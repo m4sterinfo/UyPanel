@@ -35,11 +35,11 @@ docker exec -it xcvm-test-install bash
 1. Распаковывает `UyPanel.zip`
 2. Запускает `python3 install` с автоматическими ответами на интерактивные вопросы
 3. Проверяет наличие ключевых файлов после установки:
-   - `/home/xc_vm/status`, `console.php`, `autoload.php`, `bootstrap.php`
-   - `/home/xc_vm/config/config.ini`
-   - `/home/xc_vm/bin/nginx/sbin/nginx`
-   - `/home/xc_vm/bin/php/bin/php`
-   - `/home/xc_vm/bin/redis/redis-server`
+   - `/home/uypanel/status`, `console.php`, `autoload.php`, `bootstrap.php`
+   - `/home/uypanel/config/config.ini`
+   - `/home/uypanel/bin/nginx/sbin/nginx`
+   - `/home/uypanel/bin/php/bin/php`
+   - `/home/uypanel/bin/redis/redis-server`
 
 ## Порты
 

@@ -29,9 +29,9 @@ class UpdateCronJob implements CommandInterface {
             return 1;
         }
 
-        $rConfig = parse_ini_string(file_get_contents('/home/xc_vm/config/config.ini'));
+        $rConfig = parse_ini_string(file_get_contents('/home/uypanel/config/config.ini'));
         if (!isset($rConfig['is_lb']) || !$rConfig['is_lb']) {
-            $rPort = (intval(explode(';', explode(' ', trim(explode('listen ', file_get_contents('/home/xc_vm/bin/nginx/conf/ports/http.conf'))[1]))[0])[0]) ?: 80);
+            $rPort = (intval(explode(';', explode(' ', trim(explode('listen ', file_get_contents('/home/uypanel/bin/nginx/conf/ports/http.conf'))[1]))[0])[0]) ?: 80);
         }
 
         $rUpdate = $gitRelease->getUpdate(UyPanel_VERSION);
@@ -57,7 +57,7 @@ class UpdateCronJob implements CommandInterface {
 
     private function isRunning(): bool {
         $rNginx = 0;
-        exec('ps -fp $(pgrep -u xc_vm)', $rOutput, $rReturnVar);
+        exec('ps -fp $(pgrep -u uypanel)', $rOutput, $rReturnVar);
         foreach ($rOutput as $rProcess) {
             $rSplit = explode(' ', preg_replace('!\\s+!', ' ', trim($rProcess)));
             if ($rSplit[8] == 'nginx:' && $rSplit[9] == 'master') {

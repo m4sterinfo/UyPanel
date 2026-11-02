@@ -3,11 +3,11 @@ pid = #PATH#bin/php/sockets/#ID#.pid
 events.mechanism = epoll
 daemonize = yes
 rlimit_files = 4000
-[xc_vm]
+[uypanel]
 listen = #PATH#bin/php/sockets/#ID#.sock
 listen.allowed_clients = 127.0.0.1
-listen.owner = xc_vm
-listen.group = xc_vm
+listen.owner = uypanel
+listen.group = uypanel
 listen.mode = 0660
 pm = ondemand
 pm.max_children = 4000

@@ -45,12 +45,12 @@ rPackages = [
 ]
 rRemove = ["mysql-server"]
 rMySQLCnfTemplate = """# UyPanel\n[client]\nport                            = 3306\n\n[mysqld_safe]\nnice                            = 0\n\n[mysqld]\nuser                            = mysql\nport                            = 3306\nbasedir                         = /usr\ndatadir                         = /var/lib/mysql\ntmpdir                          = /tmp\nlc-messages-dir                 = /usr/share/mysql\nskip-external-locking\nskip-name-resolve\nbind-address                    = *\n\n# MyISAM\nkey_buffer_size                 = {{KEY_BUFFER}}M\nmyisam_sort_buffer_size         = 4M\nmyisam-recover-options          = BACKUP\nmax_length_for_sort_data        = 4096\n\n# Connections\nmax_connections                 = {{MAX_CONNECTIONS}}\nback_log                        = {{BACK_LOG}}\nmax_connect_errors              = 1000\n\n# Packet and cache\nmax_allowed_packet              = 16M\nopen_files_limit                = 2048\ninnodb_open_files               = 1024\ntable_open_cache                = 1024\ntable_definition_cache          = 1024\n\n# Temp tables\ntmp_table_size                  = {{TMP_TABLE_SIZE}}M\nmax_heap_table_size             = {{TMP_TABLE_SIZE}}M\n\n# InnoDB\ninnodb_buffer_pool_size         = {{BUFFER_POOL_SIZE}}\ninnodb_buffer_pool_instances    = {{BUFFER_POOL_INSTANCES}}\ninnodb_read_io_threads          = 4\ninnodb_write_io_threads         = 4\ninnodb_flush_log_at_trx_commit  = 1\ninnodb_flush_method             = O_DIRECT\ninnodb_file_per_table           = 1\ninnodb_io_capacity              = 1000\ninnodb_table_locks              = 1\ninnodb_lock_wait_timeout        = 30\n\n# Logging\nexpire_logs_days                = 7\nmax_binlog_size                 = 64M\n\n# Query cache – disabled\nquery_cache_limit               = 0\nquery_cache_size                = 0\nquery_cache_type                = 0\n\nperformance_schema              = 0\n\nsql_mode                        = "NO_ENGINE_SUBSTITUTION"\n\n[mariadb]\nthread_cache_size               = {{THREAD_CACHE}}\nthread_handling                 = pool-of-threads\nthread_pool_size                = 4\nthread_pool_idle_timeout        = 20\nthread_pool_max_threads         = 256\n\n[mysqldump]\nquick\nquote-names\nmax_allowed_packet              = 16M\n\n[mysql]\n\n[isamchk]\nkey_buffer_size                 = 8M"""
-rConfig = '; UyPanel Configuration\n; -----------------\n; To change your username or password, modify BOTH\n; below and UyPanel will read and re-encrypt them.\n\n[UyPanel]\nhostname    =   "127.0.0.1"\ndatabase    =   "xc_vm"\nport        =   3306\nserver_id   =   1\n\n[Encrypted]\nusername    =   "%s"\npassword    =   "%s"'
-rRedisConfig = 'bind *\nprotected-mode yes\nport 6379\ntcp-backlog 511\ntimeout 0\ntcp-keepalive 300\ndaemonize yes\nsupervised no\npidfile /home/xc_vm/bin/redis/redis-server.pid\nloglevel warning\nlogfile /home/xc_vm/bin/redis/redis-server.log\ndatabases 1\nalways-show-logo yes\nstop-writes-on-bgsave-error no\nrdbcompression no\nrdbchecksum no\ndbfilename dump.rdb\ndir /home/xc_vm/bin/redis/\nslave-serve-stale-data yes\nslave-read-only yes\nrepl-diskless-sync no\nrepl-diskless-sync-delay 5\nrepl-disable-tcp-nodelay no\nslave-priority 100\nrequirepass #PASSWORD#\nmaxclients 655350\nlazyfree-lazy-eviction no\nlazyfree-lazy-expire no\nlazyfree-lazy-server-delay no\nslave-lazy-flush no\nappendonly no\nappendfilename "appendonly.aof"\nappendfsync everysec\nno-appendfsync-on-rewrite no\nauto-aof-rewrite-percentage 100\nauto-aof-rewrite-min-size 64mb\naof-load-truncated yes\naof-use-rdb-preamble no\nlua-time-limit 5000\nslowlog-log-slower-than 10000\nslowlog-max-len 128\nlatency-monitor-threshold 0\nnotify-keyspace-events ""\nhash-max-ziplist-entries 512\nhash-max-ziplist-value 64\nlist-max-ziplist-size -2\nlist-compress-depth 0\nset-max-intset-entries 512\nzset-max-ziplist-entries 128\nzset-max-ziplist-value 64\nhll-sparse-max-bytes 3000\nactiverehashing yes\nclient-output-buffer-limit normal 0 0 0\nclient-output-buffer-limit slave 256mb 64mb 60\nclient-output-buffer-limit pubsub 32mb 8mb 60\nhz 10\naof-rewrite-incremental-fsync yes\nsave 60 1000'
+rConfig = '; UyPanel Configuration\n; -----------------\n; To change your username or password, modify BOTH\n; below and UyPanel will read and re-encrypt them.\n\n[UyPanel]\nhostname    =   "127.0.0.1"\ndatabase    =   "uypanel"\nport        =   3306\nserver_id   =   1\n\n[Encrypted]\nusername    =   "%s"\npassword    =   "%s"'
+rRedisConfig = 'bind *\nprotected-mode yes\nport 6379\ntcp-backlog 511\ntimeout 0\ntcp-keepalive 300\ndaemonize yes\nsupervised no\npidfile /home/uypanel/bin/redis/redis-server.pid\nloglevel warning\nlogfile /home/uypanel/bin/redis/redis-server.log\ndatabases 1\nalways-show-logo yes\nstop-writes-on-bgsave-error no\nrdbcompression no\nrdbchecksum no\ndbfilename dump.rdb\ndir /home/uypanel/bin/redis/\nslave-serve-stale-data yes\nslave-read-only yes\nrepl-diskless-sync no\nrepl-diskless-sync-delay 5\nrepl-disable-tcp-nodelay no\nslave-priority 100\nrequirepass #PASSWORD#\nmaxclients 655350\nlazyfree-lazy-eviction no\nlazyfree-lazy-expire no\nslave-lazy-flush no\nappendonly no\nappendfilename "appendonly.aof"\nappendfsync everysec\nno-appendfsync-on-rewrite no\nauto-aof-rewrite-percentage 100\nauto-aof-rewrite-min-size 64mb\naof-load-truncated yes\naof-use-rdb-preamble no\nlua-time-limit 5000\nslowlog-log-slower-than 10000\nslowlog-max-len 128\nlatency-monitor-threshold 0\nnotify-keyspace-events ""\nhash-max-ziplist-entries 512\nhash-max-ziplist-value 64\nlist-max-ziplist-size -2\nlist-compress-depth 0\nset-max-intset-entries 512\nzset-max-ziplist-entries 128\nzset-max-ziplist-value 64\nhll-sparse-max-bytes 3000\nactiverehashing yes\nclient-output-buffer-limit normal 0 0 0\nclient-output-buffer-limit slave 256mb 64mb 60\nclient-output-buffer-limit pubsub 32mb 8mb 60\nhz 10\naof-rewrite-incremental-fsync yes\nsave 60 1000'
 rSysCtl = "# UyPanel\n\nnet.ipv4.tcp_congestion_control = bbr\nnet.core.default_qdisc = fq\nnet.ipv4.tcp_rmem = 8192 87380 134217728\nnet.ipv4.udp_rmem_min = 16384\nnet.core.rmem_default = 262144\nnet.core.rmem_max = 268435456\nnet.ipv4.tcp_wmem = 8192 65536 134217728\nnet.ipv4.udp_wmem_min = 16384\nnet.core.wmem_default = 262144\nnet.core.wmem_max = 268435456\nnet.core.somaxconn = 1000000\nnet.core.netdev_max_backlog = 250000\nnet.core.optmem_max = 65535\nnet.ipv4.tcp_max_tw_buckets = 1440000\nnet.ipv4.tcp_max_orphans = 16384\nnet.ipv4.ip_local_port_range = 2000 65000\nnet.ipv4.tcp_no_metrics_save = 1\nnet.ipv4.tcp_slow_start_after_idle = 0\nnet.ipv4.tcp_fin_timeout = 15\nnet.ipv4.tcp_keepalive_time = 300\nnet.ipv4.tcp_keepalive_probes = 5\nnet.ipv4.tcp_keepalive_intvl = 15\nfs.file-max=20970800\nfs.nr_open=20970800\nfs.aio-max-nr=20970800\nnet.ipv4.tcp_timestamps = 1\nnet.ipv4.tcp_window_scaling = 1\nnet.ipv4.tcp_mtu_probing = 1\nnet.ipv4.route.flush = 1\nnet.ipv6.route.flush = 1"
-rSystemd = "[Unit]\nSourcePath=/home/xc_vm/service\nDescription=UyPanel Service\nAfter=network.target\nStartLimitIntervalSec=0\n\n[Service]\nType=simple\nUser=root\nRestart=always\nRestartSec=1\nExecStart=/bin/bash /home/xc_vm/service start\nExecRestart=/bin/bash /home/xc_vm/service restart\nExecStop=/bin/bash /home/xc_vm/service stop\n\n[Install]\nWantedBy=multi-user.target"
+rSystemd = "[Unit]\nSourcePath=/home/uypanel/service\nDescription=UyPanel Service\nAfter=network.target\nStartLimitIntervalSec=0\n\n[Service]\nType=simple\nUser=root\nRestart=always\nRestartSec=1\nExecStart=/bin/bash /home/uypanel/service start\nExecRestart=/bin/bash /home/uypanel/service restart\nExecStop=/bin/bash /home/uypanel/service stop\n\n[Install]\nWantedBy=multi-user.target"
 rChoice = "23456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ"
-rConfigPath = "/home/xc_vm/config/config.ini"
+rConfigPath = "/home/uypanel/config/config.ini"
 
 rVersions = {
     "20.04": "focal",
@@ -203,9 +203,9 @@ if __name__ == "__main__":
         printc("Unsupported Operating System")
         sys.exit(1)
 
-    if not os.path.exists("./xc_vm.tar.gz"):
+    if not os.path.exists("./uypanel.tar.gz"):
         print(
-            "Fatal Error: xc_vm.tar.gz is missing. Please download the release package from https://github.com/m4sterinfo/UyPanel/releases"
+            "Fatal Error: uypanel.tar.gz is missing. Please download the release package from https://github.com/m4sterinfo/UyPanel/releases"
         )
         sys.exit(1)
 
@@ -214,10 +214,10 @@ if __name__ == "__main__":
     rServerID = 1
     rUsername = generate()
     rPassword = generate()
-    rDatabase = "xc_vm"
+    rDatabase = "uypanel"
     rPort = 3306
 
-    if os.path.exists("/home/xc_vm/"):
+    if os.path.exists("/home/uypanel/"):
         printc("UyPanel Directory Exists!")
         while True:
             rAnswer = input("Continue and overwrite? (Y / N) : ")
@@ -298,23 +298,23 @@ if __name__ == "__main__":
             "sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install %s" % rPackage
         )
     try:
-        subprocess.check_output("getent passwd xc_vm".split())
+        subprocess.check_output("getent passwd uypanel".split())
     except:
         printc("Creating user")
         os.system(
-            "sudo adduser --system --shell /bin/false --group --disabled-login xc_vm"
+            "sudo adduser --system --shell /bin/false --group --disabled-login uypanel"
         )
-    if not os.path.exists("/home/xc_vm"):
-        os.mkdir("/home/xc_vm")
+    if not os.path.exists("/home/uypanel"):
+        os.mkdir("/home/uypanel")
 
     ##################################################
     # INSTALL                                        #
     ##################################################
 
     printc("Installing UyPanel")
-    if os.path.exists("./xc_vm.tar.gz"):
-        os.system('sudo tar -zxvf "./xc_vm.tar.gz" -C "/home/xc_vm/"')
-        if not os.path.exists("/home/xc_vm/status"):
+    if os.path.exists("./uypanel.tar.gz"):
+        os.system('sudo tar -zxvf "./uypanel.tar.gz" -C "/home/uypanel/"')
+        if not os.path.exists("/home/uypanel/status"):
             printc("Failed to extract! Exiting")
             sys.exit(1)
 
@@ -351,26 +351,26 @@ if __name__ == "__main__":
                 printc("Invalid password! Please try again.")
     
     os.system(
-        'sudo mariadb -u root%s -e "DROP DATABASE IF EXISTS xc_vm; CREATE DATABASE IF NOT EXISTS xc_vm;"'
+        'sudo mariadb -u root%s -e "DROP DATABASE IF EXISTS uypanel; CREATE DATABASE IF NOT EXISTS uypanel;"'
         % rExtra
     )
     os.system(
-        'sudo mariadb -u root%s -e "DROP DATABASE IF EXISTS xc_vm_migrate; CREATE DATABASE IF NOT EXISTS xc_vm_migrate;"'
+        'sudo mariadb -u root%s -e "DROP DATABASE IF EXISTS uypanel_migrate; CREATE DATABASE IF NOT EXISTS uypanel_migrate;"'
         % rExtra
     )
     os.system(
-        'sudo mariadb -u root%s xc_vm < "/home/xc_vm/bin/install/database.sql"' % rExtra
+        'sudo mariadb -u root%s uypanel < "/home/uypanel/bin/install/database.sql"' % rExtra
     )
     os.system(
         "sudo mariadb -u root%s -e \"CREATE USER '%s'@'localhost' IDENTIFIED BY '%s';\""
         % (rExtra, rUsername, rPassword)
     )
     os.system(
-        "sudo mariadb -u root%s -e \"GRANT ALL PRIVILEGES ON xc_vm.* TO '%s'@'localhost';\""
+        "sudo mariadb -u root%s -e \"GRANT ALL PRIVILEGES ON uypanel.* TO '%s'@'localhost';\""
         % (rExtra, rUsername)
     )
     os.system(
-        "sudo mariadb -u root%s -e \"GRANT ALL PRIVILEGES ON xc_vm_migrate.* TO '%s'@'localhost';\""
+        "sudo mariadb -u root%s -e \"GRANT ALL PRIVILEGES ON uypanel_migrate.* TO '%s'@'localhost';\""
         % (rExtra, rUsername)
     )
     os.system(
@@ -378,7 +378,7 @@ if __name__ == "__main__":
         % (rExtra, rUsername)
     )
     os.system(
-        "sudo mariadb -u root%s -e \"GRANT GRANT OPTION ON xc_vm.* TO '%s'@'localhost';\""
+        "sudo mariadb -u root%s -e \"GRANT GRANT OPTION ON uypanel.* TO '%s'@'localhost';\""
         % (rExtra, rUsername)
     )
     os.system(
@@ -386,11 +386,11 @@ if __name__ == "__main__":
         % (rExtra, rUsername, rPassword)
     )
     os.system(
-        "sudo mariadb -u root%s -e \"GRANT ALL PRIVILEGES ON xc_vm.* TO '%s'@'127.0.0.1';\""
+        "sudo mariadb -u root%s -e \"GRANT ALL PRIVILEGES ON uypanel.* TO '%s'@'127.0.0.1';\""
         % (rExtra, rUsername)
     )
     os.system(
-        "sudo mariadb -u root%s -e \"GRANT ALL PRIVILEGES ON xc_vm_migrate.* TO '%s'@'127.0.0.1';\""
+        "sudo mariadb -u root%s -e \"GRANT ALL PRIVILEGES ON uypanel_migrate.* TO '%s'@'127.0.0.1';\""
         % (rExtra, rUsername)
     )
     os.system(
@@ -398,7 +398,7 @@ if __name__ == "__main__":
         % (rExtra, rUsername)
     )
     os.system(
-        "sudo mariadb -u root%s -e \"GRANT GRANT OPTION ON xc_vm.* TO '%s'@'127.0.0.1';\""
+        "sudo mariadb -u root%s -e \"GRANT GRANT OPTION ON uypanel.* TO '%s'@'127.0.0.1';\""
         % (rExtra, rUsername)
     )
     os.system('sudo mariadb -u root%s -e "FLUSH PRIVILEGES;"' % rExtra)
@@ -412,10 +412,10 @@ if __name__ == "__main__":
     ##################################################
 
     printc("Configuring System")
-    if not "/home/xc_vm/" in open("/etc/fstab").read():
+    if not "/home/uypanel/" in open("/etc/fstab").read():
         rFile = io.open("/etc/fstab", "a", encoding="utf-8")
         rFile.write(
-            "\ntmpfs /home/xc_vm/content/streams tmpfs defaults,noatime,nosuid,nodev,noexec,mode=1777,size=90% 0 0\ntmpfs /home/xc_vm/tmp tmpfs defaults,noatime,nosuid,nodev,noexec,mode=1777,size=6G 0 0"
+            "\ntmpfs /home/uypanel/content/streams tmpfs defaults,noatime,nosuid,nodev,noexec,mode=1777,size=90% 0 0\ntmpfs /home/uypanel/tmp tmpfs defaults,noatime,nosuid,nodev,noexec,mode=1777,size=6G 0 0"
         )
         rFile.close()
 
@@ -440,28 +440,28 @@ if __name__ == "__main__":
         printc("Error: port must be a number between 1 and 65535")
 
     # Write HTTP ports configuration
-    http_conf_path = "/home/xc_vm/bin/nginx/conf/ports/http.conf"
+    http_conf_path = "/home/uypanel/bin/nginx/conf/ports/http.conf"
     with io.open(http_conf_path, "w", encoding="utf-8") as rFile:
         rFile.write(f"listen {http_port};")
 
     # Write HTTPS ports configuration
-    https_conf_path = "/home/xc_vm/bin/nginx/conf/ports/https.conf"
+    https_conf_path = "/home/uypanel/bin/nginx/conf/ports/https.conf"
     with io.open(https_conf_path, "w", encoding="utf-8") as rFile:
         rFile.write(f"listen {https_port} ssl;")
 
     print(f"Ports configured: HTTP - {http_port}, HTTPS - {https_port}")
 
-    if os.path.exists("/etc/init.d/xc_vm"):
-        os.remove("/etc/init.d/xc_vm")
-    if os.path.exists("/etc/systemd/system/xc_vm.service"):
-        os.remove("/etc/systemd/system/xc_vm.service")
-    if not os.path.exists("/etc/systemd/system/xc_vm.service"):
-        rFile = io.open("/etc/systemd/system/xc_vm.service", "w", encoding="utf-8")
+    if os.path.exists("/etc/init.d/uypanel"):
+        os.remove("/etc/init.d/uypanel")
+    if os.path.exists("/etc/systemd/system/uypanel.service"):
+        os.remove("/etc/systemd/system/uypanel.service")
+    if not os.path.exists("/etc/systemd/system/uypanel.service"):
+        rFile = io.open("/etc/systemd/system/uypanel.service", "w", encoding="utf-8")
         rFile.write(rSystemd)
         rFile.close()
-        os.system("sudo chmod +x /etc/systemd/system/xc_vm.service")
+        os.system("sudo chmod +x /etc/systemd/system/uypanel.service")
         os.system("sudo systemctl daemon-reload")
-        os.system("sudo systemctl enable xc_vm")
+        os.system("sudo systemctl enable uypanel")
     
     print(
         "Custom sysctl.conf - If you have your own custom sysctl.conf, type N or it will be overwritten. If you don't know what a sysctl configuration is, type Y as it will correctly set your TCP settings and open file limits."
@@ -482,13 +482,13 @@ if __name__ == "__main__":
             rFile.write(rSysCtl)
             rFile.close()
             os.system("sudo sysctl -p >/dev/null 2>&1")
-            rFile = open("/home/xc_vm/config/sysctl.on", "w")
+            rFile = open("/home/uypanel/config/sysctl.on", "w")
             rFile.close()
         except:
             print("Failed to write to sysctl file.")
     else:
-        if os.path.exists("/home/xc_vm/config/sysctl.on"):
-            os.remove("/home/xc_vm/config/sysctl.on")
+        if os.path.exists("/home/uypanel/config/sysctl.on"):
+            os.remove("/home/uypanel/config/sysctl.on")
     
     if not "DefaultLimitNOFILE=655350" in open("/etc/systemd/system.conf").read():
         os.system(
@@ -496,8 +496,8 @@ if __name__ == "__main__":
         )
         os.system('sudo echo "\nDefaultLimitNOFILE=655350" >> "/etc/systemd/user.conf"')
     
-    if not os.path.exists("/home/xc_vm/bin/redis/redis.conf"):
-        rFile = io.open("/home/xc_vm/bin/redis/redis.conf", "w", encoding="utf-8")
+    if not os.path.exists("/home/uypanel/bin/redis/redis.conf"):
+        rFile = io.open("/home/uypanel/bin/redis/redis.conf", "w", encoding="utf-8")
         rFile.write(rRedisConfig)
         rFile.close()
 
@@ -505,19 +505,19 @@ if __name__ == "__main__":
     # ACCESS CODE                                    #
     ##################################################
 
-    rCodeDir = "/home/xc_vm/bin/nginx/conf/codes/"
+    rCodeDir = "/home/uypanel/bin/nginx/conf/codes/"
     rHasAdmin = None
     for rCode in os.listdir(rCodeDir):
         if rCode.endswith(".conf"):
             if rCode.split(".")[0] == "setup":
                 os.remove(rCodeDir + "setup.conf")
-            elif "/home/xc_vm/admin" in open(rCodeDir + rCode, "r").read():
+            elif "/home/uypanel/admin" in open(rCodeDir + rCode, "r").read():
                 rHasAdmin = rCode
     
     if not rHasAdmin:
         rCode = generate(8)
         os.system(
-            "sudo mariadb -u root%s -e \"USE xc_vm; INSERT INTO access_codes(code, type, enabled, groups) VALUES('%s', 0, 1, '[1]');\""
+            "sudo mariadb -u root%s -e \"USE uypanel; INSERT INTO access_codes(code, type, enabled, groups) VALUES('%s', 0, 1, '[1]');\""
             % (rExtra, rCode)
         )
         rTemplate = open(rCodeDir + "template").read()
@@ -536,21 +536,21 @@ if __name__ == "__main__":
     ##################################################
 
     os.system("sudo mount -a  >/dev/null 2>&1")
-    os.system("sudo chown xc_vm:xc_vm -R /home/xc_vm  >/dev/null 2>&1")
+    os.system("sudo chown uypanel:uypanel -R /home/uypanel  >/dev/null 2>&1")
     os.system("sudo systemctl daemon-reload")
-    os.system("sudo setcap 'cap_net_bind_service=+ep' /home/xc_vm/bin/nginx/sbin/nginx")
-    os.system("sudo systemctl start xc_vm")
+    os.system("sudo setcap 'cap_net_bind_service=+ep' /home/uypanel/bin/nginx/sbin/nginx")
+    os.system("sudo systemctl start uypanel")
 
     time.sleep(10)
 
-    os.system("sudo /home/xc_vm/status 1")
-    os.system("sudo chown xc_vm:xc_vm -R /home/xc_vm/config/")
+    os.system("sudo /home/uypanel/status 1")
+    os.system("sudo chown uypanel:uypanel -R /home/uypanel/config/")
     os.system(
-        "sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php startup >/dev/null 2>&1"
+        "sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php startup >/dev/null 2>&1"
     )
 
     time.sleep(3)
-    os.system("service xc_vm restart")
+    os.system("service uypanel restart")
 
     printc("Installation completed!", col.OKGREEN, 2)
     printc("Continue Setup: http://%s:%s/%s" % (getIP(),http_port, rCode))

@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../_media/UyPanel_logo.jpg" width="440" alt="UyPanel Logo"/>
+</p>
+
 <h1 align="center">📺 UyPanel IPTV Panel</h1>
 
 <p align="center">

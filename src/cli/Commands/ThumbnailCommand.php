@@ -11,7 +11,7 @@ class ThumbnailCommand implements CommandInterface {
 	}
 
 	public function execute(array $rArgs): int {
-		if (posix_getpwuid(posix_geteuid())['name'] != 'xc_vm') {
+		if (posix_getpwuid(posix_geteuid())['name'] != 'uypanel') {
 			echo "Please run as UyPanel!\n";
 			return 1;
 		}

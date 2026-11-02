@@ -139,9 +139,9 @@ if (isset($rServerArr) && $rServerArr['is_main'] == 1) {
 
     if (isset($rServerArr) && isset(RequestManager::getAll()['update'])) {
         echo '                                                <div class="alert alert-info" role="alert">' . "\n" . '                                                    In order to update your UyPanel core from v';
-        echo $rServerArr['xc_vm_version'];
+        echo $rServerArr['uypanel_version'];
         echo ' to v';
-        echo $allServers[SERVER_ID]['xc_vm_version'];
+        echo $allServers[SERVER_ID]['uypanel_version'];
         echo ", you will need to enter root SSH details.<br/>This will reinstall your server with the most up to date software, it shouldn't take too long, however your server will be offline to customers during the update process." . "\n" . '                                                </div>' . "\n" . '                                                ';
     } else {
         echo '                                                <div class="alert alert-warning mb-4" role="alert">' . "\n" . '                                                    ';

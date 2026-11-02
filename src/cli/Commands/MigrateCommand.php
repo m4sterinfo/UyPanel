@@ -7,7 +7,7 @@ class MigrateCommand implements CommandInterface {
 	}
 
 	public function getDescription(): string {
-		return 'Migrate — database migration from xc_vm_migrate';
+		return 'Migrate — database migration from uypanel_migrate';
 	}
 
 	public function execute(array $rArgs): int {

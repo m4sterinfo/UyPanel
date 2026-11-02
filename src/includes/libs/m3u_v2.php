@@ -669,8 +669,8 @@ class ParserFacade
 	public function parse(StreamInterface $stream)
 	{
 		if (NULL === $this->parser) {
-			$tagDefinitions = new TagDefinitions(require '/home/xc_vm/includes/libs/resources/tags.php');
-			$this->parser = new Parser($tagDefinitions, new Config(require '/home/xc_vm/includes/libs/resources/tagValueParsers.php'), new DataBuilder());
+			$tagDefinitions = new TagDefinitions(require '/home/uypanel/includes/libs/resources/tags.php');
+			$this->parser = new Parser($tagDefinitions, new Config(require '/home/uypanel/includes/libs/resources/tagValueParsers.php'), new DataBuilder());
 		}
 
 		return $this->parser->parse(new Lines($stream));
@@ -684,8 +684,8 @@ class DumperFacade
 	public function dump(ArrayAccess $data, StreamInterface $stream)
 	{
 		if (NULL === $this->dumper) {
-			$tagDefinitions = new TagDefinitions(require '/home/xc_vm/includes/libs/resources/tags.php');
-			$this->dumper = new Dumper($tagDefinitions, new Config(require '/home/xc_vm/includes/libs/resources/tagValueDumpers.php'));
+			$tagDefinitions = new TagDefinitions(require '/home/uypanel/includes/libs/resources/tags.php');
+			$this->dumper = new Dumper($tagDefinitions, new Config(require '/home/uypanel/includes/libs/resources/tagValueDumpers.php'));
 		}
 
 		$this->dumper->dumpToLines($data, new Lines($stream));

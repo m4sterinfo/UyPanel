@@ -18,7 +18,7 @@
 Подключитесь к консоли сервера и выполните команду:
 
 ```bash
-sudo -u xc_vm /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php monitor 291
+sudo -u uypanel /home/uypanel/bin/php/bin/php /home/uypanel/console.php monitor 291
 ```
 
 > 🧩 Где `291` — это **ID вашего стрима** (замените на свой).
@@ -108,7 +108,7 @@ sudo apt install <имя_библиотеки>
 **Как разблокировать:**
 
 1. **Через админ-панель:** Инструменты → Управление IP → удалить из списка блокировки.
-2. **Через CLI:** `sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools flush` — сбрасывает все блокировки.
+2. **Через CLI:** `sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools flush` — сбрасывает все блокировки.
 3. **Если полностью заблокированы:** Используйте `console.php tools rescue` для создания кода восстановления доступа (см. [CLI-инструменты](ru-ru/development/cli-tools.md)).
 
 ---
@@ -123,7 +123,7 @@ sudo apt install <имя_библиотеки>
 Создайте нового пользователя-администратора через CLI:
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools user
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools user
 ```
 
 Команда выведет случайный логин и пароль с полными правами. Войдите, смените пароль и удалите rescue-пользователя.
@@ -131,7 +131,7 @@ sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools user
 Если не знаете URL админ-панели — создайте код восстановления:
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools rescue
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools rescue
 ```
 
 ---
@@ -154,10 +154,10 @@ sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools rescue
 3. **Сеть недоступна** — сервер БД на другом хосте, порт заблокирован файрволом
 4. **Нет прав у пользователя** — перевыдайте через `console.php tools mysql`
 
-**Исправление:** Отредактируйте `/home/xc_vm/config/config.ini`, затем выполните:
+**Исправление:** Отредактируйте `/home/uypanel/config/config.ini`, затем выполните:
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php status
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php status
 ```
 
 ---
@@ -201,13 +201,13 @@ SQL-файлы миграций из `migrations/` выполняются авт
 |---|---|---|
 | Error 3 | Домен — голый IP-адрес | Certbot требует доменное имя, а не IP |
 | Error 4 | Dry run упал — порт 80/443 занят | Остановите конфликтующий сервис: `sudo lsof -i :80` |
-| Error 0 | Файлы не найдены после генерации | Проверьте `/home/xc_vm/bin/certbot/logs/xc_vm.log` |
+| Error 0 | Файлы не найдены после генерации | Проверьте `/home/uypanel/bin/certbot/logs/uypanel.log` |
 | Error 2 | Неожиданная ошибка certbot | Проверьте логи, убедитесь что DNS ведёт на ваш сервер |
 
 **Также:** Удалите устаревшие lock-файлы, если certbot был прерван:
 
 ```bash
-sudo rm -f /home/xc_vm/bin/certbot/*/.certbot.lock
+sudo rm -f /home/uypanel/bin/certbot/*/.certbot.lock
 ```
 
 ---
@@ -235,7 +235,7 @@ sudo netstat -tlnp | grep -E ':80|:443|:1935'
 **Решение:** Измените порт вещания в настройках админ-панели, затем перегенерируйте конфиги:
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools ports
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools ports
 ```
 
 ---
@@ -260,7 +260,7 @@ sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools ports
 Обновление никогда не применяется, если контрольная сумма не совпадает. Перезапустите после устранения сетевых проблем:
 
 ```bash
-sudo -u xc_vm /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php update update
+sudo -u uypanel /home/uypanel/bin/php/bin/php /home/uypanel/console.php update update
 ```
 
 ---
@@ -276,13 +276,13 @@ sudo -u xc_vm /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php update update
 
 ```bash
 # Проверить зависшие процессы
-ps -u xc_vm
+ps -u uypanel
 
 # Принудительное завершение при необходимости
-sudo killall -9 -u xc_vm
+sudo killall -9 -u uypanel
 
 # Чистый перезапуск
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php service start
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php service start
 ```
 
 Частые причины: deadlock в PHP-транзакции, бесконечный цикл в обработке стрима, или сетевой сокет ожидает ответ.
@@ -303,7 +303,7 @@ sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php service start
 Запустите команду status — она автоматически исправляет все известные проблемы с правами:
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php status
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php status
 ```
 
 Что исправляет:
@@ -313,7 +313,7 @@ sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php status
 - Бит исполнения `daemons.sh`
 - Права на сетевые интерфейсы (`/sys/class/net`)
 
-Если права ломаются после каждого перезапуска, проверьте что системный пользователь `xc_vm` существует и является владельцем `/home/xc_vm`.
+Если права ломаются после каждого перезапуска, проверьте что системный пользователь `uypanel` существует и является владельцем `/home/uypanel`.
 
 ---
 
@@ -329,14 +329,14 @@ LB-серверы опрашивают MAIN по HTTP и обрабатываю�
 1. **Сеть:** LB не может достучаться до HTTP-порта MAIN — проверьте правила файрвола
 2. **База данных:** LB не может подключиться к MySQL на MAIN — перевыдайте привилегии:
    ```bash
-   sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools mysql
+   sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools mysql
    ```
 3. **Таймаут:** Если `last_check_ago` превышает 180 секунд, сервер помечается как offline
 
 **Отладка:** Запустите на MAIN для проверки связи:
 
 ```bash
-sudo -u xc_vm /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php watchdog
+sudo -u uypanel /home/uypanel/bin/php/bin/php /home/uypanel/console.php watchdog
 ```
 
 ---

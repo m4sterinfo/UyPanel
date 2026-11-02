@@ -29,7 +29,7 @@
  *   Коды генерируются из шаблона bin/nginx/conf/codes/template:
  *
  *     location ^~ /#CODE# {
- *         alias /home/xc_vm/#TYPE#;
+ *         alias /home/uypanel/#TYPE#;
  *         try_files $uri $uri.html $uri/ @extensionless-php;
  *         ...
  *     }
@@ -49,7 +49,7 @@
  * ──────────────────────────────────────────────────────────────────
  *
  *   location ^~ /#CODE# {
- *       alias /home/xc_vm/#TYPE#;
+ *       alias /home/uypanel/#TYPE#;
  *       index index.php;
  *       try_files $uri $uri.html $uri/ @fc_#CODE#;
  *       location ~ \.php$ { ... }
@@ -57,7 +57,7 @@
  *   location @fc_#CODE# {
  *       fastcgi_param XC_SCOPE #TYPE#;
  *       fastcgi_param XC_CODE  #CODE#;
- *       fastcgi_param SCRIPT_FILENAME /home/xc_vm/public/index.php;
+ *       fastcgi_param SCRIPT_FILENAME /home/uypanel/public/index.php;
  *       fastcgi_pass php;
  *       include fastcgi_params;
  *   }

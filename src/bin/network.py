@@ -77,7 +77,7 @@ def stats_display(prev_stats, current_stats):
             ]
             diffs.append(diff)
     try:
-        with open("/home/xc_vm/tmp/logs/network", "w") as f:
+        with open("/home/uypanel/tmp/logs/network", "w") as f:
             json.dump(diffs, f)
     except IOError as e:
         print(f"Cannot write to log file: {e}")

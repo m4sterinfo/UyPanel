@@ -216,10 +216,10 @@ class RootSignalsCronJob implements CommandInterface {
             }
         }
         $rUyPanelList = trim(implode("\n", array_unique($rUyPanelList)));
-        $rCurrentList = (trim(file_get_contents(BIN_PATH . 'nginx/conf/realip_xc_vm.conf')) ?: '');
+        $rCurrentList = (trim(file_get_contents(BIN_PATH . 'nginx/conf/realip_uypanel.conf')) ?: '');
         if ($rUyPanelList != $rCurrentList) {
             echo 'Updating UyPanel IP List...' . "\n";
-            file_put_contents(BIN_PATH . 'nginx/conf/realip_xc_vm.conf', $rUyPanelList);
+            file_put_contents(BIN_PATH . 'nginx/conf/realip_uypanel.conf', $rUyPanelList);
             $rReload = true;
         }
         $rCurrentList = (trim(file_get_contents(BIN_PATH . 'nginx/conf/realip_cloudflare.conf')) ?: '');
@@ -290,7 +290,7 @@ class RootSignalsCronJob implements CommandInterface {
         }
         if (SettingsManager::getAll()['restart_php_fpm']) {
             $rPHP = $rNginx = 0;
-            exec('ps -fp ' . trim(shell_exec('pgrep -u xc_vm | tr "\n" "," | sed "s/,$//"')), $rOutput, $rReturnVar);
+            exec('ps -fp ' . trim(shell_exec('pgrep -u uypanel | tr "\n" "," | sed "s/,$//"')), $rOutput, $rReturnVar);
             foreach ($rOutput as $rProcess) {
                 $rSplit = explode(' ', preg_replace('!\\s+!', ' ', trim($rProcess)));
                 if (isset($rSplit[8], $rSplit[9]) && $rSplit[8] == 'php-fpm:' && $rSplit[9] == 'master') {
@@ -304,8 +304,8 @@ class RootSignalsCronJob implements CommandInterface {
                 if ($rPHP == 0) {
                     echo 'PHP-FPM ERROR - Restarting...';
                     $db->query("INSERT INTO `mysql_syslog`(`server_id`, `type`, `error`, `username`, `ip`, `database`, `date`) VALUES(?, 'PHP-FPM', 'Restarted PHP-FPM instances due to a suspected crash.', 'root', 'localhost', NULL, ?);", SERVER_ID, time());
-                    shell_exec('sudo systemctl stop xc_vm');
-                    shell_exec('sudo systemctl start xc_vm');
+                    shell_exec('sudo systemctl stop uypanel');
+                    shell_exec('sudo systemctl start uypanel');
                     exit();
                 }
             }
@@ -318,8 +318,8 @@ class RootSignalsCronJob implements CommandInterface {
             } else {
                 echo $rCode . ' ERROR - Restarting...';
                 $db->query("INSERT INTO `mysql_syslog`(`server_id`, `type`, `error`, `username`, `ip`, `database`, `date`) VALUES(?, 'PHP-FPM', 'Restarted services due to " . $rCode . " error.', 'root', 'localhost', NULL, ?);", SERVER_ID, time());
-                shell_exec('sudo systemctl stop xc_vm');
-                shell_exec('sudo systemctl start xc_vm');
+                shell_exec('sudo systemctl stop uypanel');
+                shell_exec('sudo systemctl start uypanel');
                 exit();
             }
         }
@@ -415,7 +415,7 @@ class RootSignalsCronJob implements CommandInterface {
             }
             if (file_exists(TMP_PATH . 'crontab')) {
                 echo 'Checking crontab...' . "\n";
-                exec('crontab -u xc_vm -l', $rCrons);
+                exec('crontab -u uypanel -l', $rCrons);
                 $rCurrentCron = trim(implode("\n", $rCrons));
                 $rJobs = [];
                 $db->query('SELECT * FROM `crontab` WHERE `enabled` = 1;');
@@ -454,13 +454,13 @@ class RootSignalsCronJob implements CommandInterface {
                         case 'restart_services':
                             echo 'Restarting services...' . "\n";
                             $db->query("INSERT INTO `mysql_syslog`(`server_id`, `type`, `error`, `username`, `ip`, `database`, `date`) VALUES(?, 'RESTART', 'UyPanel services restarted on request.', 'root', 'localhost', NULL, ?);", SERVER_ID, time());
-                            shell_exec('sudo systemctl stop xc_vm');
-                            shell_exec('sudo systemctl start xc_vm');
+                            shell_exec('sudo systemctl stop uypanel');
+                            shell_exec('sudo systemctl start uypanel');
                             break;
                         case 'stop_services':
                             echo 'Stopping services...' . "\n";
                             $db->query("INSERT INTO `mysql_syslog`(`server_id`, `type`, `error`, `username`, `ip`, `database`, `date`) VALUES(?, 'STOP', 'UyPanel services stopped on request.', 'root', 'localhost', NULL, ?);", SERVER_ID, time());
-                            shell_exec('sudo systemctl stop xc_vm');
+                            shell_exec('sudo systemctl stop uypanel');
                             break;
                         case 'reload_nginx':
                             echo 'Reloading nginx...' . "\n";
@@ -473,28 +473,28 @@ class RootSignalsCronJob implements CommandInterface {
                             $rFstab = file_get_contents('/etc/fstab');
                             $rOutput = [];
                             foreach (explode("\n", $rFstab) as $rLine) {
-                                if (substr($rLine, 0, 31) == 'tmpfs /home/xc_vm/content/streams') {
+                                if (substr($rLine, 0, 31) == 'tmpfs /home/uypanel/content/streams') {
                                     $rLine = '#' . $rLine;
                                 }
                                 $rOutput[] = $rLine;
                             }
                             file_put_contents('/etc/fstab', implode("\n", $rOutput));
                             shell_exec('sudo umount -l ' . STREAMS_PATH);
-                            shell_exec('sudo chown -R xc_vm:xc_vm ' . STREAMS_PATH);
+                            shell_exec('sudo chown -R uypanel:uypanel ' . STREAMS_PATH);
                             break;
                         case 'enable_ramdisk':
                             echo 'Enabling ramdisk...' . "\n";
                             $rFstab = file_get_contents('/etc/fstab');
                             $rOutput = [];
                             foreach (explode("\n", $rFstab) as $rLine) {
-                                if (substr($rLine, 0, 32) == '#tmpfs /home/xc_vm/content/streams') {
+                                if (substr($rLine, 0, 32) == '#tmpfs /home/uypanel/content/streams') {
                                     $rLine = ltrim($rLine, '#');
                                 }
                                 $rOutput[] = $rLine;
                             }
                             file_put_contents('/etc/fstab', implode("\n", $rOutput));
                             shell_exec('sudo mount ' . STREAMS_PATH);
-                            shell_exec('sudo chown -R xc_vm:xc_vm ' . STREAMS_PATH);
+                            shell_exec('sudo chown -R uypanel:uypanel ' . STREAMS_PATH);
                             break;
                         case 'certbot_generate':
                             echo 'Generating certbot certificate.' . "\n";
@@ -525,7 +525,7 @@ class RootSignalsCronJob implements CommandInterface {
                             echo 'Setting PHP Services' . "\n";
                             $rServices = intval($rData['count']);
                             if ($rData['reload']) {
-                                shell_exec('sudo systemctl stop xc_vm');
+                                shell_exec('sudo systemctl stop uypanel');
                             }
                             shell_exec('sudo rm ' . MAIN_HOME . 'bin/php/etc/*.conf');
                             $rNewScript = '#! /bin/bash' . "\n";
@@ -538,9 +538,9 @@ class RootSignalsCronJob implements CommandInterface {
                             }
                             file_put_contents(MAIN_HOME . 'bin/daemons.sh', $rNewScript);
                             file_put_contents(MAIN_HOME . 'bin/nginx/conf/balance.conf', $rNewBalance . '}');
-                            shell_exec('sudo chown xc_vm:xc_vm ' . MAIN_HOME . 'bin/php/etc/*');
+                            shell_exec('sudo chown uypanel:uypanel ' . MAIN_HOME . 'bin/php/etc/*');
                             if ($rData['reload']) {
-                                shell_exec('sudo systemctl start xc_vm');
+                                shell_exec('sudo systemctl start uypanel');
                             }
                             break;
                         case 'set_governor':

@@ -4151,7 +4151,7 @@ player.prototype.bind = function () {
 
             this.init_pvr_dialogs();
 
-            if (loader.template == "xc_vm") {
+            if (loader.template == "uypanel") {
                 if (module.pvr_local) {
                     if (this.cur_tv_item['allow_local_pvr']) {
                         // show confirm

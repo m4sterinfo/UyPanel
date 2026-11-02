@@ -93,7 +93,7 @@ if (!isset(RequestManager::getAll()['update'])):
 
     if (!$rMigrating) {
         $rMigrateConnection = false;
-        $odb = new DatabaseHandler($_INFO['username'], $_INFO['password'], "xc_vm_migrate", $_INFO['hostname'], $_INFO['port'], true);
+        $odb = new DatabaseHandler($_INFO['username'], $_INFO['password'], "uypanel_migrate", $_INFO['hostname'], $_INFO['port'], true);
 
         if ($odb->connected) {
             $rMigrateConnection = true;
@@ -219,7 +219,7 @@ if (!isset(RequestManager::getAll()['update'])):
                                             <div class="alert alert-secondary mb-4" role="alert">
                                                 In order to migrate your database from a previous installation of Xtream UI, XUI, ZapX
                                                 (original and NXT), StreamCreed or generic Xtream Codes v2 installation, you will
-                                                need to restore your migration database to the <strong>xc_vm_migrate</strong> database
+                                                need to restore your migration database to the <strong>uypanel_migrate</strong> database
                                                 as UyPanel will have access to it.<br /><br />The script will then loop through all of
                                                 your previously existing data and alter it to work with UyPanel. No logs will be
                                                 migrated and some clean up may need to be done post-migration but this tool should
@@ -227,7 +227,7 @@ if (!isset(RequestManager::getAll()['update'])):
                                             </div>
                                             <?php if (!$rMigrateConnection): ?>
                                                 <div class="alert alert-danger mb-4" role="alert">
-                                                    A connection to the xc_vm_migrate database could not be made. Please ensure the
+                                                    A connection to the uypanel_migrate database could not be made. Please ensure the
                                                     database exists, if it does not, create it.
                                                 </div>
                                             <?php endif; ?>

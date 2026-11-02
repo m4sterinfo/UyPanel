@@ -47,7 +47,7 @@
 
             stb.player.init_pvr_dialogs();
 
-            if (loader.template == "xc_vm") {
+            if (loader.template == "uypanel") {
                 if (module.pvr_local) {
                     if (channel['allow_local_pvr']) {
                         // show confirm
