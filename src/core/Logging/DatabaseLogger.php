@@ -65,7 +65,7 @@ class DatabaseLogger implements LoggerInterface {
             return LOGS_TMP_PATH . 'client_request.log';
         }
 
-        return '/tmp/xc_vm_client.log';
+        return '/tmp/uypanel_client.log';
     }
 
     /**

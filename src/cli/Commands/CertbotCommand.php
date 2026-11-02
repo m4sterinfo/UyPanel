@@ -31,8 +31,8 @@ class CertbotCommand implements CommandInterface {
 
 		$rData = json_decode(base64_decode($rArgs[0]), true);
 		if ($rData['action'] == 'certbot_generate') {
-			if (file_exists(BIN_PATH . 'certbot/logs/xc_vm.log')) {
-				unlink(BIN_PATH . 'certbot/logs/xc_vm.log');
+			if (file_exists(BIN_PATH . 'certbot/logs/uypanel.log')) {
+				unlink(BIN_PATH . 'certbot/logs/uypanel.log');
 			}
 			foreach (array('logs', 'config', 'work') as $rPath) {
 				if (file_exists(BIN_PATH . 'certbot/' . $rPath . '/.certbot.lock')) {
@@ -51,7 +51,7 @@ class CertbotCommand implements CommandInterface {
 			if (0 < count($rActiveDomains)) {
 				foreach (array('--dry-run ', '') as $rDry) {
 					if (ServerRepository::getAll()[SERVER_ID]['http_broadcast_port'] == 80) {
-						$rCommand = 'sudo certbot ' . $rDry . '--config-dir ' . BIN_PATH . 'certbot/config --work-dir ' . BIN_PATH . 'certbot/work --logs-dir ' . BIN_PATH . 'certbot/logs certonly --agree-tos --expand --non-interactive --register-unsafely-without-email --webroot -w /home/xc_vm/www/';
+						$rCommand = 'sudo certbot ' . $rDry . '--config-dir ' . BIN_PATH . 'certbot/config --work-dir ' . BIN_PATH . 'certbot/work --logs-dir ' . BIN_PATH . 'certbot/logs certonly --agree-tos --expand --non-interactive --register-unsafely-without-email --webroot -w /home/uypanel/www/';
 					} else {
 						$rCommand = 'sudo certbot ' . $rDry . '--config-dir ' . BIN_PATH . 'certbot/config --work-dir ' . BIN_PATH . 'certbot/work --logs-dir ' . BIN_PATH . 'certbot/logs certonly --agree-tos --expand --non-interactive --register-unsafely-without-email --standalone';
 					}
@@ -78,7 +78,7 @@ class CertbotCommand implements CommandInterface {
 								if (file_exists($rCertificate) && file_exists($rChain) && file_exists($rPrivateKey)) {
 									$rSSLConfig = $this->buildSslConfig($rCertificate, $rPrivateKey, $rChain);
 									file_put_contents(BIN_PATH . 'nginx/conf/ssl.conf', $rSSLConfig);
-									shell_exec('chown xc_vm:xc_vm ' . BIN_PATH . 'nginx/conf/ssl.conf');
+									shell_exec('chown uypanel:uypanel ' . BIN_PATH . 'nginx/conf/ssl.conf');
 									$rInfo = DiagnosticsService::getCertificateInfo();
 									if ($rInfo['serial']) {
 										$db->query('UPDATE `servers` SET `certbot_ssl` = ? WHERE `id` = ?;', json_encode($rInfo), SERVER_ID);
@@ -143,7 +143,7 @@ class CertbotCommand implements CommandInterface {
 						if (file_exists($rCertificate) && file_exists($rChain) && file_exists($rPrivateKey)) {
 							$rSSLConfig = $this->buildSslConfig($rCertificate, $rPrivateKey, $rChain);
 							file_put_contents(BIN_PATH . 'nginx/conf/ssl.conf', $rSSLConfig);
-							shell_exec('chown xc_vm:xc_vm ' . BIN_PATH . 'nginx/conf/ssl.conf');
+							shell_exec('chown uypanel:uypanel ' . BIN_PATH . 'nginx/conf/ssl.conf');
 							$db->query('UPDATE `servers` SET `certbot_ssl` = ? WHERE `id` = ?;', json_encode($rSelectedDomain[1]), SERVER_ID);
 							$rResult = true;
 						}
@@ -151,8 +151,8 @@ class CertbotCommand implements CommandInterface {
 				}
 			}
 			$rReturn = array('status' => $rResult, 'error' => $rError, 'output' => $rOutput);
-			shell_exec('chown -R xc_vm:xc_vm ' . BIN_PATH . 'certbot/');
-			file_put_contents(BIN_PATH . 'certbot/logs/xc_vm.log', json_encode($rReturn));
+			shell_exec('chown -R uypanel:uypanel ' . BIN_PATH . 'certbot/');
+			file_put_contents(BIN_PATH . 'certbot/logs/uypanel.log', json_encode($rReturn));
 			if ($rResult) {
 				shell_exec(MAIN_HOME . 'service reload');
 			}

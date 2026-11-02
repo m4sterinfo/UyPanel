@@ -154,7 +154,7 @@ class ServerRepository {
 
 		foreach ($rLines as $rLine) {
 			$rSplit = explode(' ', preg_replace('!\s+!', ' ', trim($rLine)));
-			if (0 < strlen($rSplit[0]) && strpos($rSplit[5], 'xc_vm') !== false || $rSplit[5] == '/') {
+			if (0 < strlen($rSplit[0]) && strpos($rSplit[5], 'uypanel') !== false || $rSplit[5] == '/') {
 				$rReturn[] = array('filesystem' => $rSplit[0], 'size' => $rSplit[1], 'used' => $rSplit[2], 'avail' => $rSplit[3], 'percentage' => $rSplit[4], 'mount' => implode(' ', array_slice($rSplit, 5, count($rSplit) - 5)));
 			}
 		}
@@ -193,7 +193,7 @@ class ServerRepository {
 
 	public static function getSSLLog($rServerID) {
 		global $rServers;
-		$rAPI = $rServers[intval($rServerID)]['api_url_ip'] . '&action=getFile&filename=' . urlencode(BIN_PATH . 'certbot/logs/xc_vm.log');
+		$rAPI = $rServers[intval($rServerID)]['api_url_ip'] . '&action=getFile&filename=' . urlencode(BIN_PATH . 'certbot/logs/uypanel.log');
 		return json_decode(file_get_contents($rAPI), true);
 	}
 

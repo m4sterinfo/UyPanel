@@ -68,8 +68,8 @@ class StatusCommand implements CommandInterface {
 		$rReload = $this->fixNginxConfig($rReload);
 
 		if ($rReload) {
-			exec('sudo -u xc_vm ' . MAIN_HOME . 'bin/nginx/sbin/nginx -s reload');
-			exec('sudo service xc_vm restart');
+			exec('sudo -u uypanel ' . MAIN_HOME . 'bin/nginx/sbin/nginx -s reload');
+			exec('sudo service uypanel restart');
 		}
 
 		$this->installRootCrontab();
@@ -85,14 +85,14 @@ class StatusCommand implements CommandInterface {
 			$this->printStatusReport($db, $rServers);
 		}
 
-		$db->query('UPDATE `servers` SET `xc_vm_version` = ? WHERE `id` = ?;', UyPanel_VERSION, SERVER_ID);
+		$db->query('UPDATE `servers` SET `uypanel_version` = ? WHERE `id` = ?;', UyPanel_VERSION, SERVER_ID);
 
 		return 0;
 	}
 
 	private function isRunning(): bool {
 		$rNginx = 0;
-		exec('ps -fp $(pgrep -u xc_vm 2>/dev/null) 2>/dev/null', $rOutput);
+		exec('ps -fp $(pgrep -u uypanel 2>/dev/null) 2>/dev/null', $rOutput);
 
 		foreach ($rOutput as $rProcess) {
 			$rSplit = explode(' ', preg_replace('!\\s+!', ' ', trim($rProcess)));
@@ -134,7 +134,7 @@ class StatusCommand implements CommandInterface {
 		shell_exec('sudo chmod 0660 ' . MAIN_HOME . 'bin/php/sockets/*');
 		shell_exec('sudo chmod 0771 ' . MAIN_HOME . 'bin/daemons.sh');
 		shell_exec('sudo chmod 0775 ' . MAIN_HOME . 'bin/certbot');
-		shell_exec('sudo chown -R xc_vm:xc_vm ' . MAIN_HOME . 'config');
+		shell_exec('sudo chown -R uypanel:uypanel ' . MAIN_HOME . 'config');
 		shell_exec("sudo echo 'net.ipv4.ip_unprivileged_port_start=0' > /etc/sysctl.d/50-allports-nonroot.conf && sudo sysctl --system 2> /dev/null");
 	}
 
@@ -220,8 +220,8 @@ class StatusCommand implements CommandInterface {
 	}
 
 	private function removeInitScript(): void {
-		if (file_exists('/etc/init.d/xc_vm')) {
-			unlink('/etc/init.d/xc_vm');
+		if (file_exists('/etc/init.d/uypanel')) {
+			unlink('/etc/init.d/uypanel');
 			shell_exec('sudo systemctl daemon-reload');
 		}
 	}
@@ -328,13 +328,13 @@ class StatusCommand implements CommandInterface {
 			echo "\n";
 		}
 
-		echo 'Installed Version: ' . $rServers[SERVER_ID]['xc_vm_version'] . "\n------------------------------\n";
+		echo 'Installed Version: ' . $rServers[SERVER_ID]['uypanel_version'] . "\n------------------------------\n";
 		$rMismatch = 0;
 
 		foreach ($rServers as $rServerID => $rServer) {
 			if ($rServerID !== SERVER_ID) {
-				if ($rServer['server_type'] == 0 && $rServer['xc_vm_version'] && $rServer['xc_vm_version'] !== $rServers[SERVER_ID]['xc_vm_version']) {
-					echo 'Server #' . $rServerID . ' - ' . $rServer['server_ip'] . ' - Running v' . $rServer['xc_vm_version'] . "\n";
+				if ($rServer['server_type'] == 0 && $rServer['uypanel_version'] && $rServer['uypanel_version'] !== $rServers[SERVER_ID]['uypanel_version']) {
+					echo 'Server #' . $rServerID . ' - ' . $rServer['server_ip'] . ' - Running v' . $rServer['uypanel_version'] . "\n";
 					$rMismatch++;
 				}
 			}

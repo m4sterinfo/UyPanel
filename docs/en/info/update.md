@@ -75,6 +75,6 @@ Follow these steps to update via the panel. Each step is illustrated with a scre
 > After completion, verify server status, restart services, and ensure everything is working correctly.
 
 > ⚠️ **Update Errors**
-> If errors occur, check server logs (e.g., in `/home/xc_vm/logs/`). If the problem persists, create an issue in the [repository](https://github.com/m4sterinfo/UyPanel/issues).
+> If errors occur, check server logs (e.g., in `/home/uypanel/logs/`). If the problem persists, create an issue in the [repository](https://github.com/m4sterinfo/UyPanel/issues).
 
 ---

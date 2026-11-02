@@ -5,7 +5,7 @@ session_write_close();
 if (isset($_SESSION['hash'])) {
 	set_time_limit(2);
 	ini_set('default_socket_timeout', 2);
-	if (!defined('MAIN_HOME')) define('MAIN_HOME', '/home/xc_vm/');
+	if (!defined('MAIN_HOME')) define('MAIN_HOME', '/home/uypanel/');
 	if (!defined('WWW_PATH')) define('WWW_PATH', MAIN_HOME . 'www/');
 	if (!defined('IMAGES_PATH')) define('IMAGES_PATH', WWW_PATH . 'images/');
 	if (!defined('TMP_PATH')) define('TMP_PATH', MAIN_HOME . 'tmp/');

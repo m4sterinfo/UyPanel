@@ -18,10 +18,10 @@ trait DaemonTrait {
 	protected $rRefreshInterval = 60;
 
 	/**
-	 * Проверить что процесс запущен от пользователя xc_vm.
+	 * Проверить что процесс запущен от пользователя uypanel.
 	 */
 	protected function assertRunAsXcVm(): bool {
-		if (posix_getpwuid(posix_geteuid())['name'] !== 'xc_vm') {
+		if (posix_getpwuid(posix_geteuid())['name'] !== 'uypanel') {
 			echo "Please run as UyPanel!\n";
 			return false;
 		}

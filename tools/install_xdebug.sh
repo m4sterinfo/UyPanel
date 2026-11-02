@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-PHP_PREFIX="/home/xc_vm/bin/php"
+PHP_PREFIX="/home/uypanel/bin/php"
 PHP_BIN="$PHP_PREFIX/bin/php"
 PHPIZE="$PHP_PREFIX/bin/phpize"
 PHP_CONFIG="$PHP_PREFIX/bin/php-config"
@@ -84,7 +84,7 @@ zend_extension=xdebug.so
 ; Включаем отладку и профайлинг
 xdebug.mode=debug,profile
 xdebug.start_with_request=trigger
-xdebug.output_dir=/home/xc_vm/xdebug
+xdebug.output_dir=/home/uypanel/xdebug
 xdebug.client_host=127.0.0.1
 xdebug.client_port=9003
 xdebug.discover_client_host=0
@@ -99,7 +99,7 @@ EOF
     echo "Настройки Xdebug успешно добавлены в конец файла $PHP_INI"
 fi
 
-sudo chown xc_vm:xc_vm -R /home/xc_vm >/dev/null 2>&1
+sudo chown uypanel:uypanel -R /home/uypanel >/dev/null 2>&1
 sudo chmod 777 "$EXT_DIR/xdebug.so" >/dev/null 2>&1
 
 echo

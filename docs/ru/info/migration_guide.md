@@ -76,7 +76,7 @@
 Очистите базу миграции и восстановите бэкап:
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools migration "/tmp/backup.sql"
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools migration "/tmp/backup.sql"
 ```
 
 Перед продолжением убедитесь, что восстановление завершилось **без ошибок**.
@@ -90,7 +90,7 @@ sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools migration "/tmp/b
 #### 🧩 Вариант 1 — Командная строка (рекомендуется)
 
 ```bash
-/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php migrate
+/home/uypanel/bin/php/bin/php /home/uypanel/console.php migrate
 ```
 
 #### 🌐 Вариант 2 — Веб-установщик
@@ -111,13 +111,13 @@ sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools migration "/tmp/b
 ### Создание резервного кода доступа
 
 ```bash
-/home/xc_vm/tools access
+/home/uypanel/tools access
 ```
 
 ### Создание администратора
 
 ```bash
-/home/xc_vm/tools user
+/home/uypanel/tools user
 ```
 
 > ⚠️ После восстановления доступа **немедленно смените** код доступа и учётные данные администратора.

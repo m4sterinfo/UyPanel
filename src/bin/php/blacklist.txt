@@ -1,2 +1,2 @@
-/home/xc_vm/admin/*
-/home/xc_vm/reseller/*
+/home/uypanel/admin/*
+/home/uypanel/reseller/*

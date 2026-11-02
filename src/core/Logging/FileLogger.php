@@ -51,7 +51,7 @@ class FileLogger implements LoggerInterface {
             return LOGS_TMP_PATH . 'error_log.log';
         }
 
-        return '/tmp/xc_vm_error.log';
+        return '/tmp/uypanel_error.log';
     }
 
     /**

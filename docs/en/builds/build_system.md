@@ -26,7 +26,7 @@ UyPanel supports two deployment roles from a single source tree:
 
 | Variant | Archive | Purpose |
 |---|---|---|
-| **MAIN** | `xc_vm.tar.gz` | Full application — admin panel, streaming, all modules, cron jobs |
+| **MAIN** | `uypanel.tar.gz` | Full application — admin panel, streaming, all modules, cron jobs |
 | **LB** (Load Balancer) | `loadbalancer.tar.gz` | Streaming-only server — no admin panel, no user management |
 
 **MAIN** is the primary server that manages everything: admin UI, database writes, user/device management, EPG processing, backups, etc.
@@ -39,14 +39,14 @@ UyPanel supports two deployment roles from a single source tree:
 
 | Target | Output | Description |
 |---|---|---|
-| `make main` | `dist/xc_vm.tar.gz` | Full MAIN build |
+| `make main` | `dist/uypanel.tar.gz` | Full MAIN build |
 | `make lb` | `dist/loadbalancer.tar.gz` | LB build (streaming-only subset) |
 | `make main_update` | `dist/update.tar.gz` | Incremental MAIN update |
 | `make lb_update` | `dist/loadbalancer_update.tar.gz` | Incremental LB update |
 | `make new` | Both full builds | Shortcut: `main` + `lb` |
 
 Additional outputs:
-- `UyPanel.zip` — installer package (`install/` + `xc_vm.tar.gz`)
+- `UyPanel.zip` — installer package (`install/` + `uypanel.tar.gz`)
 - `hashes.md5` — MD5 checksums for integrity verification
 
 ---
@@ -160,7 +160,7 @@ The LB build uses a specialized nginx config optimized for high-throughput strea
 | Worker processes | `auto` | Scale to CPU cores |
 | Worker connections | 16,000 | High concurrency per worker |
 | Max file descriptors | 300,000 | System resource limit |
-| Thread pool | `pool_xc_vm` (32 threads) | Async I/O for streaming |
+| Thread pool | `pool_uypanel` (32 threads) | Async I/O for streaming |
 | Gzip | OFF | Streaming data is already compressed |
 | Access logs | OFF | Reduce I/O overhead |
 | Rate limiting | 20 req/s per IP | DDoS mitigation |
@@ -257,5 +257,5 @@ tar -tzf dist/loadbalancer.tar.gz | grep -cE "admin/|player/|ministra|reseller"
 # Expected: 0
 
 # Compare sizes (LB should be significantly smaller)
-ls -lh dist/xc_vm.tar.gz dist/loadbalancer.tar.gz
+ls -lh dist/uypanel.tar.gz dist/loadbalancer.tar.gz
 ```

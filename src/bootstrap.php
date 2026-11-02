@@ -36,19 +36,19 @@
  * ──────────────────────────────────────────────────────────────────
  *
  *   // В admin-контроллере:
- *   require_once '/home/xc_vm/bootstrap.php';
+ *   require_once '/home/uypanel/bootstrap.php';
  *   XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_ADMIN);
  *
  *   // В cron-задаче:
- *   require_once '/home/xc_vm/bootstrap.php';
+ *   require_once '/home/uypanel/bootstrap.php';
  *   XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_CLI);
  *
  *   // В стриминг-эндпоинте:
- *   require_once '/home/xc_vm/bootstrap.php';
+ *   require_once '/home/uypanel/bootstrap.php';
  *   XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_STREAM, ['cached' => true]);
  *
  *   // Только константы (без БД):
- *   require_once '/home/xc_vm/bootstrap.php';
+ *   require_once '/home/uypanel/bootstrap.php';
  *   XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_MINIMAL);
  *
  * ──────────────────────────────────────────────────────────────────
@@ -330,7 +330,7 @@ class XC_Bootstrap {
                         $rDomains = @igbinary_unserialize(@file_get_contents(CACHE_TMP_PATH . 'allowed_domains'));
                         if (
                             is_array($rDomains) && count($rDomains) > 0
-                            && !in_array(HOST, $rDomains) && HOST !== 'xc_vm'
+                            && !in_array(HOST, $rDomains) && HOST !== 'uypanel'
                             && !filter_var(HOST, FILTER_VALIDATE_IP)
                         ) {
                             generateError('INVALID_HOST');

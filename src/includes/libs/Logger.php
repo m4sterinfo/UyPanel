@@ -158,8 +158,8 @@ final class Logger {
 
         // Set log file permissions if running as root (common in containers)
         if (function_exists('posix_geteuid') && posix_geteuid() === 0) {
-            @chown(self::$logFile, 'xc_vm');
-            @chgrp(self::$logFile, 'xc_vm');
+            @chown(self::$logFile, 'uypanel');
+            @chgrp(self::$logFile, 'uypanel');
             @chmod(self::$logFile, 0664);
         }
 

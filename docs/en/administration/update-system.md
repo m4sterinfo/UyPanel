@@ -33,14 +33,14 @@ The process begins when the administrator clicks the **"Update"** button in the 
 Every **minute**, the following CRON job runs:
 
 ```bash
-/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php cron:root_signals
+/home/uypanel/bin/php/bin/php /home/uypanel/console.php cron:root_signals
 ```
 
 The `root_signals` cron job checks for new signals.
 When it detects an `update` signal, it launches:
 
 ```bash
-/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php update update
+/home/uypanel/bin/php/bin/php /home/uypanel/console.php update update
 
 ---
 
@@ -63,7 +63,7 @@ At this stage the following actions are performed:
 5. Hand over control to the system-level updater (Python):
 
 ```bash
-sudo /usr/bin/python3 /home/xc_vm/update "/home/xc_vm/tmp/.update.tar.gz" "HASH" > /dev/null 2>&1 &
+sudo /usr/bin/python3 /home/uypanel/update "/home/uypanel/tmp/.update.tar.gz" "HASH" > /dev/null 2>&1 &
 ```
 
 > 💡 After the Python updater finishes, it calls `console.php update post-update` which triggers [database migrations](en-us/development/cli-tools.md#database-migrations) and post-update cleanup.
@@ -75,7 +75,7 @@ sudo /usr/bin/python3 /home/xc_vm/update "/home/xc_vm/tmp/.update.tar.gz" "HASH"
 Control is transferred to the Python script:
 
 ```
-/home/xc_vm/update
+/home/uypanel/update
 ```
 
 It performs privileged system operations:
@@ -85,17 +85,17 @@ It performs privileged system operations:
 3. **Extract** the new version into:
 
    ```bash
-   /home/xc_vm/
+   /home/uypanel/
    ```
 4. **Fix ownership**:
 
    ```bash
-   chown -R xc_vm:xc_vm /home/xc_vm/
+   chown -R uypanel:uypanel /home/uypanel/
    ```
 5. Run post-update tasks:
 
    ```bash
-   /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php update post-update
+   /home/uypanel/bin/php/bin/php /home/uypanel/console.php update post-update
    ```
 6. **Restart** the panel in normal operating mode.
 
@@ -111,7 +111,7 @@ Final steps are executed in the `post-update` phase of `UpdateCommand`:
 4. Re-apply correct permissions:
 
    ```bash
-   chown -R xc_vm:xc_vm /home/xc_vm/
+   chown -R uypanel:uypanel /home/uypanel/
    ```
 5. Reload systemd daemons:
 
@@ -121,7 +121,7 @@ Final steps are executed in the `post-update` phase of `UpdateCommand`:
 6. Verify panel status:
 
    ```bash
-   sudo /home/xc_vm/status
+   sudo /home/uypanel/status
    ```
 7. Mark the update process as complete.
 

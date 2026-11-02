@@ -71,9 +71,9 @@
                                                 <?php if (!$rServer['enabled']): ?>
                                                     <i class="text-secondary fas fa-square tooltip" title="Disabled"></i>
                                                 <?php elseif ($rServer['server_online']): ?>
-                                                    <?php if ($rServer['xc_vm_version'] && ($rServer['xc_vm_version'] != $rServers[SERVER_ID]['xc_vm_version'])): ?>
+                                                    <?php if ($rServer['uypanel_version'] && ($rServer['uypanel_version'] != $rServers[SERVER_ID]['uypanel_version'])): ?>
                                                         <a href="javascript: void(0);" onClick="api(<?= intval($rServer['id']) ?>, 'update');">
-                                                            <i class="text-success mdi mdi-download tooltip" style="font-size:14pt;" title="An update is available! v<?= $rServers[SERVER_ID]['xc_vm_version'] ?>"></i>
+                                                            <i class="text-success mdi mdi-download tooltip" style="font-size:14pt;" title="An update is available! v<?= $rServers[SERVER_ID]['uypanel_version'] ?>"></i>
                                                         </a>
                                                     <?php else: ?>
                                                         <i class="text-success fas fa-square tooltip" title="Online"></i>
@@ -185,9 +185,9 @@
                                                 </button>
                                             </td>
                                             <td class="text-center">
-                                                <button type='button' class='btn <?= ($rServer['xc_vm_version'] != $rServers[SERVER_ID]['xc_vm_version']) ? 'btn-warning' : 'btn-light' ?> btn-xs waves-effect waves-light'>
-                                                    <?php if ($rServer['xc_vm_version']): ?>
-                                                        <?= $rServer['xc_vm_version'] ?>
+                                                <button type='button' class='btn <?= ($rServer['uypanel_version'] != $rServers[SERVER_ID]['uypanel_version']) ? 'btn-warning' : 'btn-light' ?> btn-xs waves-effect waves-light'>
+                                                    <?php if ($rServer['uypanel_version']): ?>
+                                                        <?= $rServer['uypanel_version'] ?>
                                                     <?php else: ?>
                                                         N/A
                                                     <?php endif; ?>

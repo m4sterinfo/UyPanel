@@ -31,13 +31,13 @@ This tutorial shows how to create a **self-signed SSL certificate** for the embe
 All SSL-related files (key, certificate, and config) are stored in:
 
 ```bash
-/home/xc_vm/bin/nginx/conf
+/home/uypanel/bin/nginx/conf
 ```
 
 Navigate to this directory before proceeding:
 
 ```bash
-cd /home/xc_vm/bin/nginx/conf
+cd /home/uypanel/bin/nginx/conf
 ```
 
 ---
@@ -119,7 +119,7 @@ openssl req -new -x509 -key server.key -out server.crt -days 3650 -config server
 
 ## Final Files
 
-After completing all steps, the following files should be present in `/home/xc_vm/bin/nginx/conf`:
+After completing all steps, the following files should be present in `/home/uypanel/bin/nginx/conf`:
 
 | File          | Purpose                          |
 | ------------- | --------------------------------- |

@@ -20,14 +20,14 @@ if [[ ! -f install ]]; then
     echo "ERROR: install script not found after unzip"
     exit 1
 fi
-if [[ ! -f xc_vm.tar.gz ]]; then
-    echo "ERROR: xc_vm.tar.gz not found after unzip"
+if [[ ! -f uypanel.tar.gz ]]; then
+    echo "ERROR: uypanel.tar.gz not found after unzip"
     exit 1
 fi
 
 echo "==> Запуск инсталлятора..."
 # Ответы на интерактивные вопросы:
-#   1) "Continue and overwrite? (Y / N)" — Y (на случай если /home/xc_vm/ существует)
+#   1) "Continue and overwrite? (Y / N)" — Y (на случай если /home/uypanel/ существует)
 #   2) "HTTP port (default 80):" — пустая строка (default 80)
 #   3) "HTTPS port (default 443):" — пустая строка (default 443)
 #   4) "Overwrite sysctl configuration? (Y / N):" — N (sysctl нельзя менять в контейнере)
@@ -48,14 +48,14 @@ echo ""
 # Проверяем что ключевые файлы на месте
 echo "==> Post-install verification:"
 CHECKS=(
-    "/home/xc_vm/status"
-    "/home/xc_vm/console.php"
-    "/home/xc_vm/autoload.php"
-    "/home/xc_vm/bootstrap.php"
-    "/home/xc_vm/config/config.ini"
-    "/home/xc_vm/bin/nginx/sbin/nginx"
-    "/home/xc_vm/bin/php/bin/php"
-    "/home/xc_vm/bin/redis/redis-server"
+    "/home/uypanel/status"
+    "/home/uypanel/console.php"
+    "/home/uypanel/autoload.php"
+    "/home/uypanel/bootstrap.php"
+    "/home/uypanel/config/config.ini"
+    "/home/uypanel/bin/nginx/sbin/nginx"
+    "/home/uypanel/bin/php/bin/php"
+    "/home/uypanel/bin/redis/redis-server"
 )
 
 PASS=0
@@ -77,7 +77,7 @@ echo "Results: $PASS passed, $FAIL failed out of ${#CHECKS[@]} checks"
 if command -v systemctl &>/dev/null && systemctl is-system-running &>/dev/null 2>&1; then
     echo ""
     echo "==> Service status:"
-    systemctl status xc_vm --no-pager 2>/dev/null || echo "  xc_vm service not running (may need manual start)"
+    systemctl status uypanel --no-pager 2>/dev/null || echo "  uypanel service not running (may need manual start)"
 fi
 
 exit $EXIT_CODE

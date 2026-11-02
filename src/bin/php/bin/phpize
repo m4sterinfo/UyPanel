@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # Variable declaration
-prefix='/home/xc_vm/bin/php'
-datarootdir='/home/xc_vm/bin/php/php'
+prefix='/home/uypanel/bin/php'
+datarootdir='/home/uypanel/bin/php/php'
 exec_prefix="`eval echo ${prefix}`"
 phpdir="`eval echo ${exec_prefix}/lib/php`/build"
 includedir="`eval echo ${prefix}/include`/php"
@@ -152,7 +152,7 @@ phpize_copy_files()
 phpize_replace_prefix()
 {
   $SED \
-  -e "s#/home/xc_vm/bin/php#$prefix#" \
+  -e "s#/home/uypanel/bin/php#$prefix#" \
   < "$phpdir/phpize.m4" > configure.ac
 }
 

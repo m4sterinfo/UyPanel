@@ -11,7 +11,7 @@
  */
 
 if (!defined('MAIN_HOME')) {
-	define('MAIN_HOME', '/home/xc_vm/');
+	define('MAIN_HOME', '/home/uypanel/');
 }
 
 // Импорт глобальных переменных bootstrap'а.
@@ -83,7 +83,7 @@ if (isset($_SESSION['hash'])) {
 	}
 	$updateRequired = false;
 
-	if (!version_compare($rServers[SERVER_ID]['xc_vm_version'], SettingsManager::getAll()['update_version'], '>=')) {
+	if (!version_compare($rServers[SERVER_ID]['uypanel_version'], SettingsManager::getAll()['update_version'], '>=')) {
 		$updateRequired = true;
 	}
 }

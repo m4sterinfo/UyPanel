@@ -14,7 +14,7 @@
 $rSessionTimeout = 60;
 
 if (!defined('TMP_PATH')) {
-	define('TMP_PATH', '/home/xc_vm/tmp/');
+	define('TMP_PATH', '/home/uypanel/tmp/');
 }
 
 if (session_status() === PHP_SESSION_NONE && !headers_sent()) {

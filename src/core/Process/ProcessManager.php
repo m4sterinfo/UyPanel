@@ -467,7 +467,7 @@ class ProcessManager {
     }
 
     /**
-     * Check if nginx master process is running under xc_vm user
+     * Check if nginx master process is running under uypanel user
      *
      * Replaces CoreUtilities::isRunning().
      *
@@ -475,7 +475,7 @@ class ProcessManager {
      */
     public static function isNginxRunning() {
         $rOutput = [];
-        @exec('pgrep -u xc_vm -a 2>/dev/null', $rOutput);
+        @exec('pgrep -u uypanel -a 2>/dev/null', $rOutput);
         foreach ($rOutput as $rProcess) {
             if (preg_match('/nginx:\s+master/', $rProcess)) {
                 return true;

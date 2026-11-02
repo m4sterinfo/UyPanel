@@ -23,8 +23,8 @@ class BinariesCommand implements CommandInterface {
 			}
 		});
 
-		$rBaseDir = '/home/xc_vm/bin/';
-		$geolitejsonFile = '/home/xc_vm/bin/maxmind/version.json';
+		$rBaseDir = '/home/uypanel/bin/';
+		$geolitejsonFile = '/home/uypanel/bin/maxmind/version.json';
 
 		// Check if apparmor_status command exists
 		if (shell_exec('which apparmor_status')) {
@@ -68,7 +68,7 @@ class BinariesCommand implements CommandInterface {
 						echo 'Updated binary: ' . $rFile['path'] . "\n";
 						file_put_contents($rFile['path'], $rData);
 
-						shell_exec('sudo chown xc_vm:xc_vm "' . $rFile['path'] . '"');
+						shell_exec('sudo chown uypanel:uypanel "' . $rFile['path'] . '"');
 						shell_exec('sudo chmod ' . $rFile["permission"] . ' "' . $rFile['path'] . '"');
 						$rUpdated = true;
 					}
@@ -85,7 +85,7 @@ class BinariesCommand implements CommandInterface {
 		}
 
 		if ($rUpdated) {
-			shell_exec('sudo chown -R xc_vm:xc_vm "' . $rBaseDir . '"');
+			shell_exec('sudo chown -R uypanel:uypanel "' . $rBaseDir . '"');
 		}
 
 		return 0;

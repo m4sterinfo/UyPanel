@@ -651,7 +651,7 @@ if (isset($_SESSION['hash'])) {
 				}
 
 				shell_exec(PHP_BIN . ' ' . MAIN_HOME . 'console.php cron:cache_engine');
-				$rCache = intval(trim(shell_exec('pgrep -U xc_vm | xargs ps -f -p | grep cache_handler | grep -v grep | grep -v pgrep | wc -l')));
+				$rCache = intval(trim(shell_exec('pgrep -U uypanel | xargs ps -f -p | grep cache_handler | grep -v grep | grep -v pgrep | wc -l')));
 
 				if ($rCache != 0) {
 				} else {
@@ -3194,7 +3194,7 @@ if (isset($_SESSION['hash'])) {
 					unlink(CACHE_TMP_PATH . 'settings');
 				}
 
-				exec('pgrep -u xc_vm redis-server', $rRedis);
+				exec('pgrep -u uypanel redis-server', $rRedis);
 
 				if (!(0 < count($rRedis) && is_numeric($rRedis[0]))) {
 				} else {
@@ -3204,7 +3204,7 @@ if (isset($_SESSION['hash'])) {
 
 				shell_exec(MAIN_HOME . 'bin/redis/redis-server ' . MAIN_HOME . '/bin/redis/redis.conf > /dev/null 2>/dev/null &');
 				sleep(1);
-				exec("pgrep -U xc_vm | xargs ps | grep signals | awk '{print \$1}'", $rPID);
+				exec("pgrep -U uypanel | xargs ps | grep signals | awk '{print \$1}'", $rPID);
 
 				if (!(0 < count($rPID) && is_numeric($rPID[0]))) {
 				} else {
@@ -3213,7 +3213,7 @@ if (isset($_SESSION['hash'])) {
 					shell_exec(PHP_BIN . ' ' . MAIN_HOME . 'console.php signals > /dev/null 2>/dev/null &');
 				}
 
-				exec("pgrep -U xc_vm | xargs ps | grep watchdog | awk '{print \$1}'", $rPID);
+				exec("pgrep -U uypanel | xargs ps | grep watchdog | awk '{print \$1}'", $rPID);
 
 				if (!(0 < count($rPID) && is_numeric($rPID[0]))) {
 				} else {
@@ -3241,7 +3241,7 @@ if (isset($_SESSION['hash'])) {
 					unlink(CACHE_TMP_PATH . 'settings');
 				}
 
-				exec('pgrep -u xc_vm redis-server', $rRedis);
+				exec('pgrep -u uypanel redis-server', $rRedis);
 
 				if (!(0 < count($rRedis) && is_numeric($rRedis[0]))) {
 				} else {
@@ -3249,7 +3249,7 @@ if (isset($_SESSION['hash'])) {
 					shell_exec('kill -9 ' . $rPID);
 				}
 
-				exec("pgrep -U xc_vm | xargs ps | grep signals | awk '{print \$1}'", $rPID);
+				exec("pgrep -U uypanel | xargs ps | grep signals | awk '{print \$1}'", $rPID);
 
 				if (!(0 < count($rPID) && is_numeric($rPID[0]))) {
 				} else {
@@ -3258,7 +3258,7 @@ if (isset($_SESSION['hash'])) {
 					shell_exec(PHP_BIN . ' ' . MAIN_HOME . 'console.php signals > /dev/null 2>/dev/null &');
 				}
 
-				exec("pgrep -U xc_vm | xargs ps | grep watchdog | awk '{print \$1}'", $rPID);
+				exec("pgrep -U uypanel | xargs ps | grep watchdog | awk '{print \$1}'", $rPID);
 
 				if (!(0 < count($rPID) && is_numeric($rPID[0]))) {
 				} else {

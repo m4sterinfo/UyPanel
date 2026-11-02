@@ -16,7 +16,7 @@
             'action': 'get_ordered_list'
         };
 
-        if (loader.template == "xc_vm") {
+        if (loader.template == "uypanel") {
             this.preview_pos_map = [
                 { "mode": 720, "xsize": 595, "ysize": 335, "x": 615, "y": 82 },
                 { "mode": 1080, "xsize": 893, "ysize": 503, "x": 920, "y": 123 },
@@ -93,7 +93,7 @@
             _debug('parseInt(stb.video_mode)', parseInt(stb.video_mode));
             _debug('stb.graphic_mode', stb.graphic_mode);
 
-            if (loader.template == "xc_vm") {
+            if (loader.template == "uypanel") {
                 this.preview_pos = this.preview_pos_map[this.preview_pos_map.getIdxByVal("mode", parseInt(stb.video_mode))];
             } else {
                 if (stb.graphic_mode == 1080) {
@@ -182,7 +182,7 @@
                 }
             ));
 
-            if (loader.template == "xc_vm") { this.init_search_box(); }
+            if (loader.template == "uypanel") { this.init_search_box(); }
         };
 
         this.show = function (do_not_load) {
@@ -454,7 +454,7 @@
                             stb.player.stop();
                             window.location = window.referrer;
                         } else {
-                            if (loader.template == "xc_vm") {
+                            if (loader.template == "uypanel") {
                                 stb.player.stop();
                             } else {
                                 this.check_for_play();
@@ -463,7 +463,7 @@
 
                         return;
                     }
-                    if (loader.template == "xc_vm") {
+                    if (loader.template == "uypanel") {
                         stb.player.stop();
                     }
 
@@ -734,7 +734,7 @@
         };
 
         this.hide_player = function () {
-            if (loader.template == "xc_vm") {
+            if (loader.template == "uypanel") {
                 _debug("tv.hide_player");
                 try {
                     stb.SetTopWin(0);
@@ -746,7 +746,7 @@
         }
 
         this.show_player = function () {
-            if (loader.template == "xc_vm") {
+            if (loader.template == "uypanel") {
                 _debug("tv.show_player");
                 if (this.cur_view == 'short') {
                     try {
@@ -889,7 +889,7 @@
 
             this.superclass.set_short_container.apply(this);
 
-            if (loader.template == "xc_vm") {
+            if (loader.template == "uypanel") {
                 this.color_buttons.get('blue').enable();
             } else {
                 if (this.load_params.fav) {
@@ -1999,7 +1999,7 @@
 
     tv.init_right_ear(word['ears_tv_guide']);
 
-    if (loader.template == "xc_vm") {
+    if (loader.template == "uypanel") {
         var color_buttons_map = [
             { "label": word['tv_view'], "cmd": tv.view_switcher },
             { "label": word['tv_sort'], "cmd": tv.sort_menu_switcher },

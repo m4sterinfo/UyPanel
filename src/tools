@@ -1,4 +1,4 @@
-#!/home/xc_vm/bin/php/bin/php
+#!/home/uypanel/bin/php/bin/php
 <?php
 // @legacy-proxy — redirect to console.php tools
 // Logic moved to src/cli/Commands/ToolsCommand.php (rescue/access/ports subcommands)

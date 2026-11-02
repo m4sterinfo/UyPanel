@@ -1477,7 +1477,7 @@ HTTP → Service → Queue Job (Redis LPUSH) → Worker (cron) → Result
 
 ```php
 // public/index.php — admin/reseller entry point
-require_once '/home/xc_vm/bootstrap.php';
+require_once '/home/uypanel/bootstrap.php';
 XC_Bootstrap::defineStatusConstants();
 XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_ADMIN);
 // $db, CoreUtilities, API, ResellerAPI, Translator — всё готово
@@ -1485,14 +1485,14 @@ XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_ADMIN);
 
 ```php
 // public/stream.php — streaming entry point (lightweight)
-require_once '/home/xc_vm/bootstrap.php';
+require_once '/home/uypanel/bootstrap.php';
 XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_STREAM);
 // Только Database + StreamingUtilities, без admin_api, без Translator
 ```
 
 ```php
 // cli/CronJobs/StreamsCron.php — cron
-require_once '/home/xc_vm/bootstrap.php';
+require_once '/home/uypanel/bootstrap.php';
 XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_CLI, [
     'cached'  => true,
     'redis'   => true,

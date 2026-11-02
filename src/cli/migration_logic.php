@@ -9,7 +9,7 @@ $rMigrateOptions = (json_decode(file_get_contents(TMP_PATH . '.migration.options
 
 file_put_contents(TMP_PATH . '.migration.pid', getmypid());
 file_put_contents(TMP_PATH . '.migration.status', 1);
-$odb = new DatabaseHandler($_INFO['username'], $_INFO['password'], "xc_vm_migrate", $_INFO['hostname'], $_INFO['port'], true);
+$odb = new DatabaseHandler($_INFO['username'], $_INFO['password'], "uypanel_migrate", $_INFO['hostname'], $_INFO['port'], true);
 if (!$odb->connected) {
     echo 'Failed to connect to migration database, or database is empty!' . "\n";
     file_put_contents(TMP_PATH . '.migration.status', 3);
@@ -31,7 +31,7 @@ if ($odb->num_rows() > 0) {
         }
     }
     if ($rItemCount == 0) {
-        echo "\n" . "Couldn't find anything to migrate in the `xc_vm_migrate` database. Please ensure you restore your backup to that database specifically." . "\n\n";
+        echo "\n" . "Couldn't find anything to migrate in the `uypanel_migrate` database. Please ensure you restore your backup to that database specifically." . "\n\n";
         exit();
     }
     echo "\n" . 'Migrating database to UyPanel...' . "\n\n";
@@ -625,7 +625,7 @@ if ($odb->num_rows() > 0) {
         }
     }
     if ($rItemCount == 0) {
-        echo "\n" . "Couldn't find anything to migrate in the `xc_vm_migrate` database. Please ensure you restore your backup to that database specifically." . "\n\n";
+        echo "\n" . "Couldn't find anything to migrate in the `uypanel_migrate` database. Please ensure you restore your backup to that database specifically." . "\n\n";
         exit();
     }
     echo "\n" . 'Migrating database to UyPanel...' . "\n\n";

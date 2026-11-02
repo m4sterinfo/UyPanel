@@ -18,7 +18,7 @@ class BalancerCommand implements CommandInterface {
 	}
 
 	public function execute(array $rArgs): int {
-		if (posix_getpwuid(posix_geteuid())['name'] != 'xc_vm') {
+		if (posix_getpwuid(posix_geteuid())['name'] != 'uypanel') {
 			echo "Please run as UyPanel!\n";
 			return 1;
 		}
@@ -107,8 +107,8 @@ class BalancerCommand implements CommandInterface {
 		echo "\nRemote OS version: {$rVersion}\n";
 
 		echo "\nStopping any previous version of UyPanel\n";
-		$this->runSSH($rConn, 'sudo systemctl stop xc_vm');
-		$this->runSSH($rConn, 'sudo killall -9 -u xc_vm');
+		$this->runSSH($rConn, 'sudo systemctl stop uypanel');
+		$this->runSSH($rConn, 'sudo killall -9 -u uypanel');
 		echo "\nUpdating system\n";
 		$this->runSSH($rConn, 'sudo rm /var/lib/dpkg/lock-frontend && sudo rm /var/cache/apt/archives/lock && sudo rm /var/lib/dpkg/lock');
 		if ($rType == 2) {
@@ -131,7 +131,7 @@ class BalancerCommand implements CommandInterface {
 
 		if (in_array($rType, array(1, 2))) {
 			echo "Creating UyPanel system user\n";
-			$this->runSSH($rConn, 'sudo adduser --system --shell /bin/false --group --disabled-login xc_vm');
+			$this->runSSH($rConn, 'sudo adduser --system --shell /bin/false --group --disabled-login uypanel');
 			$this->runSSH($rConn, 'sudo mkdir ' . MAIN_HOME);
 			$this->runSSH($rConn, 'sudo rm -rf ' . BIN_PATH);
 		}
@@ -208,23 +208,23 @@ class BalancerCommand implements CommandInterface {
 				$rNewConfig = '; UyPanel Configuration' . "\n" . '; -----------------' . "\n\n" . '[UyPanel]' . "\n" . 'hostname    =   "' . $rServers[SERVER_ID]['server_ip'] . '"' . "\n" . 'port        =   ' . intval($rServers[SERVER_ID]['http_broadcast_port']) . "\n" . 'server_id   =   ' . $rServerID;
 			}
 		} else {
-			$rNewConfig = '; UyPanel Configuration' . "\n" . '; -----------------' . "\n\n" . '[UyPanel]' . "\n" . 'hostname    =   "' . $rServers[SERVER_ID]['server_ip'] . '"' . "\n" . 'database    =   "xc_vm"' . "\n" . 'port        =   ' . intval(ConfigReader::get('port')) . "\n" . 'server_id   =   ' . $rServerID . "\n" . 'is_lb       =   1' . "\n\n" . '[Encrypted]' . "\n" . 'username    =   "' . ConfigReader::get('username') . '"' . "\n" . 'password    =   "' . ConfigReader::get('password') . '"';
+			$rNewConfig = '; UyPanel Configuration' . "\n" . '; -----------------' . "\n\n" . '[UyPanel]' . "\n" . 'hostname    =   "' . $rServers[SERVER_ID]['server_ip'] . '"' . "\n" . 'database    =   "uypanel"' . "\n" . 'port        =   ' . intval(ConfigReader::get('port')) . "\n" . 'server_id   =   ' . $rServerID . "\n" . 'is_lb       =   1' . "\n\n" . '[Encrypted]' . "\n" . 'username    =   "' . ConfigReader::get('username') . '"' . "\n" . 'password    =   "' . ConfigReader::get('password') . '"';
 		}
 		file_put_contents(TMP_PATH . 'config_' . $rServerID, $rNewConfig);
 		$this->sendFileSSH($rConn, TMP_PATH . 'config_' . $rServerID, CONFIG_PATH . 'config.ini');
 
 		echo "Installing service\n";
-		$this->runSSH($rConn, 'sudo rm /etc/systemd/system/xc_vm.service');
-		$rSystemd = '[Unit]' . "\n" . 'SourcePath=/home/xc_vm/service' . "\n" . 'Description=UyPanel Service' . "\n" . 'After=network.target' . "\n" . 'StartLimitIntervalSec=0' . "\n\n" . '[Service]' . "\n" . 'Type=simple' . "\n" . 'User=root' . "\n" . 'Restart=always' . "\n" . 'RestartSec=1' . "\n" . 'ExecStart=/bin/bash /home/xc_vm/service start' . "\n" . 'ExecRestart=/bin/bash /home/xc_vm/service restart' . "\n" . 'ExecStop=/bin/bash /home/xc_vm/service stop' . "\n\n" . '[Install]' . "\n" . 'WantedBy=multi-user.target';
+		$this->runSSH($rConn, 'sudo rm /etc/systemd/system/uypanel.service');
+		$rSystemd = '[Unit]' . "\n" . 'SourcePath=/home/uypanel/service' . "\n" . 'Description=UyPanel Service' . "\n" . 'After=network.target' . "\n" . 'StartLimitIntervalSec=0' . "\n\n" . '[Service]' . "\n" . 'Type=simple' . "\n" . 'User=root' . "\n" . 'Restart=always' . "\n" . 'RestartSec=1' . "\n" . 'ExecStart=/bin/bash /home/uypanel/service start' . "\n" . 'ExecRestart=/bin/bash /home/uypanel/service restart' . "\n" . 'ExecStop=/bin/bash /home/uypanel/service stop' . "\n\n" . '[Install]' . "\n" . 'WantedBy=multi-user.target';
 		file_put_contents(TMP_PATH . 'systemd_' . $rServerID, $rSystemd);
-		$this->sendFileSSH($rConn, TMP_PATH . 'systemd_' . $rServerID, '/etc/systemd/system/xc_vm.service');
-		$this->runSSH($rConn, 'sudo chmod +x /etc/systemd/system/xc_vm.service');
-		$this->runSSH($rConn, 'sudo rm /etc/init.d/xc_vm');
+		$this->sendFileSSH($rConn, TMP_PATH . 'systemd_' . $rServerID, '/etc/systemd/system/uypanel.service');
+		$this->runSSH($rConn, 'sudo chmod +x /etc/systemd/system/uypanel.service');
+		$this->runSSH($rConn, 'sudo rm /etc/init.d/uypanel');
 		$this->runSSH($rConn, 'sudo systemctl daemon-reload');
-		$this->runSSH($rConn, 'sudo systemctl enable xc_vm');
+		$this->runSSH($rConn, 'sudo systemctl enable uypanel');
 
 		if ($rType == 1) {
-			$this->runSSH($rConn, 'sudo rm /home/xc_vm/bin/nginx/conf/servers/*.conf');
+			$this->runSSH($rConn, 'sudo rm /home/uypanel/bin/nginx/conf/servers/*.conf');
 			$rServices = 1;
 			foreach ($rParentIDs as $rParentID) {
 				if ($rPrivateIP) {
@@ -241,20 +241,20 @@ class BalancerCommand implements CommandInterface {
 				}
 				$rTmpPath = TMP_PATH . md5(time() . $rKey . '.conf');
 				file_put_contents($rTmpPath, $rConfigText);
-				$this->sendFileSSH($rConn, $rTmpPath, '/home/xc_vm/bin/nginx/conf/servers/' . intval($rParentID) . '.conf');
+				$this->sendFileSSH($rConn, $rTmpPath, '/home/uypanel/bin/nginx/conf/servers/' . intval($rParentID) . '.conf');
 			}
-			$this->runSSH($rConn, 'sudo echo "listen ' . $rHTTPPort . ';" > "/home/xc_vm/bin/nginx/conf/ports/http.conf"');
-			$this->runSSH($rConn, 'sudo echo "listen ' . $rHTTPSPort . ' ssl;" > "/home/xc_vm/bin/nginx/conf/ports/https.conf"');
-			$this->runSSH($rConn, 'sudo chmod 0777 /home/xc_vm/bin');
+			$this->runSSH($rConn, 'sudo echo "listen ' . $rHTTPPort . ';" > "/home/uypanel/bin/nginx/conf/ports/http.conf"');
+			$this->runSSH($rConn, 'sudo echo "listen ' . $rHTTPSPort . ' ssl;" > "/home/uypanel/bin/nginx/conf/ports/https.conf"');
+			$this->runSSH($rConn, 'sudo chmod 0777 /home/uypanel/bin');
 		} else {
 			$this->sendFileSSH($rConn, MAIN_HOME . 'bin/nginx/conf/custom.conf', MAIN_HOME . 'bin/nginx/conf/custom.conf');
 			$this->sendFileSSH($rConn, MAIN_HOME . 'bin/nginx/conf/realip_cdn.conf', MAIN_HOME . 'bin/nginx/conf/realip_cdn.conf');
 			$this->sendFileSSH($rConn, MAIN_HOME . 'bin/nginx/conf/realip_cloudflare.conf', MAIN_HOME . 'bin/nginx/conf/realip_cloudflare.conf');
-			$this->sendFileSSH($rConn, MAIN_HOME . 'bin/nginx/conf/realip_xc_vm.conf', MAIN_HOME . 'bin/nginx/conf/realip_xc_vm.conf');
-			$this->runSSH($rConn, 'sudo echo "" > "/home/xc_vm/bin/nginx/conf/limit.conf"');
-			$this->runSSH($rConn, 'sudo echo "" > "/home/xc_vm/bin/nginx/conf/limit_queue.conf"');
+			$this->sendFileSSH($rConn, MAIN_HOME . 'bin/nginx/conf/realip_uypanel.conf', MAIN_HOME . 'bin/nginx/conf/realip_uypanel.conf');
+			$this->runSSH($rConn, 'sudo echo "" > "/home/uypanel/bin/nginx/conf/limit.conf"');
+			$this->runSSH($rConn, 'sudo echo "" > "/home/uypanel/bin/nginx/conf/limit_queue.conf"');
 			$rIP = '127.0.0.1:' . $rServers[$rServerID]['http_broadcast_port'];
-			$this->runSSH($rConn, 'sudo echo "on_play http://' . $rIP . '/stream/rtmp; on_publish http://' . $rIP . '/stream/rtmp; on_play_done http://' . $rIP . '/stream/rtmp;" > "/home/xc_vm/bin/nginx_rtmp/conf/live.conf"');
+			$this->runSSH($rConn, 'sudo echo "on_play http://' . $rIP . '/stream/rtmp; on_publish http://' . $rIP . '/stream/rtmp; on_play_done http://' . $rIP . '/stream/rtmp;" > "/home/uypanel/bin/nginx_rtmp/conf/live.conf"');
 			$rServices = (intval($this->runSSH($rConn, 'sudo cat /proc/cpuinfo | grep "^processor" | wc -l')['output']) ?: 4);
 			$this->runSSH($rConn, 'sudo rm ' . MAIN_HOME . 'bin/php/etc/*.conf');
 			$rNewScript = '#! /bin/bash' . "\n";
@@ -292,19 +292,19 @@ class BalancerCommand implements CommandInterface {
 		$this->runSSH($rConn, 'sudo mount -a');
 		$this->runSSH($rConn, "sudo echo 'net.ipv4.ip_unprivileged_port_start=0' > /etc/sysctl.d/50-allports-nonroot.conf && sudo sysctl --system");
 		sleep(3);
-		$this->runSSH($rConn, 'sudo chown -R xc_vm:xc_vm ' . MAIN_HOME . 'tmp');
-		$this->runSSH($rConn, 'sudo chown -R xc_vm:xc_vm ' . MAIN_HOME . 'content/streams');
-		$this->runSSH($rConn, 'sudo chown -R xc_vm:xc_vm ' . MAIN_HOME);
+		$this->runSSH($rConn, 'sudo chown -R uypanel:uypanel ' . MAIN_HOME . 'tmp');
+		$this->runSSH($rConn, 'sudo chown -R uypanel:uypanel ' . MAIN_HOME . 'content/streams');
+		$this->runSSH($rConn, 'sudo chown -R uypanel:uypanel ' . MAIN_HOME);
 		BackupService::grantPrivileges($rHost, DatabaseFactory::get(), ConfigReader::getAll());
 		echo "Installation complete! Starting UyPanel\n";
-		$this->runSSH($rConn, 'sudo service xc_vm restart');
+		$this->runSSH($rConn, 'sudo service uypanel restart');
 
 		if ($rType == 2) {
 			$this->runSSH($rConn, 'sudo ' . MAIN_HOME . 'status 1');
-			$this->runSSH($rConn, 'sudo -u xc_vm ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php startup');
-			$this->runSSH($rConn, 'sudo -u xc_vm ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php cron:servers');
+			$this->runSSH($rConn, 'sudo -u uypanel ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php startup');
+			$this->runSSH($rConn, 'sudo -u uypanel ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php cron:servers');
 		} else {
-			$this->runSSH($rConn, 'sudo -u xc_vm ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php startup');
+			$this->runSSH($rConn, 'sudo -u uypanel ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php startup');
 		}
 
 		if (in_array($rType, array(1, 2))) {

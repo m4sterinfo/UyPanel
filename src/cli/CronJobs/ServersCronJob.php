@@ -50,25 +50,25 @@ class ServersCronJob implements CommandInterface {
         $rServers = ServerRepository::getAll(true);
 
         if ($rServers[SERVER_ID]['is_main'] && SettingsManager::getAll()['redis_handler']) {
-            exec('pgrep -u xc_vm redis-server', $rRedis);
+            exec('pgrep -u uypanel redis-server', $rRedis);
             if (count($rRedis) == 0) {
                 echo 'Restarting Redis!' . "\n";
                 shell_exec(MAIN_HOME . 'bin/redis/redis-server ' . MAIN_HOME . '/bin/redis/redis.conf > /dev/null 2>/dev/null &');
             }
         }
 
-        $rSignals = intval(trim(shell_exec('pgrep -U xc_vm | xargs ps -f -p | grep signals | grep -v grep | grep -v pgrep | wc -l')));
+        $rSignals = intval(trim(shell_exec('pgrep -U uypanel | xargs ps -f -p | grep signals | grep -v grep | grep -v pgrep | wc -l')));
         if ($rSignals == 0) {
             shell_exec(PHP_BIN . ' ' . MAIN_HOME . 'console.php signals > /dev/null 2>/dev/null &');
         }
 
         if ($rServers[SERVER_ID]['is_main']) {
-            $rCache = intval(trim(shell_exec('pgrep -U xc_vm | xargs ps -f -p | grep cache_handler | grep -v grep | grep -v pgrep | wc -l')));
+            $rCache = intval(trim(shell_exec('pgrep -U uypanel | xargs ps -f -p | grep cache_handler | grep -v grep | grep -v pgrep | wc -l')));
             if (SettingsManager::getAll()['enable_cache'] && $rCache == 0) {
                 shell_exec(PHP_BIN . ' ' . MAIN_HOME . 'console.php cache_handler > /dev/null 2>/dev/null &');
             } elseif (!SettingsManager::getAll()['enable_cache'] && $rCache > 0) {
                 echo 'Killing Cache Handler' . "\n";
-                exec("pgrep -U xc_vm | xargs ps | grep cache_handler | awk '{print \$1}'", $rPIDs);
+                exec("pgrep -U uypanel | xargs ps | grep cache_handler | awk '{print \$1}'", $rPIDs);
                 foreach ($rPIDs as $rPID) {
                     if (intval($rPID) > 0) {
                         shell_exec('kill -9 ' . intval($rPID));
@@ -77,27 +77,27 @@ class ServersCronJob implements CommandInterface {
             }
         }
 
-        $rNetwork = intval(trim(shell_exec('pgrep -U xc_vm | xargs ps -f -p | grep network | grep -v grep | grep -v pgrep | wc -l')));
+        $rNetwork = intval(trim(shell_exec('pgrep -U uypanel | xargs ps -f -p | grep network | grep -v grep | grep -v pgrep | wc -l')));
         if ($rNetwork == 0) {
             shell_exec(BIN_PATH . 'network > /dev/null 2>/dev/null &');
         }
 
-        $rWatchdog = intval(trim(shell_exec('pgrep -U xc_vm | xargs ps -f -p | grep watchdog | grep -v grep | grep -v pgrep | wc -l')));
+        $rWatchdog = intval(trim(shell_exec('pgrep -U uypanel | xargs ps -f -p | grep watchdog | grep -v grep | grep -v pgrep | wc -l')));
         if ($rWatchdog == 0) {
             shell_exec(PHP_BIN . ' ' . MAIN_HOME . 'console.php watchdog > /dev/null 2>/dev/null &');
         }
 
-        $rQueue = intval(trim(shell_exec('pgrep -U xc_vm | xargs ps -f -p | grep queue | grep -v grep | grep -v pgrep | wc -l')));
+        $rQueue = intval(trim(shell_exec('pgrep -U uypanel | xargs ps -f -p | grep queue | grep -v grep | grep -v pgrep | wc -l')));
         if ($rQueue == 0) {
             shell_exec(PHP_BIN . ' ' . MAIN_HOME . 'console.php queue > /dev/null 2>/dev/null &');
         }
 
-        $rOnDemand = intval(trim(shell_exec('pgrep -U xc_vm | xargs ps -f -p | grep ondemand | grep -v grep | grep -v pgrep | wc -l')));
+        $rOnDemand = intval(trim(shell_exec('pgrep -U uypanel | xargs ps -f -p | grep ondemand | grep -v grep | grep -v pgrep | wc -l')));
         if (SettingsManager::getAll()['on_demand_instant_off'] && $rOnDemand == 0) {
             shell_exec(PHP_BIN . ' ' . MAIN_HOME . 'console.php ondemand > /dev/null 2>/dev/null &');
         } elseif (!SettingsManager::getAll()['on_demand_instant_off'] && $rOnDemand > 0) {
             echo 'Killing On-Demand Instant-Off' . "\n";
-            exec("pgrep -U xc_vm | xargs ps | grep ondemand | awk '{print \$1}'", $rPIDs);
+            exec("pgrep -U uypanel | xargs ps | grep ondemand | awk '{print \$1}'", $rPIDs);
             foreach ($rPIDs as $rPID) {
                 if (intval($rPID) > 0) {
                     shell_exec('kill -9 ' . intval($rPID));
@@ -105,12 +105,12 @@ class ServersCronJob implements CommandInterface {
             }
         }
 
-        $rScanner = intval(trim(shell_exec('pgrep -U xc_vm | xargs ps -f -p | grep scanner | grep -v grep | grep -v pgrep | wc -l')));
+        $rScanner = intval(trim(shell_exec('pgrep -U uypanel | xargs ps -f -p | grep scanner | grep -v grep | grep -v pgrep | wc -l')));
         if (SettingsManager::getAll()['on_demand_checker'] && $rScanner == 0) {
             shell_exec(PHP_BIN . ' ' . MAIN_HOME . 'console.php scanner > /dev/null 2>/dev/null &');
         } elseif (!SettingsManager::getAll()['on_demand_checker'] && $rScanner > 0) {
             echo 'Killing On-Demand Scanner' . "\n";
-            exec("pgrep -U xc_vm | xargs ps | grep scanner | awk '{print \$1}'", $rPIDs);
+            exec("pgrep -U uypanel | xargs ps | grep scanner | awk '{print \$1}'", $rPIDs);
             foreach ($rPIDs as $rPID) {
                 if (intval($rPID) > 0) {
                     shell_exec('kill -9 ' . intval($rPID));
@@ -180,7 +180,7 @@ class ServersCronJob implements CommandInterface {
 
         $db->query('INSERT INTO `servers_stats`(`server_id`, `connections`, `total_users`, `users`, `streams`, `cpu`, `cpu_cores`, `cpu_avg`, `total_mem`, `total_mem_free`, `total_mem_used`, `total_mem_used_percent`, `total_disk_space`, `uptime`, `total_running_streams`, `bytes_sent`, `bytes_received`, `bytes_sent_total`, `bytes_received_total`, `cpu_load_average`, `gpu_info`, `iostat_info`, `time`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, UNIX_TIMESTAMP());', SERVER_ID, $rConnections, $rAllUsers, $rUsers, $rStreams, $rStats['cpu'], $rStats['cpu_cores'], $rStats['cpu_avg'], $rStats['total_mem'], $rStats['total_mem_free'], $rStats['total_mem_used'], $rStats['total_mem_used_percent'], $rStats['total_disk_space'], $rStats['uptime'], $rStats['total_running_streams'], $rStats['bytes_sent'], $rStats['bytes_received'], $rStats['bytes_sent_total'], $rStats['bytes_received_total'], $rStats['cpu_load_average'], json_encode($rStats['gpu_info'], JSON_UNESCAPED_UNICODE), json_encode($rStats['iostat_info'], JSON_UNESCAPED_UNICODE));
 
-        $db->query('UPDATE `servers` SET `remote_status` = ?, `xc_vm_version` = ?, `server_hardware` = ?,`whitelist_ips` = ?, `governors` = ?, `sysctl` = ?, `video_devices` = ?, `audio_devices` = ?, `gpu_info` = ?, `interfaces` = ?, `time_offset` = ' . intval(time()) . ' - UNIX_TIMESTAMP(), `ping` = ? WHERE `id` = ?', $rRemoteStatus, UyPanel_VERSION, json_encode($rHardware, JSON_UNESCAPED_UNICODE), json_encode($rAddresses, JSON_UNESCAPED_UNICODE), json_encode($rGovernors, JSON_UNESCAPED_UNICODE), $rSysCtl, json_encode($rStats['video_devices'], JSON_UNESCAPED_UNICODE), json_encode($rStats['audio_devices'], JSON_UNESCAPED_UNICODE), json_encode($rStats['gpu_info'], JSON_UNESCAPED_UNICODE), json_encode($rStats['interfaces'], JSON_UNESCAPED_UNICODE), $rPing, SERVER_ID);
+        $db->query('UPDATE `servers` SET `remote_status` = ?, `uypanel_version` = ?, `server_hardware` = ?,`whitelist_ips` = ?, `governors` = ?, `sysctl` = ?, `video_devices` = ?, `audio_devices` = ?, `gpu_info` = ?, `interfaces` = ?, `time_offset` = ' . intval(time()) . ' - UNIX_TIMESTAMP(), `ping` = ? WHERE `id` = ?', $rRemoteStatus, UyPanel_VERSION, json_encode($rHardware, JSON_UNESCAPED_UNICODE), json_encode($rAddresses, JSON_UNESCAPED_UNICODE), json_encode($rGovernors, JSON_UNESCAPED_UNICODE), $rSysCtl, json_encode($rStats['video_devices'], JSON_UNESCAPED_UNICODE), json_encode($rStats['audio_devices'], JSON_UNESCAPED_UNICODE), json_encode($rStats['gpu_info'], JSON_UNESCAPED_UNICODE), json_encode($rStats['interfaces'], JSON_UNESCAPED_UNICODE), $rPing, SERVER_ID);
 
         if ($rServers[SERVER_ID]['is_main']) {
             foreach ($rServers as $rServerID => $rServerArray) {
