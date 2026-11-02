@@ -1,7 +1,7 @@
 <?php
 
 /**
- * XC_VM - Stream initialization (stream/init.php)
+ * UyPanel - Stream initialization (stream/init.php)
  *
  * Bootstrap for streaming endpoints (live, vod, timeshift, thumb, subtitle, rtmp, portal).
  * High-load path - does not load config.ini, does not connect to DB directly.
@@ -26,7 +26,7 @@ require_once dirname(dirname(__DIR__)) . '/autoload.php';
 require_once MAIN_HOME . 'core/Error/ErrorCodes.php';     // $rErrorCodes
 require_once MAIN_HOME . 'core/Error/ErrorHandler.php';   // generateError(), generate404()
 require_once MAIN_HOME . 'core/Config/Paths.php';         // *_PATH, *_TMP_PATH
-require_once MAIN_HOME . 'core/Config/AppConfig.php';     // XC_VM_VERSION, DEVELOPMENT, etc.
+require_once MAIN_HOME . 'core/Config/AppConfig.php';     // UyPanel_VERSION, DEVELOPMENT, etc.
 require_once MAIN_HOME . 'core/Config/Binaries.php';      // FFMPEG_*, PHP_BIN, GeoIP
 
 // -----------------------------------------------------------------

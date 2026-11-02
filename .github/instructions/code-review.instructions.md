@@ -1,7 +1,7 @@
 ---
 description: "Use when performing structured multi-agent code review, security audit, performance analysis, or quality review of PHP code. Covers finding templates, severity matrix, deduplication rules."
 ---
-# XC_VM Structured Code Review (Pragmatic Mode)
+# UyPanel Structured Code Review (Pragmatic Mode)
 
 This repository uses a structured multi-agent review process.
 

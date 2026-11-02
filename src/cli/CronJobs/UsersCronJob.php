@@ -24,7 +24,7 @@ class UsersCronJob implements CommandInterface {
         set_time_limit(0);
         ini_set('memory_limit', -1);
 
-        $this->setProcessTitle('XC_VM[Users]');
+        $this->setProcessTitle('UyPanel[Users]');
         $this->acquireCronLock();
 
         global $db;

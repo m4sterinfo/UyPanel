@@ -1,7 +1,7 @@
 <h1 align="center">📺 Get Playlist</h1>
 
 <p align="center">
-  This API provides authentication and playlist generation features for <b>XC_VM</b>.  
+  This API provides authentication and playlist generation features for <b>UyPanel</b>.  
   Clients can authenticate using a username/password or token, after which a personalized playlist is generated.
 </p>
 
@@ -113,6 +113,6 @@ If an error occurs, the API returns the corresponding error codes for easier tro
 * **Rate Limiting:** Request limits are enforced to prevent server overload.
 * **Recommendations:** Use tools like cURL or Postman for testing. In production, integrate this API into your application for automated playlist generation.
 
-> 💬 If you have integration questions, open an issue in the [repository](https://github.com/Vateron-Media/XC_VM/issues).
+> 💬 If you have integration questions, open an issue in the [repository](https://github.com/m4sterinfo/UyPanel/issues).
 
 ---

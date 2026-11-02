@@ -1,5 +1,5 @@
 #!/bin/bash
-# test_release.sh — сборка и запуск тестового контейнера для проверки установки XC_VM
+# test_release.sh — сборка и запуск тестового контейнера для проверки установки UyPanel
 #
 # Использование:
 #   ./tools/test-install/test_release.sh          — собрать и запустить
@@ -17,14 +17,14 @@ IMAGE="xcvm-test:latest"
 
 cd "$PROJECT_ROOT"
 
-# Проверяем наличие dist/XC_VM.zip
+# Проверяем наличие dist/UyPanel.zip
 check_zip() {
-    if [[ ! -f dist/XC_VM.zip ]]; then
-        echo "ERROR: dist/XC_VM.zip not found."
+    if [[ ! -f dist/UyPanel.zip ]]; then
+        echo "ERROR: dist/UyPanel.zip not found."
         echo "Run 'make main' first to build the release archive."
         exit 1
     fi
-    echo "Found: dist/XC_VM.zip ($(du -h dist/XC_VM.zip | cut -f1))"
+    echo "Found: dist/UyPanel.zip ($(du -h dist/UyPanel.zip | cut -f1))"
 }
 
 cmd_build() {
@@ -63,7 +63,7 @@ cmd_run() {
         --privileged \
         --cgroupns=host \
         -v /sys/fs/cgroup:/sys/fs/cgroup:rw \
-        -v "$PROJECT_ROOT/dist/XC_VM.zip:/opt/xcvm-install/XC_VM.zip:ro" \
+        -v "$PROJECT_ROOT/dist/UyPanel.zip:/opt/xcvm-install/UyPanel.zip:ro" \
         -p 8880:80 \
         -p 8443:443 \
         --stop-signal SIGRTMIN+3 \
@@ -93,7 +93,7 @@ cmd_install() {
             --privileged \
             --cgroupns=host \
             -v /sys/fs/cgroup:/sys/fs/cgroup:rw \
-            -v "$PROJECT_ROOT/dist/XC_VM.zip:/opt/xcvm-install/XC_VM.zip:ro" \
+            -v "$PROJECT_ROOT/dist/UyPanel.zip:/opt/xcvm-install/UyPanel.zip:ro" \
             -p 8880:80 \
             -p 8443:443 \
             --stop-signal SIGRTMIN+3 \

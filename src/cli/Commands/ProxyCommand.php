@@ -12,7 +12,7 @@ class ProxyCommand implements CommandInterface {
 
 	public function execute(array $rArgs): int {
 		if (posix_getpwuid(posix_geteuid())['name'] != 'xc_vm') {
-			echo "Please run as XC_VM!\n";
+			echo "Please run as UyPanel!\n";
 			return 1;
 		}
 
@@ -38,7 +38,7 @@ class ProxyCommand implements CommandInterface {
 		});
 
 		set_time_limit(0);
-		cli_set_process_title('XC_VMProxy[' . $rStreamID . ']');
+		cli_set_process_title('UyPanelProxy[' . $rStreamID . ']');
 
 		$db->query('SELECT * FROM `streams` t1 INNER JOIN `streams_servers` t2 ON t2.stream_id = t1.id AND t2.server_id = ? WHERE t1.id = ?', SERVER_ID, $rStreamID);
 		if ($db->num_rows() <= 0) {
@@ -81,7 +81,7 @@ class ProxyCommand implements CommandInterface {
 			$rOptions['http']['header'] .= 'Cookie: ' . $rStreamArguments['cookie']['value'] . "\r\n";
 		}
 		if (SettingsManager::getAll()['request_prebuffer']) {
-			$rOptions['http']['header'] .= 'X-XC_VM-Prebuffer: 1' . "\r\n";
+			$rOptions['http']['header'] .= 'X-UyPanel-Prebuffer: 1' . "\r\n";
 		}
 		$rContext = stream_context_create($rOptions);
 		$rURLs = json_decode($rStreamInfo['stream_source'], true);
@@ -282,11 +282,11 @@ class ProxyCommand implements CommandInterface {
 			$rPID = intval(file_get_contents(STREAMS_PATH . $rStreamID . '_.monitor'));
 		}
 		if (empty($rPID)) {
-			shell_exec("kill -9 `ps -ef | grep 'XC_VMProxy\\[" . intval($rStreamID) . "\\]' | grep -v grep | awk '{print \$2}'`;");
+			shell_exec("kill -9 `ps -ef | grep 'UyPanelProxy\\[" . intval($rStreamID) . "\\]' | grep -v grep | awk '{print \$2}'`;");
 		} else {
 			if (file_exists('/proc/' . $rPID)) {
 				$rCommand = trim(file_get_contents('/proc/' . $rPID . '/cmdline'));
-				if ($rCommand == 'XC_VMProxy[' . $rStreamID . ']' && is_numeric($rPID) && 0 < $rPID) {
+				if ($rCommand == 'UyPanelProxy[' . $rStreamID . ']' && is_numeric($rPID) && 0 < $rPID) {
 					posix_kill($rPID, 9);
 				}
 			}

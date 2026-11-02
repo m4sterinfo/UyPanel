@@ -1,7 +1,7 @@
 <h1 align="center">📡 XtreamCodes API</h1>
 
 <p align="center">
-  API предоставляет доступ к IPTV-потокам (Live TV, Радио), VOD (фильмы), сериалам и EPG (телепрограмма) в приложениях, совместимых с XtreamCodes. Это ключевой компонент для интеграции с XC_VM.
+  API предоставляет доступ к IPTV-потокам (Live TV, Радио), VOD (фильмы), сериалам и EPG (телепрограмма) в приложениях, совместимых с XtreamCodes. Это ключевой компонент для интеграции с UyPanel.
 </p>
 
 ---
@@ -52,7 +52,7 @@ GET /player_api?username={username}&password={password}
   "user_info": {
     "username": "testxc",
     "password": "testxc",
-    "message": "Welcome to XC_VM",
+    "message": "Welcome to UyPanel",
     "auth": 1,
     "status": "Active",
     "exp_date": null,
@@ -505,6 +505,6 @@ http://176.124.192.118/series/{username}/{password}/{episode_id}.mp4
 - **Интеграция:** Для тестирования используйте инструменты вроде Postman. В приложении реализуйте кэширование ответов для оптимизации.
 
 
-> 💬 Если возникнут вопросы по интеграции, создайте issue в [репозитории](https://github.com/Vateron-Media/XC_VM/issues).
+> 💬 Если возникнут вопросы по интеграции, создайте issue в [репозитории](https://github.com/m4sterinfo/UyPanel/issues).
 
 ---

@@ -1,7 +1,7 @@
 <h1 align="center">❓ FAQ — Часто задаваемые вопросы</h1>
 
 <p align="center">
-  Здесь собраны ответы на наиболее частые вопросы и проблемы при работе с <b>XC_VM</b>.
+  Здесь собраны ответы на наиболее частые вопросы и проблемы при работе с <b>UyPanel</b>.
 </p>
 
 ---
@@ -219,7 +219,7 @@ sudo rm -f /home/xc_vm/bin/certbot/*/.certbot.lock
 
 ---
 
-XC_VM запускает **два** инстанса nginx:
+UyPanel запускает **два** инстанса nginx:
 
 1. **nginx** (`bin/nginx/`) — HTTP(S)-трафик
 2. **nginx_rtmp** (`bin/nginx_rtmp/`) — RTMP-стриминг
@@ -345,6 +345,6 @@ sudo -u xc_vm /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php watchdog
 
 ---
 
-📘 *Эта страница обновляется со временем. Если вы нашли новую типовую проблему — предложите её в [Issues](https://github.com/Vateron-Media/XC_VM/issues).*
+📘 *Эта страница обновляется со временем. Если вы нашли новую типовую проблему — предложите её в [Issues](https://github.com/m4sterinfo/UyPanel/issues).*
 
 ---

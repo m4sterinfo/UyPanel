@@ -47,7 +47,7 @@ class PlexCronJob implements CommandInterface {
 
         $this->rIdentifier = CACHE_TMP_PATH . 'plex_pid';
         file_put_contents($this->rIdentifier, getmypid());
-        $this->setProcessTitle('XC_VM[Plex Sync]');
+        $this->setProcessTitle('UyPanel[Plex Sync]');
 
         set_time_limit(0);
         if (!empty(SettingsManager::getAll()['tmdb_api_key'])) {

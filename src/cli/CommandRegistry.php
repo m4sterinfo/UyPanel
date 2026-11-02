@@ -68,7 +68,7 @@ class CommandRegistry {
 	}
 
 	private function printHelp(): void {
-		echo "XC_VM Console\n";
+		echo "UyPanel Console\n";
 		echo "\n";
 		echo "Usage: php console.php <command> [arguments]\n";
 		echo "\n";

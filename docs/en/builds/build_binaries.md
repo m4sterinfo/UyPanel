@@ -1,7 +1,7 @@
-<h1 align="center">🧱 XC_VM — Building Binary Files</h1>
+<h1 align="center">🧱 UyPanel — Building Binary Files</h1>
 
 <p align="center">
-  This guide explains how to build binary files for XC_VM.  
+  This guide explains how to build binary files for UyPanel.  
   It is intended for developers and system administrators who want to customize the system.
 </p>
 
@@ -309,7 +309,7 @@ After completing all steps, you will have your own statically built binaries:
 - `pecl` extensions
 - `network` (Python script binary)
 
-> 💡 **Tip:** If issues occur, check build logs or open an [issue](https://github.com/Vateron-Media/XC_VM/issues).
+> 💡 **Tip:** If issues occur, check build logs or open an [issue](https://github.com/m4sterinfo/UyPanel/issues).
 
 <p align="center">
   <a href="../../en/main-page.md"><b>⬅️ Back to Main Page</b></a>

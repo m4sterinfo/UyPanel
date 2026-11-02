@@ -323,7 +323,7 @@ class CacheEngineCronJob implements CommandInterface {
                 exit();
             }
         } else {
-            echo 'XC_VM not running...' . "\n";
+            echo 'UyPanel not running...' . "\n";
             exit();
         }
     }

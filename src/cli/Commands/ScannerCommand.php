@@ -20,7 +20,7 @@ class ScannerCommand implements CommandInterface {
 
 		global $db;
 
-		$this->setProcessTitle('XC_VM[Scanner]');
+		$this->setProcessTitle('UyPanel[Scanner]');
 		$this->killStaleProcesses('console.php scanner');
 		$this->initDaemonMD5();
 
@@ -92,39 +92,39 @@ class ScannerCommand implements CommandInterface {
 				$rStreamSource = StreamUtils::parseStreamURL($rSource);
 				echo 'Checking source: ' . $rSource . "\n";
 				$rURLInfo = parse_url($rStreamSource);
-				$rIsXC_VM = StreamUtils::detectXC_VM($rStreamSource);
+				$rIsUyPanel = StreamUtils::detectUyPanel($rStreamSource);
 
-				if ($rIsXC_VM && SettingsManager::getAll()['send_xc_vm_header']) {
+				if ($rIsUyPanel && SettingsManager::getAll()['send_xc_vm_header']) {
 					foreach (array_keys($rStreamArguments) as $rID) {
 						if ($rStreamArguments[$rID]['argument_key'] != 'headers') {
 							continue;
 						}
-						$rStreamArguments[$rID]['value'] .= "\r\n" . 'X-XC_VM-Detect:1';
+						$rStreamArguments[$rID]['value'] .= "\r\n" . 'X-UyPanel-Detect:1';
 						$rProcessed = true;
 					}
 					if (!$rProcessed) {
-						$rStreamArguments[] = array('value' => 'X-XC_VM-Detect:1', 'argument_key' => 'headers', 'argument_cat' => 'fetch', 'argument_wprotocol' => 'http', 'argument_type' => 'text', 'argument_cmd' => "-headers '%s" . "\r\n" . "'");
+						$rStreamArguments[] = array('value' => 'X-UyPanel-Detect:1', 'argument_key' => 'headers', 'argument_cat' => 'fetch', 'argument_wprotocol' => 'http', 'argument_type' => 'text', 'argument_cmd' => "-headers '%s" . "\r\n" . "'");
 					}
 				}
 
-				if ($rIsXC_VM && SettingsManager::getAll()['request_prebuffer'] == 1) {
+				if ($rIsUyPanel && SettingsManager::getAll()['request_prebuffer'] == 1) {
 					$rProcessed = false;
 					foreach (array_keys($rStreamArguments) as $rID) {
 						if ($rStreamArguments[$rID]['argument_key'] != 'headers') {
 							continue;
 						}
-						$rStreamArguments[$rID]['value'] .= "\r\n" . 'X-XC_VM-Prebuffer:1';
+						$rStreamArguments[$rID]['value'] .= "\r\n" . 'X-UyPanel-Prebuffer:1';
 						$rProcessed = true;
 					}
 					if (!$rProcessed) {
-						$rStreamArguments[] = array('value' => 'X-XC_VM-Prebuffer:1', 'argument_key' => 'headers', 'argument_cat' => 'fetch', 'argument_wprotocol' => 'http', 'argument_type' => 'text', 'argument_cmd' => "-headers '%s" . "\r\n" . "'");
+						$rStreamArguments[] = array('value' => 'X-UyPanel-Prebuffer:1', 'argument_key' => 'headers', 'argument_cat' => 'fetch', 'argument_wprotocol' => 'http', 'argument_type' => 'text', 'argument_cmd' => "-headers '%s" . "\r\n" . "'");
 					}
 				}
 
 				$rProtocol = strtolower(substr($rStreamSource, 0, strpos($rStreamSource, '://')));
 				$rFetchOptions = implode(' ', StreamUtils::getArguments($rStreamArguments, $rProtocol, 'fetch'));
 
-				if ($rIsXC_VM && SettingsManager::getAll()['api_probe']) {
+				if ($rIsUyPanel && SettingsManager::getAll()['api_probe']) {
 					$rProbeURL = $rURLInfo['scheme'] . '://' . $rURLInfo['host'] . ':' . $rURLInfo['port'] . '/probe/' . base64_encode($rURLInfo['path']);
 					$rTime = round(microtime(true) * 1000);
 					$rFFProbeOutput = json_decode(CurlClient::getURL($rProbeURL), true);

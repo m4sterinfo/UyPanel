@@ -1,7 +1,7 @@
 ---
-description: "Use when creating or modifying services, repositories, controllers, modules, or any domain/core code. Enforces XC_VM architectural rules from ARCHITECTURE.md."
+description: "Use when creating or modifying services, repositories, controllers, modules, or any domain/core code. Enforces UyPanel architectural rules from ARCHITECTURE.md."
 ---
-# Architecture Rules — XC_VM
+# Architecture Rules — UyPanel
 
 ## Layer Pattern
 Every domain context follows: **Controller → Service → Repository → Database**

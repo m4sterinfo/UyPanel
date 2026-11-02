@@ -18,7 +18,7 @@ class VodCronJob implements CommandInterface {
             return 1;
         }
 
-        $this->initCron('XC_VM[VOD]');
+        $this->initCron('UyPanel[VOD]');
         $this->loadCron();
 
         return 0;

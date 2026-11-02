@@ -42,6 +42,36 @@
   en producción con este instalador.
 - Skill `.devin/skills/uypanel/` creado (SKILL.md + STATE.md).
 
+### 2026-11-02 — Rebranding completo y separación total del original
+- **Barrido de rebranding** en 176 archivos: `XC_VM` → `UyPanel`,
+  `Vateron-Media` → `m4sterinfo` (README, docs en/ru, UI, langs, CLI, Makefile,
+  instalador, workflows, test_installer). Copyrights del original conservados
+  (obligatorio AGPL). Logo del original eliminado de los READMEs (pendiente
+  logo propio).
+- **Repos de soporte propios** (forks de upstream, renombrados):
+  `m4sterinfo/UyPanel_Update` (changelog, GeoLite lists, api_server),
+  `m4sterinfo/UyPanel_Binaries` (build PHP/nginx/redis/nginx_rtmp),
+  `m4sterinfo/UyPanel_FFMPEG` (build FFmpeg).
+- **Submódulos** renombrados y reapuntados: `third_party/UyPanel_Binaries`,
+  `third_party/UyPanel_FFMPEG` (mismos commits pineados).
+- **Git LFS**: el repo usa LFS para binarios grandes (20 archivos, ~665 MB:
+  ffmpeg x6, redis-server, proxy.tar.gz 56 MB, GeoIP2-ISP, database.sql,
+  yt-dlp, guess, cidr.db, login-bg.mp4). Objetos descargados del LFS del
+  original; al pushear se suben al LFS propio. Añadidos GeoLite2-City/Country
+  (extraídos del payload oficial 2.0.1, en LFS) — eran los únicos archivos del
+  payload oficial no trackeados en git.
+- **Telemetría desactivada**: `CertbotCronJob` ya no llama a
+  `DiagnosticsService::submitPanelLogs()` (enviaba logs de errores al servidor
+  central del original). La función sigue existiendo pero sin llamante.
+- **Constantes de update** (`src/core/Config/AppConfig.php`):
+  `GIT_OWNER=m4sterinfo`, `GIT_REPO_MAIN=UyPanel`, `GIT_REPO_UPDATE=UyPanel_Update`.
+- **Release propio publicado**: https://github.com/m4sterinfo/UyPanel/releases/tag/2.0.1
+  con `UyPanel.zip` (434 MB, payload íntegro verificado: 6,321 archivos,
+  binarios reales), `loadbalancer.tar.gz` (291 MB) y `hashes.md5`. El Quick
+  Install del README ya funciona apuntando a nuestro repo.
+- **Validación**: php -l en todos los PHP modificados, py_compile del
+  instalador, `make main` + `make lb` completos.
+
 ### Pendiente de hacer en el servidor (no requiere código)
 - Nota: el PHP/nginx/redis en producción son los binarios Ubuntu del tarball
   2.0.1 con librerías adaptadas (`libcurl3t64-gnutls`, `libjpeg.so.8` ABI 8 en
@@ -60,12 +90,15 @@
 ## Trabajo pendiente / Roadmap
 
 - [x] Crear repo propio en GitHub y pushear (hecho 2026-11-02: m4sterinfo/UyPanel)
-- [ ] Actualizar `LAST_TAG` del Makefile al repo propio cuando haya releases
-- [ ] Rebranding progresivo XC_VM → UyPanel (README, docs, UI) — decidir alcance
-      (cuidado: `xc_vm` está arraigado en service systemd, rutas, configs)
+- [x] Separación total del original: forks de soporte propios + rebranding + release 2.0.1
+- [ ] Logo propio de UyPanel (READMEs sin logo actualmente)
+- [ ] Identificadores técnicos `xc_vm` minúsculas (rutas /home/xc_vm, servicio
+      systemd, BD, usuario): SIN cambiar — decisión pendiente; requiere plan de
+      migración del servidor en producción
+- [ ] Los forks de soporte (UyPanel_Binaries/FFMPEG/Update) heredan contenido
+      upstream; personalizar sus READMEs/branding cuando se toque
 - [ ] Re-importar EPG desde las 22 URLs migradas (los datos EPG no se migran)
 - [ ] Revisar página de Settings del panel (quedó en defaults tras migración)
-- [ ] Decidir política de versionado propio (ej. `2.0.1-uy.1`)
 
 ## Notas técnicas importantes
 

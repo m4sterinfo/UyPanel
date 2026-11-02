@@ -22,7 +22,7 @@ trait DaemonTrait {
 	 */
 	protected function assertRunAsXcVm(): bool {
 		if (posix_getpwuid(posix_geteuid())['name'] !== 'xc_vm') {
-			echo "Please run as XC_VM!\n";
+			echo "Please run as UyPanel!\n";
 			return false;
 		}
 		return true;
@@ -106,7 +106,7 @@ trait DaemonTrait {
 	/**
 	 * Установить заголовок процесса.
 	 *
-	 * @param string $rTitle Например 'XC_VM[Signals]'
+	 * @param string $rTitle Например 'UyPanel[Signals]'
 	 */
 	protected function setProcessTitle(string $rTitle): void {
 		set_time_limit(0);

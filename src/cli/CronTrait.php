@@ -16,7 +16,7 @@ trait CronTrait {
      */
     protected function assertRunAsXcVm(): bool {
         if ((posix_getpwuid(posix_geteuid())['name'] ?? null) !== 'xc_vm') {
-            echo "Please run as XC_VM!\n";
+            echo "Please run as UyPanel!\n";
             return false;
         }
         return true;
@@ -71,7 +71,7 @@ trait CronTrait {
     /**
      * Стандартная инициализация cron-задачи.
      *
-     * @param string $rTitle Заголовок процесса (например 'XC_VM[Activity]')
+     * @param string $rTitle Заголовок процесса (например 'UyPanel[Activity]')
      */
     protected function initCron(string $rTitle): void {
         $this->registerShutdown();

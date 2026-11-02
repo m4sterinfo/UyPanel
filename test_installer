@@ -103,11 +103,11 @@ PACKAGES = {
 }
 
 rRemove = ["mysql-server"]
-rMySQLCnfTemplate = """# XC_VM\n[client]\nport                            = 3306\n\n[mysqld_safe]\nnice                            = 0\n\n[mysqld]\nuser                            = mysql\nport                            = 3306\nbasedir                         = /usr\ndatadir                         = /var/lib/mysql\ntmpdir                          = /tmp\nlc-messages-dir                 = /usr/share/mysql\nskip-external-locking\nskip-name-resolve\nbind-address                    = *\n\n# MyISAM\nkey_buffer_size                 = {{KEY_BUFFER}}M\nmyisam_sort_buffer_size         = 4M\nmyisam-recover-options          = BACKUP\nmax_length_for_sort_data        = 4096\n\n# Connections\nmax_connections                 = {{MAX_CONNECTIONS}}\nback_log                        = {{BACK_LOG}}\nmax_connect_errors              = 1000\n\n# Packet and cache\nmax_allowed_packet              = 16M\nopen_files_limit                = 2048\ninnodb_open_files               = 1024\ntable_open_cache                = 1024\ntable_definition_cache          = 1024\n\n# Temp tables\ntmp_table_size                  = {{TMP_TABLE_SIZE}}M\nmax_heap_table_size             = {{TMP_TABLE_SIZE}}M\n\n# InnoDB\ninnodb_buffer_pool_size         = {{BUFFER_POOL_SIZE}}\ninnodb_buffer_pool_instances    = {{BUFFER_POOL_INSTANCES}}\ninnodb_read_io_threads          = 4\ninnodb_write_io_threads         = 4\ninnodb_flush_log_at_trx_commit  = 1\ninnodb_flush_method             = O_DIRECT\ninnodb_file_per_table           = 1\ninnodb_io_capacity              = 1000\ninnodb_table_locks              = 1\ninnodb_lock_wait_timeout        = 30\n\n# Logging\nexpire_logs_days                = 7\nmax_binlog_size                 = 64M\n\n# Query cache – disabled\nquery_cache_limit               = 0\nquery_cache_size                = 0\nquery_cache_type                = 0\n\nperformance_schema              = 0\n\nsql_mode                        = "NO_ENGINE_SUBSTITUTION"\n\n[mariadb]\nthread_cache_size               = {{THREAD_CACHE}}\nthread_handling                 = pool-of-threads\nthread_pool_size                = 4\nthread_pool_idle_timeout        = 20\nthread_pool_max_threads         = 256\n\n[mysqldump]\nquick\nquote-names\nmax_allowed_packet              = 16M\n\n[mysql]\n\n[isamchk]\nkey_buffer_size                 = 8M"""
-rConfig = '; XC_VM Configuration\n; -----------------\n; To change your username or password, modify BOTH\n; below and XC_VM will read and re-encrypt them.\n\n[XC_VM]\nhostname    =   "127.0.0.1"\ndatabase    =   "xc_vm"\nport        =   3306\nserver_id   =   1\n\n[Encrypted]\nusername    =   "%s"\npassword    =   "%s"'
+rMySQLCnfTemplate = """# UyPanel\n[client]\nport                            = 3306\n\n[mysqld_safe]\nnice                            = 0\n\n[mysqld]\nuser                            = mysql\nport                            = 3306\nbasedir                         = /usr\ndatadir                         = /var/lib/mysql\ntmpdir                          = /tmp\nlc-messages-dir                 = /usr/share/mysql\nskip-external-locking\nskip-name-resolve\nbind-address                    = *\n\n# MyISAM\nkey_buffer_size                 = {{KEY_BUFFER}}M\nmyisam_sort_buffer_size         = 4M\nmyisam-recover-options          = BACKUP\nmax_length_for_sort_data        = 4096\n\n# Connections\nmax_connections                 = {{MAX_CONNECTIONS}}\nback_log                        = {{BACK_LOG}}\nmax_connect_errors              = 1000\n\n# Packet and cache\nmax_allowed_packet              = 16M\nopen_files_limit                = 2048\ninnodb_open_files               = 1024\ntable_open_cache                = 1024\ntable_definition_cache          = 1024\n\n# Temp tables\ntmp_table_size                  = {{TMP_TABLE_SIZE}}M\nmax_heap_table_size             = {{TMP_TABLE_SIZE}}M\n\n# InnoDB\ninnodb_buffer_pool_size         = {{BUFFER_POOL_SIZE}}\ninnodb_buffer_pool_instances    = {{BUFFER_POOL_INSTANCES}}\ninnodb_read_io_threads          = 4\ninnodb_write_io_threads         = 4\ninnodb_flush_log_at_trx_commit  = 1\ninnodb_flush_method             = O_DIRECT\ninnodb_file_per_table           = 1\ninnodb_io_capacity              = 1000\ninnodb_table_locks              = 1\ninnodb_lock_wait_timeout        = 30\n\n# Logging\nexpire_logs_days                = 7\nmax_binlog_size                 = 64M\n\n# Query cache – disabled\nquery_cache_limit               = 0\nquery_cache_size                = 0\nquery_cache_type                = 0\n\nperformance_schema              = 0\n\nsql_mode                        = "NO_ENGINE_SUBSTITUTION"\n\n[mariadb]\nthread_cache_size               = {{THREAD_CACHE}}\nthread_handling                 = pool-of-threads\nthread_pool_size                = 4\nthread_pool_idle_timeout        = 20\nthread_pool_max_threads         = 256\n\n[mysqldump]\nquick\nquote-names\nmax_allowed_packet              = 16M\n\n[mysql]\n\n[isamchk]\nkey_buffer_size                 = 8M"""
+rConfig = '; UyPanel Configuration\n; -----------------\n; To change your username or password, modify BOTH\n; below and UyPanel will read and re-encrypt them.\n\n[UyPanel]\nhostname    =   "127.0.0.1"\ndatabase    =   "xc_vm"\nport        =   3306\nserver_id   =   1\n\n[Encrypted]\nusername    =   "%s"\npassword    =   "%s"'
 rRedisConfig = 'bind *\nprotected-mode yes\nport 6379\ntcp-backlog 511\ntimeout 0\ntcp-keepalive 300\ndaemonize yes\nsupervised no\npidfile /home/xc_vm/bin/redis/redis-server.pid\nloglevel warning\nlogfile /home/xc_vm/bin/redis/redis-server.log\ndatabases 1\nalways-show-logo yes\nstop-writes-on-bgsave-error no\nrdbcompression no\nrdbchecksum no\ndbfilename dump.rdb\ndir /home/xc_vm/bin/redis/\nslave-serve-stale-data yes\nslave-read-only yes\nrepl-diskless-sync no\nrepl-diskless-sync-delay 5\nrepl-disable-tcp-nodelay no\nslave-priority 100\nrequirepass #PASSWORD#\nmaxclients 655350\nlazyfree-lazy-eviction no\nlazyfree-lazy-expire no\nlazyfree-lazy-server-delay no\nslave-lazy-flush no\nappendonly no\nappendfilename "appendonly.aof"\nappendfsync everysec\nno-appendfsync-on-rewrite no\nauto-aof-rewrite-percentage 100\nauto-aof-rewrite-min-size 64mb\naof-load-truncated yes\naof-use-rdb-preamble no\nlua-time-limit 5000\nslowlog-log-slower-than 10000\nslowlog-max-len 128\nlatency-monitor-threshold 0\nnotify-keyspace-events ""\nhash-max-ziplist-entries 512\nhash-max-ziplist-value 64\nlist-max-ziplist-size -2\nlist-compress-depth 0\nset-max-intset-entries 512\nzset-max-ziplist-entries 128\nzset-max-ziplist-value 64\nhll-sparse-max-bytes 3000\nactiverehashing yes\nclient-output-buffer-limit normal 0 0 0\nclient-output-buffer-limit slave 256mb 64mb 60\nclient-output-buffer-limit pubsub 32mb 8mb 60\nhz 10\naof-rewrite-incremental-fsync yes\nsave 60 1000\nserver-threads 4\nserver-thread-affinity true'
-rSysCtl = "# XC_VM\n\nnet.ipv4.tcp_congestion_control = bbr\nnet.core.default_qdisc = fq\nnet.ipv4.tcp_rmem = 8192 87380 134217728\nnet.ipv4.udp_rmem_min = 16384\nnet.core.rmem_default = 262144\nnet.core.rmem_max = 268435456\nnet.ipv4.tcp_wmem = 8192 65536 134217728\nnet.ipv4.udp_wmem_min = 16384\nnet.core.wmem_default = 262144\nnet.core.wmem_max = 268435456\nnet.core.somaxconn = 1000000\nnet.core.netdev_max_backlog = 250000\nnet.core.optmem_max = 65535\nnet.ipv4.tcp_max_tw_buckets = 1440000\nnet.ipv4.tcp_max_orphans = 16384\nnet.ipv4.ip_local_port_range = 2000 65000\nnet.ipv4.tcp_no_metrics_save = 1\nnet.ipv4.tcp_slow_start_after_idle = 0\nnet.ipv4.tcp_fin_timeout = 15\nnet.ipv4.tcp_keepalive_time = 300\nnet.ipv4.tcp_keepalive_probes = 5\nnet.ipv4.tcp_keepalive_intvl = 15\nfs.file-max=20970800\nfs.nr_open=20970800\nfs.aio-max-nr=20970800\nnet.ipv4.tcp_timestamps = 1\nnet.ipv4.tcp_window_scaling = 1\nnet.ipv4.tcp_mtu_probing = 1\nnet.ipv4.route.flush = 1\nnet.ipv6.route.flush = 1"
-rSystemd = "[Unit]\nSourcePath=/home/xc_vm/service\nDescription=XC_VM Service\nAfter=network.target\nStartLimitIntervalSec=0\n\n[Service]\nType=simple\nUser=root\nRestart=always\nRestartSec=1\nLimitNOFILE=655350\nExecStart=/bin/sh /home/xc_vm/service start\nExecRestart=/bin/sh /home/xc_vm/service restart\nExecStop=/bin/sh /home/xc_vm/service stop\n\n[Install]\nWantedBy=multi-user.target"
+rSysCtl = "# UyPanel\n\nnet.ipv4.tcp_congestion_control = bbr\nnet.core.default_qdisc = fq\nnet.ipv4.tcp_rmem = 8192 87380 134217728\nnet.ipv4.udp_rmem_min = 16384\nnet.core.rmem_default = 262144\nnet.core.rmem_max = 268435456\nnet.ipv4.tcp_wmem = 8192 65536 134217728\nnet.ipv4.udp_wmem_min = 16384\nnet.core.wmem_default = 262144\nnet.core.wmem_max = 268435456\nnet.core.somaxconn = 1000000\nnet.core.netdev_max_backlog = 250000\nnet.core.optmem_max = 65535\nnet.ipv4.tcp_max_tw_buckets = 1440000\nnet.ipv4.tcp_max_orphans = 16384\nnet.ipv4.ip_local_port_range = 2000 65000\nnet.ipv4.tcp_no_metrics_save = 1\nnet.ipv4.tcp_slow_start_after_idle = 0\nnet.ipv4.tcp_fin_timeout = 15\nnet.ipv4.tcp_keepalive_time = 300\nnet.ipv4.tcp_keepalive_probes = 5\nnet.ipv4.tcp_keepalive_intvl = 15\nfs.file-max=20970800\nfs.nr_open=20970800\nfs.aio-max-nr=20970800\nnet.ipv4.tcp_timestamps = 1\nnet.ipv4.tcp_window_scaling = 1\nnet.ipv4.tcp_mtu_probing = 1\nnet.ipv4.route.flush = 1\nnet.ipv6.route.flush = 1"
+rSystemd = "[Unit]\nSourcePath=/home/xc_vm/service\nDescription=UyPanel Service\nAfter=network.target\nStartLimitIntervalSec=0\n\n[Service]\nType=simple\nUser=root\nRestart=always\nRestartSec=1\nLimitNOFILE=655350\nExecStart=/bin/sh /home/xc_vm/service start\nExecRestart=/bin/sh /home/xc_vm/service restart\nExecStop=/bin/sh /home/xc_vm/service stop\n\n[Install]\nWantedBy=multi-user.target"
 rChoice = "23456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ"
 rConfigPath = "/home/xc_vm/config/config.ini"
 
@@ -194,7 +194,7 @@ def install_prerequisites(dist_info):
 
 # Función genérica para instalar binarios específicos de distribución
 def install_distribution_binaries(dist_id, version):
-    """Download and install distribution-specific binaries for XC_VM"""
+    """Download and install distribution-specific binaries for UyPanel"""
     printc(f"Installing {dist_id} {version} specific binaries...", col.OKBLUE)
 
     # Determinar el nombre del parche basado en la distribución y versión
@@ -511,16 +511,16 @@ def is_valid_tar(file_path):
         return False
 
 def download_xc_vm():
-    """Download XC_VM from GitHub releases - SIGUIENDO LA MISMA LÓGICA DEL BASH"""
-    printc("Checking for XC_VM installation files...", col.OKBLUE)
+    """Download UyPanel from GitHub releases - SIGUIENDO LA MISMA LÓGICA DEL BASH"""
+    printc("Checking for UyPanel installation files...", col.OKBLUE)
     
     # Check if valid files already exist (igual que antes)
     if os.path.exists("./xc_vm.tar.gz") and is_valid_tar("./xc_vm.tar.gz"):
         printc("Valid xc_vm.tar.gz found locally", col.OKGREEN)
         return True
     
-    if os.path.exists("./XC_VM.zip") and is_valid_zip("./XC_VM.zip"):
-        printc("Valid XC_VM.zip found locally", col.OKGREEN)
+    if os.path.exists("./UyPanel.zip") and is_valid_zip("./UyPanel.zip"):
+        printc("Valid UyPanel.zip found locally", col.OKGREEN)
         return True
     
     printc("Not found. Trying to download from GitHub...", col.OKBLUE)
@@ -528,34 +528,34 @@ def download_xc_vm():
     try:
         # 1. Obtener la última versión de la API de GitHub (IGUAL QUE BASH)
         printc("Getting latest version from GitHub API...", col.OKBLUE)
-        api_url = "https://api.github.com/repos/Vateron-Media/XC_VM/releases/latest"
+        api_url = "https://api.github.com/repos/m4sterinfo/UyPanel/releases/latest"
         req = urllib.request.Request(api_url)
-        req.add_header('User-Agent', 'XC_VM-Installer/1.0')
+        req.add_header('User-Agent', 'UyPanel-Installer/1.0')
         
         with urllib.request.urlopen(req, timeout=10) as response:
             data = json.loads(response.read().decode())
             latest_version = data['tag_name']
             printc(f"Latest version: {latest_version}", col.OKGREEN)
         
-        # 2. Descargar XC_VM.zip directamente (IGUAL QUE BASH: wget "https://github.com/Vateron-Media/XC_VM/releases/download/${latest_version}/XC_VM.zip")
-        download_url = f"https://github.com/Vateron-Media/XC_VM/releases/download/{latest_version}/XC_VM.zip"
+        # 2. Descargar UyPanel.zip directamente (IGUAL QUE BASH: wget "https://github.com/m4sterinfo/UyPanel/releases/download/${latest_version}/UyPanel.zip")
+        download_url = f"https://github.com/m4sterinfo/UyPanel/releases/download/{latest_version}/UyPanel.zip"
         printc(f"Downloading: {download_url}", col.OKBLUE)
         
         # Usar urllib para descargar
-        urllib.request.urlretrieve(download_url, "XC_VM.zip")
+        urllib.request.urlretrieve(download_url, "UyPanel.zip")
         
         # Verificar la descarga
-        if os.path.exists("XC_VM.zip") and os.path.getsize("XC_VM.zip") > 0:
-            file_size = os.path.getsize("XC_VM.zip")
-            printc(f"Download successful: XC_VM.zip ({file_size} bytes)", col.OKGREEN)
+        if os.path.exists("UyPanel.zip") and os.path.getsize("UyPanel.zip") > 0:
+            file_size = os.path.getsize("UyPanel.zip")
+            printc(f"Download successful: UyPanel.zip ({file_size} bytes)", col.OKGREEN)
             
             # Validar que sea un ZIP válido
-            if is_valid_zip("XC_VM.zip"):
+            if is_valid_zip("UyPanel.zip"):
                 printc("ZIP archive validated successfully", col.OKGREEN)
                 return True
             else:
                 printc("Downloaded file is not a valid ZIP archive", col.WARNING)
-                os.remove("XC_VM.zip")
+                os.remove("UyPanel.zip")
                 return False
         else:
             printc("Download failed or file is empty", col.FAIL)
@@ -569,11 +569,11 @@ def download_xc_vm():
         
         # Método alternativo 1: Descarga directa del latest
         try:
-            alt_url = "https://github.com/Vateron-Media/XC_VM/releases/latest/download/XC_VM.zip"
+            alt_url = "https://github.com/m4sterinfo/UyPanel/releases/latest/download/UyPanel.zip"
             printc(f"Trying alternative: {alt_url}", col.OKBLUE)
-            urllib.request.urlretrieve(alt_url, "XC_VM.zip")
+            urllib.request.urlretrieve(alt_url, "UyPanel.zip")
             
-            if os.path.exists("XC_VM.zip") and is_valid_zip("XC_VM.zip"):
+            if os.path.exists("UyPanel.zip") and is_valid_zip("UyPanel.zip"):
                 printc("Alternative download successful", col.OKGREEN)
                 return True
         except:
@@ -581,11 +581,11 @@ def download_xc_vm():
         
         # Método alternativo 2: Versión específica 1.2.10
         try:
-            specific_url = "https://github.com/Vateron-Media/XC_VM/releases/download/1.2.10/XC_VM.zip"
+            specific_url = "https://github.com/m4sterinfo/UyPanel/releases/download/1.2.10/UyPanel.zip"
             printc(f"Trying specific version: {specific_url}", col.OKBLUE)
-            urllib.request.urlretrieve(specific_url, "XC_VM.zip")
+            urllib.request.urlretrieve(specific_url, "UyPanel.zip")
             
-            if os.path.exists("XC_VM.zip") and is_valid_zip("XC_VM.zip"):
+            if os.path.exists("UyPanel.zip") and is_valid_zip("UyPanel.zip"):
                 printc("Specific version download successful", col.OKGREEN)
                 return True
         except:
@@ -1050,7 +1050,7 @@ if __name__ == "__main__":
     # START                                          #
     ##################################################
     
-    printc("XC_VM Multi-Distribution Installer", col.OKGREEN, 2)
+    printc("UyPanel Multi-Distribution Installer", col.OKGREEN, 2)
     
     # NUEVO: Verificar si se ejecuta como root
     check_root()
@@ -1069,7 +1069,7 @@ if __name__ == "__main__":
             sys.exit(1)
         printc("Continuing with installation...", col.WARNING)
     
-    # Try to download XC_VM if not present
+    # Try to download UyPanel if not present
     has_valid_archive = False
     archive_path = None
     
@@ -1078,10 +1078,10 @@ if __name__ == "__main__":
         has_valid_archive = True
         archive_path = "./xc_vm.tar.gz"
         printc("Found valid xc_vm.tar.gz", col.OKGREEN)
-    elif os.path.exists("./XC_VM.zip") and is_valid_zip("./XC_VM.zip"):
+    elif os.path.exists("./UyPanel.zip") and is_valid_zip("./UyPanel.zip"):
         has_valid_archive = True
-        archive_path = "./XC_VM.zip"
-        printc("Found valid XC_VM.zip", col.OKGREEN)
+        archive_path = "./UyPanel.zip"
+        printc("Found valid UyPanel.zip", col.OKGREEN)
     
     # Download if needed
     if not has_valid_archive:
@@ -1090,13 +1090,13 @@ if __name__ == "__main__":
             if os.path.exists("./xc_vm.tar.gz") and is_valid_tar("./xc_vm.tar.gz"):
                 has_valid_archive = True
                 archive_path = "./xc_vm.tar.gz"
-            elif os.path.exists("./XC_VM.zip") and is_valid_zip("./XC_VM.zip"):
+            elif os.path.exists("./UyPanel.zip") and is_valid_zip("./UyPanel.zip"):
                 has_valid_archive = True
-                archive_path = "./XC_VM.zip"
+                archive_path = "./UyPanel.zip"
     
     if not has_valid_archive or not archive_path:
-        printc("XC_VM package not found or invalid. Please download manually.", col.FAIL)
-        printc("You can download from: https://github.com/Vateron-Media/XC_VM/releases", col.OKBLUE)
+        printc("UyPanel package not found or invalid. Please download manually.", col.FAIL)
+        printc("You can download from: https://github.com/m4sterinfo/UyPanel/releases", col.OKBLUE)
         sys.exit(1)
 
     rHost = "127.0.0.1"
@@ -1127,7 +1127,7 @@ if __name__ == "__main__":
             printc("Using provided root password", col.OKGREEN)
     
     if os.path.exists("/home/xc_vm/"):
-        printc("XC_VM Directory Exists!", col.WARNING)
+        printc("UyPanel Directory Exists!", col.WARNING)
         while True:
             rAnswer = input("Continue and overwrite? (Y / N) : ").strip().upper()
             if rAnswer in ["Y", "N"]:
@@ -1424,10 +1424,10 @@ if __name__ == "__main__":
         run_command("chown xc_vm:xc_vm /home/xc_vm")
 
     ##################################################
-    # INSTALL XC_VM                                  #
+    # INSTALL UyPanel                                  #
     ##################################################
     
-    printc("Installing XC_VM", col.OKBLUE)
+    printc("Installing UyPanel", col.OKBLUE)
     
     # Extract the archive
     if not extract_archive(archive_path):
@@ -1439,7 +1439,7 @@ if __name__ == "__main__":
         printc("Extraction failed: /home/xc_vm/status not found", col.FAIL)
         sys.exit(1)
     else:
-        printc("XC_VM extracted successfully", col.OKGREEN)
+        printc("UyPanel extracted successfully", col.OKGREEN)
     
     # Instalar binarios específicos para distribuciones soportadas
     dist_id = dist_info['id']
@@ -1514,7 +1514,7 @@ if __name__ == "__main__":
     else:
         printc(f"Database schema not found at {db_schema_path}", col.WARNING)
     
-    # Create XC_VM user with all privileges (like bash script)
+    # Create UyPanel user with all privileges (like bash script)
     printc("Creating database user", col.OKBLUE)
     
     # Localhost grants
@@ -1541,8 +1541,8 @@ if __name__ == "__main__":
     for cmd in all_commands:
         run_command(f'mariadb -u root -p"{root_password}" -e "{cmd}"')
     
-    # Write XC_VM configuration
-    printc("Writing XC_VM configuration", col.OKBLUE)
+    # Write UyPanel configuration
+    printc("Writing UyPanel configuration", col.OKBLUE)
     os.makedirs(os.path.dirname(rConfigPath), exist_ok=True)
     rConfigData = rConfig % (rUsername, rPassword)
     with io.open(rConfigPath, "w", encoding="utf-8") as rFile:
@@ -1650,7 +1650,7 @@ if __name__ == "__main__":
     # Ask for systemd service (like bash script)
     printc("Systemd Service Configuration", col.OKBLUE)
     while True:
-        enable_systemd = input("Do you want to configure and enable XC_VM as a systemd service? (Y/N): ").strip().upper()
+        enable_systemd = input("Do you want to configure and enable UyPanel as a systemd service? (Y/N): ").strip().upper()
         if enable_systemd in ["Y", "N"]:
             break
     
@@ -1774,8 +1774,8 @@ if __name__ == "__main__":
         rFile.write("MariaDB Root \n")
         rFile.write(f"Username: root\n")
         rFile.write(f"Password: {root_password}\n\n")
-        rFile.write(f"XC_VM Username: {rUsername}\n")
-        rFile.write(f"XC_VM Password: {rPassword}\n")
+        rFile.write(f"UyPanel Username: {rUsername}\n")
+        rFile.write(f"UyPanel Password: {rPassword}\n")
         rFile.write(f"Database: {rDatabase}\n")
     
     # Also save to installer directory (like original install script)
@@ -1805,7 +1805,7 @@ if __name__ == "__main__":
     run_command("systemctl daemon-reload")
     
     # Post-install startup (like bash script)
-    printc("Starting XC_VM processes...", col.OKBLUE)
+    printc("Starting UyPanel processes...", col.OKBLUE)
     time.sleep(10)
     
     # Run status command

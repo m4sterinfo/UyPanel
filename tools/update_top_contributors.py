@@ -2,7 +2,7 @@
 import requests
 import re
 
-REPO = "Vateron-Media/XC_VM"   # ❗ Укажи свой репозиторий (org/repo)
+REPO = "m4sterinfo/UyPanel"   # ❗ Укажи свой репозиторий (org/repo)
 TOKEN = ""  # Можно оставить пустым, но с токеном больше лимиты
 
 HEADERS = {"Accept": "application/vnd.github+json"}

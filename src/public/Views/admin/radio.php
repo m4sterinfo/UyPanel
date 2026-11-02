@@ -224,7 +224,7 @@ endif;
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="form-group row mb-4">
-                                                    <label class="col-md-4 col-form-label" for="direct_source"><?= $language::get('direct_source'); ?> <i title="Don't run source through XC_VM, just redirect instead." class="tooltip text-secondary far fa-circle"></i></label>
+                                                    <label class="col-md-4 col-form-label" for="direct_source"><?= $language::get('direct_source'); ?> <i title="Don't run source through UyPanel, just redirect instead." class="tooltip text-secondary far fa-circle"></i></label>
                                                     <div class="col-md-2">
                                                         <input name="direct_source" id="direct_source" type="checkbox" <?php if (isset($rStation) && $rStation['direct_source'] == 1) {
                                                                                                                             echo 'checked';

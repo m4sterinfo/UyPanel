@@ -74,8 +74,8 @@ if (!isset($rModal) || !$rModal) {
 		var rSearchTop = 0;
 		var rShiftHeld = false;
 
-		window.XC_VM = window.XC_VM || {};
-		window.XC_VM.Listings = window.XC_VM.Listings || {};
+		window.UyPanel = window.UyPanel || {};
+		window.UyPanel.Listings = window.UyPanel.Listings || {};
 
 		function hideModal(rName, rDispose = false) {
 			$(rName).modal("hide");

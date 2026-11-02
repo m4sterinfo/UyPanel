@@ -20,7 +20,7 @@ class SignalsCommand implements CommandInterface {
 
 		global $db;
 
-		$this->setProcessTitle('XC_VM[Signals]');
+		$this->setProcessTitle('UyPanel[Signals]');
 		$this->killStaleProcesses('console.php signals');
 		$this->initDaemonMD5();
 		$this->initRedisIfEnabled();

@@ -1,6 +1,6 @@
-[submodule "third_party/XC_VM_Binaries"]
-	path = third_party/XC_VM_Binaries
-	url = https://github.com/Vateron-Media/XC_VM_Binaries.git
-[submodule "third_party/XC_VM_FFMPEG"]
-	path = third_party/XC_VM_FFMPEG
-	url = https://github.com/Vateron-Media/XC_VM_FFMPEG.git
+[submodule "third_party/UyPanel_Binaries"]
+	path = third_party/UyPanel_Binaries
+	url = https://github.com/m4sterinfo/UyPanel_Binaries.git
+[submodule "third_party/UyPanel_FFMPEG"]
+	path = third_party/UyPanel_FFMPEG
+	url = https://github.com/m4sterinfo/UyPanel_FFMPEG.git

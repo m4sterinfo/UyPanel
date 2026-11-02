@@ -51,8 +51,8 @@ class PlexAuth {
 		$headers = [
 			'Content-Type: application/xml; charset=utf-8',
 			'X-Plex-Client-Identifier: 526e163c-8dbd-11eb-8dcd-0242ac130003',
-			'X-Plex-Product: XC_VM',
-			'X-Plex-Version: v' . XC_VM_VERSION
+			'X-Plex-Product: UyPanel',
+			'X-Plex-Version: v' . UyPanel_VERSION
 		];
 
 		$ch = curl_init('https://plex.tv/users/sign_in.json');

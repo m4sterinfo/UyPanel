@@ -19,7 +19,7 @@ class BalancerCommand implements CommandInterface {
 
 	public function execute(array $rArgs): int {
 		if (posix_getpwuid(posix_geteuid())['name'] != 'xc_vm') {
-			echo "Please run as XC_VM!\n";
+			echo "Please run as UyPanel!\n";
 			return 1;
 		}
 
@@ -37,9 +37,9 @@ class BalancerCommand implements CommandInterface {
 			return 0;
 		}
 
-		shell_exec("kill -9 `ps -ef | grep 'XC_VM Install\\[" . $rServerID . "\\]' | grep -v grep | awk '{print \$2}'`;");
+		shell_exec("kill -9 `ps -ef | grep 'UyPanel Install\\[" . $rServerID . "\\]' | grep -v grep | awk '{print \$2}'`;");
 		set_time_limit(0);
-		cli_set_process_title('XC_VM Install[' . $rServerID . ']');
+		cli_set_process_title('UyPanel Install[' . $rServerID . ']');
 		register_shutdown_function(function () use ($db) {
 			if (is_object($db)) {
 				$db->close_mysql();
@@ -57,7 +57,7 @@ class BalancerCommand implements CommandInterface {
 		$rUpdateSysctl = (empty($rArgs[7]) ? 0 : intval($rArgs[7]));
 		$rPrivateIP = (empty($rArgs[8]) ? 0 : intval($rArgs[8]));
 		$rParentIDs = (empty($rArgs[9]) ? array() : json_decode($rArgs[9], true));
-		$rSysCtl = '# XC_VM' . PHP_EOL . PHP_EOL . 'net.ipv4.tcp_congestion_control = bbr' . PHP_EOL . 'net.core.default_qdisc = fq' . PHP_EOL . 'net.ipv4.tcp_rmem = 8192 87380 134217728' . PHP_EOL . 'net.ipv4.udp_rmem_min = 16384' . PHP_EOL . 'net.core.rmem_default = 262144' . PHP_EOL . 'net.core.rmem_max = 268435456' . PHP_EOL . 'net.ipv4.tcp_wmem = 8192 65536 134217728' . PHP_EOL . 'net.ipv4.udp_wmem_min = 16384' . PHP_EOL . 'net.core.wmem_default = 262144' . PHP_EOL . 'net.core.wmem_max = 268435456' . PHP_EOL . 'net.core.somaxconn = 1000000' . PHP_EOL . 'net.core.netdev_max_backlog = 250000' . PHP_EOL . 'net.core.optmem_max = 65535' . PHP_EOL . 'net.ipv4.tcp_max_tw_buckets = 1440000' . PHP_EOL . 'net.ipv4.tcp_max_orphans = 16384' . PHP_EOL . 'net.ipv4.ip_local_port_range = 2000 65000' . PHP_EOL . 'net.ipv4.tcp_no_metrics_save = 1' . PHP_EOL . 'net.ipv4.tcp_slow_start_after_idle = 0' . PHP_EOL . 'net.ipv4.tcp_fin_timeout = 15' . PHP_EOL . 'net.ipv4.tcp_keepalive_time = 300' . PHP_EOL . 'net.ipv4.tcp_keepalive_probes = 5' . PHP_EOL . 'net.ipv4.tcp_keepalive_intvl = 15' . PHP_EOL . 'fs.file-max=20970800' . PHP_EOL . 'fs.nr_open=20970800' . PHP_EOL . 'fs.aio-max-nr=20970800' . PHP_EOL . 'net.ipv4.tcp_timestamps = 1' . PHP_EOL . 'net.ipv4.tcp_window_scaling = 1' . PHP_EOL . 'net.ipv4.tcp_mtu_probing = 1' . PHP_EOL . 'net.ipv4.route.flush = 1' . PHP_EOL . 'net.ipv6.route.flush = 1';
+		$rSysCtl = '# UyPanel' . PHP_EOL . PHP_EOL . 'net.ipv4.tcp_congestion_control = bbr' . PHP_EOL . 'net.core.default_qdisc = fq' . PHP_EOL . 'net.ipv4.tcp_rmem = 8192 87380 134217728' . PHP_EOL . 'net.ipv4.udp_rmem_min = 16384' . PHP_EOL . 'net.core.rmem_default = 262144' . PHP_EOL . 'net.core.rmem_max = 268435456' . PHP_EOL . 'net.ipv4.tcp_wmem = 8192 65536 134217728' . PHP_EOL . 'net.ipv4.udp_wmem_min = 16384' . PHP_EOL . 'net.core.wmem_default = 262144' . PHP_EOL . 'net.core.wmem_max = 268435456' . PHP_EOL . 'net.core.somaxconn = 1000000' . PHP_EOL . 'net.core.netdev_max_backlog = 250000' . PHP_EOL . 'net.core.optmem_max = 65535' . PHP_EOL . 'net.ipv4.tcp_max_tw_buckets = 1440000' . PHP_EOL . 'net.ipv4.tcp_max_orphans = 16384' . PHP_EOL . 'net.ipv4.ip_local_port_range = 2000 65000' . PHP_EOL . 'net.ipv4.tcp_no_metrics_save = 1' . PHP_EOL . 'net.ipv4.tcp_slow_start_after_idle = 0' . PHP_EOL . 'net.ipv4.tcp_fin_timeout = 15' . PHP_EOL . 'net.ipv4.tcp_keepalive_time = 300' . PHP_EOL . 'net.ipv4.tcp_keepalive_probes = 5' . PHP_EOL . 'net.ipv4.tcp_keepalive_intvl = 15' . PHP_EOL . 'fs.file-max=20970800' . PHP_EOL . 'fs.nr_open=20970800' . PHP_EOL . 'fs.aio-max-nr=20970800' . PHP_EOL . 'net.ipv4.tcp_timestamps = 1' . PHP_EOL . 'net.ipv4.tcp_window_scaling = 1' . PHP_EOL . 'net.ipv4.tcp_mtu_probing = 1' . PHP_EOL . 'net.ipv4.route.flush = 1' . PHP_EOL . 'net.ipv6.route.flush = 1';
 		$rInstallDir = BIN_PATH . 'install/';
 
 		if ($rType == 1) {
@@ -65,7 +65,7 @@ class BalancerCommand implements CommandInterface {
 			$rInstallFiles = 'proxy.tar.gz';
 		} elseif ($rType == 2) {
 			$rPackages = array('cpufrequtils', 'iproute2', 'python', 'net-tools', 'dirmngr', 'gpg-agent', 'software-properties-common', 'libmaxminddb0', 'libmaxminddb-dev', 'mmdb-bin', 'libcurl4', 'libgeoip-dev', 'libxslt1-dev', 'libonig-dev', 'e2fsprogs', 'wget', 'sysstat', 'alsa-utils', 'v4l-utils', 'mcrypt', 'python3', 'certbot', 'iptables-persistent', 'libjpeg-dev', 'libpng-dev', 'php-ssh2', 'xz-utils', 'zip', 'unzip', 'cron', 'libfribidi-dev', 'libharfbuzz-dev', 'libogg0');
-			$UpdateData = $gitRelease->getUpdateFile("lb", XC_VM_VERSION);
+			$UpdateData = $gitRelease->getUpdateFile("lb", UyPanel_VERSION);
 			$rInstallFiles = $UpdateData['url'];
 			$hash = $UpdateData['md5'];
 		} else {
@@ -106,7 +106,7 @@ class BalancerCommand implements CommandInterface {
 		$rVersion = trim($rOS['output']);
 		echo "\nRemote OS version: {$rVersion}\n";
 
-		echo "\nStopping any previous version of XC_VM\n";
+		echo "\nStopping any previous version of UyPanel\n";
 		$this->runSSH($rConn, 'sudo systemctl stop xc_vm');
 		$this->runSSH($rConn, 'sudo killall -9 -u xc_vm');
 		echo "\nUpdating system\n";
@@ -130,7 +130,7 @@ class BalancerCommand implements CommandInterface {
 		}
 
 		if (in_array($rType, array(1, 2))) {
-			echo "Creating XC_VM system user\n";
+			echo "Creating UyPanel system user\n";
 			$this->runSSH($rConn, 'sudo adduser --system --shell /bin/false --group --disabled-login xc_vm');
 			$this->runSSH($rConn, 'sudo mkdir ' . MAIN_HOME);
 			$this->runSSH($rConn, 'sudo rm -rf ' . BIN_PATH);
@@ -153,14 +153,14 @@ class BalancerCommand implements CommandInterface {
 			}
 		} else {
 			echo "Download archive\n";
-			$this->runSSH($rConn, 'wget --timeout=2 -O /tmp/XC_VM.tar.gz -o /dev/null "' . $rInstallFiles . '"');
-			$fileHash = $this->runSSH($rConn, 'md5=($(md5sum /tmp/XC_VM.tar.gz)); echo $md5;');
+			$this->runSSH($rConn, 'wget --timeout=2 -O /tmp/UyPanel.tar.gz -o /dev/null "' . $rInstallFiles . '"');
+			$fileHash = $this->runSSH($rConn, 'md5=($(md5sum /tmp/UyPanel.tar.gz)); echo $md5;');
 			if (!empty($fileHash['output']) && $hash == trim($fileHash['output'])) {
 				echo "Extracting to directory\n";
 				$this->runSSH($rConn, 'sudo rm -rf ' . MAIN_HOME . 'status');
-				$this->runSSH($rConn, 'sudo tar -zxvf "/tmp/XC_VM.tar.gz" -C "' . MAIN_HOME . '"');
+				$this->runSSH($rConn, 'sudo tar -zxvf "/tmp/UyPanel.tar.gz" -C "' . MAIN_HOME . '"');
 				if (file_exists(MAIN_HOME . 'status')) {
-					$this->runSSH($rConn, 'sudo rm -f "/tmp/XC_VM.tar.gz"');
+					$this->runSSH($rConn, 'sudo rm -f "/tmp/UyPanel.tar.gz"');
 				} else {
 					$db->query('UPDATE `servers` SET `status` = 4 WHERE `id` = ?;', $rServerID);
 					echo "Failed to extract files! Exiting\n";
@@ -179,7 +179,7 @@ class BalancerCommand implements CommandInterface {
 				$this->runSSH($rConn, 'sudo echo "tmpfs ' . STREAMS_PATH . ' tmpfs defaults,noatime,nosuid,nodev,noexec,mode=1777,size=90% 0 0" >> /etc/fstab');
 				$this->runSSH($rConn, 'sudo echo "tmpfs ' . TMP_PATH . ' tmpfs defaults,noatime,nosuid,nodev,noexec,mode=1777,size=2G 0 0" >> /etc/fstab');
 			}
-			if (stripos($this->runSSH($rConn, 'sudo cat /etc/sysctl.conf')['output'], 'XC_VM') === false) {
+			if (stripos($this->runSSH($rConn, 'sudo cat /etc/sysctl.conf')['output'], 'UyPanel') === false) {
 				if ($rUpdateSysctl) {
 					echo "Adding sysctl.conf\n";
 					$this->runSSH($rConn, 'sudo modprobe ip_conntrack');
@@ -203,19 +203,19 @@ class BalancerCommand implements CommandInterface {
 		$rMasterConfig = parse_ini_file(CONFIG_PATH . 'config.ini');
 		if ($rType == 1) {
 			if ($rPrivateIP) {
-				$rNewConfig = '; XC_VM Configuration' . "\n" . '; -----------------' . "\n\n" . '[XC_VM]' . "\n" . 'hostname    =   "' . $rServers[SERVER_ID]['private_ip'] . '"' . "\n" . 'port        =   ' . intval($rServers[SERVER_ID]['http_broadcast_port']) . "\n" . 'server_id   =   ' . $rServerID;
+				$rNewConfig = '; UyPanel Configuration' . "\n" . '; -----------------' . "\n\n" . '[UyPanel]' . "\n" . 'hostname    =   "' . $rServers[SERVER_ID]['private_ip'] . '"' . "\n" . 'port        =   ' . intval($rServers[SERVER_ID]['http_broadcast_port']) . "\n" . 'server_id   =   ' . $rServerID;
 			} else {
-				$rNewConfig = '; XC_VM Configuration' . "\n" . '; -----------------' . "\n\n" . '[XC_VM]' . "\n" . 'hostname    =   "' . $rServers[SERVER_ID]['server_ip'] . '"' . "\n" . 'port        =   ' . intval($rServers[SERVER_ID]['http_broadcast_port']) . "\n" . 'server_id   =   ' . $rServerID;
+				$rNewConfig = '; UyPanel Configuration' . "\n" . '; -----------------' . "\n\n" . '[UyPanel]' . "\n" . 'hostname    =   "' . $rServers[SERVER_ID]['server_ip'] . '"' . "\n" . 'port        =   ' . intval($rServers[SERVER_ID]['http_broadcast_port']) . "\n" . 'server_id   =   ' . $rServerID;
 			}
 		} else {
-			$rNewConfig = '; XC_VM Configuration' . "\n" . '; -----------------' . "\n\n" . '[XC_VM]' . "\n" . 'hostname    =   "' . $rServers[SERVER_ID]['server_ip'] . '"' . "\n" . 'database    =   "xc_vm"' . "\n" . 'port        =   ' . intval(ConfigReader::get('port')) . "\n" . 'server_id   =   ' . $rServerID . "\n" . 'is_lb       =   1' . "\n\n" . '[Encrypted]' . "\n" . 'username    =   "' . ConfigReader::get('username') . '"' . "\n" . 'password    =   "' . ConfigReader::get('password') . '"';
+			$rNewConfig = '; UyPanel Configuration' . "\n" . '; -----------------' . "\n\n" . '[UyPanel]' . "\n" . 'hostname    =   "' . $rServers[SERVER_ID]['server_ip'] . '"' . "\n" . 'database    =   "xc_vm"' . "\n" . 'port        =   ' . intval(ConfigReader::get('port')) . "\n" . 'server_id   =   ' . $rServerID . "\n" . 'is_lb       =   1' . "\n\n" . '[Encrypted]' . "\n" . 'username    =   "' . ConfigReader::get('username') . '"' . "\n" . 'password    =   "' . ConfigReader::get('password') . '"';
 		}
 		file_put_contents(TMP_PATH . 'config_' . $rServerID, $rNewConfig);
 		$this->sendFileSSH($rConn, TMP_PATH . 'config_' . $rServerID, CONFIG_PATH . 'config.ini');
 
 		echo "Installing service\n";
 		$this->runSSH($rConn, 'sudo rm /etc/systemd/system/xc_vm.service');
-		$rSystemd = '[Unit]' . "\n" . 'SourcePath=/home/xc_vm/service' . "\n" . 'Description=XC_VM Service' . "\n" . 'After=network.target' . "\n" . 'StartLimitIntervalSec=0' . "\n\n" . '[Service]' . "\n" . 'Type=simple' . "\n" . 'User=root' . "\n" . 'Restart=always' . "\n" . 'RestartSec=1' . "\n" . 'ExecStart=/bin/bash /home/xc_vm/service start' . "\n" . 'ExecRestart=/bin/bash /home/xc_vm/service restart' . "\n" . 'ExecStop=/bin/bash /home/xc_vm/service stop' . "\n\n" . '[Install]' . "\n" . 'WantedBy=multi-user.target';
+		$rSystemd = '[Unit]' . "\n" . 'SourcePath=/home/xc_vm/service' . "\n" . 'Description=UyPanel Service' . "\n" . 'After=network.target' . "\n" . 'StartLimitIntervalSec=0' . "\n\n" . '[Service]' . "\n" . 'Type=simple' . "\n" . 'User=root' . "\n" . 'Restart=always' . "\n" . 'RestartSec=1' . "\n" . 'ExecStart=/bin/bash /home/xc_vm/service start' . "\n" . 'ExecRestart=/bin/bash /home/xc_vm/service restart' . "\n" . 'ExecStop=/bin/bash /home/xc_vm/service stop' . "\n\n" . '[Install]' . "\n" . 'WantedBy=multi-user.target';
 		file_put_contents(TMP_PATH . 'systemd_' . $rServerID, $rSystemd);
 		$this->sendFileSSH($rConn, TMP_PATH . 'systemd_' . $rServerID, '/etc/systemd/system/xc_vm.service');
 		$this->runSSH($rConn, 'sudo chmod +x /etc/systemd/system/xc_vm.service');
@@ -296,7 +296,7 @@ class BalancerCommand implements CommandInterface {
 		$this->runSSH($rConn, 'sudo chown -R xc_vm:xc_vm ' . MAIN_HOME . 'content/streams');
 		$this->runSSH($rConn, 'sudo chown -R xc_vm:xc_vm ' . MAIN_HOME);
 		BackupService::grantPrivileges($rHost, DatabaseFactory::get(), ConfigReader::getAll());
-		echo "Installation complete! Starting XC_VM\n";
+		echo "Installation complete! Starting UyPanel\n";
 		$this->runSSH($rConn, 'sudo service xc_vm restart');
 
 		if ($rType == 2) {

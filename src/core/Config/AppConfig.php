@@ -13,10 +13,10 @@ define('AUTO_RESTART_MARIADB', true);  // Test function
 define('DEVELOPMENT', false);          // It will be deleted in the future.
 
 // ── Версия и Git ──────────────────────────────────────────────
-define('XC_VM_VERSION', '2.0.1');
-define('GIT_OWNER',       'Vateron-Media');
-define('GIT_REPO_MAIN',   'XC_VM');
-define('GIT_REPO_UPDATE', 'XC_VM_Update');
+define('UyPanel_VERSION', '2.0.1');
+define('GIT_OWNER',       'm4sterinfo');
+define('GIT_REPO_MAIN',   'UyPanel');
+define('GIT_REPO_UPDATE', 'UyPanel_Update');
 
 // ── Разное ────────────────────────────────────────────────────
 define('MONITOR_CALLS', 3);
