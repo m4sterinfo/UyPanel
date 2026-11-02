@@ -32,7 +32,7 @@ class UpdateCommand implements CommandInterface {
 		switch ($rCommand) {
 			case 'update':
 				if (ServerRepository::getAll()[SERVER_ID]['is_main']) {
-					$UpdateData = $gitRelease->getUpdateFile("main", XC_VM_VERSION);
+					$UpdateData = $gitRelease->getUpdateFile("main", UyPanel_VERSION);
 				} else {
 					$UpdateData = $gitRelease->getUpdateFile("lb_update", ServerRepository::getAll()[SERVER_ID]['xc_vm_version']);
 				}
@@ -66,7 +66,7 @@ class UpdateCommand implements CommandInterface {
 					}
 				}
 
-				$db->query('UPDATE `servers` SET `status` = 1, `xc_vm_version` = ? WHERE `id` = ?;', XC_VM_VERSION, SERVER_ID);
+				$db->query('UPDATE `servers` SET `status` = 1, `xc_vm_version` = ? WHERE `id` = ?;', UyPanel_VERSION, SERVER_ID);
 				$db->query('UPDATE `settings` SET `update_data` = NULL;');
 
 				foreach (array('http', 'https') as $rType) {

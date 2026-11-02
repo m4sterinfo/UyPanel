@@ -26,7 +26,7 @@ class RootMysqlCronJob implements CommandInterface {
 
         global $db;
 
-        $this->setProcessTitle('XC_VM[MysqlErrors]');
+        $this->setProcessTitle('UyPanel[MysqlErrors]');
         $this->acquireCronLock();
 
         $rIgnoreErrors = array('innodb: page_cleaner', 'aborted connection', 'got an error reading communication packets', 'got packets out of order', 'got timeout reading communication packets');

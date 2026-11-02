@@ -1,7 +1,7 @@
-<h1 align="center">🔄 XC_VM Update Guide</h1>
+<h1 align="center">🔄 UyPanel Update Guide</h1>
 
 <p align="center">
-  This document describes the process of updating <b>XC_VM</b> via the web control panel. Follow these steps to safely update the system and avoid errors.
+  This document describes the process of updating <b>UyPanel</b> via the web control panel. Follow these steps to safely update the system and avoid errors.
 </p>
 
 ---
@@ -75,6 +75,6 @@ Follow these steps to update via the panel. Each step is illustrated with a scre
 > After completion, verify server status, restart services, and ensure everything is working correctly.
 
 > ⚠️ **Update Errors**
-> If errors occur, check server logs (e.g., in `/home/xc_vm/logs/`). If the problem persists, create an issue in the [repository](https://github.com/Vateron-Media/XC_VM/issues).
+> If errors occur, check server logs (e.g., in `/home/xc_vm/logs/`). If the problem persists, create an issue in the [repository](https://github.com/m4sterinfo/UyPanel/issues).
 
 ---

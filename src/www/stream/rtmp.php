@@ -19,7 +19,7 @@ if (!($_GET['addr'] == '127.0.0.1' && $_GET['call'] == 'publish')) {
 	$rRestreamDetect = false;
 
 	foreach (getallheaders() as $rKey => $rValue) {
-		if (strtoupper($rKey) != 'X-XC_VM-DETECT') {
+		if (strtoupper($rKey) != 'X-UyPanel-DETECT') {
 		} else {
 			$rRestreamDetect = true;
 		}

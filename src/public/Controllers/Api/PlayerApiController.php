@@ -813,7 +813,7 @@ class PlayerApiController {
 		}
 
 		$output['server_info'] = [
-			'version' => XC_VM_VERSION,
+			'version' => UyPanel_VERSION,
 			'url' => $this->domain,
 			'port' => strval($rServers[SERVER_ID]['http_broadcast_port']),
 			'https_port' => strval($rServers[SERVER_ID]['https_broadcast_port']),

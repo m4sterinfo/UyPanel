@@ -12,7 +12,7 @@ class DelayCommand implements CommandInterface {
 
 	public function execute(array $rArgs): int {
 		if (posix_getpwuid(posix_geteuid())['name'] != 'xc_vm') {
-			echo "Please run as XC_VM!\n";
+			echo "Please run as UyPanel!\n";
 			return 1;
 		}
 
@@ -34,7 +34,7 @@ class DelayCommand implements CommandInterface {
 
 		$this->checkRunning($rStreamID);
 		set_time_limit(0);
-		cli_set_process_title('XC_VMDelay[' . $rStreamID . ']');
+		cli_set_process_title('UyPanelDelay[' . $rStreamID . ']');
 
 		$db->query('SELECT * FROM `streams` t1 INNER JOIN `streams_servers` t2 ON t2.stream_id = t1.id AND t2.server_id = ? WHERE t1.id = ?', SERVER_ID, $rStreamID);
 		if ($db->num_rows() <= 0) {
@@ -170,11 +170,11 @@ class DelayCommand implements CommandInterface {
 			$rPID = intval(file_get_contents(STREAMS_PATH . $rStreamID . '_.monitor_delay'));
 		}
 		if (empty($rPID)) {
-			shell_exec("kill -9 `ps -ef | grep 'XC_VMDelay\\[" . intval($rStreamID) . "\\]' | grep -v grep | awk '{print \$2}'`;");
+			shell_exec("kill -9 `ps -ef | grep 'UyPanelDelay\\[" . intval($rStreamID) . "\\]' | grep -v grep | awk '{print \$2}'`;");
 		} else {
 			if (file_exists('/proc/' . $rPID)) {
 				$rCommand = trim(file_get_contents('/proc/' . $rPID . '/cmdline'));
-				if ($rCommand == 'XC_VMDelay[' . $rStreamID . ']' && is_numeric($rPID) && 0 < $rPID) {
+				if ($rCommand == 'UyPanelDelay[' . $rStreamID . ']' && is_numeric($rPID) && 0 < $rPID) {
 					posix_kill($rPID, 9);
 				}
 			}

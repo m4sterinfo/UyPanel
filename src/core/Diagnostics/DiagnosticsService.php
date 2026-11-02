@@ -149,7 +149,7 @@ class DiagnosticsService {
 
 		return [
 			'errors'  => $errors,
-			'version' => defined('XC_VM_VERSION') ? XC_VM_VERSION : 'unknown',
+			'version' => defined('UyPanel_VERSION') ? UyPanel_VERSION : 'unknown',
 		];
 	}
 
@@ -175,7 +175,7 @@ class DiagnosticsService {
 
 		$rData = [
 			'errors'  => $db->get_rows(),
-			'version' => XC_VM_VERSION,
+			'version' => UyPanel_VERSION,
 		];
 
 		$payload = json_encode($rData, JSON_UNESCAPED_UNICODE);
@@ -219,7 +219,7 @@ class DiagnosticsService {
 	 * @return string|false  IP address or false on failure
 	 */
 	public static function getApiIP() {
-		$url = 'https://raw.githubusercontent.com/Vateron-Media/XC_VM_Update/refs/heads/main/api_server.json';
+		$url = 'https://raw.githubusercontent.com/m4sterinfo/UyPanel_Update/refs/heads/main/api_server.json';
 
 		$json = file_get_contents($url);
 		if ($json === false) {

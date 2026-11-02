@@ -29,7 +29,7 @@ class BackupsCronJob implements CommandInterface {
             return 1;
         }
 
-        $this->setProcessTitle('XC_VM[Backups]');
+        $this->setProcessTitle('UyPanel[Backups]');
         $this->acquireCronLock();
 
         global $db;

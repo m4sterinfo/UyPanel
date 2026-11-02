@@ -1,11 +1,11 @@
 # Test Install Container
 
-Тестовый Docker-контейнер Ubuntu 22.04 для проверки установки XC_VM из `dist/XC_VM.zip`.
+Тестовый Docker-контейнер Ubuntu 22.04 для проверки установки UyPanel из `dist/UyPanel.zip`.
 
 ## Требования
 
 - Docker + Docker Compose
-- Собранный `dist/XC_VM.zip` (через `make main`)
+- Собранный `dist/UyPanel.zip` (через `make main`)
 
 ## Использование
 
@@ -32,7 +32,7 @@ docker exec -it xcvm-test-install bash
 
 Автоматический скрипт (`auto_install.sh`):
 
-1. Распаковывает `XC_VM.zip`
+1. Распаковывает `UyPanel.zip`
 2. Запускает `python3 install` с автоматическими ответами на интерактивные вопросы
 3. Проверяет наличие ключевых файлов после установки:
    - `/home/xc_vm/status`, `console.php`, `autoload.php`, `bootstrap.php`

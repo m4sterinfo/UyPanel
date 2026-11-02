@@ -1,6 +1,6 @@
 # Autoloader — Class Registration
 
-XC_VM uses a custom autoloader (`src/autoload.php`) instead of Composer.
+UyPanel uses a custom autoloader (`src/autoload.php`) instead of Composer.
 Classes are discovered **automatically** — no manual registration required.
 
 ---

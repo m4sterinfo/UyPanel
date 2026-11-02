@@ -34,7 +34,7 @@ if ($odb->num_rows() > 0) {
         echo "\n" . "Couldn't find anything to migrate in the `xc_vm_migrate` database. Please ensure you restore your backup to that database specifically." . "\n\n";
         exit();
     }
-    echo "\n" . 'Migrating database to XC_VM...' . "\n\n";
+    echo "\n" . 'Migrating database to UyPanel...' . "\n\n";
 
     if (in_array('access_codes', $rMigrateOptions)) {
         $odb->query('SELECT * FROM `access_codes`;');
@@ -628,7 +628,7 @@ if ($odb->num_rows() > 0) {
         echo "\n" . "Couldn't find anything to migrate in the `xc_vm_migrate` database. Please ensure you restore your backup to that database specifically." . "\n\n";
         exit();
     }
-    echo "\n" . 'Migrating database to XC_VM...' . "\n\n";
+    echo "\n" . 'Migrating database to UyPanel...' . "\n\n";
 
     echo 'Remapping bouquets.' . "\n";
     $rSeriesMap = $rBouquetMap = array();
@@ -1579,7 +1579,7 @@ try {
 if (in_array('access_codes', $rMigrateOptions)) {
     echo "\n" . 'Admin acces code: ' . $AdminAccesCode;
 }
-echo "\n" . 'Migration has been completed!' . "\n\n" . 'Your settings have been reset to the XC_VM default, please take some time to review the settings page and make the desired changes.' . "\n";
+echo "\n" . 'Migration has been completed!' . "\n\n" . 'Your settings have been reset to the UyPanel default, please take some time to review the settings page and make the desired changes.' . "\n";
 
 file_put_contents(TMP_PATH . '.migration.status', 2);
 if (is_object($odb)) {

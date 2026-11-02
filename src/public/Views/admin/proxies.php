@@ -565,7 +565,7 @@ renderUnifiedLayoutFooter('admin');
 			$(".bs-server-modal-center").modal("hide");
 			$.getJSON("./api?action=restart_services&server_id=" + $(".bs-server-modal-center").data("id"), function(data) {
 				if (data.result === true) {
-					$.toast("XC_VM will be restarted shortly.");
+					$.toast("UyPanel will be restarted shortly.");
 				} else {
 					$.toast("An error occured while processing your request.");
 				}

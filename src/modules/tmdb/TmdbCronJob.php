@@ -23,7 +23,7 @@ class TmdbCronJob implements CommandInterface {
         require_once INCLUDES_PATH . 'libs/tmdb_release.php';
         require_once __DIR__ . '/TmdbCron.php';
 
-        $this->initCron('XC_VM[TMDB]');
+        $this->initCron('UyPanel[TMDB]');
 
         $rTimeout = 3600;
         set_time_limit($rTimeout);

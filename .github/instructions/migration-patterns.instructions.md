@@ -1,7 +1,7 @@
 ---
-description: "Use when migrating legacy code to services, replacing global variables, extracting logic from god-objects, or refactoring admin pages. Covers safe migration patterns for XC_VM."
+description: "Use when migrating legacy code to services, replacing global variables, extracting logic from god-objects, or refactoring admin pages. Covers safe migration patterns for UyPanel."
 ---
-# Migration Patterns — XC_VM
+# Migration Patterns — UyPanel
 
 ## Strategy
 Iterative refactoring. Each step must be backward-compatible. No big-bang rewrites.

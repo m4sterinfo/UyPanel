@@ -73,15 +73,15 @@ class StartupCommand implements CommandInterface {
 
 	private function installRootCrontab(): void {
 		$rCrons = array();
-		$rCrons[] = '* * * * * ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php cron:root_signals # XC_VM';
+		$rCrons[] = '* * * * * ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php cron:root_signals # UyPanel';
 		if (file_exists(MAIN_HOME . 'cli/CronJobs/RootMysqlCronJob.php')) {
-			$rCrons[] = '* * * * * ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php cron:root_mysql # XC_VM';
+			$rCrons[] = '* * * * * ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php cron:root_mysql # UyPanel';
 		}
 		$rWrite = false;
 		$rOutput = array();
 		exec('sudo crontab -l', $rOutput);
 
-		// Удаляем старые записи от XC_VM v1.x.x, чтобы не было дубликатов, и проверяем наличие нужных записей
+		// Удаляем старые записи от UyPanel v1.x.x, чтобы не было дубликатов, и проверяем наличие нужных записей
 		$rFiltered = array();
 		foreach ($rOutput as $rLine) {
 			if (strpos($rLine, MAIN_HOME . 'crons/root_') !== false) {

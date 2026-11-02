@@ -12,7 +12,7 @@ class CreatedCommand implements CommandInterface {
 
 	public function execute(array $rArgs): int {
 		if (posix_getpwuid(posix_geteuid())['name'] != 'xc_vm') {
-			echo "Please run as XC_VM!\n";
+			echo "Please run as UyPanel!\n";
 			return 1;
 		}
 
@@ -30,7 +30,7 @@ class CreatedCommand implements CommandInterface {
 		$rStreamID = intval($rArgs[0]);
 		$this->checkRunning($rStreamID);
 		set_time_limit(0);
-		cli_set_process_title('XC_VMCreate[' . $rStreamID . ']');
+		cli_set_process_title('UyPanelCreate[' . $rStreamID . ']');
 
 		global $db;
 
@@ -163,11 +163,11 @@ class CreatedCommand implements CommandInterface {
 		}
 
 		if (empty($rPID)) {
-			shell_exec("kill -9 `ps -ef | grep 'XC_VMCreate\\[" . intval($rStreamID) . "\\]' | grep -v grep | awk '{print \$2}'`;");
+			shell_exec("kill -9 `ps -ef | grep 'UyPanelCreate\\[" . intval($rStreamID) . "\\]' | grep -v grep | awk '{print \$2}'`;");
 		} else {
 			if (file_exists('/proc/' . $rPID)) {
 				$rCommand = trim(file_get_contents('/proc/' . $rPID . '/cmdline'));
-				if ($rCommand == 'XC_VMCreate[' . $rStreamID . ']') {
+				if ($rCommand == 'UyPanelCreate[' . $rStreamID . ']') {
 					posix_kill($rPID, 9);
 				}
 			}

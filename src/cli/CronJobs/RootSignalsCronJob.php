@@ -27,11 +27,11 @@ class RootSignalsCronJob implements CommandInterface {
         $this->rIdentifier = CRONS_TMP_PATH . md5(Encryption::generateUniqueCode(SettingsManager::getAll()['live_streaming_pass']) . static::class);
         ProcessManager::acquireCronLock($this->rIdentifier);
 
-        $pids = shell_exec("pgrep -f 'XC_VM\[Signals\]'");
+        $pids = shell_exec("pgrep -f 'UyPanel\[Signals\]'");
         if (!empty($pids)) {
             shell_exec("sudo kill -9 $pids");
         }
-        cli_set_process_title('XC_VM[Signals]');
+        cli_set_process_title('UyPanel[Signals]');
         file_put_contents(CONFIG_PATH . 'signals.last', time());
 
         $this->loadCron();
@@ -206,20 +206,20 @@ class RootSignalsCronJob implements CommandInterface {
         }
         $rReload = false;
         $rAllowedIPs = ServerRepository::getAllowedIPs();
-        $rXC_VMList = [];
+        $rUyPanelList = [];
         foreach ($rAllowedIPs as $rIP) {
             if (!empty($rIP) && filter_var($rIP, FILTER_VALIDATE_IP)) {
                 $newEntry = 'set_real_ip_from ' . $rIP . ';';
-                if (!in_array($newEntry, $rXC_VMList)) {
-                    $rXC_VMList[] = $newEntry;
+                if (!in_array($newEntry, $rUyPanelList)) {
+                    $rUyPanelList[] = $newEntry;
                 }
             }
         }
-        $rXC_VMList = trim(implode("\n", array_unique($rXC_VMList)));
+        $rUyPanelList = trim(implode("\n", array_unique($rUyPanelList)));
         $rCurrentList = (trim(file_get_contents(BIN_PATH . 'nginx/conf/realip_xc_vm.conf')) ?: '');
-        if ($rXC_VMList != $rCurrentList) {
-            echo 'Updating XC_VM IP List...' . "\n";
-            file_put_contents(BIN_PATH . 'nginx/conf/realip_xc_vm.conf', $rXC_VMList);
+        if ($rUyPanelList != $rCurrentList) {
+            echo 'Updating UyPanel IP List...' . "\n";
+            file_put_contents(BIN_PATH . 'nginx/conf/realip_xc_vm.conf', $rUyPanelList);
             $rReload = true;
         }
         $rCurrentList = (trim(file_get_contents(BIN_PATH . 'nginx/conf/realip_cloudflare.conf')) ?: '');
@@ -420,7 +420,7 @@ class RootSignalsCronJob implements CommandInterface {
                 $rJobs = [];
                 $db->query('SELECT * FROM `crontab` WHERE `enabled` = 1;');
                 foreach ($db->get_rows() as $rRow) {
-                    $rJobs[] = $rRow['time'] . ' ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php cron:' . $rRow['filename'] . ' # XC_VM';
+                    $rJobs[] = $rRow['time'] . ' ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php cron:' . $rRow['filename'] . ' # UyPanel';
                 }
                 $rActualCron = trim(implode("\n", $rJobs));
                 if ($rCurrentCron != $rActualCron) {
@@ -431,10 +431,10 @@ class RootSignalsCronJob implements CommandInterface {
                 }
             }
             if (file_exists(CONFIG_PATH . 'sysctl.on')) {
-                if (strtoupper(substr(explode("\n", file_get_contents('/etc/sysctl.conf'))[0], 0, 9)) != '# XC_VM') {
+                if (strtoupper(substr(explode("\n", file_get_contents('/etc/sysctl.conf'))[0], 0, 9)) != '# UyPanel') {
                     echo 'Sysctl missing! Writing it.' . "\n";
                     exec('sudo modprobe ip_conntrack');
-                    file_put_contents('/etc/sysctl.conf', implode(PHP_EOL, ['# XC_VM', '', 'net.core.somaxconn = 655350', 'net.ipv4.route.flush=1', 'net.ipv4.tcp_no_metrics_save=1', 'net.ipv4.tcp_moderate_rcvbuf = 1', 'fs.file-max = 6815744', 'fs.aio-max-nr = 6815744', 'fs.nr_open = 6815744', 'net.ipv4.ip_local_port_range = 1024 65000', 'net.ipv4.tcp_sack = 1', 'net.ipv4.tcp_rmem = 10000000 10000000 10000000', 'net.ipv4.tcp_wmem = 10000000 10000000 10000000', 'net.ipv4.tcp_mem = 10000000 10000000 10000000', 'net.core.rmem_max = 524287', 'net.core.wmem_max = 524287', 'net.core.rmem_default = 524287', 'net.core.wmem_default = 524287', 'net.core.optmem_max = 524287', 'net.core.netdev_max_backlog = 300000', 'net.ipv4.tcp_max_syn_backlog = 300000', 'net.netfilter.nf_conntrack_max=1215196608', 'net.ipv4.tcp_window_scaling = 1', 'vm.max_map_count = 655300', 'net.ipv4.tcp_max_tw_buckets = 50000', 'net.ipv6.conf.all.disable_ipv6 = 1', 'net.ipv6.conf.default.disable_ipv6 = 1', 'net.ipv6.conf.lo.disable_ipv6 = 1', 'kernel.shmmax=134217728', 'kernel.shmall=134217728', 'vm.overcommit_memory = 1', 'net.ipv4.tcp_tw_reuse=1']));
+                    file_put_contents('/etc/sysctl.conf', implode(PHP_EOL, ['# UyPanel', '', 'net.core.somaxconn = 655350', 'net.ipv4.route.flush=1', 'net.ipv4.tcp_no_metrics_save=1', 'net.ipv4.tcp_moderate_rcvbuf = 1', 'fs.file-max = 6815744', 'fs.aio-max-nr = 6815744', 'fs.nr_open = 6815744', 'net.ipv4.ip_local_port_range = 1024 65000', 'net.ipv4.tcp_sack = 1', 'net.ipv4.tcp_rmem = 10000000 10000000 10000000', 'net.ipv4.tcp_wmem = 10000000 10000000 10000000', 'net.ipv4.tcp_mem = 10000000 10000000 10000000', 'net.core.rmem_max = 524287', 'net.core.wmem_max = 524287', 'net.core.rmem_default = 524287', 'net.core.wmem_default = 524287', 'net.core.optmem_max = 524287', 'net.core.netdev_max_backlog = 300000', 'net.ipv4.tcp_max_syn_backlog = 300000', 'net.netfilter.nf_conntrack_max=1215196608', 'net.ipv4.tcp_window_scaling = 1', 'vm.max_map_count = 655300', 'net.ipv4.tcp_max_tw_buckets = 50000', 'net.ipv6.conf.all.disable_ipv6 = 1', 'net.ipv6.conf.default.disable_ipv6 = 1', 'net.ipv6.conf.lo.disable_ipv6 = 1', 'kernel.shmmax=134217728', 'kernel.shmall=134217728', 'vm.overcommit_memory = 1', 'net.ipv4.tcp_tw_reuse=1']));
                     exec('sudo sysctl -p > /dev/null');
                 }
             }
@@ -453,13 +453,13 @@ class RootSignalsCronJob implements CommandInterface {
                             break;
                         case 'restart_services':
                             echo 'Restarting services...' . "\n";
-                            $db->query("INSERT INTO `mysql_syslog`(`server_id`, `type`, `error`, `username`, `ip`, `database`, `date`) VALUES(?, 'RESTART', 'XC_VM services restarted on request.', 'root', 'localhost', NULL, ?);", SERVER_ID, time());
+                            $db->query("INSERT INTO `mysql_syslog`(`server_id`, `type`, `error`, `username`, `ip`, `database`, `date`) VALUES(?, 'RESTART', 'UyPanel services restarted on request.', 'root', 'localhost', NULL, ?);", SERVER_ID, time());
                             shell_exec('sudo systemctl stop xc_vm');
                             shell_exec('sudo systemctl start xc_vm');
                             break;
                         case 'stop_services':
                             echo 'Stopping services...' . "\n";
-                            $db->query("INSERT INTO `mysql_syslog`(`server_id`, `type`, `error`, `username`, `ip`, `database`, `date`) VALUES(?, 'STOP', 'XC_VM services stopped on request.', 'root', 'localhost', NULL, ?);", SERVER_ID, time());
+                            $db->query("INSERT INTO `mysql_syslog`(`server_id`, `type`, `error`, `username`, `ip`, `database`, `date`) VALUES(?, 'STOP', 'UyPanel services stopped on request.', 'root', 'localhost', NULL, ?);", SERVER_ID, time());
                             shell_exec('sudo systemctl stop xc_vm');
                             break;
                         case 'reload_nginx':
@@ -503,12 +503,12 @@ class RootSignalsCronJob implements CommandInterface {
                             break;
                         case 'update_binaries':
                             echo 'Updating binaries...' . "\n";
-                            $db->query("INSERT INTO `mysql_syslog`(`server_id`, `type`, `error`, `username`, `ip`, `database`, `date`) VALUES(?, 'BINARIES', 'Updating XC_VM binaries from XC_VM server...', 'root', 'localhost', NULL, ?);", SERVER_ID, time());
+                            $db->query("INSERT INTO `mysql_syslog`(`server_id`, `type`, `error`, `username`, `ip`, `database`, `date`) VALUES(?, 'BINARIES', 'Updating UyPanel binaries from UyPanel server...', 'root', 'localhost', NULL, ?);", SERVER_ID, time());
                             shell_exec('sudo ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php binaries 2>&1 &');
                             break;
                         case 'update':
                             echo 'Updating...' . "\n";
-                            $db->query("INSERT INTO `mysql_syslog`(`server_id`, `type`, `error`, `username`, `ip`, `database`, `date`) VALUES(?, 'UPDATE', 'Updating XC_VM...', 'root', 'localhost', NULL, ?);", SERVER_ID, time());
+                            $db->query("INSERT INTO `mysql_syslog`(`server_id`, `type`, `error`, `username`, `ip`, `database`, `date`) VALUES(?, 'UPDATE', 'Updating UyPanel...', 'root', 'localhost', NULL, ?);", SERVER_ID, time());
                             shell_exec('sudo ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php update update 2>&1 &');
                             break;
                         case 'enable_ministra':

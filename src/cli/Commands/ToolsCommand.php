@@ -54,7 +54,7 @@ class ToolsCommand implements CommandInterface {
 
 		// xc_vm subcommands
 		if ($rUser !== 'xc_vm') {
-			echo "Please run as XC_VM!\n";
+			echo "Please run as UyPanel!\n";
 			return 1;
 		}
 
@@ -81,7 +81,7 @@ class ToolsCommand implements CommandInterface {
 				echo "  migration   Clear migration database and optionally restore .sql backup\n";
 				echo "  user        Create a rescue admin user for the admin panel\n";
 				echo "  mysql       Reauthorise load balancers on MySQL\n";
-				echo "  database    Restore blank XC_VM database (requires --confirm)\n";
+				echo "  database    Restore blank UyPanel database (requires --confirm)\n";
 				echo "  flush       Flush all blocked IPs (iptables + database)\n";
 				return 1;
 		}

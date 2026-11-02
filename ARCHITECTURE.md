@@ -1,4 +1,4 @@
-# XC_VM — Архитектурный план реорганизации `/src`
+# UyPanel — Архитектурный план реорганизации `/src`
 
 ## Содержание
 
@@ -1496,7 +1496,7 @@ require_once '/home/xc_vm/bootstrap.php';
 XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_CLI, [
     'cached'  => true,
     'redis'   => true,
-    'process' => 'XC_VM[Streams]'
+    'process' => 'UyPanel[Streams]'
 ]);
 // Database + CoreUtilities + Redis, без session и admin API
 ```

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Управление сервисом XC_VM (start/stop/restart/reload).
+ * Управление сервисом UyPanel (start/stop/restart/reload).
  *
  * Команда: service {start|stop|restart|reload}
  * Требует: root
@@ -16,7 +16,7 @@ class ServiceCommand implements CommandInterface {
 	}
 
 	public function getDescription(): string {
-		return 'Manage XC_VM service: start, stop, restart, reload';
+		return 'Manage UyPanel service: start, stop, restart, reload';
 	}
 
 	public function execute(array $rArgs): int {
@@ -45,11 +45,11 @@ class ServiceCommand implements CommandInterface {
 	private function start(): int {
 		$rPids = intval(trim(shell_exec('pgrep -u xc_vm nginx | wc -l')));
 		if ($rPids > 0) {
-			echo "XC_VM is already running\n";
+			echo "UyPanel is already running\n";
 			return 1;
 		}
 
-		echo "Starting XC_VM...\n";
+		echo "Starting UyPanel...\n";
 
 		exec('sudo chown -R xc_vm:xc_vm /sys/class/net');
 		exec('sudo chown -R xc_vm:xc_vm ' . MAIN_HOME . 'content/streams');
@@ -78,11 +78,11 @@ class ServiceCommand implements CommandInterface {
 	private function stop(): int {
 		$rPids = intval(trim(shell_exec('pgrep -u xc_vm nginx | wc -l')));
 		if ($rPids === 0) {
-			echo "XC_VM is not running\n";
+			echo "UyPanel is not running\n";
 			return 1;
 		}
 
-		echo "Stopping XC_VM...\n";
+		echo "Stopping UyPanel...\n";
 		exec('sudo killall -u xc_vm');
 		sleep(1);
 		exec('sudo killall -u xc_vm');
@@ -99,11 +99,11 @@ class ServiceCommand implements CommandInterface {
 	private function reload(): int {
 		$rPids = intval(trim(shell_exec('pgrep -u xc_vm nginx | wc -l')));
 		if ($rPids === 0) {
-			echo "XC_VM is not running\n";
+			echo "UyPanel is not running\n";
 			return 1;
 		}
 
-		echo "Reloading XC_VM...\n";
+		echo "Reloading UyPanel...\n";
 		exec('sudo -u xc_vm ' . MAIN_HOME . 'bin/nginx/sbin/nginx -s reload');
 		exec('sudo -u xc_vm ' . MAIN_HOME . 'bin/nginx_rtmp/sbin/nginx_rtmp -s reload');
 		return 0;

@@ -6,11 +6,11 @@
  * @package VateronMedia_GitHubReleases
  * @author Divarion_D <https://github.com/Divarion-D>
  * @copyright 2025-2026 Vateron Media
- * @link https://github.com/Vateron-Media/XC_VM
+ * @link https://github.com/m4sterinfo/UyPanel
  * @version 0.1.0
  * @license AGPL-3.0 https://www.gnu.org/licenses/agpl-3.0.html
  *
- * A PHP class created specifically for the XC_VM project to interact with the GitHub Releases API.
+ * A PHP class created specifically for the UyPanel project to interact with the GitHub Releases API.
  * Provides methods to fetch release versions, changelogs, asset hashes, and GeoLite database information
  * with caching support.
  */
@@ -313,7 +313,7 @@ class GitHubReleases {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Vateron-Media/XC_VM');
+        curl_setopt($ch, CURLOPT_USERAGENT, 'm4sterinfo/UyPanel');
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 
@@ -519,7 +519,7 @@ class GitHubReleases {
  * ------------------------------------------------------------
  * 🔧 Инициализация:
  *
- *   $gh = new GitHubReleases("Vateron-Media", "XC_VM", 'stable');
+ *   $gh = new GitHubReleases("m4sterinfo", "UyPanel", 'stable');
  *   // Можно передать токен для увеличения лимита API:
  *   // $gh = new GitHubReleases("owner", "repo", "ghp_XXXXXXX");
  *
@@ -545,7 +545,7 @@ class GitHubReleases {
  * ------------------------------------------------------------
  * 4. Загрузить changelog:
  *
- *   $changelog = $gh->getChangelog("https://raw.githubusercontent.com/Vateron-Media/XC_VM_Update/refs/heads/main/changelog.json");
+ *   $changelog = $gh->getChangelog("https://raw.githubusercontent.com/m4sterinfo/UyPanel_Update/refs/heads/main/changelog.json");
  *   print_r($changelog);
  *
  * ------------------------------------------------------------
@@ -569,7 +569,7 @@ class GitHubReleases {
  * ------------------------------------------------------------
  * 8. Получить информацию о GeoLite базах:
  *
- *   $gh = new GitHubReleases("Vateron-Media", "XC_VM_Update");
+ *   $gh = new GitHubReleases("m4sterinfo", "UyPanel_Update");
  *   $geo = $gh->getGeolite();
  *   print_r($geo);
  *

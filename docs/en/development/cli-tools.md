@@ -1,7 +1,7 @@
 <h1 align="center">🛠 CLI Tools & Database Migrations</h1>
 
 <p align="center">
-  Reference for XC_VM command-line interface, system tools, and the database migration system.<br>
+  Reference for UyPanel command-line interface, system tools, and the database migration system.<br>
   Covers daily operations, emergency access, and creating new DB migrations.
 </p>
 
@@ -53,7 +53,7 @@ To see all available commands:
 |---|---|---|---|
 | `status` | `StatusCommand` | System status, DB migrations, configuration check | root |
 | `update` | `UpdateCommand` | System update (update / post-update) | xc_vm |
-| `service` | `ServiceCommand` | Manage XC_VM service: start, stop, restart, reload | root |
+| `service` | `ServiceCommand` | Manage UyPanel service: start, stop, restart, reload | root |
 | `tools` | `ToolsCommand` | Maintenance utilities (see [Tools Command](#tools-command)) | root/xc_vm |
 | `certbot` | `CertbotCommand` | Generate SSL certificate via certbot | root |
 | `binaries` | `BinariesCommand` | Update binaries and GeoLite DB from GitHub | xc_vm |
@@ -237,7 +237,7 @@ console.php tools <subcommand>
 | `migration` | Clear the migration database (`xc_vm_migrate`) and optionally restore a `.sql` backup into it. |
 | `user` | Create a rescue admin user with random credentials. Prints username and password. **Delete this user after use!** |
 | `mysql` | Reauthorise MySQL privileges for all load balancer servers. |
-| `database` | Restore a blank XC_VM database from `database.sql`. **Erases ALL data!** Requires `--confirm` flag. |
+| `database` | Restore a blank UyPanel database from `database.sql`. **Erases ALL data!** Requires `--confirm` flag. |
 | `flush` | Flush all blocked IPs — clears iptables rules, removes block files, and truncates the `blocked_ips` table. |
 
 ### Subcommands (run as `xc_vm`)
@@ -300,7 +300,7 @@ su - xc_vm -c '/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools bouquet
 
 ## 🗃 Database Migrations
 
-XC_VM uses a file-based migration system to manage database schema changes between versions. Migrations are executed automatically during updates and system status checks.
+UyPanel uses a file-based migration system to manage database schema changes between versions. Migrations are executed automatically during updates and system status checks.
 
 ### How It Works
 
@@ -442,7 +442,7 @@ If a statement fails, the migration will still be recorded but show `[WARN]` —
 sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php status
 ```
 
-Checks if XC_VM is running, connects to the database, runs pending migrations, fixes permissions, and validates nginx configuration. Required after installation or recovery.
+Checks if UyPanel is running, connects to the database, runs pending migrations, fixes permissions, and validates nginx configuration. Required after installation or recovery.
 
 With `first-run` argument, skips the running check — used for initial setup:
 

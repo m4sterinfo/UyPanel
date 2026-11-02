@@ -29,9 +29,8 @@ class CertbotCronJob implements CommandInterface {
         $rCertInfo = null;
 
         if (!$rCheck) {
-            if (!DEVELOPMENT) {
-                DiagnosticsService::submitPanelLogs(DatabaseFactory::get());
-            }
+            // UyPanel: telemetry to the original project's API server disabled.
+            // DiagnosticsService::submitPanelLogs() removed — logs stay local.
             $rCertInfo = DiagnosticsService::getCertificateInfo();
             if (ServerRepository::getAll()[SERVER_ID]['enable_https'] && $rCertInfo) {
                 if ($rCertInfo['expiration'] - time() < 604800) {
