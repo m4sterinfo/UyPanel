@@ -94,7 +94,7 @@ class ScannerCommand implements CommandInterface {
 				$rURLInfo = parse_url($rStreamSource);
 				$rIsUyPanel = StreamUtils::detectUyPanel($rStreamSource);
 
-				if ($rIsUyPanel && SettingsManager::getAll()['send_xc_vm_header']) {
+				if ($rIsUyPanel && SettingsManager::getAll()['send_uypanel_header']) {
 					foreach (array_keys($rStreamArguments) as $rID) {
 						if ($rStreamArguments[$rID]['argument_key'] != 'headers') {
 							continue;

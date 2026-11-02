@@ -1917,13 +1917,13 @@
 #define PHP_CAN_SUPPORT_PROC_OPEN 1
 
 /* fpm group name */
-#define PHP_FPM_GROUP "xc_vm"
+#define PHP_FPM_GROUP "uypanel"
 
 /* fpm systemd service type */
 #define PHP_FPM_SYSTEMD "simple"
 
 /* fpm user name */
-#define PHP_FPM_USER "xc_vm"
+#define PHP_FPM_USER "uypanel"
 
 /* Whether the compiler supports __builtin_clz */
 #define PHP_HAVE_BUILTIN_CLZ 1

@@ -1,9 +1,9 @@
 location ^~ /#CODE#/assets/ {
-    alias /home/xc_vm/public/assets/#TYPE#/;
+    alias /home/uypanel/public/assets/#TYPE#/;
 }
 
 location ^~ /#CODE# {
-    alias /home/xc_vm/#ALIAS#;
+    alias /home/uypanel/#ALIAS#;
     try_files $uri $uri.html @fc_#CODE#;
     #WHITELIST#
     location ~ \.php$ {
@@ -26,7 +26,7 @@ location @fc_#CODE# {
     fastcgi_index index.php;
     fastcgi_pass php;
     include fastcgi_params;
-    fastcgi_param SCRIPT_FILENAME /home/xc_vm/public/index.php;
+    fastcgi_param SCRIPT_FILENAME /home/uypanel/public/index.php;
     fastcgi_param SCRIPT_NAME /public/index.php;
     fastcgi_param XC_SCOPE #TYPE#;
     fastcgi_param XC_CODE  #CODE#;

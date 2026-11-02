@@ -48,8 +48,8 @@ class StartupCommand implements CommandInterface {
 			$rNewBalance .= '}';
 			file_put_contents(MAIN_HOME . 'bin/daemons.sh', $rNewScript);
 			exec('chmod 0771 ' . MAIN_HOME . 'bin/daemons.sh');
-			exec('sudo chown xc_vm:xc_vm ' . MAIN_HOME . 'bin/daemons.sh');
-			exec('sudo chown xc_vm:xc_vm ' . MAIN_HOME . 'bin/php/etc/*');
+			exec('sudo chown uypanel:uypanel ' . MAIN_HOME . 'bin/daemons.sh');
+			exec('sudo chown uypanel:uypanel ' . MAIN_HOME . 'bin/php/etc/*');
 			file_put_contents(MAIN_HOME . 'bin/nginx/conf/balance.conf', $rNewBalance);
 		}
 
@@ -57,7 +57,7 @@ class StartupCommand implements CommandInterface {
 		if (posix_getpwuid(posix_geteuid())['name'] == 'root') {
 			$this->installRootCrontab();
 			if (!$rFixCron) {
-				exec('sudo -u xc_vm ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php cron:cache 1', $rOutput);
+				exec('sudo -u uypanel ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php cron:cache 1', $rOutput);
 				$this->generateCacheIfNeeded();
 			}
 		} else {

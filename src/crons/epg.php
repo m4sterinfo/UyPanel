@@ -307,7 +307,7 @@ function shutdown() {
 }
 
 
-if (posix_getpwuid(posix_geteuid())['name'] != 'xc_vm') {
+if (posix_getpwuid(posix_geteuid())['name'] != 'uypanel') {
 	exit('Please run as UyPanel!' . "\n");
 }
 

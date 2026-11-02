@@ -271,7 +271,7 @@ var main_menu = {
             this.map[i].sub_obj = create_block_element('mm_vert_container', this.vert_body);
             this.map[i].sub_items_dom_obj = [];
 
-            if (loader.template == "xc_vm") {
+            if (loader.template == "uypanel") {
                 max_items = 3;
             } else {
                 max_items = 6;
@@ -531,7 +531,7 @@ var main_menu = {
 
         _debug('img', img);
 
-        if (loader.template == "xc_vm") {
+        if (loader.template == "uypanel") {
             n = 2;
         } else {
             n = 3;

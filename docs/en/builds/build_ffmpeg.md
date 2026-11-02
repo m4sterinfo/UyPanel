@@ -41,7 +41,7 @@ Set environment variables to easily customize versions and paths.
 export FFMPEG_VERSION="8.0"
 
 # Installation directory
-export INSTALL_DIR="/home/xc_vm/bin/ffmpeg_bin"
+export INSTALL_DIR="/home/uypanel/bin/ffmpeg_bin"
 
 # Build directory
 export BUILD_DIR="$HOME/ffmpeg_sources"
@@ -338,8 +338,8 @@ make -j$(nproc)
 ## 📦 Installation
 
 ```bash
-mkdir -p ${INSTALL_DIR:-/home/xc_vm/bin/ffmpeg_bin}/${FFMPEG_VERSION:-8.0}/
-cp ffmpeg ffprobe ${INSTALL_DIR:-/home/xc_vm/bin/ffmpeg_bin}/${FFMPEG_VERSION:-8.0}/
+mkdir -p ${INSTALL_DIR:-/home/uypanel/bin/ffmpeg_bin}/${FFMPEG_VERSION:-8.0}/
+cp ffmpeg ffprobe ${INSTALL_DIR:-/home/uypanel/bin/ffmpeg_bin}/${FFMPEG_VERSION:-8.0}/
 ```
 
 ---
@@ -349,15 +349,15 @@ cp ffmpeg ffprobe ${INSTALL_DIR:-/home/xc_vm/bin/ffmpeg_bin}/${FFMPEG_VERSION:-8
 Check version and NVIDIA support:
 
 ```bash
-${INSTALL_DIR:-/home/xc_vm/bin/ffmpeg_bin}/${FFMPEG_VERSION:-8.0}/ffmpeg -version
-${INSTALL_DIR:-/home/xc_vm/bin/ffmpeg_bin}/${FFMPEG_VERSION:-8.0}/ffprobe -version
+${INSTALL_DIR:-/home/uypanel/bin/ffmpeg_bin}/${FFMPEG_VERSION:-8.0}/ffmpeg -version
+${INSTALL_DIR:-/home/uypanel/bin/ffmpeg_bin}/${FFMPEG_VERSION:-8.0}/ffprobe -version
 ```
 
 Verify NVIDIA encoder/decoder support:
 
 ```bash
-${INSTALL_DIR:-/home/xc_vm/bin/ffmpeg_bin}/${FFMPEG_VERSION:-8.0}/ffmpeg -encoders | grep nvenc
-${INSTALL_DIR:-/home/xc_vm/bin/ffmpeg_bin}/${FFMPEG_VERSION:-8.0}/ffmpeg -decoders | grep cuvid
+${INSTALL_DIR:-/home/uypanel/bin/ffmpeg_bin}/${FFMPEG_VERSION:-8.0}/ffmpeg -encoders | grep nvenc
+${INSTALL_DIR:-/home/uypanel/bin/ffmpeg_bin}/${FFMPEG_VERSION:-8.0}/ffmpeg -decoders | grep cuvid
 ```
 
 ---

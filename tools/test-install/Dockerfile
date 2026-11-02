@@ -5,7 +5,7 @@ ENV container=docker
 ENV LC_ALL=C
 ENV TZ=UTC
 
-# systemd — необходим для инсталлятора (systemctl enable/start xc_vm)
+# systemd — необходим для инсталлятора (systemctl enable/start uypanel)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     systemd systemd-sysv dbus \
     lsb-release sudo python3 python3-pip wget curl unzip \

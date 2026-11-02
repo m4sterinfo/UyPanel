@@ -288,7 +288,7 @@ FC переключён на `infrastructure/bootstrap/admin_*_fc.php`. Ориг
    - **8 view-файлов**: `dirname(__DIR__, 3) . '/modules/'` (исправлена глубина)
    - **AuthRepository.php**: `$rAlias` admin → `'public/Views/admin'`
    - **Makefile**: permissions `$(TEMP_DIR)/public/assets/admin`
-5. nginx template (`bin/nginx/conf/codes/template`) уже корректный: `alias /home/xc_vm/public/assets/#TYPE#/`
+5. nginx template (`bin/nginx/conf/codes/template`) уже корректный: `alias /home/uypanel/public/assets/#TYPE#/`
 6. Syntax check: 126/127 pass (review.php — pre-existing bug, не регрессия)
 
 ---
@@ -361,12 +361,12 @@ console.php                  # Единая точка входа (root-level)
 **Запуск:**
 ```bash
 # Было:
-php /home/xc_vm/includes/cli/startup.php
-php /home/xc_vm/crons/servers.php
+php /home/uypanel/includes/cli/startup.php
+php /home/uypanel/crons/servers.php
 
 # Стало:
-php /home/xc_vm/console.php startup
-php /home/xc_vm/console.php cron:servers
+php /home/uypanel/console.php startup
+php /home/uypanel/console.php cron:servers
 ```
 
 #### Шаг 12.2 — Миграция includes/cli/ → cli/Commands/ ✅

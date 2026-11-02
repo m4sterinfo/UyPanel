@@ -9,7 +9,7 @@
         this.layer_name = 'epg_simple';
         //this.buttons = {};
 
-        if (loader.template == "xc_vm") {
+        if (loader.template == "uypanel") {
             this.total_rows = 7;
         } else {
             this.total_rows = 10;
@@ -868,7 +868,7 @@
 
     epg_simple.init_left_ear(word['ears_back']);
 
-    if (loader.template == "xc_vm") {
+    if (loader.template == "uypanel") {
         epg_simple.init_color_buttons([
             { "label": "", "cmd": (function () { }) },
             { "label": "", "cmd": (function () { }) },

@@ -59,7 +59,7 @@ Do not submit PRs with syntax errors — CI will reject them.
 - Write unit tests for PHP scripts.
 - To run tests:
   ```sh
-  php8.4 /home/xc_vm/bin/install/php/phpunit-12.0.5.phar --configuration /home/xc_vm/tests/phpunit.xml 
+  php8.4 /home/uypanel/bin/install/php/phpunit-12.0.5.phar --configuration /home/uypanel/tests/phpunit.xml 
   ```
 - Ensure all tests pass before submitting PRs. -->
 

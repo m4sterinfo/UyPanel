@@ -34,7 +34,7 @@ class UpdateCommand implements CommandInterface {
 				if (ServerRepository::getAll()[SERVER_ID]['is_main']) {
 					$UpdateData = $gitRelease->getUpdateFile("main", UyPanel_VERSION);
 				} else {
-					$UpdateData = $gitRelease->getUpdateFile("lb_update", ServerRepository::getAll()[SERVER_ID]['xc_vm_version']);
+					$UpdateData = $gitRelease->getUpdateFile("lb_update", ServerRepository::getAll()[SERVER_ID]['uypanel_version']);
 				}
 
 				if ($UpdateData && 0 < strlen($UpdateData['url'])) {
@@ -66,7 +66,7 @@ class UpdateCommand implements CommandInterface {
 					}
 				}
 
-				$db->query('UPDATE `servers` SET `status` = 1, `xc_vm_version` = ? WHERE `id` = ?;', UyPanel_VERSION, SERVER_ID);
+				$db->query('UPDATE `servers` SET `status` = 1, `uypanel_version` = ? WHERE `id` = ?;', UyPanel_VERSION, SERVER_ID);
 				$db->query('UPDATE `settings` SET `update_data` = NULL;');
 
 				foreach (array('http', 'https') as $rType) {
@@ -76,7 +76,7 @@ class UpdateCommand implements CommandInterface {
 					}
 				}
 
-				exec('sudo chown -R xc_vm:xc_vm ' . MAIN_HOME);
+				exec('sudo chown -R uypanel:uypanel ' . MAIN_HOME);
 				exec('sudo systemctl daemon-reload');
 				exec("sudo echo 'net.ipv4.ip_unprivileged_port_start=0' > /etc/sysctl.d/50-allports-nonroot.conf && sudo sysctl --system");
 				exec('sudo ' . MAIN_HOME . 'status');

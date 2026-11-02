@@ -52,7 +52,7 @@ class InvoiceService {
 После создания файла **удалите кэш**, чтобы автозагрузчик обнаружил новые классы:
 
 ```bash
-rm -f /home/xc_vm/tmp/cache/autoload_map
+rm -f /home/uypanel/tmp/cache/autoload_map
 ```
 
 При следующем запросе `warmCache()` запустится автоматически, найдёт `InvoiceService` и закэширует.
@@ -68,7 +68,7 @@ rm -f /home/xc_vm/tmp/cache/autoload_map
 
 ```bash
 # Удалить вручную
-rm -f /home/xc_vm/tmp/cache/autoload_map
+rm -f /home/uypanel/tmp/cache/autoload_map
 
 # Или через PHP
 XC_Autoloader::clearCache();
@@ -81,8 +81,8 @@ XC_Autoloader::clearCache();
 Для особых случаев когда файл содержит несколько классов или имя файла не совпадает с именем класса:
 
 ```php
-XC_Autoloader::addClass('DropboxClient', '/home/xc_vm/includes/libs/Dropbox.php');
-XC_Autoloader::addClass('DropboxException', '/home/xc_vm/includes/libs/Dropbox.php');
+XC_Autoloader::addClass('DropboxClient', '/home/uypanel/includes/libs/Dropbox.php');
+XC_Autoloader::addClass('DropboxException', '/home/uypanel/includes/libs/Dropbox.php');
 ```
 
 Это нужно в основном для legacy-библиотек с несколькими классами в одном файле (например, `iptables.php`, `m3u.php`).

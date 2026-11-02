@@ -24,7 +24,7 @@
 Все CLI-команды выполняются через `console.php`:
 
 ```bash
-/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php <command> [args...]
+/home/uypanel/bin/php/bin/php /home/uypanel/console.php <command> [args...]
 ```
 
 Консоль поддерживает три типа команд:
@@ -40,7 +40,7 @@
 Для просмотра всех доступных команд:
 
 ```bash
-/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php list
+/home/uypanel/bin/php/bin/php /home/uypanel/console.php list
 ```
 
 ---
@@ -52,17 +52,17 @@
 | Команда | Класс | Описание | Пользователь |
 |---|---|---|---|
 | `status` | `StatusCommand` | Статус системы, миграции БД, проверка конфигурации | root |
-| `update` | `UpdateCommand` | Обновление системы (update / post-update) | xc_vm |
+| `update` | `UpdateCommand` | Обновление системы (update / post-update) | uypanel |
 | `service` | `ServiceCommand` | Управление сервисом UyPanel: start, stop, restart, reload | root |
-| `tools` | `ToolsCommand` | Утилиты обслуживания (см. [Команда tools](#команда-tools)) | root/xc_vm |
+| `tools` | `ToolsCommand` | Утилиты обслуживания (см. [Команда tools](#команда-tools)) | root/uypanel |
 | `certbot` | `CertbotCommand` | Генерация SSL-сертификата через certbot | root |
-| `binaries` | `BinariesCommand` | Обновление бинарников и GeoLite из GitHub | xc_vm |
+| `binaries` | `BinariesCommand` | Обновление бинарников и GeoLite из GitHub | uypanel |
 | `startup` | `StartupCommand` | Инициализация системы: daemons.sh, crontab, кеш | root |
-| `monitor` | `MonitorCommand` | Мониторинг стрима по ID (запуск/перезапуск/отслеживание) | xc_vm |
-| `thumbnail` | `ThumbnailCommand` | Генерация превью-кадров для стрима | xc_vm |
-| `plex_item` | `PlexItemCommand` | Обработка элемента Plex (фильм/сериал) | xc_vm |
-| `watch_item` | `WatchItemCommand` | Обработка элемента Watch (поиск/обновление TMDB) | xc_vm |
-| `migrate` | `MigrateCommand` | Миграция данных из БД `xc_vm_migrate` | xc_vm |
+| `monitor` | `MonitorCommand` | Мониторинг стрима по ID (запуск/перезапуск/отслеживание) | uypanel |
+| `thumbnail` | `ThumbnailCommand` | Генерация превью-кадров для стрима | uypanel |
+| `plex_item` | `PlexItemCommand` | Обработка элемента Plex (фильм/сериал) | uypanel |
+| `watch_item` | `WatchItemCommand` | Обработка элемента Watch (поиск/обновление TMDB) | uypanel |
+| `migrate` | `MigrateCommand` | Миграция данных из БД `uypanel_migrate` | uypanel |
 | `balancer` | `BalancerCommand` | Установка/настройка балансировщика по SSH | root |
 
 > Опциональные команды (условная регистрация через `file_exists()`): `cache_handler`, `balancer`, `migrate`.
@@ -211,10 +211,10 @@ if (file_exists(CLI_PATH . 'Commands/MyNewCommand.php')) {
 
 ```bash
 # Проверьте, что команда отображается в списке
-/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php list
+/home/uypanel/bin/php/bin/php /home/uypanel/console.php list
 
 # Запустите
-/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php my_command
+/home/uypanel/bin/php/bin/php /home/uypanel/console.php my_command
 ```
 
 ---
@@ -234,13 +234,13 @@ console.php tools <subcommand>
 | `rescue` | Создать временный код доступа для экстренного входа в панель. Выводит URL. **Удалите код после использования!** |
 | `access` | Перегенерировать все конфигурации кодов доступа nginx и перезагрузить nginx. Выводит URL всех кодов админ-панели. |
 | `ports` | Перегенерировать конфигурации портов nginx (HTTP, HTTPS, RTMP) из базы данных и перезагрузить nginx. |
-| `migration` | Очистить базу миграций (`xc_vm_migrate`) и опционально восстановить `.sql`-бэкап. |
+| `migration` | Очистить базу миграций (`uypanel_migrate`) и опционально восстановить `.sql`-бэкап. |
 | `user` | Создать rescue-администратора со случайными учётными данными. Выводит логин и пароль. **Удалите пользователя после использования!** |
 | `mysql` | Переавторизовать привилегии MySQL для всех серверов балансировки нагрузки. |
 | `database` | Восстановить чистую БД UyPanel из `database.sql`. **Удаляет ВСЕ данные!** Требует флаг `--confirm`. |
 | `flush` | Сбросить все заблокированные IP — очищает правила iptables, удаляет файлы блокировок и очищает таблицу `blocked_ips`. |
 
-### Подкоманды (запуск от `xc_vm`)
+### Подкоманды (запуск от `uypanel`)
 
 | Подкоманда | Описание |
 |---|---|
@@ -252,40 +252,40 @@ console.php tools <subcommand>
 
 ```bash
 # Экстренный доступ к панели (root)
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools rescue
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools rescue
 
 # Перегенерация кодов доступа (root) — требуется после изменения шаблона nginx
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools access
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools access
 
 # Перегенерация конфигурации портов (root)
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools ports
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools ports
 
 # Очистить базу миграций (root)
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools migration
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools migration
 
 # Очистить базу миграций и восстановить бэкап (root)
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools migration /path/to/backup.sql
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools migration /path/to/backup.sql
 
 # Создать rescue-администратора (root)
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools user
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools user
 
 # Переавторизовать MySQL на всех серверах (root)
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools mysql
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools mysql
 
 # Восстановить чистую базу данных (root) — ДЕСТРУКТИВНАЯ ОПЕРАЦИЯ!
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools database --confirm
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools database --confirm
 
 # Сбросить все заблокированные IP (root)
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools flush
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools flush
 
-# Скачать недостающие изображения (xc_vm)
-su - xc_vm -c '/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools images'
+# Скачать недостающие изображения (uypanel)
+su - uypanel -c '/home/uypanel/bin/php/bin/php /home/uypanel/console.php tools images'
 
-# Удалить дубликаты VOD (xc_vm)
-su - xc_vm -c '/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools duplicates'
+# Удалить дубликаты VOD (uypanel)
+su - uypanel -c '/home/uypanel/bin/php/bin/php /home/uypanel/console.php tools duplicates'
 
-# Очистить ссылки в букетах (xc_vm)
-su - xc_vm -c '/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools bouquets'
+# Очистить ссылки в букетах (uypanel)
+su - uypanel -c '/home/uypanel/bin/php/bin/php /home/uypanel/console.php tools bouquets'
 ```
 
 > ⚠️ **Внимание:** `duplicates` безвозвратно удаляет стримы и все связанные данные (логи, статистика, эпизоды, записи). Всегда делайте бэкап перед запуском.
@@ -306,7 +306,7 @@ UyPanel использует файловую систему миграций д
 
 1. Файлы миграций хранятся как `.sql` файлы в:
    ```
-   /home/xc_vm/migrations/
+   /home/uypanel/migrations/
    ```
 
 2. Каждый файл именуется с числовым префиксом:
@@ -408,7 +408,7 @@ WHERE NOT EXISTS (SELECT 1 FROM `streams_arguments` WHERE argument_key = 'my_key
 Скопируйте файл миграции в:
 
 ```
-/home/xc_vm/migrations/
+/home/uypanel/migrations/
 ```
 
 > 💡 В репозитории исходного кода это `src/migrations/`.
@@ -418,7 +418,7 @@ WHERE NOT EXISTS (SELECT 1 FROM `streams_arguments` WHERE argument_key = 'my_key
 Запустите команду status для применения ожидающих миграций:
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php status first-run
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php status first-run
 ```
 
 Ожидаемый вывод:
@@ -439,7 +439,7 @@ Migrations
 ### Проверка статуса
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php status
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php status
 ```
 
 Проверяет, запущен ли UyPanel, подключается к БД, выполняет ожидающие миграции, исправляет права доступа и валидирует конфигурацию nginx. Требуется после установки или восстановления.
@@ -447,19 +447,19 @@ sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php status
 С аргументом `first-run` пропускает проверку статуса — используется при первоначальной настройке:
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php status first-run
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php status first-run
 ```
 
 ### Управление сервисом
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php service start|stop|restart|reload
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php service start|stop|restart|reload
 ```
 
 ### Ручное обновление
 
 ```bash
-sudo -u xc_vm /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php update update
+sudo -u uypanel /home/uypanel/bin/php/bin/php /home/uypanel/console.php update update
 ```
 
 Скачивает и применяет последнее обновление с GitHub. Обычно запускается автоматически через веб-панель.
@@ -467,7 +467,7 @@ sudo -u xc_vm /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php update update
 ### Диагностика стримов
 
 ```bash
-sudo -u xc_vm /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php monitor <stream_id>
+sudo -u uypanel /home/uypanel/bin/php/bin/php /home/uypanel/console.php monitor <stream_id>
 ```
 
 Запускает стрим вручную и отображает ошибки. Полезно для диагностики проблем запуска стримов.
@@ -475,13 +475,13 @@ sudo -u xc_vm /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php monitor <strea
 ### SSL-сертификат
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php certbot
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php certbot
 ```
 
 ### Миграция (с других систем)
 
 ```bash
-/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php migrate
+/home/uypanel/bin/php/bin/php /home/uypanel/console.php migrate
 ```
 
 Переносит данные из базы миграции. Подробности в [Руководстве по миграции](ru-ru/info/migration_guide.md).

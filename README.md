@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/_media/UyPanel_logo.jpg" width="440" alt="UyPanel Logo"/>
+</p>
+
 <h1 align="center">UyPanel IPTV Panel</h1>
 <p align="center">
   <b>Open-source, community-driven Xtream Codes panel</b><br>
@@ -142,12 +146,12 @@ sudo python3 install
 ## 🧰 Service Management
 
 ```bash
-sudo systemctl start xc_vm     # Start
-sudo systemctl stop xc_vm      # Stop
-sudo systemctl restart xc_vm   # Restart
-sudo systemctl status xc_vm    # Status
-sudo /home/xc_vm/bin/nginx/sbin/nginx -s reload    # Reload Nginx config
-journalctl -u xc_vm -f         # Live logs
+sudo systemctl start uypanel     # Start
+sudo systemctl stop uypanel      # Stop
+sudo systemctl restart uypanel   # Restart
+sudo systemctl status uypanel    # Status
+sudo /home/uypanel/bin/nginx/sbin/nginx -s reload    # Reload Nginx config
+journalctl -u uypanel -f         # Live logs
 ```
 
 ---

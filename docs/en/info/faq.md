@@ -18,7 +18,7 @@
 Connect to your server console and run the following command:
 
 ```bash
-sudo -u xc_vm /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php monitor 291
+sudo -u uypanel /home/uypanel/bin/php/bin/php /home/uypanel/console.php monitor 291
 ````
 
 > 🧩 Where `291` is your **stream ID** (replace it with your own).
@@ -108,7 +108,7 @@ UyPanel's brute-force guard blocks IPs after too many failed login attempts. Thi
 **To unblock yourself:**
 
 1. **From admin panel:** Tools → IP Management → remove from blocked list.
-2. **From CLI:** `sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools flush` — flushes all blocked IPs.
+2. **From CLI:** `sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools flush` — flushes all blocked IPs.
 3. **If completely locked out:** Use `console.php tools rescue` to create a rescue access code (see [CLI Tools](en-us/development/cli-tools.md)).
 
 ---
@@ -123,7 +123,7 @@ UyPanel's brute-force guard blocks IPs after too many failed login attempts. Thi
 Create a new rescue admin user via CLI:
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools user
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools user
 ```
 
 This outputs a random username and password with full admin privileges. Log in, change the password, and delete the rescue user when done.
@@ -131,7 +131,7 @@ This outputs a random username and password with full admin privileges. Log in, 
 If the admin panel URL itself is unknown, create a rescue access code:
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools rescue
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools rescue
 ```
 
 ---
@@ -154,10 +154,10 @@ The most common issue. Causes:
 3. **Network unreachable** — DB server on another host and port is firewalled
 4. **User lacks privileges** — re-grant with `console.php tools mysql`
 
-**Fix:** Edit `/home/xc_vm/config/config.ini`, then run:
+**Fix:** Edit `/home/uypanel/config/config.ini`, then run:
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php status
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php status
 ```
 
 ---
@@ -201,13 +201,13 @@ See [Database Migrations](en-us/development/cli-tools.md#database-migrations) fo
 |---|---|---|
 | Error 3 | Domain is a bare IP address | Certbot requires a domain name, not an IP |
 | Error 4 | Dry run failed — port 80/443 in use | Stop conflicting service: `sudo lsof -i :80` |
-| Error 0 | Files not found after generation | Check `/home/xc_vm/bin/certbot/logs/xc_vm.log` |
+| Error 0 | Files not found after generation | Check `/home/uypanel/bin/certbot/logs/uypanel.log` |
 | Error 2 | Unexpected certbot error | Check logs, ensure DNS resolves to your server |
 
 **Also:** Remove stale lock files if certbot was interrupted:
 
 ```bash
-sudo rm -f /home/xc_vm/bin/certbot/*/.certbot.lock
+sudo rm -f /home/uypanel/bin/certbot/*/.certbot.lock
 ```
 
 ---
@@ -235,7 +235,7 @@ sudo netstat -tlnp | grep -E ':80|:443|:1935'
 **Fix:** Change the broadcast port in admin panel settings, then regenerate configs:
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools ports
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools ports
 ```
 
 ---
@@ -260,7 +260,7 @@ The update system downloads from GitHub releases. If it fails:
 Updates are never applied if the checksum doesn't match. Re-run the update after fixing network issues:
 
 ```bash
-sudo -u xc_vm /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php update update
+sudo -u uypanel /home/uypanel/bin/php/bin/php /home/uypanel/console.php update update
 ```
 
 ---
@@ -276,13 +276,13 @@ The service command uses escalating kill signals. If processes hang:
 
 ```bash
 # Check for stuck processes
-ps -u xc_vm
+ps -u uypanel
 
 # Force kill if necessary
-sudo killall -9 -u xc_vm
+sudo killall -9 -u uypanel
 
 # Restart cleanly
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php service start
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php service start
 ```
 
 Common causes: PHP transaction deadlock, infinite loop in stream processing, or network socket timeout waiting for a response.
@@ -303,7 +303,7 @@ Common causes: PHP transaction deadlock, infinite loop in stream processing, or 
 Run the status command — it automatically repairs all known permission issues:
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php status
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php status
 ```
 
 What it fixes:
@@ -313,7 +313,7 @@ What it fixes:
 - Executable bit on `daemons.sh`
 - Network interface permissions (`/sys/class/net`)
 
-If permissions break after every restart, check that the `xc_vm` system user exists and owns `/home/xc_vm`.
+If permissions break after every restart, check that the `uypanel` system user exists and owns `/home/uypanel`.
 
 ---
 
@@ -329,14 +329,14 @@ LB servers poll MAIN via HTTP and process signals. When sync fails:
 1. **Network:** LB can't reach MAIN's HTTP port — check firewall rules
 2. **Database:** LB can't connect to MAIN's MySQL — re-grant privileges:
    ```bash
-   sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools mysql
+   sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools mysql
    ```
 3. **Timeout:** If `last_check_ago` exceeds 180 seconds, server is marked offline
 
 **Debug:** Run on MAIN to check connectivity:
 
 ```bash
-sudo -u xc_vm /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php watchdog
+sudo -u uypanel /home/uypanel/bin/php/bin/php /home/uypanel/console.php watchdog
 ```
 
 ---

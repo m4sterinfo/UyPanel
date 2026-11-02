@@ -5,7 +5,7 @@ applyTo: "Makefile"
 # Makefile & Build — UyPanel
 
 ## Build Variants
-- **MAIN** (`xc_vm.tar.gz`): Full application — admin panel + streaming + all modules
+- **MAIN** (`uypanel.tar.gz`): Full application — admin panel + streaming + all modules
 - **LoadBalancer** (`loadbalancer.tar.gz`): Streaming-only subset — admin dirs stripped
 - **Installer** (`UyPanel.zip`): Distribution package with install script
 

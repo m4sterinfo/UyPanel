@@ -34,7 +34,7 @@ class BackupService {
 
 		$ignoreArgs = '';
 		foreach ($ignoreTables as $table) {
-			$ignoreArgs .= " --ignore-table xc_vm.{$table}";
+			$ignoreArgs .= " --ignore-table uypanel.{$table}";
 		}
 
 		shell_exec("mysqldump -h 127.0.0.1 -u {$user} -p{$pass} -P {$port} --no-create-info{$ignoreArgs} {$db} >> " . escapeshellarg($filename));
@@ -52,7 +52,7 @@ class BackupService {
 		$port = $config['port'];
 		$db   = $config['database'];
 
-		shell_exec("mysql -u {$user} -p{$pass} -P {$port} {$db} -e \"DROP DATABASE IF EXISTS xc_vm; CREATE DATABASE IF NOT EXISTS xc_vm;\"");
+		shell_exec("mysql -u {$user} -p{$pass} -P {$port} {$db} -e \"DROP DATABASE IF EXISTS uypanel; CREATE DATABASE IF NOT EXISTS uypanel;\"");
 		shell_exec("mysql -u {$user} -p{$pass} -P {$port} {$db} < " . escapeshellarg($filename) . " > /dev/null 2>/dev/null &");
 
 		// Re-dump structure
@@ -68,7 +68,7 @@ class BackupService {
 
 		$ignoreArgs = '';
 		foreach ($ignoreTables as $table) {
-			$ignoreArgs .= " --ignore-table xc_vm.{$table}";
+			$ignoreArgs .= " --ignore-table uypanel.{$table}";
 		}
 
 		shell_exec("mysqldump -h 127.0.0.1 -u {$user} -p{$pass} -P {$port} --no-create-info{$ignoreArgs} {$db} >> " . escapeshellarg($filename));

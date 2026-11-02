@@ -27,7 +27,7 @@
 
 class XC_Autoloader {
 
-    /** @var string Project root directory (e.g. /home/xc_vm/) */
+    /** @var string Project root directory (e.g. /home/uypanel/) */
     private static $basePath = '';
 
     /** @var array<string, string> Explicit map: class name → absolute file path */

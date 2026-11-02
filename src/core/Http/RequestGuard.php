@@ -36,7 +36,7 @@ if (!isset($_SERVER['argc'])) {
                 $rData = file_get_contents(CACHE_TMP_PATH . 'allowed_domains');
                 $rAllowedDomains = igbinary_unserialize($rData);
 
-                if (!(is_array($rAllowedDomains) && !in_array(HOST, $rAllowedDomains) && HOST != 'xc_vm') || filter_var(HOST, FILTER_VALIDATE_IP)) {
+                if (!(is_array($rAllowedDomains) && !in_array(HOST, $rAllowedDomains) && HOST != 'uypanel') || filter_var(HOST, FILTER_VALIDATE_IP)) {
                 } else {
                     generateError('INVALID_HOST');
                 }

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SCRIPT=/home/xc_vm
+SCRIPT=/home/uypanel
 USER=$(whoami)
 
 if [ "$USER" != "root" ]; then
@@ -9,58 +9,58 @@ if [ "$USER" != "root" ]; then
 fi
 
 start() {
-  pids=$(pgrep -u xc_vm nginx | wc -l)
+  pids=$(pgrep -u uypanel nginx | wc -l)
   if [ $pids != 0 ]; then
     echo 'UyPanel is already running'
     return 1
   fi
   echo 'Starting UyPanel...'
-  sudo chown -R xc_vm:xc_vm /sys/class/net
-  sudo chown -R xc_vm:xc_vm /home/xc_vm/content/streams
-  sudo chown -R xc_vm:xc_vm /home/xc_vm/tmp
+  sudo chown -R uypanel:uypanel /sys/class/net
+  sudo chown -R uypanel:uypanel /home/uypanel/content/streams
+  sudo chown -R uypanel:uypanel /home/uypanel/tmp
   if [ -f $SCRIPT/bin/redis/redis-server ]; then
-    sudo -u xc_vm $SCRIPT/bin/redis/redis-server $SCRIPT/bin/redis/redis.conf >/dev/null 2>/dev/null
+    sudo -u uypanel $SCRIPT/bin/redis/redis-server $SCRIPT/bin/redis/redis.conf >/dev/null 2>/dev/null
   fi
-  sudo -u xc_vm $SCRIPT/bin/nginx/sbin/nginx >/dev/null 2>/dev/null
-  sudo -u xc_vm $SCRIPT/bin/nginx_rtmp/sbin/nginx_rtmp >/dev/null 2>/dev/null
-  sudo -u xc_vm $SCRIPT/bin/daemons.sh
+  sudo -u uypanel $SCRIPT/bin/nginx/sbin/nginx >/dev/null 2>/dev/null
+  sudo -u uypanel $SCRIPT/bin/nginx_rtmp/sbin/nginx_rtmp >/dev/null 2>/dev/null
+  sudo -u uypanel $SCRIPT/bin/daemons.sh
   sudo $SCRIPT/bin/php/bin/php $SCRIPT/console.php startup
-  sudo -u xc_vm $SCRIPT/bin/php/bin/php $SCRIPT/console.php signals >/dev/null 2>/dev/null &
-  sudo -u xc_vm $SCRIPT/bin/php/bin/php $SCRIPT/console.php watchdog >/dev/null 2>/dev/null &
-  sudo -u xc_vm $SCRIPT/bin/php/bin/php $SCRIPT/console.php queue >/dev/null 2>/dev/null &
-  sudo -u xc_vm $SCRIPT/bin/php/bin/php $SCRIPT/console.php cache_handler >/dev/null 2>/dev/null &
+  sudo -u uypanel $SCRIPT/bin/php/bin/php $SCRIPT/console.php signals >/dev/null 2>/dev/null &
+  sudo -u uypanel $SCRIPT/bin/php/bin/php $SCRIPT/console.php watchdog >/dev/null 2>/dev/null &
+  sudo -u uypanel $SCRIPT/bin/php/bin/php $SCRIPT/console.php queue >/dev/null 2>/dev/null &
+  sudo -u uypanel $SCRIPT/bin/php/bin/php $SCRIPT/console.php cache_handler >/dev/null 2>/dev/null &
   echo 'Running in foreground...'
   sleep infinity
 }
 
 stop() {
-  pids=$(pgrep -u xc_vm nginx | wc -l)
+  pids=$(pgrep -u uypanel nginx | wc -l)
   if [ $pids = 0 ]; then
     echo 'UyPanel is not running'
     return 1
   fi
   echo 'Stopping UyPanel...'
-  sudo killall -u xc_vm
+  sudo killall -u uypanel
   sleep 1
-  sudo killall -u xc_vm
+  sudo killall -u uypanel
   sleep 1
-  sudo killall -u xc_vm
+  sudo killall -u uypanel
 }
 
 restart() {
-  ps -U xc_vm | egrep -v "ffmpeg|PID" | awk '{print $1}' | xargs kill -9
+  ps -U uypanel | egrep -v "ffmpeg|PID" | awk '{print $1}' | xargs kill -9
   start
 }
 
 reload() {
-  pids=$(pgrep -u xc_vm nginx | wc -l)
+  pids=$(pgrep -u uypanel nginx | wc -l)
   if [ $pids = 0 ]]; then
     echo 'UyPanel is not running'
     return 1
   fi
   echo 'Reloading UyPanel...'
-  sudo -u xc_vm $SCRIPT/bin/nginx/sbin/nginx -s reload
-  sudo -u xc_vm $SCRIPT/bin/nginx_rtmp/sbin/nginx_rtmp -s reload
+  sudo -u uypanel $SCRIPT/bin/nginx/sbin/nginx -s reload
+  sudo -u uypanel $SCRIPT/bin/nginx_rtmp/sbin/nginx_rtmp -s reload
 }
 
 case "$1" in

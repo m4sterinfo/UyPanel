@@ -8,7 +8,7 @@
  */
 
 if (!defined('MAIN_HOME')) {
-	define('MAIN_HOME', '/home/xc_vm/');
+	define('MAIN_HOME', '/home/uypanel/');
 }
 
 require_once MAIN_HOME . 'includes/admin.php';

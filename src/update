@@ -15,11 +15,11 @@ def md5(rFilename):
 
 
 def doUpdate(rFilename):
-    os.system("sudo systemctl stop xc_vm")
+    os.system("sudo systemctl stop uypanel")
     os.system('sudo tar -zxvf "%s" -C "%s"' % (rFilename, rBaseDir))
-    os.system('sudo chown -R xc_vm:xc_vm "%s"' % rBaseDir)
+    os.system('sudo chown -R uypanel:uypanel "%s"' % rBaseDir)
     os.system('sudo %s %s update "post-update"' % (rPHPDir, rConsole))
-    os.system("sudo systemctl start xc_vm")
+    os.system("sudo systemctl start uypanel")
     os.remove(rFilename)
     return True
 

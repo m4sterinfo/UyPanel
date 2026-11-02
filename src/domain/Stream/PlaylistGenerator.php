@@ -240,7 +240,7 @@ class PlaylistGenerator {
 				if ($isM3UFormat && strpos($rDeviceInfo['device_header'], 'x-tvg-url') === false) {
 					$rDeviceInfo['device_header'] = str_replace('#EXTM3U', '#EXTM3U x-tvg-url="' . $epgUrl . '"', $rDeviceInfo['device_header']);
 				}
-				$rAppend = ($isM3UFormat ? "\n" . '#EXT-X-SESSION-DATA:DATA-ID="com.xc_vm.' . str_replace('.', '_', UyPanel_VERSION) . '"' : '');
+				$rAppend = ($isM3UFormat ? "\n" . '#EXT-X-SESSION-DATA:DATA-ID="com.uypanel.' . str_replace('.', '_', UyPanel_VERSION) . '"' : '');
 				$rData = str_replace(array('&lt;', '&gt;'), array('<', '>'), str_replace(array('{BOUQUET_NAME}', '{USERNAME}', '{PASSWORD}', '{SERVER_URL}', '{OUTPUT_KEY}'), array($rSettings['server_name'], $rUserInfo['username'], $rUserInfo['password'], $rDomainName, $rOutputKey), $rDeviceInfo['device_header'] . $rAppend)) . "\n";
 				if ($rOutputFile) {
 					fwrite($rOutputFile, $rData);
@@ -282,7 +282,7 @@ class PlaylistGenerator {
 								$rConfig = str_replace('tvg-id="{CHANNEL_ID}" ', '', $rConfig);
 							}
 							if (!$rEncryptPlaylist) {
-								$rConfig = str_replace('xc_vm-id="{UyPanel_ID}" ', '', $rConfig);
+								$rConfig = str_replace('uypanel-id="{UyPanel_ID}" ', '', $rConfig);
 							}
 							if (0 < $rChannel['tv_archive_server_id'] && 0 < $rChannel['tv_archive_duration']) {
 								$rConfig = str_replace('#EXTINF:-1 ', '#EXTINF:-1 timeshift="' . intval($rChannel['tv_archive_duration']) . '" ', $rConfig);

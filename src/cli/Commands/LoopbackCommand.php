@@ -11,7 +11,7 @@ class LoopbackCommand implements CommandInterface {
 	}
 
 	public function execute(array $rArgs): int {
-		if (posix_getpwuid(posix_geteuid())['name'] != 'xc_vm') {
+		if (posix_getpwuid(posix_geteuid())['name'] != 'uypanel') {
 			echo "Please run as UyPanel!\n";
 			return 1;
 		}
@@ -26,7 +26,7 @@ class LoopbackCommand implements CommandInterface {
 		$rStreamID = intval($rArgs[0]);
 		$rServerID = intval($rArgs[1]);
 
-		if (!defined('MAIN_HOME')) define('MAIN_HOME', '/home/xc_vm/');
+		if (!defined('MAIN_HOME')) define('MAIN_HOME', '/home/uypanel/');
 		if (!defined('STREAMS_PATH')) define('STREAMS_PATH', MAIN_HOME . 'content/streams/');
 		if (!defined('INCLUDES_PATH')) define('INCLUDES_PATH', MAIN_HOME . 'includes/');
 		if (!defined('FFMPEG')) define('FFMPEG', MAIN_HOME . 'bin/ffmpeg_bin/4.0/ffmpeg');

@@ -76,7 +76,7 @@ Example location:
 Clear the migration database and restore the backup:
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools migration "/tmp/backup.sql"
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools migration "/tmp/backup.sql"
 ```
 
 Ensure the restore completes **without errors** before proceeding.
@@ -90,7 +90,7 @@ Once the backup is restored, start the migration using one of the following meth
 #### 🧩 Option 1 — Command Line (Recommended)
 
 ```bash
-/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php migrate
+/home/uypanel/bin/php/bin/php /home/uypanel/console.php migrate
 ```
 
 #### 🌐 Option 2 — Web Installer
@@ -111,13 +111,13 @@ If login fails due to missing credentials or access code, use the rescue tools.
 ### Create a Rescue Access Code
 
 ```bash
-/home/xc_vm/tools access
+/home/uypanel/tools access
 ```
 
 ### Create an Administrator Account
 
 ```bash
-/home/xc_vm/tools user
+/home/uypanel/tools user
 ```
 
 > ⚠️ After regaining access, **immediately change** the access code and administrator credentials.

@@ -24,7 +24,7 @@
 All CLI commands are executed through `console.php`:
 
 ```bash
-/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php <command> [args...]
+/home/uypanel/bin/php/bin/php /home/uypanel/console.php <command> [args...]
 ```
 
 The console supports three types of commands:
@@ -40,7 +40,7 @@ The console supports three types of commands:
 To see all available commands:
 
 ```bash
-/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php list
+/home/uypanel/bin/php/bin/php /home/uypanel/console.php list
 ```
 
 ---
@@ -52,17 +52,17 @@ To see all available commands:
 | Command | Class | Description | User |
 |---|---|---|---|
 | `status` | `StatusCommand` | System status, DB migrations, configuration check | root |
-| `update` | `UpdateCommand` | System update (update / post-update) | xc_vm |
+| `update` | `UpdateCommand` | System update (update / post-update) | uypanel |
 | `service` | `ServiceCommand` | Manage UyPanel service: start, stop, restart, reload | root |
-| `tools` | `ToolsCommand` | Maintenance utilities (see [Tools Command](#tools-command)) | root/xc_vm |
+| `tools` | `ToolsCommand` | Maintenance utilities (see [Tools Command](#tools-command)) | root/uypanel |
 | `certbot` | `CertbotCommand` | Generate SSL certificate via certbot | root |
-| `binaries` | `BinariesCommand` | Update binaries and GeoLite DB from GitHub | xc_vm |
+| `binaries` | `BinariesCommand` | Update binaries and GeoLite DB from GitHub | uypanel |
 | `startup` | `StartupCommand` | System initialization: daemons.sh, crontab, cache | root |
-| `monitor` | `MonitorCommand` | Monitor stream by ID (start/restart/track) | xc_vm |
-| `thumbnail` | `ThumbnailCommand` | Generate thumbnail frames for a stream | xc_vm |
-| `plex_item` | `PlexItemCommand` | Process single Plex item (movie/series) | xc_vm |
-| `watch_item` | `WatchItemCommand` | Process single Watch item (TMDB search/update) | xc_vm |
-| `migrate` | `MigrateCommand` | Migrate data from `xc_vm_migrate` database | xc_vm |
+| `monitor` | `MonitorCommand` | Monitor stream by ID (start/restart/track) | uypanel |
+| `thumbnail` | `ThumbnailCommand` | Generate thumbnail frames for a stream | uypanel |
+| `plex_item` | `PlexItemCommand` | Process single Plex item (movie/series) | uypanel |
+| `watch_item` | `WatchItemCommand` | Process single Watch item (TMDB search/update) | uypanel |
+| `migrate` | `MigrateCommand` | Migrate data from `uypanel_migrate` database | uypanel |
 | `balancer` | `BalancerCommand` | Install/configure load balancer via SSH | root |
 
 > Commands marked **optional** are conditionally registered via `file_exists()` guard: `cache_handler`, `balancer`, `migrate`.
@@ -211,10 +211,10 @@ If the command should NOT be included in Load Balancer builds, add its path to `
 
 ```bash
 # Verify it appears in the list
-/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php list
+/home/uypanel/bin/php/bin/php /home/uypanel/console.php list
 
 # Run it
-/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php my_command
+/home/uypanel/bin/php/bin/php /home/uypanel/console.php my_command
 ```
 
 ---
@@ -234,13 +234,13 @@ console.php tools <subcommand>
 | `rescue` | Create a temporary rescue access code for emergency panel access. Prints the URL. **Delete this code after use!** |
 | `access` | Regenerate all nginx access code configs and reload nginx. Prints URLs for all admin panel codes. |
 | `ports` | Regenerate nginx port configs (HTTP, HTTPS, RTMP) from the database and reload nginx. |
-| `migration` | Clear the migration database (`xc_vm_migrate`) and optionally restore a `.sql` backup into it. |
+| `migration` | Clear the migration database (`uypanel_migrate`) and optionally restore a `.sql` backup into it. |
 | `user` | Create a rescue admin user with random credentials. Prints username and password. **Delete this user after use!** |
 | `mysql` | Reauthorise MySQL privileges for all load balancer servers. |
 | `database` | Restore a blank UyPanel database from `database.sql`. **Erases ALL data!** Requires `--confirm` flag. |
 | `flush` | Flush all blocked IPs — clears iptables rules, removes block files, and truncates the `blocked_ips` table. |
 
-### Subcommands (run as `xc_vm`)
+### Subcommands (run as `uypanel`)
 
 | Subcommand | Description |
 |---|---|
@@ -252,40 +252,40 @@ console.php tools <subcommand>
 
 ```bash
 # Emergency panel access (root)
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools rescue
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools rescue
 
 # Regenerate access codes (root) — required after nginx template changes
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools access
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools access
 
 # Regenerate port configuration (root)
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools ports
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools ports
 
 # Clear migration database (root)
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools migration
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools migration
 
 # Clear migration database and restore a backup (root)
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools migration /path/to/backup.sql
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools migration /path/to/backup.sql
 
 # Create rescue admin user (root)
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools user
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools user
 
 # Reauthorise MySQL privileges on all servers (root)
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools mysql
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools mysql
 
 # Restore blank database (root) — DESTRUCTIVE!
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools database --confirm
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools database --confirm
 
 # Flush all blocked IPs (root)
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools flush
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php tools flush
 
-# Download missing images (xc_vm)
-su - xc_vm -c '/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools images'
+# Download missing images (uypanel)
+su - uypanel -c '/home/uypanel/bin/php/bin/php /home/uypanel/console.php tools images'
 
-# Remove duplicate VOD entries (xc_vm)
-su - xc_vm -c '/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools duplicates'
+# Remove duplicate VOD entries (uypanel)
+su - uypanel -c '/home/uypanel/bin/php/bin/php /home/uypanel/console.php tools duplicates'
 
-# Clean orphaned bouquet references (xc_vm)
-su - xc_vm -c '/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php tools bouquets'
+# Clean orphaned bouquet references (uypanel)
+su - uypanel -c '/home/uypanel/bin/php/bin/php /home/uypanel/console.php tools bouquets'
 ```
 
 > ⚠️ **Warning:** `duplicates` permanently deletes streams and all associated data (logs, stats, episodes, recordings). Always back up before running.
@@ -306,7 +306,7 @@ UyPanel uses a file-based migration system to manage database schema changes bet
 
 1. Migration files are stored as `.sql` files in:
    ```
-   /home/xc_vm/migrations/
+   /home/uypanel/migrations/
    ```
 
 2. Each file is named with a sequential number prefix:
@@ -408,7 +408,7 @@ WHERE NOT EXISTS (SELECT 1 FROM `streams_arguments` WHERE argument_key = 'my_key
 Copy the migration file to:
 
 ```
-/home/xc_vm/migrations/
+/home/uypanel/migrations/
 ```
 
 > 💡 In the source repository, this is `src/migrations/`.
@@ -418,7 +418,7 @@ Copy the migration file to:
 Run the status command to apply pending migrations:
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php status first-run
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php status first-run
 ```
 
 Expected output:
@@ -439,7 +439,7 @@ If a statement fails, the migration will still be recorded but show `[WARN]` —
 ### Status Check
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php status
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php status
 ```
 
 Checks if UyPanel is running, connects to the database, runs pending migrations, fixes permissions, and validates nginx configuration. Required after installation or recovery.
@@ -447,19 +447,19 @@ Checks if UyPanel is running, connects to the database, runs pending migrations,
 With `first-run` argument, skips the running check — used for initial setup:
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php status first-run
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php status first-run
 ```
 
 ### Service Management
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php service start|stop|restart|reload
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php service start|stop|restart|reload
 ```
 
 ### Manual Update
 
 ```bash
-sudo -u xc_vm /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php update update
+sudo -u uypanel /home/uypanel/bin/php/bin/php /home/uypanel/console.php update update
 ```
 
 Downloads and applies the latest update from GitHub. Usually triggered automatically through the web panel.
@@ -467,7 +467,7 @@ Downloads and applies the latest update from GitHub. Usually triggered automatic
 ### Stream Diagnostics
 
 ```bash
-sudo -u xc_vm /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php monitor <stream_id>
+sudo -u uypanel /home/uypanel/bin/php/bin/php /home/uypanel/console.php monitor <stream_id>
 ```
 
 Starts a stream manually and displays any errors. Useful for diagnosing stream startup failures.
@@ -475,13 +475,13 @@ Starts a stream manually and displays any errors. Useful for diagnosing stream s
 ### SSL Certificate
 
 ```bash
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php certbot
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php certbot
 ```
 
 ### Migration (from Other Systems)
 
 ```bash
-/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php migrate
+/home/uypanel/bin/php/bin/php /home/uypanel/console.php migrate
 ```
 
 Transfers data from a migration database. See the [Migration Guide](en-us/info/migration_guide.md) for details.

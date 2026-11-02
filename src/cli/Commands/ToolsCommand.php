@@ -52,8 +52,8 @@ class ToolsCommand implements CommandInterface {
 			}
 		}
 
-		// xc_vm subcommands
-		if ($rUser !== 'xc_vm') {
+		// uypanel subcommands
+		if ($rUser !== 'uypanel') {
 			echo "Please run as UyPanel!\n";
 			return 1;
 		}
@@ -70,7 +70,7 @@ class ToolsCommand implements CommandInterface {
 				break;
 			default:
 				echo "Usage: console.php tools <subcommand>\n\n";
-				echo "Subcommands (run as xc_vm):\n";
+				echo "Subcommands (run as uypanel):\n";
 				echo "  images      Download missing stream/movie/series images from TMDB\n";
 				echo "  duplicates  Find and remove duplicate VOD streams\n";
 				echo "  bouquets    Clean stale references from bouquets\n\n";
@@ -90,8 +90,8 @@ class ToolsCommand implements CommandInterface {
 	}
 
 	private function processMigration($db, array $rArgs, array $rServers): int {
-		$db->query('DROP DATABASE IF EXISTS `xc_vm_migrate`;');
-		$db->query('CREATE DATABASE IF NOT EXISTS `xc_vm_migrate`;');
+		$db->query('DROP DATABASE IF EXISTS `uypanel_migrate`;');
+		$db->query('CREATE DATABASE IF NOT EXISTS `uypanel_migrate`;');
 		echo "Migration database has been cleared.\n";
 
 		$database = (!empty($rArgs[1]) ? $rArgs[1] : null);
@@ -100,14 +100,14 @@ class ToolsCommand implements CommandInterface {
 			$rExtension = strtolower(pathinfo($database, PATHINFO_EXTENSION));
 			if ($rExtension === 'sql') {
 				echo 'Restoring: ' . $database . "\n";
-				shell_exec('sudo mysql xc_vm_migrate < ' . escapeshellarg($database));
+				shell_exec('sudo mysql uypanel_migrate < ' . escapeshellarg($database));
 				echo "If no errors were shown above, restore was completed.\n\n";
 			} else {
 				echo "Error: File must have .sql extension\n";
 			}
 		} else {
 			echo "You can restore a database to it using:\n";
-			echo "sudo mysql xc_vm_migrate < backup.sql\n\n";
+			echo "sudo mysql uypanel_migrate < backup.sql\n\n";
 		}
 
 		$rConfig = ConfigReader::getAll();
@@ -121,7 +121,7 @@ class ToolsCommand implements CommandInterface {
 	private function processUser($db): int {
 		$rUsername = 'admin_' . bin2hex(random_bytes(4));
 		$rPassword = bin2hex(random_bytes(8));
-		$rHash = crypt($rPassword, sprintf('$6$rounds=%d$%s$', 20000, 'xc_vm'));
+		$rHash = crypt($rPassword, sprintf('$6$rounds=%d$%s$', 20000, 'uypanel'));
 		$db->query(
 			"INSERT INTO `users`(`username`, `password`, `email`, `ip`, `date_registered`, `last_login`, `member_group_id`, `status`) VALUES(?, ?, '', '', ?, ?, 1, 1);",
 			$rUsername, $rHash, time(), time()
@@ -155,7 +155,7 @@ class ToolsCommand implements CommandInterface {
 			return 1;
 		}
 		echo "Restoring blank database...\n";
-		shell_exec('sudo mariadb -u root xc_vm < ' . escapeshellarg($rDatabaseFile));
+		shell_exec('sudo mariadb -u root uypanel < ' . escapeshellarg($rDatabaseFile));
 		echo "Blank database has been restored.\n";
 		return 0;
 	}

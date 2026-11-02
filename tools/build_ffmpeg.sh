@@ -64,10 +64,10 @@ log_error() { echo -e "${RED}[ERROR]${NC} $*"; }
 log_step()  { echo -e "${CYAN}[STEP]${NC} $*"; }
 
 # ── Detect UyPanel install dir ─────────────────────────────────────────────────
-detect_xc_vm_bin_dir() {
+detect_uypanel_bin_dir() {
     local candidates=(
-        "/home/xc_vm/bin/ffmpeg_bin"
-        "/opt/xc_vm/bin/ffmpeg_bin"
+        "/home/uypanel/bin/ffmpeg_bin"
+        "/opt/uypanel/bin/ffmpeg_bin"
     )
     for dir in "${candidates[@]}"; do
         if [[ -d "$dir" ]]; then
@@ -122,7 +122,7 @@ if [[ ${#VERSIONS_TO_BUILD[@]} -eq 0 ]]; then
 fi
 
 if [[ "$DO_INSTALL" == true && -z "$INSTALL_DIR" ]]; then
-    INSTALL_DIR="$(detect_xc_vm_bin_dir)" || {
+    INSTALL_DIR="$(detect_uypanel_bin_dir)" || {
         log_error "Cannot detect UyPanel bin dir. Use --install-dir PATH"
         exit 1
     }
@@ -544,7 +544,7 @@ GPU:      $(if [[ "$HAS_CUDA" == true ]]; then echo "NVENC+CUVID (CUDA: ${CUDA_H
 Strategy: static deps + dynamic glibc
 EOF
 
-    chown -R xc_vm:xc_vm "$target" 2>/dev/null || true
+    chown -R uypanel:uypanel "$target" 2>/dev/null || true
     chmod +x "${target}/ffmpeg" "${target}/ffprobe"
     if timeout 5 "${target}/ffmpeg" -version &>/dev/null; then
         log_info "Installed and validated: OK"

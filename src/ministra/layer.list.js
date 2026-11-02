@@ -16,7 +16,7 @@ function ListLayer() {
     this.dom_obj = this.create_block();
     document.body.appendChild(this.dom_obj);
 
-    if (loader.template == "xc_vm") {
+    if (loader.template == "uypanel") {
         this.active_row_offset = 0;
         this.total_rows = 10;
     } else {

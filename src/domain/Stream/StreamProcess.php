@@ -640,7 +640,7 @@ class StreamProcess {
 					$rURLInfo = parse_url($rStreamSource);
 					$rIsUyPanel = ($rLoopback ? true : StreamUtils::detectUyPanel($rStreamSource));
 
-					if ($rIsUyPanel && !$rLoopback && $rSettings['send_xc_vm_header']) {
+					if ($rIsUyPanel && !$rLoopback && $rSettings['send_uypanel_header']) {
 						foreach (array_keys($rStream['stream_arguments']) as $rID) {
 							if ($rStream['stream_arguments'][$rID]['argument_key'] == 'headers') {
 								$rStream['stream_arguments'][$rID]['value'] .= "\r\n" . 'X-UyPanel-Detect:1';

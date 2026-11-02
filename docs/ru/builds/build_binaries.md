@@ -20,7 +20,7 @@
 
 ## 🔧 Предварительная подготовка
 
-> ⚠️ **Внимание:** Все действия выполняются **на сервере**, где установлен `xc_vm`.
+> ⚠️ **Внимание:** Все действия выполняются **на сервере**, где установлен `uypanel`.
 
 ### 1. Установите зависимости
 
@@ -81,7 +81,7 @@ cd nginx-1.28.0
 
 ```bash
 ./configure \
-  --prefix=/home/xc_vm/bin/nginx \
+  --prefix=/home/uypanel/bin/nginx \
   --with-compat \
   --with-http_auth_request_module \
   --with-file-aio \
@@ -128,7 +128,7 @@ tar -xzvf v1.2.2.tar.gz
 ```bash
 cd nginx-1.28.0
 ./configure \
-  --prefix=/home/xc_vm/bin/nginx_rtmp \
+  --prefix=/home/uypanel/bin/nginx_rtmp \
   --add-module=../nginx-http-flv-module-1.2.12 \
   --with-compat \
   --with-http_auth_request_module \
@@ -158,7 +158,7 @@ make install
 ### 4. Переименование исполняемого файла
 
 ```bash
-mv /home/xc_vm/bin/nginx_rtmp/sbin/nginx /home/xc_vm/bin/nginx_rtmp/sbin/nginx_rtmp
+mv /home/uypanel/bin/nginx_rtmp/sbin/nginx /home/uypanel/bin/nginx_rtmp/sbin/nginx_rtmp
 ```
 
 ---
@@ -185,9 +185,9 @@ cd php-8.1.33
 
 ```bash
 ./configure \
-  --prefix=/home/xc_vm/bin/php \
-  --with-fpm-user=xc_vm \
-  --with-fpm-group=xc_vm \
+  --prefix=/home/uypanel/bin/php \
+  --with-fpm-user=uypanel \
+  --with-fpm-group=uypanel \
   --enable-gd \
   --with-jpeg \
   --with-freetype \
@@ -240,10 +240,10 @@ make install
 Используйте встроенный `pecl` из вашей сборки PHP для установки расширений.
 
 ```bash
-/home/xc_vm/bin/php/bin/pecl install maxminddb
-/home/xc_vm/bin/php/bin/pecl install ssh2
-/home/xc_vm/bin/php/bin/pecl install igbinary
-/home/xc_vm/bin/php/bin/pecl install redis
+/home/uypanel/bin/php/bin/pecl install maxminddb
+/home/uypanel/bin/php/bin/pecl install ssh2
+/home/uypanel/bin/php/bin/pecl install igbinary
+/home/uypanel/bin/php/bin/pecl install redis
 ```
 
 ### Настройка Redis-расширения
@@ -274,20 +274,20 @@ pip install -U pyinstaller
 ### 2. Соберите бинарный файл
 
 ```bash
-cd /home/xc_vm/bin
+cd /home/uypanel/bin
 pyinstaller --onefile network.py
 ```
 
 После сборки исполняемый файл появится в директории:
 
 ```bash
-/home/xc_vm/bin/dist/network
+/home/uypanel/bin/dist/network
 ```
 
 ### 3. Переместите бинарник в нужное место
 
 ```bash
-mv /home/xc_vm/bin/dist/network /home/xc_vm/bin/network
+mv /home/uypanel/bin/dist/network /home/uypanel/bin/network
 ```
 
 ### 4. Очистите временные директории

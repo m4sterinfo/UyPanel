@@ -31,13 +31,13 @@
 Все SSL-файлы (ключ, сертификат и конфигурация) хранятся в директории:
 
 ```bash
-/home/xc_vm/bin/nginx/conf
+/home/uypanel/bin/nginx/conf
 ```
 
 Перед началом работы перейдите в неё:
 
 ```bash
-cd /home/xc_vm/bin/nginx/conf
+cd /home/uypanel/bin/nginx/conf
 ```
 
 ---
@@ -119,7 +119,7 @@ openssl req -new -x509 -key server.key -out server.crt -days 3650 -config server
 
 ## 📂 Итоговые файлы
 
-После всех шагов в `/home/xc_vm/bin/nginx/conf` должны находиться:
+После всех шагов в `/home/uypanel/bin/nginx/conf` должны находиться:
 
 | Файл         | Назначение                     |
 | ------------ | ------------------------------ |

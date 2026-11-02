@@ -52,7 +52,7 @@ class InvoiceService {
 After creating the file, **delete the cache** so the autoloader rediscovers classes:
 
 ```bash
-rm -f /home/xc_vm/tmp/cache/autoload_map
+rm -f /home/uypanel/tmp/cache/autoload_map
 ```
 
 On the next request, `warmCache()` runs automatically, finds `InvoiceService`, and caches it.
@@ -68,7 +68,7 @@ It must be deleted whenever:
 
 ```bash
 # Delete manually
-rm -f /home/xc_vm/tmp/cache/autoload_map
+rm -f /home/uypanel/tmp/cache/autoload_map
 
 # Or via PHP
 XC_Autoloader::clearCache();
@@ -81,8 +81,8 @@ XC_Autoloader::clearCache();
 For special cases where a file contains multiple classes or the filename doesn't match the class name:
 
 ```php
-XC_Autoloader::addClass('DropboxClient', '/home/xc_vm/includes/libs/Dropbox.php');
-XC_Autoloader::addClass('DropboxException', '/home/xc_vm/includes/libs/Dropbox.php');
+XC_Autoloader::addClass('DropboxClient', '/home/uypanel/includes/libs/Dropbox.php');
+XC_Autoloader::addClass('DropboxException', '/home/uypanel/includes/libs/Dropbox.php');
 ```
 
 This is mainly needed for legacy library files that bundle multiple classes in one file (e.g., `iptables.php`, `m3u.php`).

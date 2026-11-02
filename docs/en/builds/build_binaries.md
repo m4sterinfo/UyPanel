@@ -21,7 +21,7 @@
 
 ## 🔧 Prerequisites
 
-> ⚠️ **Warning:** All steps should be performed **on the server** where `xc_vm` is installed.
+> ⚠️ **Warning:** All steps should be performed **on the server** where `uypanel` is installed.
 
 ### 1. Install Dependencies
 
@@ -82,7 +82,7 @@ Configure a static build with required modules:
 
 ```bash
 ./configure \
-  --prefix=/home/xc_vm/bin/nginx \
+  --prefix=/home/uypanel/bin/nginx \
   --with-compat \
   --with-http_auth_request_module \
   --with-file-aio \
@@ -129,7 +129,7 @@ tar -xzvf v1.2.2.tar.gz
 ```bash
 cd nginx-1.28.0
 ./configure \
-  --prefix=/home/xc_vm/bin/nginx_rtmp \
+  --prefix=/home/uypanel/bin/nginx_rtmp \
   --add-module=../nginx-http-flv-module-1.2.12 \
   --with-compat \
   --with-http_auth_request_module \
@@ -159,7 +159,7 @@ make install
 ### 4. Rename Executable
 
 ```bash
-mv /home/xc_vm/bin/nginx_rtmp/sbin/nginx /home/xc_vm/bin/nginx_rtmp/sbin/nginx_rtmp
+mv /home/uypanel/bin/nginx_rtmp/sbin/nginx /home/uypanel/bin/nginx_rtmp/sbin/nginx_rtmp
 ```
 
 ---
@@ -186,9 +186,9 @@ cd php-8.1.33
 
 ```bash
 ./configure \
-  --prefix=/home/xc_vm/bin/php \
-  --with-fpm-user=xc_vm \
-  --with-fpm-group=xc_vm \
+  --prefix=/home/uypanel/bin/php \
+  --with-fpm-user=uypanel \
+  --with-fpm-group=uypanel \
   --enable-gd \
   --with-jpeg \
   --with-freetype \
@@ -241,10 +241,10 @@ make install
 Use the built-in `pecl` to install extensions:
 
 ```bash
-/home/xc_vm/bin/php/bin/pecl install maxminddb
-/home/xc_vm/bin/php/bin/pecl install ssh2
-/home/xc_vm/bin/php/bin/pecl install igbinary
-/home/xc_vm/bin/php/bin/pecl install redis
+/home/uypanel/bin/php/bin/pecl install maxminddb
+/home/uypanel/bin/php/bin/pecl install ssh2
+/home/uypanel/bin/php/bin/pecl install igbinary
+/home/uypanel/bin/php/bin/pecl install redis
 ```
 
 ### Configuring Redis Extension
@@ -275,20 +275,20 @@ pip install -U pyinstaller
 ### 2. Build Binary
 
 ```bash
-cd /home/xc_vm/bin
+cd /home/uypanel/bin
 pyinstaller --onefile network.py
 ```
 
 The executable will be located in:
 
 ```bash
-/home/xc_vm/bin/dist/network
+/home/uypanel/bin/dist/network
 ```
 
 ### 3. Move Binary to Final Location
 
 ```bash
-mv /home/xc_vm/bin/dist/network /home/xc_vm/bin/network
+mv /home/uypanel/bin/dist/network /home/uypanel/bin/network
 ```
 
 ### 4. Clean Temporary Directories

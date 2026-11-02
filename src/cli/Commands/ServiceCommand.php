@@ -43,7 +43,7 @@ class ServiceCommand implements CommandInterface {
 	}
 
 	private function start(): int {
-		$rPids = intval(trim(shell_exec('pgrep -u xc_vm nginx | wc -l')));
+		$rPids = intval(trim(shell_exec('pgrep -u uypanel nginx | wc -l')));
 		if ($rPids > 0) {
 			echo "UyPanel is already running\n";
 			return 1;
@@ -51,24 +51,24 @@ class ServiceCommand implements CommandInterface {
 
 		echo "Starting UyPanel...\n";
 
-		exec('sudo chown -R xc_vm:xc_vm /sys/class/net');
-		exec('sudo chown -R xc_vm:xc_vm ' . MAIN_HOME . 'content/streams');
-		exec('sudo chown -R xc_vm:xc_vm ' . TMP_PATH);
+		exec('sudo chown -R uypanel:uypanel /sys/class/net');
+		exec('sudo chown -R uypanel:uypanel ' . MAIN_HOME . 'content/streams');
+		exec('sudo chown -R uypanel:uypanel ' . TMP_PATH);
 
 		if (file_exists(MAIN_HOME . 'bin/redis/redis-server')) {
-			exec('sudo -u xc_vm ' . MAIN_HOME . 'bin/redis/redis-server ' . MAIN_HOME . 'bin/redis/redis.conf >/dev/null 2>/dev/null');
+			exec('sudo -u uypanel ' . MAIN_HOME . 'bin/redis/redis-server ' . MAIN_HOME . 'bin/redis/redis.conf >/dev/null 2>/dev/null');
 		}
 
-		exec('sudo -u xc_vm ' . MAIN_HOME . 'bin/nginx/sbin/nginx >/dev/null 2>/dev/null');
-		exec('sudo -u xc_vm ' . MAIN_HOME . 'bin/nginx_rtmp/sbin/nginx_rtmp >/dev/null 2>/dev/null');
+		exec('sudo -u uypanel ' . MAIN_HOME . 'bin/nginx/sbin/nginx >/dev/null 2>/dev/null');
+		exec('sudo -u uypanel ' . MAIN_HOME . 'bin/nginx_rtmp/sbin/nginx_rtmp >/dev/null 2>/dev/null');
 		exec('sudo ' . MAIN_HOME . 'bin/daemons.sh');
 
 		exec('sudo ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php startup');
-		exec('sudo -u xc_vm ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php signals >/dev/null 2>/dev/null &');
-		exec('sudo -u xc_vm ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php watchdog >/dev/null 2>/dev/null &');
-		exec('sudo -u xc_vm ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php queue >/dev/null 2>/dev/null &');
+		exec('sudo -u uypanel ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php signals >/dev/null 2>/dev/null &');
+		exec('sudo -u uypanel ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php watchdog >/dev/null 2>/dev/null &');
+		exec('sudo -u uypanel ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php queue >/dev/null 2>/dev/null &');
 
-		exec('sudo -u xc_vm ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php cache_handler >/dev/null 2>/dev/null &');
+		exec('sudo -u uypanel ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php cache_handler >/dev/null 2>/dev/null &');
 
 		echo "Running in foreground...\n";
 		// sleep infinity handled by systemd shell wrapper
@@ -76,36 +76,36 @@ class ServiceCommand implements CommandInterface {
 	}
 
 	private function stop(): int {
-		$rPids = intval(trim(shell_exec('pgrep -u xc_vm nginx | wc -l')));
+		$rPids = intval(trim(shell_exec('pgrep -u uypanel nginx | wc -l')));
 		if ($rPids === 0) {
 			echo "UyPanel is not running\n";
 			return 1;
 		}
 
 		echo "Stopping UyPanel...\n";
-		exec('sudo killall -u xc_vm');
+		exec('sudo killall -u uypanel');
 		sleep(1);
-		exec('sudo killall -u xc_vm');
+		exec('sudo killall -u uypanel');
 		sleep(1);
-		exec('sudo killall -u xc_vm');
+		exec('sudo killall -u uypanel');
 		return 0;
 	}
 
 	private function restart(): int {
-		exec("ps -U xc_vm | egrep -v 'ffmpeg|PID' | awk '{print $1}' | xargs kill -9 2>/dev/null");
+		exec("ps -U uypanel | egrep -v 'ffmpeg|PID' | awk '{print $1}' | xargs kill -9 2>/dev/null");
 		return $this->start();
 	}
 
 	private function reload(): int {
-		$rPids = intval(trim(shell_exec('pgrep -u xc_vm nginx | wc -l')));
+		$rPids = intval(trim(shell_exec('pgrep -u uypanel nginx | wc -l')));
 		if ($rPids === 0) {
 			echo "UyPanel is not running\n";
 			return 1;
 		}
 
 		echo "Reloading UyPanel...\n";
-		exec('sudo -u xc_vm ' . MAIN_HOME . 'bin/nginx/sbin/nginx -s reload');
-		exec('sudo -u xc_vm ' . MAIN_HOME . 'bin/nginx_rtmp/sbin/nginx_rtmp -s reload');
+		exec('sudo -u uypanel ' . MAIN_HOME . 'bin/nginx/sbin/nginx -s reload');
+		exec('sudo -u uypanel ' . MAIN_HOME . 'bin/nginx_rtmp/sbin/nginx_rtmp -s reload');
 		return 0;
 	}
 }

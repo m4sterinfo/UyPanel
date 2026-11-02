@@ -21,7 +21,7 @@ class GitHubReleases {
     private $api_url;
     private $headers;
     private $timeout = 5; // Request timeout in seconds
-    private $cache_file = '/home/xc_vm/tmp/gitapi'; // Cache file path
+    private $cache_file = '/home/uypanel/tmp/gitapi'; // Cache file path
     private string $channel = 'stable'; // 'stable' или 'unstable'
     private $hash_file = 'hashes.md5';
     private $cache_ttl = 1800; // Cache TTL in seconds (30 minutes)
@@ -445,7 +445,7 @@ class GitHubReleases {
             // Add file information to the list
             $data_files[] = [
                 "fileurl"   => $file_url,                                // Remote file URL
-                "path"      => "/home/xc_vm/bin/maxmind/{$file}",        // Local path where the file should be stored
+                "path"      => "/home/uypanel/bin/maxmind/{$file}",        // Local path where the file should be stored
                 "permission" => "0750",                                   // File permission
                 "md5"       => $hash_md5                                // File hash (MD5)
             ];
@@ -575,6 +575,6 @@ class GitHubReleases {
  *
  * ------------------------------------------------------------
  * ⚠️ Важно:
- * - Кеш хранится в /home/xc_vm/tmp/gitapi_repo
+ * - Кеш хранится в /home/uypanel/tmp/gitapi_repo
  * - TTL кеша: 30 минут (1800 сек)
  */

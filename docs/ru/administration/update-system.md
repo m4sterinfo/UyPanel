@@ -33,13 +33,13 @@
 Каждую **минуту** выполняется системное задание CRON:
 
 ```bash
-/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php cron:root_signals
+/home/uypanel/bin/php/bin/php /home/uypanel/console.php cron:root_signals
 ```
 
 Крон-задача `root_signals` проверяет наличие новых сигналов и при обнаружении `update` запускает:
 
 ```bash
-/home/xc_vm/bin/php/bin/php /home/xc_vm/console.php update update
+/home/uypanel/bin/php/bin/php /home/uypanel/console.php update update
 ```
 
 > ⚙️ Этот механизм позволяет выполнять обновления **автоматически**, без ручного вмешательства администратора.
@@ -66,7 +66,7 @@ src/cli/Commands/UpdateCommand.php
 5. Запуск системного обновления с помощью Python:
 
 ```bash
-sudo /usr/bin/python3 /home/xc_vm/update "/home/xc_vm/tmp/.update.tar.gz" "HASH" > /dev/null 2>&1 &
+sudo /usr/bin/python3 /home/uypanel/update "/home/uypanel/tmp/.update.tar.gz" "HASH" > /dev/null 2>&1 &
 ```
 
 ---
@@ -76,7 +76,7 @@ sudo /usr/bin/python3 /home/xc_vm/update "/home/xc_vm/tmp/.update.tar.gz" "HASH"
 После вызова передача управления переходит к скрипту:
 
 ```
-/home/xc_vm/update
+/home/uypanel/update
 ```
 
 Он выполняет операции на уровне системы:
@@ -86,17 +86,17 @@ sudo /usr/bin/python3 /home/xc_vm/update "/home/xc_vm/tmp/.update.tar.gz" "HASH"
 3. **Распаковка** обновления в каталог:
 
    ```bash
-   /home/xc_vm/
+   /home/uypanel/
    ```
 4. **Настройка прав доступа:**
 
    ```bash
-   chown -R xc_vm:xc_vm /home/xc_vm/
+   chown -R uypanel:uypanel /home/uypanel/
    ```
 5. **Запуск пост-обновления:**
 
    ```bash
-   /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php update post-update
+   /home/uypanel/bin/php/bin/php /home/uypanel/console.php update post-update
    ```
 6. **Перезапуск панели** в рабочем режиме.
 
@@ -114,7 +114,7 @@ sudo /usr/bin/python3 /home/xc_vm/update "/home/xc_vm/tmp/.update.tar.gz" "HASH"
 4. Повторное выравнивание прав:
 
    ```bash
-   chown -R xc_vm:xc_vm /home/xc_vm/
+   chown -R uypanel:uypanel /home/uypanel/
    ```
 5. Перезагрузка системных демонов:
 
@@ -124,7 +124,7 @@ sudo /usr/bin/python3 /home/xc_vm/update "/home/xc_vm/tmp/.update.tar.gz" "HASH"
 6. Проверка статуса панели:
 
    ```bash
-   sudo /home/xc_vm/status
+   sudo /home/uypanel/status
    ```
 7. Завершение процесса обновления.
 

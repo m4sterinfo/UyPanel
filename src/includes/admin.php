@@ -1268,7 +1268,7 @@ function getTickets($rID = null, $rAdmin = false) {
 	return $rReturn;
 }
 
-function cryptPassword($rPassword, $rSalt = 'xc_vm', $rRounds = 20000) {
+function cryptPassword($rPassword, $rSalt = 'uypanel', $rRounds = 20000) {
 	if ($rSalt != '') {
 	} else {
 		$rSalt = substr(bin2hex(openssl_random_pseudo_bytes(16)), 0, 16);
@@ -1445,7 +1445,7 @@ function getPIDs($rServerID) {
 	foreach ($rProcesses as $rProcess) {
 		$rSplit = explode(' ', preg_replace('!\\s+!', ' ', trim($rProcess)));
 
-		if ($rSplit[0] == 'xc_vm') {
+		if ($rSplit[0] == 'uypanel') {
 			$rUsage = array(0, 0, 0);
 			$rTimer = explode('-', $rSplit[9]);
 

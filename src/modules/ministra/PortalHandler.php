@@ -1129,7 +1129,7 @@ class PortalHandler {
                 $rChannelID = $rRequest['ch_id'];
                 $rReqDate = $rRequest['date'];
                 $rPage = intval($rRequest['p']);
-                $rPageItems = ($ctx['theme'] == 'xc_vm' ? 7 : 10);
+                $rPageItems = ($ctx['theme'] == 'uypanel' ? 7 : 10);
                 $rDefaultPage = false;
                 $rEPGDatas = array();
                 $rStartTime = strtotime($rReqDate . ' 00:00:00');
