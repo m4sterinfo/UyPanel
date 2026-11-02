@@ -1,16 +1,16 @@
 PROJECT_NAME := $(notdir $(CURDIR))
 TIMESTAMP := $(shell date +%s)
-TEMP_DIR := /tmp/XC_VM-$(TIMESTAMP)
+TEMP_DIR := /tmp/UyPanel-$(TIMESTAMP)
 MAIN_DIR = ./src
 DIST_DIR = ./dist
 CONFIG_DIR := ./lb_configs
 TEMP_ARCHIVE_NAME := $(TIMESTAMP).tar.gz
 MAIN_ARCHIVE_NAME := xc_vm.tar.gz
 MAIN_UPDATE_ARCHIVE_NAME := update.tar.gz
-MAIN_ARCHIVE_INSTALLER := XC_VM.zip
+MAIN_ARCHIVE_INSTALLER := UyPanel.zip
 LB_ARCHIVE_NAME := loadbalancer.tar.gz
 LB_UPDATE_ARCHIVE_NAME := loadbalancer_update.tar.gz
-LAST_TAG := $(shell curl -s https://api.github.com/repos/Vateron-Media/XC_VM/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+LAST_TAG := $(shell curl -s https://api.github.com/repos/m4sterinfo/UyPanel/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 HASH_FILE := hashes.md5
 
 # Directories and files to exclude (can be easily edited)

@@ -44,7 +44,7 @@ class WatchCronJob implements CommandInterface {
         }
 
         file_put_contents(CACHE_TMP_PATH . 'watch_pid', getmypid());
-        $this->setProcessTitle('XC_VM[Watch Folder]');
+        $this->setProcessTitle('UyPanel[Watch Folder]');
 
         set_time_limit(0);
         if (strlen(SettingsManager::getAll()['tmdb_api_key']) != 0) {

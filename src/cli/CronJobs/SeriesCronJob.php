@@ -20,7 +20,7 @@ class SeriesCronJob implements CommandInterface {
 
         require INCLUDES_PATH . 'admin.php';
 
-        $this->setProcessTitle('XC_VM[Series]');
+        $this->setProcessTitle('UyPanel[Series]');
         $this->acquireCronLock();
 
         $this->loadCron();

@@ -22,7 +22,7 @@
  *
  * This loader is designed for projects without Composer or namespaces.
  *
- * @package XC_VM
+ * @package UyPanel
  */
 
 class XC_Autoloader {

@@ -1,19 +1,19 @@
 #!/bin/bash
-# auto_install.sh — автоматическая установка XC_VM в контейнере
+# auto_install.sh — автоматическая установка UyPanel в контейнере
 # Подаёт ответы на интерактивные вопросы инсталлятора
 set -e
 
 INSTALL_DIR="/opt/xcvm-install"
 cd "$INSTALL_DIR"
 
-# Проверяем наличие XC_VM.zip
-if [[ ! -f XC_VM.zip ]]; then
-    echo "ERROR: XC_VM.zip not found in $INSTALL_DIR"
+# Проверяем наличие UyPanel.zip
+if [[ ! -f UyPanel.zip ]]; then
+    echo "ERROR: UyPanel.zip not found in $INSTALL_DIR"
     exit 1
 fi
 
-echo "==> Распаковка XC_VM.zip..."
-unzip -o XC_VM.zip
+echo "==> Распаковка UyPanel.zip..."
+unzip -o UyPanel.zip
 
 # Проверяем что инсталлятор и архив на месте
 if [[ ! -f install ]]; then

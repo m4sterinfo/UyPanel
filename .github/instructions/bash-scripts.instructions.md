@@ -1,8 +1,8 @@
 ---
-description: "Use when writing or editing shell scripts in tools/, src/bin/, or src/infrastructure/. Covers bash conventions for XC_VM."
+description: "Use when writing or editing shell scripts in tools/, src/bin/, or src/infrastructure/. Covers bash conventions for UyPanel."
 applyTo: "**/*.sh"
 ---
-# Bash Script Conventions — XC_VM
+# Bash Script Conventions — UyPanel
 
 ## Required Header
 ```bash

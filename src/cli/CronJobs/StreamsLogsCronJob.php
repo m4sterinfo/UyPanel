@@ -18,7 +18,7 @@ class StreamsLogsCronJob implements CommandInterface {
             return 1;
         }
 
-        $this->initCron('XC_VM[Stream Logs]');
+        $this->initCron('UyPanel[Stream Logs]');
 
         global $db;
 

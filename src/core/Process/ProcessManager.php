@@ -15,8 +15,8 @@
  *   // Check if a process with specific executable is running
  *   if (ProcessManager::isRunning($pid, 'ffmpeg')) { ... }
  *
- *   // Check named process (XC_VM[123], Thumbnail[456], etc.)
- *   if (ProcessManager::isNamedProcessRunning($pid, 'XC_VM', $streamId, PHP_BIN)) { ... }
+ *   // Check named process (UyPanel[123], Thumbnail[456], etc.)
+ *   if (ProcessManager::isNamedProcessRunning($pid, 'UyPanel', $streamId, PHP_BIN)) { ... }
  *
  *   // Kill a process
  *   ProcessManager::kill($pid);
@@ -74,12 +74,12 @@ class ProcessManager {
     }
 
     /**
-     * Check if a named process is running (e.g., XC_VM[123])
+     * Check if a named process is running (e.g., UyPanel[123])
      *
      * Reads /proc/PID/cmdline and matches against "NAME[ID]" pattern.
      *
      * @param int $pid Process ID
-     * @param string $processName Process name prefix (e.g., 'XC_VM', 'Thumbnail', 'TVArchive')
+     * @param string $processName Process name prefix (e.g., 'UyPanel', 'Thumbnail', 'TVArchive')
      * @param int|string $identifier Stream/task ID
      * @param string $exe Expected executable (default: PHP_BIN)
      * @return bool
@@ -391,7 +391,7 @@ class ProcessManager {
      * Check if a monitor/proxy process is running.
      *
      * Extracted from ProcessManager::isMonitorAlive().
-     * Checks for XC_VM[streamID] OR XC_VMProxy[streamID] in cmdline.
+     * Checks for UyPanel[streamID] OR UyPanelProxy[streamID] in cmdline.
      *
      * @param int $pid Process ID
      * @param int|string $streamID Stream identifier
@@ -421,7 +421,7 @@ class ProcessManager {
         }
 
         $cmdline = trim(@file_get_contents('/proc/' . $pid . '/cmdline'));
-        return ($cmdline == 'XC_VM[' . $streamID . ']' || $cmdline == 'XC_VMProxy[' . $streamID . ']');
+        return ($cmdline == 'UyPanel[' . $streamID . ']' || $cmdline == 'UyPanelProxy[' . $streamID . ']');
     }
 
     /**

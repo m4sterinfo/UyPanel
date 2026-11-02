@@ -18,7 +18,7 @@ class CleanupCronJob implements CommandInterface {
             return 1;
         }
 
-        $this->initCron('XC_VM[Cleanup]');
+        $this->initCron('UyPanel[Cleanup]');
 
         $rTimeout = 3600;
         set_time_limit($rTimeout);

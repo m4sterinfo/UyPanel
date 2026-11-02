@@ -54,7 +54,7 @@ endif; // !$__settingsViewMode
 					} ?>
 					<div class="card bg-info text-white cta-box">
 						<?php
-						if (isset($rUpdate) && is_array($rUpdate) && !empty($rUpdate["version"]) && (0 < version_compare($rUpdate["version"], XC_VM_VERSION) || (version_compare($rUpdate["version"], XC_VM_VERSION) == 0))) {
+						if (isset($rUpdate) && is_array($rUpdate) && !empty($rUpdate["version"]) && (0 < version_compare($rUpdate["version"], UyPanel_VERSION) || (version_compare($rUpdate["version"], UyPanel_VERSION) == 0))) {
 						?>
 							<div class="card-body" style="max-height: 250px;">
 								<h5 class="card-title text-white">Update Available</h5>
@@ -489,8 +489,8 @@ endif; // !$__settingsViewMode
 												<h5 class="card-title mb-4">Restream Prevention</h5>
 												<div class="form-group row mb-4">
 													<label class="col-md-4 col-form-label"
-														for="restream_deny_unauthorised">XC_VM Detect - Deny <i
-															title="Deny connections from non-restreamers who are trying to use XC_VM to restream."
+														for="restream_deny_unauthorised">UyPanel Detect - Deny <i
+															title="Deny connections from non-restreamers who are trying to use UyPanel to restream."
 															class="tooltip text-secondary far fa-circle"></i>
 													</label>
 													<div class="col-md-2"><input name="restream_deny_unauthorised"
@@ -499,9 +499,9 @@ endif; // !$__settingsViewMode
 																												echo ' checked ';
 																											} ?> data-plugin="switchery" class="js-switch"
 															data-color="#039cfd" /></div><label
-														class="col-md-4 col-form-label" for="detect_restream_block_user">XC_VM
+														class="col-md-4 col-form-label" for="detect_restream_block_user">UyPanel
 														Detect - Ban Lines <i
-															title="Ban lines of non-restreamers who are trying to use XC_VM to restream."
+															title="Ban lines of non-restreamers who are trying to use UyPanel to restream."
 															class="tooltip text-secondary far fa-circle"></i></label>
 													<div class="col-md-2"><input name="detect_restream_block_user"
 															id="detect_restream_block_user" type="checkbox" <?php
@@ -815,7 +815,7 @@ endif; // !$__settingsViewMode
 													</div>
 													<label class="col-md-4 col-form-label" for="cloudflare">Enable
 														Cloudflare <i
-															title="Allow Cloudflare IP's to connect to your service and relay the true client IP to XC_VM."
+															title="Allow Cloudflare IP's to connect to your service and relay the true client IP to UyPanel."
 															class="tooltip text-secondary far fa-circle"></i></label>
 													<div class="col-md-2">
 														<input name="cloudflare" id="cloudflare" type="checkbox" <?php if ($rSettings["cloudflare"] == 1) {
@@ -856,7 +856,7 @@ endif; // !$__settingsViewMode
 												<div class="form-group row mb-4">
 													<label class="col-md-4 col-form-label" for="legacy_panel_api">Legacy
 														Panel API <i
-															title="Rewrite panel_api.php requests to the new XC_VM Player API."
+															title="Rewrite panel_api.php requests to the new UyPanel Player API."
 															class="tooltip text-secondary far fa-circle"></i></label>
 													<div class="col-md-2">
 														<input name="legacy_panel_api" id="legacy_panel_api" type="checkbox"
@@ -867,7 +867,7 @@ endif; // !$__settingsViewMode
 													</div>
 													<label class="col-md-4 col-form-label"
 														for="show_category_duplicates">Duplicate Streams in Legacy Apps
-														<i title="XC_VM was the first to add multiple categories, which means most apps don't support it. The default behaviour of the API is to show the item once when ALL is requested, however apps tend to request all streams then filter them into categories themself. This option will change the default behaviour to show the stream duplicated for each additional category, therefore the stream shows correctly in each category. The downside is that when searching or displaying All category, the stream will be show up multiple times."
+														<i title="UyPanel was the first to add multiple categories, which means most apps don't support it. The default behaviour of the API is to show the item once when ALL is requested, however apps tend to request all streams then filter them into categories themself. This option will change the default behaviour to show the stream duplicated for each additional category, therefore the stream shows correctly in each category. The downside is that when searching or displaying All category, the stream will be show up multiple times."
 															class="tooltip text-secondary far fa-circle"></i></label>
 													<div class="col-md-2">
 														<input name="show_category_duplicates" id="show_category_duplicates"
@@ -891,7 +891,7 @@ endif; // !$__settingsViewMode
 												</div>
 												<div class="form-group row mb-4">
 													<label class="col-md-4 col-form-label" for="api_ips">API IP's <i
-															title="Allowed IP's to access the XC_VM Admin API. Separate each IP with a comma."
+															title="Allowed IP's to access the UyPanel Admin API. Separate each IP with a comma."
 															class="tooltip text-secondary far fa-circle"></i></label>
 													<div class="col-md-8">
 														<input type="text" class="form-control" id="api_ips" name="api_ips"
@@ -900,7 +900,7 @@ endif; // !$__settingsViewMode
 												</div>
 												<div class="form-group row mb-4">
 													<label class="col-md-4 col-form-label" for="api_ips">API Password <i
-															title="Password required to access the XC_VM Admin API. Leave blank to use IP whitelist only."
+															title="Password required to access the UyPanel Admin API. Leave blank to use IP whitelist only."
 															class="tooltip text-secondary far fa-circle"></i></label>
 													<div class="col-md-8">
 														<input type="password" class="form-control" id="api_pass"
@@ -1098,7 +1098,7 @@ endif; // !$__settingsViewMode
 													</div>
 													<label class="col-md-4 col-form-label" for="ignore_invalid_users">Ignore
 														Invalid Credentials <i
-															title="Enabling this option will make authentication completely ignore a connection if the username and password are incorrect, this means the flood limit won't activate but will also quickly close an invalid connection much faster without loading any XC_VM functions or classes. If you have a lot of throughput, enabling this may save you some CPU usage."
+															title="Enabling this option will make authentication completely ignore a connection if the username and password are incorrect, this means the flood limit won't activate but will also quickly close an invalid connection much faster without loading any UyPanel functions or classes. If you have a lot of throughput, enabling this may save you some CPU usage."
 															class="tooltip text-secondary far fa-circle"></i></label>
 													<div class="col-md-2">
 														<input name="ignore_invalid_users" id="ignore_invalid_users"
@@ -1274,7 +1274,7 @@ endif; // !$__settingsViewMode
 												</div>
 												<div class="form-group row mb-4">
 													<label class="col-md-4 col-form-label" for="allow_cdn_access">Allow CDN / Forwarding <i
-															title="Allow X-Forwarded-For to forward the correct IP to XC_VM and turn off path encryption in favour of token based encryption when streaming.<br/>To set up allowed IP's for forwarding, follow the CDN setup tutorial on the Billing Panel. Advanced usage only."
+															title="Allow X-Forwarded-For to forward the correct IP to UyPanel and turn off path encryption in favour of token based encryption when streaming.<br/>To set up allowed IP's for forwarding, follow the CDN setup tutorial on the Billing Panel. Advanced usage only."
 															class="tooltip text-secondary far fa-circle"></i></label>
 													<div class="col-md-2">
 														<input name="allow_cdn_access" id="allow_cdn_access" type="checkbox"
@@ -1313,7 +1313,7 @@ endif; // !$__settingsViewMode
 													</div>
 													<label class="col-md-4 col-form-label" for="request_prebuffer">Request
 														Prebuffer <i
-															title="When you request a stream on-demand, ask the provider to send a prebuffer so the stream starts quicker. This will only work if your provider is using XC_VM. The prebuffer will mean your source could be 10 seconds or so behind, but it will load significantly quicker.<br/><br/>On - URL means automatically append ?prebuffer=1 to the URL, On - Header sends the prebuffer request as a header instead. Header requests are only accepted when requesting from XC_VM v1.4.4+"
+															title="When you request a stream on-demand, ask the provider to send a prebuffer so the stream starts quicker. This will only work if your provider is using UyPanel. The prebuffer will mean your source could be 10 seconds or so behind, but it will load significantly quicker.<br/><br/>On - URL means automatically append ?prebuffer=1 to the URL, On - Header sends the prebuffer request as a header instead. Header requests are only accepted when requesting from UyPanel v1.4.4+"
 															class="tooltip text-secondary far fa-circle"></i></label>
 													<div class="col-md-2">
 														<input name="request_prebuffer" id="request_prebuffer"
@@ -1473,7 +1473,7 @@ endif; // !$__settingsViewMode
 												<div class="form-group row mb-4">
 													<label class="col-md-4 col-form-label" for="ffmpeg_cpu">FFMPEG
 														Version
-														<i title="Which version of FFMPEG to use for movies, created channels and normal streams.<br/><br/>v4.0 - Legacy version from 2018, shipped with XC_VM originally.<br/>v4.3.2 & v4.4 compiled by XC_VM with all libraries from v4.0 plus many more. Compatible with DASH and NVENC."
+														<i title="Which version of FFMPEG to use for movies, created channels and normal streams.<br/><br/>v4.0 - Legacy version from 2018, shipped with UyPanel originally.<br/>v4.3.2 & v4.4 compiled by UyPanel with all libraries from v4.0 plus many more. Compatible with DASH and NVENC."
 															class="tooltip text-secondary far fa-circle"></i></label>
 													<div class="col-md-2">
 														<select name="ffmpeg_cpu" id="ffmpeg_cpu" class="form-control"
@@ -1591,7 +1591,7 @@ endif; // !$__settingsViewMode
 												</div>
 												<div class="form-group row mb-4">
 													<label class="col-md-4 col-form-label" for="api_probe">Probe
-														via API <i title="Use API calls to probe sources from XC_VM servers."
+														via API <i title="Use API calls to probe sources from UyPanel servers."
 															class="tooltip text-secondary far fa-circle"></i></label>
 													<div class="col-md-2">
 														<input name="api_probe" id="api_probe" type="checkbox" <?php
@@ -1616,7 +1616,7 @@ endif; // !$__settingsViewMode
 
 																										echo 'data-plugin="switchery" class="js-switch" data-color="#039cfd"/></div><div class="col-md-6"><input type="text" class="form-control" id="not_on_air_video_path" name="not_on_air_video_path" value=" ';
 																										echo htmlspecialchars($rSettings["not_on_air_video_path"] ?? '');
-																										echo '" placeholder="Leave blank to use default XC_VM video."></div></div><div class="form-group row mb-4"><label class="col-md-4 col-form-label" for="show_banned_video">Banned Video <i title="Show this video when a banned line accesses a stream." class="tooltip text-secondary far fa-circle"></i></label><div class="col-md-2"><input name="show_banned_video" id="show_banned_video" type="checkbox"';
+																										echo '" placeholder="Leave blank to use default UyPanel video."></div></div><div class="form-group row mb-4"><label class="col-md-4 col-form-label" for="show_banned_video">Banned Video <i title="Show this video when a banned line accesses a stream." class="tooltip text-secondary far fa-circle"></i></label><div class="col-md-2"><input name="show_banned_video" id="show_banned_video" type="checkbox"';
 
 																										if ($rSettings["show_banned_video"] == 1) {
 																											echo ' checked ';
@@ -1624,7 +1624,7 @@ endif; // !$__settingsViewMode
 
 																										echo 'data-plugin="switchery" class="js-switch" data-color="#039cfd"/></div><div class="col-md-6"><input type="text" class="form-control" id="banned_video_path" name="banned_video_path" value=" ';
 																										echo htmlspecialchars($rSettings["banned_video_path"] ?? '');
-																										echo '" placeholder="Leave blank to use default XC_VM video."></div></div><div class="form-group row mb-4"><label class="col-md-4 col-form-label" for="show_expired_video">Expired Video <i title="Show this video when an expired line accesses a stream." class="tooltip text-secondary far fa-circle"></i></label><div class="col-md-2"><input name="show_expired_video" id="show_expired_video" type="checkbox"';
+																										echo '" placeholder="Leave blank to use default UyPanel video."></div></div><div class="form-group row mb-4"><label class="col-md-4 col-form-label" for="show_expired_video">Expired Video <i title="Show this video when an expired line accesses a stream." class="tooltip text-secondary far fa-circle"></i></label><div class="col-md-2"><input name="show_expired_video" id="show_expired_video" type="checkbox"';
 
 																										if ($rSettings["show_expired_video"] == 1) {
 																											echo ' checked ';
@@ -1632,7 +1632,7 @@ endif; // !$__settingsViewMode
 
 																										echo 'data-plugin="switchery" class="js-switch" data-color="#039cfd"/></div><div class="col-md-6"><input type="text" class="form-control" id="expired_video_path" name="expired_video_path" value=" ';
 																										echo htmlspecialchars($rSettings["expired_video_path"] ?? '');
-																										echo '" placeholder="Leave blank to use default XC_VM video."></div></div>    <div class="form-group row mb-4"><label class="col-md-4 col-form-label" for="show_expiring_video">Expiring Video <i title="Show this video once per day 7 days prior to a line expiring." class="tooltip text-secondary far fa-circle"></i></label><div class="col-md-2"><input name="show_expiring_video" id="show_expiring_video" type="checkbox"';
+																										echo '" placeholder="Leave blank to use default UyPanel video."></div></div>    <div class="form-group row mb-4"><label class="col-md-4 col-form-label" for="show_expiring_video">Expiring Video <i title="Show this video once per day 7 days prior to a line expiring." class="tooltip text-secondary far fa-circle"></i></label><div class="col-md-2"><input name="show_expiring_video" id="show_expiring_video" type="checkbox"';
 
 																										if ($rSettings["show_expiring_video"] == 1) {
 																											echo ' checked ';
@@ -1640,7 +1640,7 @@ endif; // !$__settingsViewMode
 
 																										echo 'data-plugin="switchery" class="js-switch" data-color="#039cfd"/></div><div class="col-md-6"><input type="text" class="form-control" id="expiring_video_path" name="expiring_video_path" value=" ';
 																										echo htmlspecialchars($rSettings["expiring_video_path"] ?? '');
-																										echo '" placeholder="Leave blank to use default XC_VM video."></div></div>    <div class="form-group row mb-4"><label class="col-md-4 col-form-label" for="show_connected_video">2nd IP Connected Video <i title="Show this video when a client connects but gets denied to already watching on another IP." class="tooltip text-secondary far fa-circle"></i></label><div class="col-md-2"><input name="show_connected_video" id="show_connected_video" type="checkbox"';
+																										echo '" placeholder="Leave blank to use default UyPanel video."></div></div>    <div class="form-group row mb-4"><label class="col-md-4 col-form-label" for="show_connected_video">2nd IP Connected Video <i title="Show this video when a client connects but gets denied to already watching on another IP." class="tooltip text-secondary far fa-circle"></i></label><div class="col-md-2"><input name="show_connected_video" id="show_connected_video" type="checkbox"';
 
 																										if ($rSettings["show_connected_video"] == 1) {
 																											echo ' checked ';
@@ -1648,7 +1648,7 @@ endif; // !$__settingsViewMode
 
 																										echo 'data-plugin="switchery" class="js-switch" data-color="#039cfd"/></div><div class="col-md-6"><input type="text" class="form-control" id="connected_video_path" name="connected_video_path" value=" ';
 																										echo htmlspecialchars($rSettings["connected_video_path"] ?? '');
-																										echo '" placeholder="Leave blank to use default XC_VM video."></div></div>    <h5 class="card-title mb-4">Allowed Countries <i title="Select individual countries to allow. This is a global geo-lock, selet All Countries to allow everyone." class="tooltip text-secondary far fa-circle"></i></h5>    <div class="form-group row mb-4"><div class="col-md-12">    <select name="allow_countries[]" id="allow_countries" class="form-control select2-multiple" data-toggle="select2" multiple="multiple" data-placeholder="Choose...">';
+																										echo '" placeholder="Leave blank to use default UyPanel video."></div></div>    <h5 class="card-title mb-4">Allowed Countries <i title="Select individual countries to allow. This is a global geo-lock, selet All Countries to allow everyone." class="tooltip text-secondary far fa-circle"></i></h5>    <div class="form-group row mb-4"><div class="col-md-12">    <select name="allow_countries[]" id="allow_countries" class="form-control select2-multiple" data-toggle="select2" multiple="multiple" data-placeholder="Choose...">';
 
 																										foreach ($rGeoCountries as $rValue => $rText) {
 																											echo '<option ';

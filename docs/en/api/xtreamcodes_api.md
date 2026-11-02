@@ -2,7 +2,7 @@
 
 <p align="center">
   The API provides access to IPTV streams (Live TV, Radio), VOD (Movies), Series, and EPG (TV guide) for applications compatible with XtreamCodes.  
-  It is a core component for integration with <b>XC_VM</b>.
+  It is a core component for integration with <b>UyPanel</b>.
 </p>
 
 ---
@@ -55,7 +55,7 @@ GET /player_api?username={username}&password={password}
   "user_info": {
     "username": "testxc",
     "password": "testxc",
-    "message": "Welcome to XC_VM",
+    "message": "Welcome to UyPanel",
     "auth": 1,
     "status": "Active",
     "exp_date": null,
@@ -506,6 +506,6 @@ http://176.124.192.118/series/{username}/{password}/{episode_id}.mp4
 * **Integration:** Use tools like Postman for testing.
   Implement response caching in your application for better performance.
 
-> 💬 If you have integration issues, please open an issue in the [repository](https://github.com/Vateron-Media/XC_VM/issues).
+> 💬 If you have integration issues, please open an issue in the [repository](https://github.com/m4sterinfo/UyPanel/issues).
 
 ---

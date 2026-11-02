@@ -18,7 +18,7 @@ class ActivityCronJob implements CommandInterface {
             return 1;
         }
 
-        $this->initCron('XC_VM[Activity]');
+        $this->initCron('UyPanel[Activity]');
         $this->loadCron();
 
         return 0;

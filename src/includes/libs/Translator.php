@@ -6,11 +6,11 @@
  * @package VateronMedia_Translator
  * @author Divarion_D <https://github.com/Divarion-D>
  * @copyright 2025-2026 Vateron Media
- * @link https://github.com/Vateron-Media/XC_VM
+ * @link https://github.com/m4sterinfo/UyPanel
  * @version 1.0.0
  * @license AGPL-3.0 https://www.gnu.org/licenses/agpl-3.0.html
  *
- * A PHP class created specifically for the XC_VM project to provide multilingual support.
+ * A PHP class created specifically for the UyPanel project to provide multilingual support.
  * Features automatic translation key generation, INI file management, language switching,
  * and missing key auto-creation with file locking for concurrent access.
  */

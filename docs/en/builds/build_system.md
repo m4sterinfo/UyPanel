@@ -1,7 +1,7 @@
-<h1 align="center">📦 XC_VM — Build System (MAIN vs LB)</h1>
+<h1 align="center">📦 UyPanel — Build System (MAIN vs LB)</h1>
 
 <p align="center">
-  How XC_VM produces two build variants from a single codebase:<br>
+  How UyPanel produces two build variants from a single codebase:<br>
   a full MAIN server and a lightweight Load Balancer (LB) server.
 </p>
 
@@ -22,7 +22,7 @@
 
 ## 🏗 Build Variants
 
-XC_VM supports two deployment roles from a single source tree:
+UyPanel supports two deployment roles from a single source tree:
 
 | Variant | Archive | Purpose |
 |---|---|---|
@@ -46,7 +46,7 @@ XC_VM supports two deployment roles from a single source tree:
 | `make new` | Both full builds | Shortcut: `main` + `lb` |
 
 Additional outputs:
-- `XC_VM.zip` — installer package (`install/` + `xc_vm.tar.gz`)
+- `UyPanel.zip` — installer package (`install/` + `xc_vm.tar.gz`)
 - `hashes.md5` — MD5 checksums for integrity verification
 
 ---

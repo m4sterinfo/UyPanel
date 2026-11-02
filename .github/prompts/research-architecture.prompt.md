@@ -1,10 +1,10 @@
 ---
-description: "Use when analyzing full project architecture, mapping entry points, subsystems, bootstrap flow, and logical layers of XC_VM."
+description: "Use when analyzing full project architecture, mapping entry points, subsystems, bootstrap flow, and logical layers of UyPanel."
 ---
 # Research Architecture
 
 Goal:
-Understand the full architecture of the XC_VM project.
+Understand the full architecture of the UyPanel project.
 
 Instructions:
 

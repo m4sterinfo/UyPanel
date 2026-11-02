@@ -35,7 +35,7 @@ if (!empty(RequestManager::getAll()['uitoken'])) {
 			$rPrebuffer = (isset(RequestManager::getAll()['prebuffer']) ? $rSegmentSettings['seg_time'] : 0);
 
 			foreach (getallheaders() as $rKey => $rValue) {
-				if (strtoupper($rKey) != 'X-XC_VM-PREBUFFER') {
+				if (strtoupper($rKey) != 'X-UyPanel-PREBUFFER') {
 				} else {
 					$rPrebuffer = $rSegmentSettings['seg_time'];
 				}

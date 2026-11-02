@@ -335,7 +335,7 @@ endif;
 													echo 'checked ';
 												}
 
-												echo 'data-plugin="switchery" class="js-switch" data-color="#039cfd"/></div></div><div class="form-group row mb-4">' . "\n\t\t\t\t\t\t\t\t\t\t\t\t\t" . "<label class=\" col-md-3 col-form-label\" for=\"direct_source\">Direct Source <i title=\"Don't run source through XC_VM, just redirect instead.\" class=\"tooltip text-secondary far fa-circle\"></i></label>" . "\n\t\t\t\t\t\t\t\t\t\t\t\t\t" . '<div class="col-md-3"><input name="direct_source" id="direct_source" type="checkbox" ';
+												echo 'data-plugin="switchery" class="js-switch" data-color="#039cfd"/></div></div><div class="form-group row mb-4">' . "\n\t\t\t\t\t\t\t\t\t\t\t\t\t" . "<label class=\" col-md-3 col-form-label\" for=\"direct_source\">Direct Source <i title=\"Don't run source through UyPanel, just redirect instead.\" class=\"tooltip text-secondary far fa-circle\"></i></label>" . "\n\t\t\t\t\t\t\t\t\t\t\t\t\t" . '<div class="col-md-3"><input name="direct_source" id="direct_source" type="checkbox" ';
 
 												if (!isset($rStream)) {
 												} else {
@@ -567,7 +567,7 @@ endif;
 
 													</select></div>
 											</div>
-											<div class="form-group row mb-4"><label class="col-md-3 col-form-label" for="title_sync">Sync Title <i title="Synchronise stream title with a provider stream. You need to add your strema providers to XC_VM in order for this to work, the title will be updated every time the cron runs." class="tooltip text-secondary far fa-circle"></i></label>
+											<div class="form-group row mb-4"><label class="col-md-3 col-form-label" for="title_sync">Sync Title <i title="Synchronise stream title with a provider stream. You need to add your strema providers to UyPanel in order for this to work, the title will be updated every time the cron runs." class="tooltip text-secondary far fa-circle"></i></label>
 												<div class="col-md-7"><select id="title_sync" name="title_sync" class="form-control" data-toggle="select2">
 
 														<?php
@@ -755,7 +755,7 @@ endif;
 										}
 									}
 
-									echo 'data-plugin="switchery" class="js-switch" data-color="#039cfd"/>                                                    </div>                                                </div>                                                <div class="alert bg-info text-white border-0" role="alert">RTMP Push will allow you to push your streams to RTMP servers, such as the one that runs with XC_VM. The `Push From` server needs to be enabled in the servers tab for this to be activated.</div>                                                <table id="datatable-rtmp" class="table table-striped table-borderless mb-0">                                                    <thead>                                                        <tr>                                                            <th>Push From</th>                                                            <th>RTMP URL</th>                                                        </tr>                                                    </thead>                                                    <tbody class="rtmp">                                                        ';
+									echo 'data-plugin="switchery" class="js-switch" data-color="#039cfd"/>                                                    </div>                                                </div>                                                <div class="alert bg-info text-white border-0" role="alert">RTMP Push will allow you to push your streams to RTMP servers, such as the one that runs with UyPanel. The `Push From` server needs to be enabled in the servers tab for this to be activated.</div>                                                <table id="datatable-rtmp" class="table table-striped table-borderless mb-0">                                                    <thead>                                                        <tr>                                                            <th>Push From</th>                                                            <th>RTMP URL</th>                                                        </tr>                                                    </thead>                                                    <tbody class="rtmp">                                                        ';
 
 									if (isset($rStream)) {
 										$rRTMPPush = json_decode($rStream['external_push'], true);
@@ -816,7 +816,7 @@ endif;
 									echo $rServer['server_name'];
 									echo '</option>' . "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
 								}
-								echo "\t\t\t\t\t\t\t\t\t\t\t\t\t\t" . '</select></div>' . "\n" . "                                                    <label class=\" col-md-3 col-form-label\" for=\"llod\">Low Latency On-Demand <i title=\"<strong>LLOD v2 - FFMPEG</strong><br />The first source is selected without probing and passed directly to FFMPEG for processing. If the first source is down, the stream will not start.<br /><br />LLOD v3 - PHP<br />A bespoke segment parser developed by XC_VM to take incoming MPEG-TS streams and identify keyframes in order to segment the stream to deliver back to the client. Very fast, still experimental however. This method doesn't suffer from issues such as lost audio as ffmpeg isn't involved at all but does not support anything but MPEG-TS sources.\" class=\"tooltip text-secondary far fa-circle\"></i></label>" . "\n\t\t\t\t\t\t\t\t\t\t\t\t\t" . '<div class="col-md-3"><select name="llod" id="llod" class="form-control" data-toggle="select2">' . "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
+								echo "\t\t\t\t\t\t\t\t\t\t\t\t\t\t" . '</select></div>' . "\n" . "                                                    <label class=\" col-md-3 col-form-label\" for=\"llod\">Low Latency On-Demand <i title=\"<strong>LLOD v2 - FFMPEG</strong><br />The first source is selected without probing and passed directly to FFMPEG for processing. If the first source is down, the stream will not start.<br /><br />LLOD v3 - PHP<br />A bespoke segment parser developed by UyPanel to take incoming MPEG-TS streams and identify keyframes in order to segment the stream to deliver back to the client. Very fast, still experimental however. This method doesn't suffer from issues such as lost audio as ffmpeg isn't involved at all but does not support anything but MPEG-TS sources.\" class=\"tooltip text-secondary far fa-circle\"></i></label>" . "\n\t\t\t\t\t\t\t\t\t\t\t\t\t" . '<div class="col-md-3"><select name="llod" id="llod" class="form-control" data-toggle="select2">' . "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
 
 								foreach (array('Disabled', 'LLOD v2 - FFMPEG', 'LLOD v3 - PHP') as $rValue => $rText) {
 									echo "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t" . '<option value="';

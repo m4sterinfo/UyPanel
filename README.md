@@ -1,17 +1,13 @@
-<p align="center">
-  <img src="https://avatars.githubusercontent.com/u/149707645?s=400&v=4" width="220" alt="Vateron Media Logo"/>
-</p>
-
-<h1 align="center">XC_VM IPTV Panel</h1>
+<h1 align="center">UyPanel IPTV Panel</h1>
 <p align="center">
   <b>Open-source, community-driven Xtream Codes panel</b><br>
   Built for modern IPTV workflows – powerful, scalable, and free.
 </p>
 
 <p align="center">
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/Vateron-Media/XC_VM" /></a>
-  <a href="https://github.com/Vateron-Media/XC_VM/stargazers"><img src="https://img.shields.io/github/stars/Vateron-Media/XC_VM?style=flat" /></a>
-  <a href="https://github.com/Vateron-Media/XC_VM/issues"><img src="https://img.shields.io/github/issues/Vateron-Media/XC_VM" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/m4sterinfo/UyPanel" /></a>
+  <a href="https://github.com/m4sterinfo/UyPanel/stargazers"><img src="https://img.shields.io/github/stars/m4sterinfo/UyPanel?style=flat" /></a>
+  <a href="https://github.com/m4sterinfo/UyPanel/issues"><img src="https://img.shields.io/github/issues/m4sterinfo/UyPanel" /></a>
 </p>
 
 ---
@@ -43,7 +39,7 @@
 
 ## 🚀 Overview
 
-**XC_VM** is an open-source IPTV platform based on Xtream Codes.
+**UyPanel** is an open-source IPTV platform based on Xtream Codes.
 It enables:
 
 * 📺 Live & VOD streaming
@@ -65,10 +61,10 @@ It enables:
 ## 📚 Documentation
 
 * 🇬🇧 **English Guide**
-  [https://vateron-media.github.io/XC_VM/#/en-us/](https://vateron-media.github.io/XC_VM/#/en-us/)
+  [https://vateron-media.github.io/UyPanel/#/en-us/](https://vateron-media.github.io/UyPanel/#/en-us/)
 
 * 🇷🇺 **Руководство на русском**
-  [https://vateron-media.github.io/XC_VM/#/ru-ru/](https://vateron-media.github.io/XC_VM/#/ru-ru/)
+  [https://vateron-media.github.io/UyPanel/#/ru-ru/](https://vateron-media.github.io/UyPanel/#/ru-ru/)
 
 ---
 
@@ -87,7 +83,7 @@ It enables:
 
 ## 🐧 Supported Ubuntu Versions
 
-XC_VM **officially supports** the following Ubuntu LTS and interim releases:
+UyPanel **officially supports** the following Ubuntu LTS and interim releases:
 
 | Ubuntu Version | Codename        | Status                |
 | -------------- | --------------- | --------------------- |
@@ -107,7 +103,7 @@ For new installations, the **strongly recommended** Ubuntu versions are:
 * 🟢 **Ubuntu 22.04 LTS**
 * 🟢 **Ubuntu 24.04 LTS**
 
-These versions receive full support, active security updates, and provide the stability required for XC_VM.
+These versions receive full support, active security updates, and provide the stability required for UyPanel.
 
 ---
 
@@ -117,7 +113,7 @@ Ubuntu 20.04 and 20.10 are **outdated** and no longer receive updates for most e
 Using these versions is still *possible*, but:
 
 * 🛠️ **Official support is discontinued** — any issues must be resolved by the user.
-* 🚫 Bugs caused by outdated dependencies or libraries **will not be addressed** by the XC_VM project.
+* 🚫 Bugs caused by outdated dependencies or libraries **will not be addressed** by the UyPanel project.
 
 ---
 
@@ -133,11 +129,11 @@ sudo apt update && sudo apt full-upgrade -y
 sudo apt install -y python3-pip unzip
 
 # 3. Download latest release
-latest_version=$(curl -s https://api.github.com/repos/Vateron-Media/XC_VM/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)
-wget "https://github.com/Vateron-Media/XC_VM/releases/download/${latest_version}/XC_VM.zip"
+latest_version=$(curl -s https://api.github.com/repos/m4sterinfo/UyPanel/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)
+wget "https://github.com/m4sterinfo/UyPanel/releases/download/${latest_version}/UyPanel.zip"
 
 # 4. Unpack and install
-unzip XC_VM.zip
+unzip UyPanel.zip
 sudo python3 install
 ```
 

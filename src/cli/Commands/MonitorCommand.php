@@ -22,7 +22,7 @@ class MonitorCommand implements CommandInterface {
 
 	public function execute(array $rArgs): int {
 		if (posix_getpwuid(posix_geteuid())['name'] != 'xc_vm') {
-			echo "Please run as XC_VM!\n";
+			echo "Please run as UyPanel!\n";
 			return 1;
 		}
 
@@ -37,7 +37,7 @@ class MonitorCommand implements CommandInterface {
 
 		$this->checkRunning($rStreamID);
 		set_time_limit(0);
-		cli_set_process_title('XC_VM[' . $rStreamID . ']');
+		cli_set_process_title('UyPanel[' . $rStreamID . ']');
 
 		$db->query('SELECT * FROM `streams` t1 INNER JOIN `streams_servers` t2 ON t2.stream_id = t1.id AND t2.server_id = ? WHERE t1.id = ?', SERVER_ID, $rStreamID);
 		if ($db->num_rows() <= 0) {
@@ -95,7 +95,7 @@ class MonitorCommand implements CommandInterface {
 				}
 				shell_exec('rm -f ' . STREAMS_PATH . intval($rStreamID) . '_*');
 				file_put_contents(STREAMS_PATH . $rStreamID . '_.monitor', getmypid());
-				if ($rDelay && ProcessManager::isNamedProcessRunning($rDelayPID, 'XC_VMDelay', $rStreamID) && is_numeric($rDelayPID) && $rDelayPID > 0) {
+				if ($rDelay && ProcessManager::isNamedProcessRunning($rDelayPID, 'UyPanelDelay', $rStreamID) && is_numeric($rDelayPID) && $rDelayPID > 0) {
 					shell_exec('kill -9 ' . intval($rDelayPID));
 				}
 				usleep(50000);
@@ -216,7 +216,7 @@ class MonitorCommand implements CommandInterface {
 				}
 				goto label1631;
 			}
-			if (($rDelay && ($rStreamInfo['delay_available_at'] <= time()) && !ProcessManager::isNamedProcessRunning($rDelayPID, 'XC_VMDelay', $rStreamID))) {
+			if (($rDelay && ($rStreamInfo['delay_available_at'] <= time()) && !ProcessManager::isNamedProcessRunning($rDelayPID, 'UyPanelDelay', $rStreamID))) {
 				echo "Start Delay\n";
 				StreamProcess::streamLog($rStreamID, SERVER_ID, 'DELAY_START');
 				$rDelayPID = intval(shell_exec(PHP_BIN . ' ' . MAIN_HOME . 'console.php delay ' . intval($rStreamID) . ' ' . intval($rStreamInfo['delay_minutes']) . ' >/dev/null 2>/dev/null & echo $!'));
@@ -418,7 +418,7 @@ class MonitorCommand implements CommandInterface {
 			}
 			usleep(50000);
 		}
-		if (ProcessManager::isNamedProcessRunning($rDelayPID, 'XC_VMDelay', $rStreamID)) {
+		if (ProcessManager::isNamedProcessRunning($rDelayPID, 'UyPanelDelay', $rStreamID)) {
 			echo "Killing stream delay...\n";
 			if ((is_numeric($rDelayPID) && (0 < $rDelayPID))) {
 				shell_exec('kill -9 ' . intval($rDelayPID));
@@ -578,11 +578,11 @@ class MonitorCommand implements CommandInterface {
 		}
 
 		if (empty($rPID)) {
-			shell_exec("ps -ef | grep 'XC_VM\\[" . intval($rStreamID) . "\\]' | grep -v grep | awk '{print \$2}' | xargs -r kill -9 2>/dev/null");
+			shell_exec("ps -ef | grep 'UyPanel\\[" . intval($rStreamID) . "\\]' | grep -v grep | awk '{print \$2}' | xargs -r kill -9 2>/dev/null");
 		} else {
 			if (file_exists('/proc/' . $rPID)) {
 				$rCommand = trim(file_get_contents('/proc/' . $rPID . '/cmdline'));
-				if ($rCommand == 'XC_VM[' . $rStreamID . ']' && is_numeric($rPID) && $rPID > 0) {
+				if ($rCommand == 'UyPanel[' . $rStreamID . ']' && is_numeric($rPID) && $rPID > 0) {
 					posix_kill($rPID, 9);
 				}
 			}

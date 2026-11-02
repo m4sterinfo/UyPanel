@@ -18,7 +18,7 @@ class TmdbPopularCronJob implements CommandInterface {
             return 1;
         }
 
-        $this->initCron('XC_VM[Popular]');
+        $this->initCron('UyPanel[Popular]');
 
         require_once INCLUDES_PATH . 'libs/tmdb.php';
         require_once __DIR__ . '/TmdbPopularCron.php';

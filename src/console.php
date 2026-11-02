@@ -2,7 +2,7 @@
 <?php
 
 /**
- * XC_VM Console — единая точка входа для CLI-команд и cron-задач.
+ * UyPanel Console — единая точка входа для CLI-команд и cron-задач.
  *
  * Использование:
  *   php console.php <command> [arguments]
@@ -32,7 +32,7 @@ require_once __DIR__ . '/cli/CommandRegistry.php';
 require_once __DIR__ . '/bootstrap.php';
 
 XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_CLI, [
-	'process' => 'XC_VM[Console]',
+	'process' => 'UyPanel[Console]',
 ]);
 
 // ─── Registry ────────────────────────────────────────────────────

@@ -1,8 +1,4 @@
-<p align="center">
-  <img src="https://avatars.githubusercontent.com/u/149707645?s=400&v=4" width="180" alt="Vateron Media Logo"/>
-</p>
-
-<h1 align="center">📺 XC_VM IPTV Panel</h1>
+<h1 align="center">📺 UyPanel IPTV Panel</h1>
 
 <p align="center">
   A modern, open-source IPTV panel inspired by Xtream Codes.<br>
@@ -13,9 +9,9 @@
 
 ## ❓ Что это такое
 
-**XC_VM** — это современная IPTV-панель, работающая на PHP, Nginx, FFmpeg и MariaDB.
+**UyPanel** — это современная IPTV-панель, работающая на PHP, Nginx, FFmpeg и MariaDB.
 
-XC_VM помогает разворачивать полноценную IPTV-инфраструктуру:
+UyPanel помогает разворачивать полноценную IPTV-инфраструктуру:
 
 - Управление Live, Movies и Series  
 - Поддержка реселлеров и пользователей  
@@ -50,20 +46,20 @@ XC_VM помогает разворачивать полноценную IPTV-и
 - **FFmpeg 8.0** — transcoding  
 - **yt-dlp** — media acquiring  
 
-XC_VM официально поддерживает Ubuntu 22.04 и тестируется на 24.04.
+UyPanel официально поддерживает Ubuntu 22.04 и тестируется на 24.04.
 
 ---
 
 ## 🌐 Сообщество
 
-XC_VM — полностью управляемый сообществом проект.
+UyPanel — полностью управляемый сообществом проект.
 
-- 💬 Issues: https://github.com/Vateron-Media/XC_VM/issues  
+- 💬 Issues: https://github.com/m4sterinfo/UyPanel/issues  
 - ⭐ GitHub Stars: поддержите проект звездой  
 - 🔧 Pull Requests: принимаются  
 
 Если хочешь внести вклад — прочитай:  
-[Contributing Guide](https://github.com/Vateron-Media/XC_VM/blob/master/CONTRIBUTING.md)
+[Contributing Guide](https://github.com/m4sterinfo/UyPanel/blob/master/CONTRIBUTING.md)
 
 ---
 
@@ -75,10 +71,10 @@ XC_VM — полностью управляемый сообществом пр�
 sudo apt update && sudo apt full-upgrade -y
 sudo apt install -y python3-pip unzip
 
-latest_version=$(curl -s https://api.github.com/repos/Vateron-Media/XC_VM/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)
-wget "https://github.com/Vateron-Media/XC_VM/releases/download/${latest_version}/XC_VM.zip"
+latest_version=$(curl -s https://api.github.com/repos/m4sterinfo/UyPanel/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)
+wget "https://github.com/m4sterinfo/UyPanel/releases/download/${latest_version}/UyPanel.zip"
 
-unzip XC_VM.zip
+unzip UyPanel.zip
 sudo python3 install
 ```
 

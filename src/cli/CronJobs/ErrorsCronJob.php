@@ -18,7 +18,7 @@ class ErrorsCronJob implements CommandInterface {
             return 1;
         }
 
-        $this->initCron('XC_VM[Errors]');
+        $this->initCron('UyPanel[Errors]');
 
         $rIgnoreErrors = array('the user-agent option is deprecated', 'last message repeated', 'deprecated', 'packets poorly interleaved', 'invalid timestamps', 'timescale not set', 'frame size not set', 'non-monotonous dts in output stream', 'invalid dts', 'no trailing crlf', 'failed to parse extradata', 'truncated', 'missing picture', 'non-existing pps', 'clipping', 'out of range', 'cannot use rename on non file protocol', 'end of file', 'stream ends prematurely');
 

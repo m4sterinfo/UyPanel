@@ -27,13 +27,13 @@ To install the panel, follow these steps:
 
 3. **Download latest release**
    ```sh
-   latest_version=$(curl -s https://api.github.com/repos/Vateron-Media/XC_VM/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)
-   wget "https://github.com/Vateron-Media/XC_VM/releases/download/${latest_version}/XC_VM.zip"
+   latest_version=$(curl -s https://api.github.com/repos/m4sterinfo/UyPanel/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)
+   wget "https://github.com/m4sterinfo/UyPanel/releases/download/${latest_version}/UyPanel.zip"
    ```
 
 4. **Unpack and install**
    ```sh
-   unzip XC_VM.zip
+   unzip UyPanel.zip
    sudo python3 install
    ```
 

@@ -18,7 +18,7 @@ class StatsCronJob implements CommandInterface {
             return 1;
         }
 
-        $this->initCron('XC_VM[Stats]');
+        $this->initCron('UyPanel[Stats]');
 
         $rTimeout = 60;
         set_time_limit($rTimeout);

@@ -204,7 +204,7 @@ class StreamProcess {
 			$rMonitor = intval($db->get_row()['monitor_pid']);
 		}
 
-		if (0 < $rMonitor && ProcessChecker::checkPID($rMonitor, array('XC_VM[' . $rStreamID . ']', 'XC_VMProxy[' . $rStreamID . ']')) && is_numeric($rMonitor)) {
+		if (0 < $rMonitor && ProcessChecker::checkPID($rMonitor, array('UyPanel[' . $rStreamID . ']', 'UyPanelProxy[' . $rStreamID . ']')) && is_numeric($rMonitor)) {
 			posix_kill($rMonitor, 9);
 		}
 
@@ -215,7 +215,7 @@ class StreamProcess {
 			$rPID = intval($db->get_row()['pid']);
 		}
 
-		if (0 < $rPID && ProcessChecker::checkPID($rPID, array($rStreamID . '_.m3u8', $rStreamID . '_%d.ts', 'LLOD[' . $rStreamID . ']', 'XC_VMProxy[' . $rStreamID . ']', 'Loopback[' . $rStreamID . ']')) && is_numeric($rPID)) {
+		if (0 < $rPID && ProcessChecker::checkPID($rPID, array($rStreamID . '_.m3u8', $rStreamID . '_%d.ts', 'LLOD[' . $rStreamID . ']', 'UyPanelProxy[' . $rStreamID . ']', 'Loopback[' . $rStreamID . ']')) && is_numeric($rPID)) {
 			posix_kill($rPID, 9);
 		}
 
@@ -638,45 +638,45 @@ class StreamProcess {
 					$rStreamSource = StreamUtils::parseStreamURL($rSource);
 					echo 'Checking source: ' . $rSource . "\n";
 					$rURLInfo = parse_url($rStreamSource);
-					$rIsXC_VM = ($rLoopback ? true : StreamUtils::detectXC_VM($rStreamSource));
+					$rIsUyPanel = ($rLoopback ? true : StreamUtils::detectUyPanel($rStreamSource));
 
-					if ($rIsXC_VM && !$rLoopback && $rSettings['send_xc_vm_header']) {
+					if ($rIsUyPanel && !$rLoopback && $rSettings['send_xc_vm_header']) {
 						foreach (array_keys($rStream['stream_arguments']) as $rID) {
 							if ($rStream['stream_arguments'][$rID]['argument_key'] == 'headers') {
-								$rStream['stream_arguments'][$rID]['value'] .= "\r\n" . 'X-XC_VM-Detect:1';
+								$rStream['stream_arguments'][$rID]['value'] .= "\r\n" . 'X-UyPanel-Detect:1';
 								$rProcessed = true;
 							}
 						}
 
 						if (!$rProcessed) {
-							$rStream['stream_arguments'][] = array('value' => 'X-XC_VM-Detect:1', 'argument_key' => 'headers', 'argument_cat' => 'fetch', 'argument_wprotocol' => 'http', 'argument_type' => 'text', 'argument_cmd' => "-headers '%s" . "\r\n" . "'");
+							$rStream['stream_arguments'][] = array('value' => 'X-UyPanel-Detect:1', 'argument_key' => 'headers', 'argument_cat' => 'fetch', 'argument_wprotocol' => 'http', 'argument_type' => 'text', 'argument_cmd' => "-headers '%s" . "\r\n" . "'");
 						}
 					}
 
 					$rProbeArguments = $rStream['stream_arguments'];
 
-					if ($rIsXC_VM && $rStream['server_info']['on_demand'] == 1 && $rSettings['request_prebuffer'] == 1) {
+					if ($rIsUyPanel && $rStream['server_info']['on_demand'] == 1 && $rSettings['request_prebuffer'] == 1) {
 						foreach (array_keys($rStream['stream_arguments']) as $rID) {
 							if ($rStream['stream_arguments'][$rID]['argument_key'] == 'headers') {
-								$rStream['stream_arguments'][$rID]['value'] .= "\r\n" . 'X-XC_VM-Prebuffer:1';
+								$rStream['stream_arguments'][$rID]['value'] .= "\r\n" . 'X-UyPanel-Prebuffer:1';
 								$rProcessed = true;
 							}
 						}
 
 						if (!$rProcessed) {
-							$rStream['stream_arguments'][] = array('value' => 'X-XC_VM-Prebuffer:1', 'argument_key' => 'headers', 'argument_cat' => 'fetch', 'argument_wprotocol' => 'http', 'argument_type' => 'text', 'argument_cmd' => "-headers '%s" . "\r\n" . "'");
+							$rStream['stream_arguments'][] = array('value' => 'X-UyPanel-Prebuffer:1', 'argument_key' => 'headers', 'argument_cat' => 'fetch', 'argument_wprotocol' => 'http', 'argument_type' => 'text', 'argument_cmd' => "-headers '%s" . "\r\n" . "'");
 						}
 					}
 
 					foreach (array_keys($rProbeArguments) as $rID) {
 						if ($rProbeArguments[$rID]['argument_key'] == 'headers') {
-							$rProbeArguments[$rID]['value'] .= "\r\n" . 'X-XC_VM-Prebuffer:1';
+							$rProbeArguments[$rID]['value'] .= "\r\n" . 'X-UyPanel-Prebuffer:1';
 							$rProcessed = true;
 						}
 					}
 
 					if (!$rProcessed) {
-						$rProbeArguments[] = array('value' => 'X-XC_VM-Prebuffer:1', 'argument_key' => 'headers', 'argument_cat' => 'fetch', 'argument_wprotocol' => 'http', 'argument_type' => 'text', 'argument_cmd' => "-headers '%s" . "\r\n" . "'");
+						$rProbeArguments[] = array('value' => 'X-UyPanel-Prebuffer:1', 'argument_key' => 'headers', 'argument_cat' => 'fetch', 'argument_wprotocol' => 'http', 'argument_type' => 'text', 'argument_cmd' => "-headers '%s" . "\r\n" . "'");
 					}
 
 					$rProtocol = strtolower(substr($rStreamSource, 0, strpos($rStreamSource, '://')));
@@ -699,7 +699,7 @@ class StreamProcess {
 							),
 							'container' => 'mpegts'
 						);
-						error_log('[XC_VM] Stream ' . $rStreamID . ': FFProbe skipped');
+						error_log('[UyPanel] Stream ' . $rStreamID . ': FFProbe skipped');
 						echo 'Got stream information via skip_ffprobe (assumed h264/aac)' . "\n";
 
 						if (empty($rSource)) {
@@ -723,7 +723,7 @@ class StreamProcess {
 					}
 
 					if (!($rStream['server_info']['on_demand'] && $rLLOD)) {
-						if ($rIsXC_VM && $rSettings['api_probe']) {
+						if ($rIsUyPanel && $rSettings['api_probe']) {
 							$rProbeURL = $rURLInfo['scheme'] . '://' . $rURLInfo['host'] . ':' . $rURLInfo['port'] . '/probe/' . base64_encode($rURLInfo['path']);
 							$rFFProbeOutput = json_decode(CurlClient::getURL($rProbeURL), true);
 

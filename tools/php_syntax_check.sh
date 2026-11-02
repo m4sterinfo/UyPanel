@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# PHP syntax checker for the XC_VM project.
+# PHP syntax checker for the UyPanel project.
 # Scans all .php files under src/, excluding src/bin/* (third-party stubs).
 # Exit code: 0 if no errors, 1 if any file has syntax errors.
 #

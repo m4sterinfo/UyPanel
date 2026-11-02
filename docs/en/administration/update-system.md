@@ -1,7 +1,7 @@
-<h1 align="center">Update Mechanism in XC_VM</h1>
+<h1 align="center">Update Mechanism in UyPanel</h1>
 
 <p align="center">
-  The <b>XC_VM</b> update system is implemented as a multi-layered process — from the web interface to system-level scripts.  
+  The <b>UyPanel</b> update system is implemented as a multi-layered process — from the web interface to system-level scripts.  
   This approach ensures <b>reliability, automation, and data integrity</b> during panel updates.
 </p>
 

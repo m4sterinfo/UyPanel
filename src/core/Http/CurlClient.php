@@ -73,7 +73,7 @@ class CurlClient {
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 3);
 		curl_setopt($ch, CURLOPT_URL, $rURL);
-		curl_setopt($ch, CURLOPT_USERAGENT, 'XC_VM/' . XC_VM_VERSION);
+		curl_setopt($ch, CURLOPT_USERAGENT, 'UyPanel/' . UyPanel_VERSION);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, $rWait);
 		$rReturn = curl_exec($ch);
 		curl_close($ch);

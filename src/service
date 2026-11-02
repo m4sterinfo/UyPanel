@@ -11,10 +11,10 @@ fi
 start() {
   pids=$(pgrep -u xc_vm nginx | wc -l)
   if [ $pids != 0 ]; then
-    echo 'XC_VM is already running'
+    echo 'UyPanel is already running'
     return 1
   fi
-  echo 'Starting XC_VM...'
+  echo 'Starting UyPanel...'
   sudo chown -R xc_vm:xc_vm /sys/class/net
   sudo chown -R xc_vm:xc_vm /home/xc_vm/content/streams
   sudo chown -R xc_vm:xc_vm /home/xc_vm/tmp
@@ -36,10 +36,10 @@ start() {
 stop() {
   pids=$(pgrep -u xc_vm nginx | wc -l)
   if [ $pids = 0 ]; then
-    echo 'XC_VM is not running'
+    echo 'UyPanel is not running'
     return 1
   fi
-  echo 'Stopping XC_VM...'
+  echo 'Stopping UyPanel...'
   sudo killall -u xc_vm
   sleep 1
   sudo killall -u xc_vm
@@ -55,10 +55,10 @@ restart() {
 reload() {
   pids=$(pgrep -u xc_vm nginx | wc -l)
   if [ $pids = 0 ]]; then
-    echo 'XC_VM is not running'
+    echo 'UyPanel is not running'
     return 1
   fi
-  echo 'Reloading XC_VM...'
+  echo 'Reloading UyPanel...'
   sudo -u xc_vm $SCRIPT/bin/nginx/sbin/nginx -s reload
   sudo -u xc_vm $SCRIPT/bin/nginx_rtmp/sbin/nginx_rtmp -s reload
 }

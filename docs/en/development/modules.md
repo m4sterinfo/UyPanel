@@ -214,7 +214,7 @@ class MyCronJob implements CommandInterface {
         require INCLUDES_PATH . 'admin.php';
         require_once __DIR__ . '/MyCron.php';
 
-        $this->initCron('XC_VM[MyTask]');
+        $this->initCron('UyPanel[MyTask]');
 
         MyCron::run();
 
@@ -240,7 +240,7 @@ public function registerCommands(CommandRegistry $registry): void {
 In `src/cli/Commands/StartupCommand.php` method `installCrontab()`, add:
 
 ```php
-$rCrons[] = '*/5 * * * * ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php cron:my_task # XC_VM';
+$rCrons[] = '*/5 * * * * ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php cron:my_task # UyPanel';
 ```
 
 ---

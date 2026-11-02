@@ -2,12 +2,12 @@
 description: "Use when editing the Makefile, understanding build targets, or working with MAIN vs LoadBalancer build configurations."
 applyTo: "Makefile"
 ---
-# Makefile & Build — XC_VM
+# Makefile & Build — UyPanel
 
 ## Build Variants
 - **MAIN** (`xc_vm.tar.gz`): Full application — admin panel + streaming + all modules
 - **LoadBalancer** (`loadbalancer.tar.gz`): Streaming-only subset — admin dirs stripped
-- **Installer** (`XC_VM.zip`): Distribution package with install script
+- **Installer** (`UyPanel.zip`): Distribution package with install script
 
 ## Key Variables
 - `MAIN_DIR = ./src` — full application source

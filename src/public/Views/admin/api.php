@@ -2460,7 +2460,7 @@ if (isset($_SESSION['hash'])) {
 				if (!empty(RequestManager::getAll()['url'])) {
 					$rURL = StreamUtils::parseStreamURL(RequestManager::getAll()['url']);
 
-					if (StreamUtils::detectXC_VM($rURL) && SettingsManager::getAll()['api_probe']) {
+					if (StreamUtils::detectUyPanel($rURL) && SettingsManager::getAll()['api_probe']) {
 						$rURLInfo = parse_url($rURL);
 						$rProbeURL = $rURLInfo['scheme'] . '://' . $rURLInfo['host'] . (($rURLInfo['port'] ? ':' . $rURLInfo['port'] : '')) . '/probe/' . base64_encode($rURLInfo['path']);
 
@@ -2583,7 +2583,7 @@ if (isset($_SESSION['hash'])) {
 					$rStreamInfoText = "<table style='width: 300px;' class='table-data' align='center'><tbody><tr><td colspan='4'>Stream probe failed!</td></tr></tbody></table>";
 					$rStreamInfo = null;
 
-					if (!(StreamUtils::detectXC_VM($rURL) && SettingsManager::getAll()['api_probe'])) {
+					if (!(StreamUtils::detectUyPanel($rURL) && SettingsManager::getAll()['api_probe'])) {
 					} else {
 						$rURLInfo = parse_url($rURL);
 						$rProbeURL = $rURLInfo['scheme'] . '://' . $rURLInfo['host'] . (($rURLInfo['port'] ? ':' . $rURLInfo['port'] : '')) . '/probe/' . base64_encode($rURLInfo['path']);

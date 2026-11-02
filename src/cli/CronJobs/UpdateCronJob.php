@@ -10,7 +10,7 @@ class UpdateCronJob implements CommandInterface {
     }
 
     public function getDescription(): string {
-        return 'Cron: check for XC_VM updates';
+        return 'Cron: check for UyPanel updates';
     }
 
     public function execute(array $rArgs): int {
@@ -34,13 +34,13 @@ class UpdateCronJob implements CommandInterface {
             $rPort = (intval(explode(';', explode(' ', trim(explode('listen ', file_get_contents('/home/xc_vm/bin/nginx/conf/ports/http.conf'))[1]))[0])[0]) ?: 80);
         }
 
-        $rUpdate = $gitRelease->getUpdate(XC_VM_VERSION);
+        $rUpdate = $gitRelease->getUpdate(UyPanel_VERSION);
 
-        if (is_array($rUpdate) && $rUpdate['version'] && (0 < version_compare($rUpdate['version'], XC_VM_VERSION) || version_compare($rUpdate['version'], XC_VM_VERSION) == 0)) {
+        if (is_array($rUpdate) && $rUpdate['version'] && (0 < version_compare($rUpdate['version'], UyPanel_VERSION) || version_compare($rUpdate['version'], UyPanel_VERSION) == 0)) {
             echo 'Update is available!' . "\n";
             $updatedChanges = array();
             foreach (array_reverse($rUpdate['changelog']) as $rItem) {
-                if (!($rItem['version'] == XC_VM_VERSION)) {
+                if (!($rItem['version'] == UyPanel_VERSION)) {
                     $updatedChanges[] = $rItem;
                 } else {
                     break;

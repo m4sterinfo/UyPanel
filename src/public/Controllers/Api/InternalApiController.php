@@ -498,7 +498,7 @@ class InternalApiController {
 		}
 
 		$rHeaders = $rRequest['headers'] ? rtrim($rRequest['headers'], "\r\n") . "\r\n" : '';
-		$rHeaders .= 'X-XC_VM-Prebuffer:1' . "\r\n";
+		$rHeaders .= 'X-UyPanel-Prebuffer:1' . "\r\n";
 		$rFetchArguments[] = sprintf('-headers %s', escapeshellarg($rHeaders));
 
 		exit(json_encode(array('result' => true, 'data' => FFprobeRunner::probeStream($rURL, $rFetchArguments, '', false))));

@@ -1,7 +1,7 @@
-# ✅ Чеклист подготовки релиза XC_VM
+# ✅ Чеклист подготовки релиза UyPanel
 
 <p align="center">
-  В этом документе описан процесс создания релиза <b>XC_VM</b> — пошаговое руководство для разработчиков по обновлению версии, сборке архивов и публикации на GitHub.
+  В этом документе описан процесс создания релиза <b>UyPanel</b> — пошаговое руководство для разработчиков по обновлению версии, сборке архивов и публикации на GitHub.
 </p>
 
 ---
@@ -18,7 +18,7 @@
 
 ## 🔢 1. Обновить версию
 
-* Установить **новое значение `XC_VM_VERSION`** в следующих файлах:
+* Установить **новое значение `UyPanel_VERSION`** в следующих файлах:
 
 **Файл для редактирования:**
 
@@ -29,7 +29,7 @@ src/core/Config/AppConfig.php
 **Auto-update команда:**
 
 ```bash
-sed -i "s/define('XC_VM_VERSION', *'[0-9]\+\.[0-9]\+\.[0-9]\+');/define('XC_VM_VERSION', 'X.Y.Z');/" src/core/Config/AppConfig.php
+sed -i "s/define('UyPanel_VERSION', *'[0-9]\+\.[0-9]\+\.[0-9]\+');/define('UyPanel_VERSION', 'X.Y.Z');/" src/core/Config/AppConfig.php
 ```
 
 **Закоммитить изменения с сообщением:**
@@ -85,7 +85,7 @@ make lb_update
 
   - `loadbalancer.tar.gz` — установочный архив LB
   - `loadbalancer_update.tar.gz` — архив обновления LB
-  - `XC_VM.zip` — установочный архив MAIN
+  - `UyPanel.zip` — установочный архив MAIN
   - `update.tar.gz` — архив обновления MAIN
   - `hashes.md5` — файл с хеш-суммами
 
@@ -96,14 +96,14 @@ make lb_update
 Получите тег предыдущего релиза через GitHub API и сгенерируйте changelog:
 
 ```bash
-PREV_TAG=$(curl -s https://api.github.com/repos/Vateron-Media/XC_VM/releases/latest \
+PREV_TAG=$(curl -s https://api.github.com/repos/m4sterinfo/UyPanel/releases/latest \
   | grep -Po '"tag_name":\s*"\K[^"]+')
 echo "Предыдущий релиз: $PREV_TAG"
 git log --pretty=format:"- %s (%h)" "$PREV_TAG"..main > dist/changes.md
 ```
 
 *   **Перейдите по ссылке и добавьте изменения текущего релиза:**
-    [https://github.com/Vateron-Media/XC_VM_Update/blob/main/changelog.json](https://github.com/Vateron-Media/XC_VM_Update/blob/main/changelog.json)
+    [https://github.com/m4sterinfo/UyPanel_Update/blob/main/changelog.json](https://github.com/m4sterinfo/UyPanel_Update/blob/main/changelog.json)
 
 * Добавить изменения текущего релиза в формате JSON:
 
@@ -125,13 +125,13 @@ git log --pretty=format:"- %s (%h)" "$PREV_TAG"..main > dist/changes.md
 
 ## 🚀 5. GitHub релиз
 
-* Создать новый релиз на [GitHub Releases](https://github.com/Vateron-Media/XC_VM/releases) **без прикрепления файлов**.
+* Создать новый релиз на [GitHub Releases](https://github.com/m4sterinfo/UyPanel/releases) **без прикрепления файлов**.
 * Указать changelog в описании релиза.
 * После публикации GitHub Actions автоматически соберёт и прикрепит к релизу:
 
   - `loadbalancer.tar.gz` — установочный архив LB
   - `loadbalancer_update.tar.gz` — архив обновления LB
-  - `XC_VM.zip` — установочный архив MAIN
+  - `UyPanel.zip` — установочный архив MAIN
   - `update.tar.gz` — архив обновления MAIN
   - `hashes.md5` — файл с хеш-суммами
 

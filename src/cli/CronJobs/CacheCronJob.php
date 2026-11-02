@@ -25,7 +25,7 @@ class CacheCronJob implements CommandInterface {
             $rStartup = true;
         }
 
-        $this->setProcessTitle('XC_VM[Cache Builder]');
+        $this->setProcessTitle('UyPanel[Cache Builder]');
         $this->acquireCronLock();
 
         global $db;

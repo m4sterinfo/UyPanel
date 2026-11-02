@@ -1,7 +1,7 @@
 <h1 align="center">❓ FAQ — Frequently Asked Questions</h1>
 
 <p align="center">
-  Here you’ll find answers to the most common questions and issues when working with <b>XC_VM</b>.
+  Here you’ll find answers to the most common questions and issues when working with <b>UyPanel</b>.
 </p>
 
 ---
@@ -99,7 +99,7 @@ If this causes issues for legitimate users (e.g., mobile networks frequently rot
 
 ---
 
-XC_VM's brute-force guard blocks IPs after too many failed login attempts. This is controlled by:
+UyPanel's brute-force guard blocks IPs after too many failed login attempts. This is controlled by:
 
 - `bruteforce_mac_attempts` — attempts per MAC per time window
 - `bruteforce_username_attempts` — attempts per username per time window
@@ -219,7 +219,7 @@ sudo rm -f /home/xc_vm/bin/certbot/*/.certbot.lock
 
 ---
 
-XC_VM runs **two** nginx instances:
+UyPanel runs **two** nginx instances:
 
 1. **nginx** (`bin/nginx/`) — HTTP(S) traffic
 2. **nginx_rtmp** (`bin/nginx_rtmp/`) — RTMP streaming
@@ -345,6 +345,6 @@ sudo -u xc_vm /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php watchdog
 
 ---
 
-📘 *This page is updated over time. If you discover a new common issue — please suggest it in [Issues](https://github.com/Vateron-Media/XC_VM/issues).*
+📘 *This page is updated over time. If you discover a new common issue — please suggest it in [Issues](https://github.com/m4sterinfo/UyPanel/issues).*
 
 ---

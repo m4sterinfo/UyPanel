@@ -1,7 +1,7 @@
-<h1 align="center">Generating SSL Certificate for Nginx in XC_VM</h1>
+<h1 align="center">Generating SSL Certificate for Nginx in UyPanel</h1>
 
 <p align="center">
-  This guide explains how to <b>create a self-signed SSL certificate</b> to enable secure HTTPS connections for the built-in Nginx server in the <b>XC_VM</b> project.
+  This guide explains how to <b>create a self-signed SSL certificate</b> to enable secure HTTPS connections for the built-in Nginx server in the <b>UyPanel</b> project.
 </p>
 
 ---
@@ -22,7 +22,7 @@
 ## Introduction
 
 **SSL (Secure Sockets Layer)** encrypts the connection between client and server, ensuring data confidentiality and user trust.  
-This tutorial shows how to create a **self-signed SSL certificate** for the embedded **Nginx** server in the **XC_VM** project.
+This tutorial shows how to create a **self-signed SSL certificate** for the embedded **Nginx** server in the **UyPanel** project.
 
 ---
 
@@ -70,9 +70,9 @@ prompt = no
 C = RU
 ST = Moscow
 L = Moscow
-O = XC_VM
-OU = XC_VM
-CN = XC_VM
+O = UyPanel
+OU = UyPanel
+CN = UyPanel
 
 [v3_req]
 keyUsage = keyEncipherment, dataEncipherment
@@ -80,7 +80,7 @@ extendedKeyUsage = serverAuth
 subjectAltName = @alt_names
 
 [alt_names]
-DNS.1 = XC_VM
+DNS.1 = UyPanel
 EOF
 ```
 
@@ -91,12 +91,12 @@ EOF
 | `C`     | RU       | Country                           |
 | `ST`    | Moscow   | State/Province                    |
 | `L`     | Moscow   | City/Locality                     |
-| `O`     | XC_VM    | Organization                      |
-| `OU`    | XC_VM    | Organizational Unit               |
-| `CN`    | XC_VM    | Common Name (primary hostname)    |
-| `DNS.1` | XC_VM    | Subject Alternative Name (SAN)    |
+| `O`     | UyPanel    | Organization                      |
+| `OU`    | UyPanel    | Organizational Unit               |
+| `CN`    | UyPanel    | Common Name (primary hostname)    |
+| `DNS.1` | UyPanel    | Subject Alternative Name (SAN)    |
 
-> **Tip:** For real domain names, replace `DNS.1 = XC_VM` with your actual domain (e.g., `DNS.1 = panel.example.com`) to avoid browser warnings.
+> **Tip:** For real domain names, replace `DNS.1 = UyPanel` with your actual domain (e.g., `DNS.1 = panel.example.com`) to avoid browser warnings.
 
 ---
 
@@ -131,7 +131,7 @@ After completing all steps, the following files should be present in `/home/xc_v
 
 ## Result
 
-Your **XC_VM Nginx server** is now accessible via **HTTPS** using the newly created self-signed certificate.  
+Your **UyPanel Nginx server** is now accessible via **HTTPS** using the newly created self-signed certificate.  
 Browsers will display a “not trusted” warning — this is expected behavior for self-signed certificates.
 
 ---

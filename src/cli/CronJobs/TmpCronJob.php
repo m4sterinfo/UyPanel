@@ -21,7 +21,7 @@ class TmpCronJob implements CommandInterface {
         global $db;
         $db->close_mysql();
 
-        $this->setProcessTitle('XC_VM[TMP]');
+        $this->setProcessTitle('UyPanel[TMP]');
         $this->acquireCronLock();
 
         $rTmpPaths = array(

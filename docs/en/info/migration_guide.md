@@ -1,7 +1,7 @@
-<h1 align="center">🧭 XC_VM Migration Guide</h1>
+<h1 align="center">🧭 UyPanel Migration Guide</h1>
 
 <p align="center">
-  Safely migrate from compatible IPTV systems using the built-in XC_VM migration tools.
+  Safely migrate from compatible IPTV systems using the built-in UyPanel migration tools.
 </p>
 
 ---
@@ -23,7 +23,7 @@
 
 > **Read this before starting the migration.**
 
-XC_VM migration transfers **data only**.
+UyPanel migration transfers **data only**.
 **All configuration is intentionally excluded from migration.**
 
 This includes (but is not limited to):
@@ -44,7 +44,7 @@ Skipping reconfiguration will **break metadata fetching, stream title updates, a
 ## ⚙️ Before You Start
 
 > 💡 **Recommendation:**
-> Perform migration on a **fresh XC_VM installation**.
+> Perform migration on a **fresh UyPanel installation**.
 
 > ⚠️ **Important:**
 > System and panel settings are **NOT migrated**.
@@ -52,7 +52,7 @@ Skipping reconfiguration will **break metadata fetching, stream title updates, a
 
 If you choose to migrate into an **existing installation**, be aware:
 
-* XC_VM will **delete all tables** in the main database that match data from the migration database.
+* UyPanel will **delete all tables** in the main database that match data from the migration database.
 * **Backups are mandatory.** No automatic rollback is provided.
 
 ---
@@ -61,7 +61,7 @@ If you choose to migrate into an **existing installation**, be aware:
 
 ### 1. Upload Backup
 
-Upload your existing database backup to the XC_VM server using **SFTP**.
+Upload your existing database backup to the UyPanel server using **SFTP**.
 
 Example location:
 

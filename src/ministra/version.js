@@ -1,1 +1,1 @@
-var ver = 'XC_VM 1.0';
+var ver = 'UyPanel 1.0';

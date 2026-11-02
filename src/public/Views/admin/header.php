@@ -9,7 +9,7 @@
 
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <title><?= $rSettings['server_name'] ?: 'XC_VM'; ?> <?= isset($_TITLE) ? ' | ' . $_TITLE : ''; ?></title>
+        <title><?= $rSettings['server_name'] ?: 'UyPanel'; ?> <?= isset($_TITLE) ? ' | ' . $_TITLE : ''; ?></title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="robots" content="noindex,nofollow">
@@ -196,7 +196,7 @@
                                     </li>
                                 <?php endif; ?>
 
-                                <?php if (!$rMobile && isset($rUpdate) && is_array($rUpdate) && isset($rUpdate['version']) && (version_compare($rUpdate['version'], XC_VM_VERSION) >= 0)): ?>
+                                <?php if (!$rMobile && isset($rUpdate) && is_array($rUpdate) && isset($rUpdate['version']) && (version_compare($rUpdate['version'], UyPanel_VERSION) >= 0)): ?>
                                     <li class="notification-list">
                                         <a href="settings" class="nav-link right-bar-toggle waves-effect <?php echo $rUserInfo['theme'] == 1 ? 'text-white' : 'text-warning'; ?>" title="Official Release v<?php echo $rUpdate['version']; ?> is available to download.">
                                             <i class="mdi mdi-update noti-icon"></i>

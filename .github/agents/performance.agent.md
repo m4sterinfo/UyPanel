@@ -19,7 +19,7 @@ You are a performance engineer analyzing runtime and scalability behavior.
 - Discuss naming or formatting
 - Discuss security unless it impacts performance
 
-## XC_VM Performance Risks
+## UyPanel Performance Risks
 
 Evaluate:
 

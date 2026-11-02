@@ -23,7 +23,7 @@ class EpgCronJob implements CommandInterface {
             $rEPGID = intval($rArgs[0]);
         }
 
-        $this->printLog("=== XC_VM[EPG] Process started ===");
+        $this->printLog("=== UyPanel[EPG] Process started ===");
         $this->printLog("Mode: " . ($rEPGID ? "Single EPG ID: $rEPGID" : "Full update"));
 
         set_time_limit(0);
@@ -31,8 +31,8 @@ class EpgCronJob implements CommandInterface {
 
         require INCLUDES_PATH . 'libs/XmlStringStreamer.php';
 
-        shell_exec('kill -9 `ps -ef | grep \'XC_VM\\[EPG\\]\' | grep -v grep | awk \'{print $2}\'`;');
-        cli_set_process_title('XC_VM[EPG]');
+        shell_exec('kill -9 `ps -ef | grep \'UyPanel\\[EPG\\]\' | grep -v grep | awk \'{print $2}\'`;');
+        cli_set_process_title('UyPanel[EPG]');
 
         global $db;
 

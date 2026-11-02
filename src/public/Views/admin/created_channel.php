@@ -410,7 +410,7 @@ endif;
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="alert bg-info text-white border-0" role="alert">
-                                                    RTMP Push will allow you to push your channels to RTMP servers, such as the one that runs with XC_VM. The `Push From` server needs to be enabled in the servers tab for this to be activated.
+                                                    RTMP Push will allow you to push your channels to RTMP servers, such as the one that runs with UyPanel. The `Push From` server needs to be enabled in the servers tab for this to be activated.
                                                 </div>
                                                 <table id="datatable-rtmp" class="table table-striped table-borderless mb-0">
                                                     <thead>

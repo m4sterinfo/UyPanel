@@ -1,7 +1,7 @@
-<h1 align="center">🚀 XC_VM — FFmpeg Build Guide</h1>
+<h1 align="center">🚀 UyPanel — FFmpeg Build Guide</h1>
 
 <p align="center">
-  This is a complete guide to building a fully static, portable FFmpeg binary with NVIDIA hardware acceleration (NVENC/NVDEC/CUVID) for the XC_VM project.
+  This is a complete guide to building a fully static, portable FFmpeg binary with NVIDIA hardware acceleration (NVENC/NVDEC/CUVID) for the UyPanel project.
 </p>
 
 ---
@@ -372,7 +372,7 @@ ${INSTALL_DIR:-/home/xc_vm/bin/ffmpeg_bin}/${FFMPEG_VERSION:-8.0}/ffmpeg -decode
 * Adjust environment variables as needed for your system.
 * Some configure flags may need adjustment for different FFmpeg versions.
 
-> 💬 **Tip:** If you encounter issues, check build logs or open an issue in the [repository](https://github.com/Vateron-Media/XC_VM/issues).
+> 💬 **Tip:** If you encounter issues, check build logs or open an issue in the [repository](https://github.com/m4sterinfo/UyPanel/issues).
 
 ---
 

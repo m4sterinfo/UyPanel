@@ -1,7 +1,7 @@
 ## ✨ Contributors
 
 Thanks to these amazing people for contributing to the project!
-Want to see your name here? [Open a PR](https://github.com/Vateron-Media/XC_VM/pulls) or [report an issue](https://github.com/Vateron-Media/XC_VM/issues) — and you'll be listed 🎉
+Want to see your name here? [Open a PR](https://github.com/m4sterinfo/UyPanel/pulls) or [report an issue](https://github.com/m4sterinfo/UyPanel/issues) — and you'll be listed 🎉
 
 ---
 

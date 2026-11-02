@@ -18,7 +18,7 @@ class LinesLogsCronJob implements CommandInterface {
             return 1;
         }
 
-        $this->initCron('XC_VM[Lines Logs]');
+        $this->initCron('UyPanel[Lines Logs]');
         $this->loadCron();
 
         return 0;

@@ -29,7 +29,7 @@ if __name__ == "__main__":
         rFilename = sys.argv[1]
         rMD5 = sys.argv[2]
     except:
-        print("Please run the update from the XC_VM Admin Interface.")
+        print("Please run the update from the UyPanel Admin Interface.")
         sys.exit(1)
     if md5(rFilename) == rMD5:
         doUpdate(rFilename)

@@ -165,10 +165,10 @@ if ($rExtension) {
 	$rPrebuffer = isset($rRequest['prebuffer']);
 
 	foreach (getallheaders() as $rKey => $rValue) {
-		if (strtoupper($rKey) == 'X-XC_VM-DETECT') {
+		if (strtoupper($rKey) == 'X-UyPanel-DETECT') {
 			$rRestreamDetect = true;
 		} else {
-			if (strtoupper($rKey) == 'X-XC_VM-PREBUFFER') {
+			if (strtoupper($rKey) == 'X-UyPanel-PREBUFFER') {
 				$rPrebuffer = true;
 			}
 		}

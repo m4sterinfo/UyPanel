@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 # ──────────────────────────────────────────────────────────────────────────────
-# XC_VM FFmpeg Auto-Builder - FINAL FULL COMPLETE VERSION 2026 (ENGLISH)
+# UyPanel FFmpeg Auto-Builder - FINAL FULL COMPLETE VERSION 2026 (ENGLISH)
 #
 # This is the longest and most complete version.
 # Everything is expanded (no shortcuts, no "...").
@@ -13,7 +13,7 @@ set -euo pipefail
 #   - Vulkan + libplacebo
 #   - Subtitles PRO (fribidi + harfbuzz + zvbi)
 #   - --force-gpu flag for Docker (GPU support retained even without CUDA at build)
-#   - 100% compatible with XUI / Xtream UI / XC_VM
+#   - 100% compatible with XUI / Xtream UI / UyPanel
 #   - Static libs + dynamic glibc (no segfaults)
 #
 # Usage:
@@ -63,7 +63,7 @@ log_warn()  { echo -e "${YELLOW}[WARN]${NC} $*"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $*"; }
 log_step()  { echo -e "${CYAN}[STEP]${NC} $*"; }
 
-# ── Detect XC_VM install dir ─────────────────────────────────────────────────
+# ── Detect UyPanel install dir ─────────────────────────────────────────────────
 detect_xc_vm_bin_dir() {
     local candidates=(
         "/home/xc_vm/bin/ffmpeg_bin"
@@ -123,7 +123,7 @@ fi
 
 if [[ "$DO_INSTALL" == true && -z "$INSTALL_DIR" ]]; then
     INSTALL_DIR="$(detect_xc_vm_bin_dir)" || {
-        log_error "Cannot detect XC_VM bin dir. Use --install-dir PATH"
+        log_error "Cannot detect UyPanel bin dir. Use --install-dir PATH"
         exit 1
     }
 fi
@@ -513,7 +513,7 @@ build_version() {
     return 0
 }
 
-# ── Install into XC_VM ───────────────────────────────────────────────────────
+# ── Install into UyPanel ───────────────────────────────────────────────────────
 install_version() {
     local version="$1"
     local prefix="${PREFIX_BASE}/${version}"
@@ -534,7 +534,7 @@ install_version() {
 
     # Write build metadata
     cat > "${target}/BUILD_INFO" <<EOF
-Built by: XC_VM FFmpeg Auto-Builder
+Built by: UyPanel FFmpeg Auto-Builder
 Version:  FFmpeg ${version} (${FFMPEG_TAGS[$version]})
 Date:     $(date -u '+%Y-%m-%d %H:%M:%S UTC')
 OS:       $(. /etc/os-release 2>/dev/null && echo "${PRETTY_NAME}" || uname -sr)
@@ -583,7 +583,7 @@ main() {
     fi
 
     echo ""
-    log_step "XC_VM FFmpeg Auto-Builder - FINAL FULL COMPLETE"
+    log_step "UyPanel FFmpeg Auto-Builder - FINAL FULL COMPLETE"
     log_step "Versions: ${VERSIONS_TO_BUILD[*]}"
     [[ "$FORCE_GPU" == true ]] && log_step "FORCE_GPU enabled for Docker"
     echo ""

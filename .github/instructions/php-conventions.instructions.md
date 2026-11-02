@@ -1,7 +1,7 @@
 ---
 applyTo: "**/*.php"
 ---
-# PHP Conventions — XC_VM
+# PHP Conventions — UyPanel
 
 ## Formatting
 - **Brace style:** K&R (opening brace on same line)

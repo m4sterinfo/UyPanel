@@ -84,7 +84,7 @@
                                     <li class="nav-item">
                                         <a href="#cache" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2">
                                             <i class="mdi mdi-cached mr-1"></i>
-                                            <span class="d-none d-sm-inline">XC_VM Caching System</span>
+                                            <span class="d-none d-sm-inline">UyPanel Caching System</span>
                                         </a>
                                     </li>
                                     <li class="nav-item">
@@ -171,7 +171,7 @@
                                                     </div>
                                                 <?php else: ?>
                                                     <h5 class="card-title">Cache is Disabled</h5>
-                                                    <p>You have chosen to disable Cache system. You can re-enable it by clicking the Enable Cache box below, however when doing so you would get best results restarting XC_VM on this server.</p>
+                                                    <p>You have chosen to disable Cache system. You can re-enable it by clicking the Enable Cache box below, however when doing so you would get best results restarting UyPanel on this server.</p>
                                                 <?php endif; ?>
 
                                                 <ul class="list-inline wizard mb-0" style="margin-top:30px;">
@@ -198,7 +198,7 @@
                                                 <h5 class="card-title">Redis Connection Handler</h5>
                                                 <p>The handler will allow all connections from clients to load balancers to be verified and managed using Redis rather than through mysql connections.<br /><br /><strong>Disabling Redis handler will disconnect all of your active clients, enabling it however should move the live connections from MySQL to Redis without disconnects.</strong></p>
                                                 <h5 class="card-title mt-4">Pros & Cons</h5>
-                                                <p>Before deciding whether Redis Connection Handler is right for you, you should know a few things. Firstly, enabling Redis will significantly increase XC_VM's ability to handle connections as the previous bottleneck would be from MySQL not being able to handle the amount of incoming client requests. You'll also find that zap time will be quicker, CPU should be lower and things will generally run quite smoothly.<br /><br />The drawbacks from using Redis is that the live connection database is stored in memory, although a backup is periodically written, restarting XC_VM can result in connection losses. In addition to this, your ability to filter or search some content in the Admin or Reseller interface will be diminished. For example, with Redis on you can only sort Live Connections by Time Active ascending or descending and you cannot search the live connection list. You also lose the ability to sort by Active Connections in Lines or Content pages etc.<br /><br />The best way to decide if Redis is right for you is to try it for yourself.</p>
+                                                <p>Before deciding whether Redis Connection Handler is right for you, you should know a few things. Firstly, enabling Redis will significantly increase UyPanel's ability to handle connections as the previous bottleneck would be from MySQL not being able to handle the amount of incoming client requests. You'll also find that zap time will be quicker, CPU should be lower and things will generally run quite smoothly.<br /><br />The drawbacks from using Redis is that the live connection database is stored in memory, although a backup is periodically written, restarting UyPanel can result in connection losses. In addition to this, your ability to filter or search some content in the Admin or Reseller interface will be diminished. For example, with Redis on you can only sort Live Connections by Time Active ascending or descending and you cannot search the live connection list. You also lose the ability to sort by Active Connections in Lines or Content pages etc.<br /><br />The best way to decide if Redis is right for you is to try it for yourself.</p>
 
                                                 <?php if ($rSettings['redis_handler']): ?>
                                                     <?php

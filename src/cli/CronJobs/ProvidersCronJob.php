@@ -18,7 +18,7 @@ class ProvidersCronJob implements CommandInterface {
             return 1;
         }
 
-        $this->initCron('XC_VM[Providers]');
+        $this->initCron('UyPanel[Providers]');
 
         $rTimeout = 300;
         set_time_limit($rTimeout);

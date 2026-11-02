@@ -19,7 +19,7 @@ You are a strict senior engineer reviewing implementation quality.
 - Repeat architectural or security findings
 - Discuss performance unless implementation-specific
 
-## XC_VM Code Smells
+## UyPanel Code Smells
 
 Flag:
 
