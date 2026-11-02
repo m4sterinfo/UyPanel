@@ -61,6 +61,16 @@ rVersions = {
     "24.10": "oracular",
 }
 
+# Debian 12/13 support (backported from upstream main-branch installer)
+rDistro = "ubuntu"
+try:
+    with open("/etc/os-release") as f:
+        for line in f:
+            if line.startswith("ID="):
+                rDistro = line.split("=", 1)[1].strip().strip('"').lower()
+except Exception:
+    pass
+
 
 def get_system_ram_mb():
     """Get total system RAM in MB"""
@@ -185,7 +195,11 @@ if __name__ == "__main__":
         rVersion = os.popen("lsb_release -sr").read().strip()
     except:
         rVersion = None
-    if not rVersion in rVersions:
+    if rDistro == "debian":
+        if rVersion not in ("12", "13"):
+            printc("Unsupported Operating System")
+            sys.exit(1)
+    elif rVersion not in rVersions:
         printc("Unsupported Operating System")
         sys.exit(1)
 
@@ -253,22 +267,31 @@ if __name__ == "__main__":
                 pass
     printc("Updating system")
     os.system("sudo apt-get update")
-    os.system(
-        "sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install software-properties-common"
-    )
-    if rVersion in rVersions:
+    if rDistro != "debian":
+        os.system(
+            "sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install software-properties-common"
+        )
+    if rDistro == "debian":
+        printc("Debian detected: using system MariaDB and MaxMind packages")
+    elif rVersion in rVersions:
         printc("Adding repo: Ubuntu %s" % rVersion)
         os.system(
             "sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8"
         )
         os.system('curl -LsS https://r.mariadb.com/downloads/mariadb_repo_setup | sudo bash -s -- --mariadb-server-version="mariadb-11.4"')
+        os.system("sudo add-apt-repository -y ppa:maxmind/ppa")
     else:
         print("Installing system version of MariaDB")
-    os.system("sudo add-apt-repository -y ppa:maxmind/ppa")
     os.system("sudo apt-get update")
     for rPackage in rRemove:
         printc("Removing %s" % rPackage)
         os.system("sudo apt-get remove %s -y" % rPackage)
+    if rDistro == "debian":
+        # Debian 12/13: t64 library names, no PPAs, libcap2-bin for setcap
+        rPackages = [p for p in rPackages if p != "software-properties-common"]
+        rPackages = ["libcurl4t64" if p == "libcurl4" else p for p in rPackages]
+        if "libcap2-bin" not in rPackages:
+            rPackages.append("libcap2-bin")
     for rPackage in rPackages:
         printc("Installing %s" % rPackage)
         os.system(
