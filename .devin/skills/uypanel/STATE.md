@@ -9,8 +9,9 @@
 - **Base**: fork de XC_VM tag `2.0.1` (commit `e21f9063`), historial git completo conservado
 - **Rama de trabajo**: `main` (nuestra)
 - **Upstream**: `origin` = https://github.com/Vateron-Media/XC_VM (solo lectura)
-- **Repo propio**: pendiente de crear; el usuario hará el push
-- **Licencia**: AGPL-3.0 (heredada, mantener)
+- **Repo propio**: https://github.com/m4sterinfo/UyPanel (público, AGPL-3.0, rama main = c19dbf69; pusheado el 2026-11-02)
+- **Auth GitHub**: gh CLI autenticado como `m4sterinfo` (credenciales de git vía gh)
+- **Licencia**: AGPL-3.0 (heredada, mantener — NO cambiar a GPL-3.0)
 
 ## Entorno
 
@@ -58,7 +59,7 @@
 
 ## Trabajo pendiente / Roadmap
 
-- [ ] Crear repo propio en GitHub y cambiar `origin` (usuario hace el push)
+- [x] Crear repo propio en GitHub y pushear (hecho 2026-11-02: m4sterinfo/UyPanel)
 - [ ] Actualizar `LAST_TAG` del Makefile al repo propio cuando haya releases
 - [ ] Rebranding progresivo XC_VM → UyPanel (README, docs, UI) — decidir alcance
       (cuidado: `xc_vm` está arraigado en service systemd, rutas, configs)
