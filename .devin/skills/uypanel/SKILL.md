@@ -39,7 +39,7 @@ propio: modificar, añadir funciones y mantener el control total del código.
 
 ```
 UyPanel/
-├─ src/                  # Código fuente del panel (lo que se despliega en /home/xc_vm)
+├─ src/                  # Código fuente del panel (lo que se despliega en /home/uypanel)
 │  ├─ core/              # Infraestructura compartida (Database, Cache, Events) — no depende de nada externo
 │  ├─ domain/            # Lógica de negocio por contexto (Controller → Service → Repository)
 │  ├─ public/            # Presentación (www/, admin, player_api, proxies)
@@ -53,8 +53,8 @@ UyPanel/
 ├─ tools/                # build_ffmpeg.sh, tests de player API, scripts varios
 ├─ docs/                 # Documentación (mkdocs, en/ y ru/)
 ├─ third_party/          # SUBMÓDULOS git (sistemas de build de binarios)
-│  ├─ XC_VM_Binaries/    # Build de PHP/nginx/redis/nginx_rtmp por distro (docker)
-│  └─ XC_VM_FFMPEG/      # Build de FFmpeg 8.0/7.1/4.0 (docker)
+│  ├─ UyPanel_Binaries/  # Build de PHP/nginx/redis/nginx_rtmp por distro (docker)
+│  └─ UyPanel_FFMPEG/    # Build de FFmpeg 8.0/7.1/4.0 (docker)
 ├─ install               # Instalador Python (con soporte Debian 12/13 — parche nuestro)
 ├─ Makefile              # Sistema de build de payloads
 ├─ ARCHITECTURE.md       # Especificación técnica completa
@@ -65,33 +65,33 @@ UyPanel/
 
 ```bash
 # Build de payloads (generan dist/)
-make main        # → dist/xc_vm.tar.gz + dist/XC_VM.zip (panel principal)
+make main        # → dist/uypanel.tar.gz + dist/UyPanel.zip (panel principal)
 make lb          # → dist/loadbalancer.tar.gz (load balancer; excluye modules/, admin, etc.)
 make main_update # → dist/update.tar.gz (actualización de panel instalado)
 make lb_update   # → dist/loadbalancer_update.tar.gz
 
 # Binarios (PHP 8.1, nginx, redis/KeyDB, nginx_rtmp) y FFmpeg:
-cd third_party/XC_VM_Binaries && ./build_all.sh   # usa docker/
-cd third_party/XC_VM_FFMPEG && make               # ver su README/Makefile
+cd third_party/UyPanel_Binaries && ./build_all.sh  # usa docker/
+cd third_party/UyPanel_FFMPEG && make             # ver su README/Makefile
 
 # Sintaxis PHP (validar antes de commitear cambios PHP):
 tools/php_syntax_check.sh   # o: find src -name "*.php" | xargs -n1 php -l
 
-# Servidor en producción (Debian 13, panel instalado en /home/xc_vm):
-sudo systemctl start|stop|restart xc_vm
-sudo /home/xc_vm/status 1                          # estado: DB + migraciones
-sudo /home/xc_vm/bin/php/bin/php /home/xc_vm/console.php <comando>   # CLI del panel
-journalctl -u xc_vm -f
+# Servidor en producción (Debian 13, panel instalado en /home/uypanel):
+sudo systemctl start|stop|restart uypanel
+sudo /home/uypanel/status 1                          # estado: DB + migraciones
+sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php <comando>   # CLI del panel
+journalctl -u uypanel -f
 ```
 
 ## Entorno de producción (servidor actual)
 
 - Debian 13 (trixie), 8 cores, 32 GB RAM, IP `198.27.81.133`
-- Panel XC_VM 2.0.1 instalado en `/home/xc_vm` (nginx 80/443, nginx_rtmp,
+- UyPanel 2.0.1 (base XC_VM 2.0.1) instalado en `/home/uypanel` (nginx 80/443, nginx_rtmp,
   4 pools php-fpm 8.1.33, KeyDB 6.3.4 en 6379 con auth, MariaDB 11.8)
 - Base de datos migrada desde XUI (27,672 líneas, 240,557 streams)
 - Acceso admin: `http://198.27.81.133/x9access9x`
-- Credenciales MariaDB: `/home/debian/credentials.txt` (NO commitear nunca)
+- Credenciales MariaDB: `/home/debian/credentials.txt` (BD: `uypanel`) (NO commitear nunca)
 - Particularidades Debian 13 del PHP incluido (build Ubuntu):
   `libcurl3t64-gnutls` + `libjpeg.so.8` (ABI 8) en `/usr/local/lib` — ver
   `/home/debian/AGENTS.md` para detalles. NO sustituir libjpeg por symlink a la
@@ -99,22 +99,24 @@ journalctl -u xc_vm -f
 
 ## Relación con upstream
 
-- `origin` apunta a Vateron-Media/XC_VM (solo lectura para nosotros).
-- Rama `main` local = nuestro código, basada en el tag 2.0.1.
+- `origin` = https://github.com/m4sterinfo/UyPanel (NUESTRO repo; push normal).
+- El proyecto original (Vateron-Media/XC_VM) solo se consulta si se quiere
+  traer fixes: añádelo como remote aparte (`git remote add upstream ...`),
+  compara con `git log 2.0.1..upstream/main --oneline` y cherry-pick selectivo
+  (NO merge ciego: rompería nuestras modificaciones).
 - Ver qué hemos cambiado respecto al original: `git diff 2.0.1..HEAD`
-- Traer fixes upstream si algún día se quiere:
-  `git fetch origin && git log 2.0.1..origin/main --oneline` y cherry-pick
-  selectivo (NO merge ciego: rompería nuestras modificaciones).
+- Repos de soporte propios (forks de upstream renombrados):
+  `m4sterinfo/UyPanel_Update`, `m4sterinfo/UyPanel_Binaries`,
+  `m4sterinfo/UyPanel_FFMPEG` — el sistema de updates del panel (AppConfig)
+  ya apunta a ellos.
 
-## Al crear el repo propio en GitHub
+## Publicar releases
 
-- Cambiar `origin` a la URL del repo nuevo (ej. `git remote set-url origin ...`
-  y añadir upstream como remote aparte si se quiere seguir al original).
-- El `Makefile` consulta el API de releases de Vateron-Media (`LAST_TAG`) —
-  actualizarlo al repo propio cuando se empiecen a publicar releases.
-- Renombrar branding "XC_VM" → "UyPanel" progresivamente (README, docs,
-  nombres de servicio si se decide; con cuidado: el nombre de servicio systemd
-  `xc_vm` y rutas `/home/xc_vm` están arraigados en scripts y configs).
+- El Quick Install del README descarga de `releases/latest` de NUESTRO repo.
+- Release 2.0.1 publicado (2026-11-02) con `UyPanel.zip` + `loadbalancer.tar.gz`
+  + `hashes.md5`. Para publicar una versión nueva: bump de `UyPanel_VERSION` en
+  `src/core/Config/AppConfig.php`, tag, `gh release create <tag> dist/*`
+  (builds con `make main` y `make lb`).
 
 ## Tono de trabajo
 
