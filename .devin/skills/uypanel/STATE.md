@@ -11,12 +11,7 @@
    `src/public/assets/admin/videos/login-bg.mp4`. Cuando lo pegue en el repo:
    commitear + pushear (es archivo LFS). El video ACTUAL en ambos sitios es el
    del original y muestra el logo 3D de XC_VM en su frame central (~3.5s).
-2. **GitHub Pages**: activar en el repo (Settings → Pages → rama main,
-   carpeta /docs) para que el sitio de docs (docs/es + docs/en) funcione en
-   https://m4sterinfo.github.io/UyPanel
-3. **Push pendiente**: el commit de traducción de comentarios (`037f50f6`) y
-   los anteriores están sin pushear (el último pusheado es `4b861388`).
-4. **Roadmap** (ver sección Trabajo pendiente): rebuild de binarios con prefix
+2. **Roadmap** (ver sección Trabajo pendiente): rebuild de binarios con prefix
    uypanel, EPG re-import, revisión de Settings, READMEs de los forks de soporte.
 
 ## Identidad
@@ -159,14 +154,20 @@
   idioma ru/bg (src/includes/langs/*.ini), mapa de transliteración y teclado
   cirílico del portal MAG (ministra/global.js, layer.search_box.js), nombres
   nativos de idiomas (ministra/external/settings/g_play.html).
-- Commit: `037f50f6` (196 archivos, 3926 líneas cambiadas 1:1). Sin push.
+- Commit: `037f50f6` (196 archivos, 3926 líneas cambiadas 1:1). Pusheado.
+
+### 2026-11-03 — Push + GitHub Pages activados
+- Push de `689474bd..3cb56994` a origin/main (traducción de comentarios + STATE.md).
+- GitHub Pages activado vía API (source: rama `main`, carpeta `/docs`).
+  Sitio: https://m4sterinfo.github.io/UyPanel/ — verificado: raíz 200
+  (redirect a guía española), ruta `#/es-es/` 200, `es/README.md` 200.
 
 ## Trabajo pendiente / Roadmap
 
 - [x] **Comentarios en ruso en ~200 archivos PHP** — traducidos al español
       (2026-11-03, commit 037f50f6; datos funcionales MAG/langs conservados)
 - [ ] **Video del login**: usuario pega el suyo (servidor + repo) → commit+push
-- [ ] **GitHub Pages**: activar en el repo (main, /docs) para el sitio de docs
+- [x] **GitHub Pages** — activado (main, /docs); sitio verificado en línea
 - [ ] **Reconstruir binarios con prefix /home/uypanel** (third_party/UyPanel_Binaries,
       ajustar scripts de build) y eliminar el symlink /home/xc_vm — ver nota shim
 - [ ] Personalizar READMEs/branding de los forks de soporte cuando se toque
