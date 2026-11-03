@@ -1,7 +1,8 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-03 (comentarios traducidos).
+> cada cambio significativo. Última actualización: 2026-11-03 (fin de sesión —
+> comentarios traducidos, Pages activo, binarios PHP 8.3.36 con prefix uypanel).
 
 ## ⏭️ CONTINUAR AQUÍ (próxima sesión)
 
