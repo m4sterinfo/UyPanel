@@ -1349,7 +1349,7 @@ if __name__ == "__main__":
             run_command("apt --fix-broken install -y || true")
 
         else:
-            # Fallback для других версий Debian/Ubuntu
+                        # Fallback para otras versiones de Debian/Ubuntu
             debian_packages = PACKAGES.get('debian', [])
             printc(f"Using standard Debian/Ubuntu package list for {dist_info['id']} {dist_info['version']}", col.OKBLUE)
 

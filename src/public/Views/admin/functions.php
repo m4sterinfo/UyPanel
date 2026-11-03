@@ -3,11 +3,11 @@ if (!defined('MAIN_HOME')) {
 	define('MAIN_HOME', '/home/uypanel/');
 }
 
-// Импорт глобальных переменных bootstrap'а.
-// bootstrapAdminRuntime() использует `global` для записи переменных.
-// Когда functions.php включается из метода контроллера (не из глобального scope),
-// эти переменные без `global` не видны в текущем scope.
-// В глобальном scope (прямой вызов через nginx) — это no-op.
+// Importa las variables globales del bootstrap.
+// bootstrapAdminRuntime() usa `global` para escribir las variables.
+// Cuando functions.php se incluye desde un método del controlador (no desde el scope global),
+// estas variables sin `global` no son visibles en el scope actual.
+// En el scope global (invocación directa vía nginx) — es un no-op.
 global $db, $rSettings, $rMobile, $rServers, $rProxyServers, $rDetect,
        $rTimeout, $rProtocol, $allServers, $rPermissions, $language, $allowedLangs,
        $rServerError, $allServersHealthy, $updateRequired, $rUserInfo, $_INFO;

@@ -1,6 +1,6 @@
 <?php
 /**
- * Контроллер просмотра тикета (admin/ticket_view.php)
+ * Controlador de visualización de ticket (admin/ticket_view.php)
  */
 
 class TicketViewController extends BaseAdminController {

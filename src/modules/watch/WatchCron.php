@@ -1,7 +1,7 @@
 <?php
 
 /**
- * WatchCron — крон-задача Watch Folder.
+ * WatchCron — tarea cron de Watch Folder.
  */
 
 require_once __DIR__ . '/../../core/Process/Thread.php';
@@ -9,9 +9,9 @@ require_once __DIR__ . '/../../core/Process/Multithread.php';
 
 class WatchCron {
     /**
-     * Получить категории Watch из БД.
+          * Obtener las categorías Watch de la BD.
      *
-     * @param int|null $rType Тип категории (1=movie, 2=series)
+          * @param int|null $rType Tipo de categoría (1=movie, 2=series)
      * @return array
      */
     public static function getWatchCategories($rType = null) {
@@ -29,7 +29,7 @@ class WatchCron {
     }
 
     /**
-     * Получить букет по ID.
+          * Obtener un bouquet por ID.
      *
      * @param int $rID
      * @return array|null
@@ -44,7 +44,7 @@ class WatchCron {
     }
 
     /**
-     * Обработать файлы букетов во временной директории.
+          * Procesar los archivos de bouquets en el directorio temporal.
      */
     public static function checkBouquets() {
         global $db;
@@ -83,8 +83,8 @@ class WatchCron {
     }
 
     /**
-     * Основная точка входа крона Watch Folder.
-     * Заменяет loadCron().
+          * Punto de entrada principal del cron de Watch Folder.
+          * Sustituye loadCron().
      */
     public static function run() {
         global $db;

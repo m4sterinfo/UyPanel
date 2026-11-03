@@ -13,14 +13,14 @@ XDEBUG_REPO="https://github.com/xdebug/xdebug.git"
 TMP_DIR="/tmp/php-xdebug-build"
 
 # ====================
-# Установка зависимостей (Ubuntu/Debian)
+# Instalación de dependencias (Ubuntu/Debian)
 # ====================
-echo "=== Обновление списка пакетов и установка зависимостей ==="
+echo "=== Actualización de la lista de paquetes e instalación de dependencias ==="
 
-# Обновляем индекс пакетов
+# Actualizamos el índice de paquetes
 sudo apt update -qq
 
-# Основной набор для сборки PHP-расширений + git
+# Conjunto básico para compilar extensiones PHP + git
 sudo apt install -y --no-install-recommends \
     build-essential \
     autoconf \
@@ -30,16 +30,16 @@ sudo apt install -y --no-install-recommends \
     pkg-config
 # ====================
 
-echo "=== Проверка окружения ==="
+echo "=== Comprobación del entorno ==="
 for bin in "$PHP_BIN" "$PHPIZE" "$PHP_CONFIG"; do
     if [ ! -x "$bin" ]; then
-        echo "Ошибка: $bin не найден"
+                echo "Error: $bin no encontrado"
         exit 1
     fi
 done
 
 if [ ! -f "$PHP_INI" ]; then
-    echo "Ошибка: Основной php.ini не найден по пути $PHP_INI"
+        echo "Error: el php.ini principal no se encontró en la ruta $PHP_INI"
     exit 1
 fi
 
@@ -48,7 +48,7 @@ echo "php.ini        : $PHP_INI"
 echo "Extension dir  : $EXT_DIR"
 
 echo
-echo "=== Подготовка сборки Xdebug ==="
+echo "=== Preparación de la compilación de Xdebug ==="
 rm -rf "$TMP_DIR"
 mkdir -p "$TMP_DIR"
 cd "$TMP_DIR"
@@ -58,30 +58,30 @@ $PHPIZE
 ./configure --with-php-config="$PHP_CONFIG"
 
 echo
-echo "=== Сборка ==="
+echo "=== Compilación ==="
 make -j$(nproc)
 
 echo
-echo "=== Установка расширения ==="
+echo "=== Instalación de la extensión ==="
 cp modules/xdebug.so "$EXT_DIR"/
 
 echo
-echo "=== Добавление настроек в $PHP_INI ==="
+echo "=== Añadiendo ajustes a $PHP_INI ==="
 
-# Проверяем, не добавляли ли уже секцию Xdebug
+# Comprobamos si ya se añadió antes la sección Xdebug
 if grep -q "^;.*Xdebug" "$PHP_INI" || grep -q "^zend_extension=.*xdebug.so" "$PHP_INI"; then
-    echo "Внимание: похоже, Xdebug уже присутствует в php.ini"
-    echo "Новые настройки добавляться НЕ будут, чтобы избежать дублирования."
+        echo "Atención: parece que Xdebug ya está presente en php.ini"
+        echo "Los ajustes nuevos NO se añadirán, para evitar duplicados."
 else
     cat >> "$PHP_INI" <<EOF
 
 
 ; ====================
-; Xdebug (добавлено $(date '+%Y-%m-%d %H:%M:%S'))
+; Xdebug (añadido $(date '+%Y-%m-%d %H:%M:%S'))
 ; ====================
 zend_extension=xdebug.so
 
-; Включаем отладку и профайлинг
+; Activamos la depuración y el profiling
 xdebug.mode=debug,profile
 xdebug.start_with_request=trigger
 xdebug.output_dir=/home/uypanel/xdebug
@@ -89,48 +89,48 @@ xdebug.client_host=127.0.0.1
 xdebug.client_port=9003
 xdebug.discover_client_host=0
 
-; Прочие настройки (по желанию)
+; Otros ajustes (opcional)
 ; xdebug.log=/tmp/xdebug.log
 ; xdebug.profiler_enable=1
 ; xdebug.profiler_output_name=cachegrind.out.%p
 ; ====================
 EOF
 
-    echo "Настройки Xdebug успешно добавлены в конец файла $PHP_INI"
+        echo "Ajustes de Xdebug añadidos con éxito al final del archivo $PHP_INI"
 fi
 
 sudo chown uypanel:uypanel -R /home/uypanel >/dev/null 2>&1
 sudo chmod 777 "$EXT_DIR/xdebug.so" >/dev/null 2>&1
 
 echo
-echo "=== Перезапуск php-fpm ==="
+echo "=== Reinicio de php-fpm ==="
 if systemctl is-active --quiet php-fpm; then
     sudo systemctl restart php-fpm
 else
-    echo "php-fpm не обнаружен в systemd, перезапустите вручную"
+        echo "php-fpm no detectado en systemd, reinícialo manualmente"
 fi
 sleep 2
 
 echo
-echo "=== Проверка загрузки модуля ==="
+echo "=== Comprobación de la carga del módulo ==="
 if $PHP_BIN -r 'exit(extension_loaded("xdebug") ? 0 : 1);'; then
-    echo "Xdebug успешно загружен (проверено через extension_loaded)"
+        echo "Xdebug cargado con éxito (verificado vía extension_loaded)"
 else
-    echo "Ошибка: Xdebug не загрузился"
-    echo "Проверьте php -r 'var_dump(extension_loaded(\"xdebug\"));'"
+        echo "Error: Xdebug no se cargó"
+        echo "Comprueba php -r 'var_dump(extension_loaded(\"xdebug\"));'"
     exit 1
 fi
 
 echo
 echo "=============================="
-echo "Xdebug установлен успешно"
+echo "Xdebug instalado con éxito"
 echo
-echo "📂 Папка профилей: /tmp/xdebug"
-echo "Для php-fpm не забудь перезапуск:"
-echo "  systemctl restart php-fpm      # если systemd"
-echo "  или"
+echo "📂 Carpeta de perfiles: /tmp/xdebug"
+echo "Para php-fpm no olvides reiniciar:"
+echo "  systemctl restart php-fpm      # si systemd"
+echo "  o"
 echo "  $PHP_PREFIX/sbin/php-fpm --reload"
-echo "  или"
+echo "  o"
 echo "  pkill -USR2 php-fpm"
 echo
 echo "=============================="

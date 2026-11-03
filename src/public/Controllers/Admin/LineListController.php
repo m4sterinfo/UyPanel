@@ -1,6 +1,6 @@
 <?php
 /**
- * LineListController — список линий.
+ * LineListController — lista de líneas.
  */
 class LineListController extends BaseAdminController
 {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Контроллер редактирования пользователя (admin/user.php)
+ * Controlador de edición de usuario (admin/user.php)
  */
 
 class UserController extends BaseAdminController {

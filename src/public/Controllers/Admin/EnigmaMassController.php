@@ -1,6 +1,6 @@
 <?php
 /**
- * Контроллер массового редактирования Enigma-устройств (admin/enigma_mass.php)
+ * Controlador de edición masiva de dispositivos Enigma (admin/enigma_mass.php)
  */
 class EnigmaMassController extends BaseAdminController {
     public function index() {

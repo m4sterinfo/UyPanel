@@ -2,20 +2,20 @@
 <?php
 
 /**
- * UyPanel Console — единая точка входа для CLI-команд и cron-задач.
+ * UyPanel Console — punto de entrada único para comandos CLI y tareas cron.
  *
- * Использование:
+ * Uso:
  *   php console.php <command> [arguments]
- *   php console.php --list              # список всех команд
- *   php console.php --help              # справка
+ *   php console.php --list              # lista de todos los comandos
+ *   php console.php --help              # ayuda
  *
- * Примеры:
- *   php console.php startup             # запуск демона startup
- *   php console.php cron:servers        # запуск cron servers
- *   php console.php watchdog            # запуск демона watchdog
+ * Ejemplos:
+ *   php console.php startup             # arranque del demonio startup
+ *   php console.php cron:servers        # arranque del cron servers
+ *   php console.php watchdog            # arranque del demonio watchdog
  *
- * Команды регистрируются ниже явно — добавьте свою команду в секцию
- * "Register commands" после создания класса, реализующего CommandInterface.
+ * Los comandos se registran más abajo de forma explícita — añade tu comando
+ * en la sección "Register commands" tras crear la clase que implementa CommandInterface.
  */
 
 // ─── Guard: CLI only ─────────────────────────────────────────────
@@ -63,8 +63,8 @@ foreach ($rCommandDirs as $rDir) {
 }
 
 // ── Module commands ──────────────────────────────────────────────
-// Модули регистрируют свои команды через ModuleInterface::registerCommands()
-// Без filesystem scanning — каждый модуль явно знает свои команды.
+// Los módulos registran sus comandos vía ModuleInterface::registerCommands()
+// Sin filesystem scanning — cada módulo conoce explícitamente sus comandos.
 
 $rModuleLoader = new ModuleLoader();
 $rModuleLoader->loadAll();

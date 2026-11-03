@@ -3,32 +3,32 @@
 /**
  * Watch Module
  *
- * Модуль Watch Folder / Recording.
- * Регистрирует сервисы, маршруты, API-действия и крон-задачи.
+ * Módulo Watch Folder / Recording.
+ * Registra servicios, rutas, acciones API y tareas cron.
  *
  * ──────────────────────────────────────────────────────────────────
- * Что включает:
+ * Qué incluye:
  * ──────────────────────────────────────────────────────────────────
  *
- *   Сервисы:
- *     - WatchService    — CRUD Watch Folder'ов, настройки, enable/disable/kill
- *     - RecordingService — планирование записей (DVR)
+ *   Servicios:
+ *     - WatchService    — CRUD de Watch Folders, ajustes, enable/disable/kill
+ *     - RecordingService — planificación de grabaciones (DVR)
  *
- *   Контроллер:
- *     - WatchController — обработка HTTP-запросов и API
+ *   Controlador:
+ *     - WatchController — procesamiento de peticiones HTTP y API
  *
- *   Страницы:
- *     - watch          — список folder'ов
- *     - watch/add      — добавление/редактирование
- *     - watch/settings — настройки watch (settings_watch)
- *     - watch/output   — логи (watch_output)
- *     - watch/record   — планирование записи (record)
+ *   Páginas:
+ *     - watch          — lista de folders
+ *     - watch/add      — añadir/editar
+ *     - watch/settings — ajustes de watch (settings_watch)
+ *     - watch/output   — logs (watch_output)
+ *     - watch/record   — planificación de grabación (record)
  *
- *   API-действия:
- *     - enable_watch   — включить все folder'ы
- *     - disable_watch  — отключить все folder'ы
- *     - kill_watch     — убить процессы
- *     - folder         — удалить/запустить folder
+ *   Acciones API:
+ *     - enable_watch   — activar todos los folders
+ *     - disable_watch  — desactivar todos los folders
+ *     - kill_watch     — matar procesos
+ *     - folder         — eliminar/lanzar folder
  *
  * @see WatchService
  * @see RecordingService
@@ -52,13 +52,13 @@ class WatchModule implements ModuleInterface {
     }
 
     /**
-     * Регистрация сервисов модуля в DI-контейнере
+          * Registro de los servicios del módulo en el contenedor DI
      *
      * @param ServiceContainer $container
      */
     public function boot(ServiceContainer $container): void {
-        // WatchService и RecordingService — статические классы,
-        // регистрируем их имена для обнаружения
+                // WatchService y RecordingService son clases estáticas,
+                // registramos sus nombres para el descubrimiento
         $container->set('watch.service', 'WatchService');
         $container->set('watch.recording', 'RecordingService');
         $container->set('watch.controller', function ($c) {
@@ -67,14 +67,14 @@ class WatchModule implements ModuleInterface {
     }
 
     /**
-     * Регистрация маршрутов модуля
+          * Registro de las rutas del módulo
      *
-     * Страницы:
+          * Páginas:
      *   GET watch              → WatchController::index
      *   GET watch/add          → WatchController::add
      *   GET settings/watch     → WatchController::settings
      *   GET watch/output       → WatchController::output
-     *   GET watch/record       → WatchController::record (через record)
+          *   GET watch/record       → WatchController::record (vía record)
      *
      * API:
      *   enable_watch           → WatchController::apiEnable
@@ -85,7 +85,7 @@ class WatchModule implements ModuleInterface {
      * @param Router $router
      */
     public function registerRoutes(Router $router): void {
-        // ── Страницы ──────────────────────────────────────────
+                // ── Páginas ──────────────────────────────────────────
         $router->group('watch', function (Router $r) {
             $r->get('', [WatchController::class, 'index'], [
                 'permission' => ['adv', 'folder_watch'],
@@ -98,17 +98,17 @@ class WatchModule implements ModuleInterface {
             ]);
         });
 
-        // settings_watch → settings/watch (через normalizePage)
+                // settings_watch → settings/watch (vía normalizePage)
         $router->get('settings/watch', [WatchController::class, 'settings'], [
             'permission' => ['adv', 'folder_watch_settings'],
         ]);
 
-        // record → отдельная страница
+                // record → página independiente
         $router->get('record', [WatchController::class, 'record'], [
             'permission' => ['adv', 'folder_watch'],
         ]);
 
-        // ── API-действия ──────────────────────────────────────
+                // ── Acciones API ──────────────────────────────────────
         $router->api('enable_watch', [WatchController::class, 'apiEnable'], [
             'permission' => ['adv', 'folder_watch_settings'],
         ]);
@@ -124,7 +124,7 @@ class WatchModule implements ModuleInterface {
     }
 
     /**
-     * CLI-команды модуля
+          * Comandos CLI del módulo
      *
      * @param CommandRegistry $registry
      */
@@ -134,7 +134,7 @@ class WatchModule implements ModuleInterface {
     }
 
     /**
-     * Подписки на события ядра
+          * Suscripciones a eventos del core
      *
      * @return array
      */

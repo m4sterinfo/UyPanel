@@ -1,28 +1,28 @@
 <?php
 
 /**
- * Overrides модулей
+ * Overrides de módulos
  *
- * ModuleLoader автоматически обнаруживает все модули из modules/&lt;name&gt;/module.json.
- * По умолчанию все обнаруженные модули включены.
+ * ModuleLoader detecta automáticamente todos los módulos desde modules/<name>/module.json.
+ * Por defecto todos los módulos detectados están activados.
  *
- * Этот файл содержит только переопределения:
- *   - Отключение модуля:  'module-name' => ['enabled' => false]
- *   - Свой класс модуля:  'module-name' => ['class' => 'CustomModule']
+ * Este archivo contiene solo las redefiniciones:
+ *   - Desactivar un módulo:  'module-name' => ['enabled' => false]
+ *   - Clase propia de módulo:  'module-name' => ['class' => 'CustomModule']
  *
- * Пример:
+ * Ejemplo:
  *   return [
  *       'theft-detection' => ['enabled' => false],
  *       'custom-module'   => ['class' => 'MyCustomModule'],
  *   ];
  *
- * Если массив пуст — все обнаруженные модули будут загружены.
+ * Si el array está vacío — se cargarán todos los módulos detectados.
  *
  * @see ModuleInterface
  * @see ModuleLoader
  */
 
 return [
-    // Пример отключения модуля:
+        // Ejemplo de desactivación de un módulo:
     // 'theft-detection' => ['enabled' => false],
 ];

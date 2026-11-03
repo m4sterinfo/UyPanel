@@ -1,7 +1,7 @@
 <?php
 
 /**
- * PlexCron — модуль синхронизации Plex (крон-задача).
+ * PlexCron — módulo de sincronización Plex (tarea cron).
  */
 
 require_once __DIR__ . '/../../core/Process/Thread.php';
@@ -9,9 +9,9 @@ require_once __DIR__ . '/../../core/Process/Multithread.php';
 
 class PlexCron {
     /**
-     * Получить категории Plex из БД.
+          * Obtener las categorías Plex de la BD.
      *
-     * @param int|null $rType Тип категории (3=movie, 4=show)
+          * @param int|null $rType Tipo de categoría (3=movie, 4=show)
      * @return array
      */
     public static function getPlexCategories($rType = null) {
@@ -29,7 +29,7 @@ class PlexCron {
     }
 
     /**
-     * Выполнить HTTP-запрос через cURL.
+          * Ejecutar una petición HTTP vía cURL.
      *
      * @param string $rURL
      * @return string|false
@@ -43,7 +43,7 @@ class PlexCron {
     }
 
     /**
-     * Нормализовать XML-массив (одиночный элемент → массив элементов).
+          * Normalizar el array XML (elemento único → array de elementos).
      *
      * @param array $rArray
      * @return array
@@ -56,7 +56,7 @@ class PlexCron {
     }
 
     /**
-     * Получить букет по ID.
+          * Obtener un bouquet por ID.
      *
      * @param int $rID
      * @return array|null
@@ -70,7 +70,7 @@ class PlexCron {
     }
 
     /**
-     * Проверить и создать новые категории из временных файлов.
+          * Comprobar y crear nuevas categorías desde los archivos temporales.
      */
     public static function checkCategories() {
         global $db;
@@ -93,7 +93,7 @@ class PlexCron {
     }
 
     /**
-     * Обработать файлы букетов во временной директории.
+          * Procesar los archivos de bouquets en el directorio temporal.
      */
     public static function checkBouquets() {
         global $db;
@@ -131,8 +131,8 @@ class PlexCron {
     }
 
     /**
-     * Основная точка входа крона Plex.
-     * Заменяет loadCron().
+          * Punto de entrada principal del cron Plex.
+          * Sustituye loadCron().
      */
     public static function run() {
         global $db;

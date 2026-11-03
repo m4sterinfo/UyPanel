@@ -1,6 +1,6 @@
 <?php
 /**
- * Контроллер редактирования MAG-устройства (admin/mag.php)
+ * Controlador de edición de dispositivo MAG (admin/mag.php)
  */
 
 class MagController extends BaseAdminController {

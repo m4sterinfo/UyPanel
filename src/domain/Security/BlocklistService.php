@@ -178,7 +178,7 @@ class BlocklistService {
 		return in_array($rASN, $rBlockedServers);
 	}
 
-	// ──────────── Из BlocklistRepository ────────────
+			// ──────────── De BlocklistRepository ────────────
 
 	public static function isProxy($rIP) {
 		$rProxies = self::getProxyIPs();

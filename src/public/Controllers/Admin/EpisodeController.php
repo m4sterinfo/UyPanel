@@ -1,6 +1,6 @@
 <?php
 /**
- * EpisodeController — редактирование/добавление эпизода.
+ * EpisodeController — edición/añadido de episodio.
  */
 class EpisodeController extends BaseAdminController
 {

@@ -3,27 +3,27 @@
 /**
  * Ministra (Stalker Portal) Module
  *
- * Модуль MAG/Ministra-портала для STB-устройств.
- * Обрабатывает HTTP-запросы от MAG-приставок через portal.php.
+ * Módulo del portal MAG/Ministra para dispositivos STB.
+ * Procesa las peticiones HTTP de los receptores MAG vía portal.php.
  *
  * ──────────────────────────────────────────────────────────────────
- * Что включает:
+ * Qué incluye:
  * ──────────────────────────────────────────────────────────────────
  *
- *   Обработчики:
- *     - PortalHandler    — диспетчер switch/case для type+action запросов
+ *   Procesadores:
+ *     - PortalHandler    — dispatcher switch/case para peticiones type+action
  *                          (pre-init, stb, itv, vod, series, epg, radio,
  *                           tv_archive, watchdog, audioclub, account_info,
  *                           handshake)
  *
- *   Хелперы:
- *     - PortalHelpers    — вспомогательные функции портала
+ *   Helpers:
+ *     - PortalHelpers    — funciones auxiliares del portal
  *                          (getDevice, updateCache, getEPG, getItems,
  *                           getMovies, getSeries, getStreams, getStations,
  *                           getSeriesItems, sort*, getHeaders, shutdown)
  *
- *   Точка входа:
- *     - ministra/portal.php — тонкая обёртка: init/auth → PortalHandler
+ *   Punto de entrada:
+ *     - ministra/portal.php — envoltorio fino: init/auth → PortalHandler
  *
  * @see PortalHandler
  * @see PortalHelpers
@@ -46,33 +46,33 @@ class MinistraModule implements ModuleInterface {
     }
 
     /**
-     * Регистрация сервисов модуля в DI-контейнере
+          * Registro de los servicios del módulo en el contenedor DI
      *
-     * Ministra — автономный портал (отдельная точка входа portal.php),
-     * не использует общий DI-контейнер напрямую.
+          * Ministra es un portal autónomo (punto de entrada independiente portal.php),
+          * no usa el contenedor DI común directamente.
      *
      * @param ServiceContainer $container
      */
     public function boot(ServiceContainer $container): void {
-        // Ministra — standalone endpoint, сервисы не регистрируются
+                // Ministra — endpoint standalone, no se registran servicios
     }
 
     /**
-     * Регистрация маршрутов модуля
+          * Registro de las rutas del módulo
      *
-     * Ministra обслуживается через ministra/portal.php (прямой HTTP),
-     * не через Router admin-панели.
+          * Ministra se atiende vía ministra/portal.php (HTTP directo),
+          * no a través del Router del panel admin.
      *
      * @param Router $router
      */
     public function registerRoutes(Router $router): void {
-        // Маршрутизация Ministra — через portal.php напрямую
+                // Enrutado de Ministra — vía portal.php directamente
     }
 
     /**
-     * CLI-команды модуля
+          * Comandos CLI del módulo
      *
-     * Ministra не имеет CLI-команд.
+          * Ministra no tiene comandos CLI.
      *
      * @param CommandRegistry $registry
      */
@@ -80,7 +80,7 @@ class MinistraModule implements ModuleInterface {
     }
 
     /**
-     * Подписки на события ядра
+          * Suscripciones a eventos del core
      *
      * @return array
      */

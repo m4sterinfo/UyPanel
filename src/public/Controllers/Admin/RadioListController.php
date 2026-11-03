@@ -1,6 +1,6 @@
 <?php
 /**
- * RadioListController — список радиостанций.
+ * RadioListController — lista de emisoras de radio.
  */
 class RadioListController extends BaseAdminController
 {

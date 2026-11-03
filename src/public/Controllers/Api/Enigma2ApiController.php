@@ -1,10 +1,10 @@
 <?php
 
 /**
- * SimpleXMLExtended — SimpleXMLElement с поддержкой CDATA.
+ * SimpleXMLExtended — SimpleXMLElement con soporte CDATA.
  *
- * Ранее определялся inline внутри switch/default в enigma2.php.
- * Вынесен на верхний уровень для корректной загрузки автолоадером.
+ * Antes se definía inline dentro del switch/default en enigma2.php.
+ * Se extrajo al nivel superior para que el autoload lo cargue correctamente.
  */
 class SimpleXMLExtended extends SimpleXMLElement {
 	public function addCData($rCData) {

@@ -3,11 +3,11 @@
 /**
  * BouquetController — Add/Edit Bouquet (admin/bouquet.php).
  *
- * Форма добавления/редактирования букета с вкладками:
+ * Formulario de añadir/editar bouquet con pestañas:
  * details, streams, movies, series, radios, review.
- * Server-side DataTables для каждого типа контента.
+ * Server-side DataTables para cada tipo de contenido.
  *
- * Legacy: admin/bouquet.php (495 строк)
+ * Legacy: admin/bouquet.php (495 líneas)
  * Route:  GET /admin/bouquet → index()
  */
 class BouquetController extends BaseAdminController
@@ -25,7 +25,7 @@ class BouquetController extends BaseAdminController
         $rBouquetRadios = [];
         $rBouquetSeries = [];
 
-        // Загрузка букета для редактирования
+                // Carga del bouquet para edición
         $editId = $this->input('id');
         $duplicateId = $this->input('duplicate');
 
@@ -39,14 +39,14 @@ class BouquetController extends BaseAdminController
             }
         }
 
-        // Разбор связанного контента
+                // Parseo del contenido asociado
         if ($rBouquetArr) {
             $rBouquetChannels = json_decode($rBouquetArr['bouquet_channels'], true) ?: [];
             $rBouquetMovies = json_decode($rBouquetArr['bouquet_movies'], true) ?: [];
             $rBouquetRadios = json_decode($rBouquetArr['bouquet_radios'], true) ?: [];
             $rBouquetSeries = json_decode($rBouquetArr['bouquet_series'], true) ?: [];
 
-            // Имена потоков/фильмов/радио
+                        // Nombres de streams/películas/radio
             $rRequiredIDs = function_exists('confirmIDs')
                 ? confirmIDs(array_merge($rBouquetChannels, $rBouquetMovies, $rBouquetRadios))
                 : array_map('intval', array_merge($rBouquetChannels, $rBouquetMovies, $rBouquetRadios));
@@ -59,7 +59,7 @@ class BouquetController extends BaseAdminController
                 }
             }
 
-            // Имена сериалов
+                        // Nombres de series
             if (count($rBouquetSeries) > 0) {
                 global $db;
                 $db->query('SELECT `id`, `title` FROM `streams_series` WHERE `id` IN (' . implode(',', $rBouquetSeries) . ');');
@@ -69,7 +69,7 @@ class BouquetController extends BaseAdminController
             }
         }
 
-        // Категории для вкладок
+                // Categorías para las pestañas
         $liveCategories = CategoryService::getAllByType('live');
         $movieCategories = CategoryService::getAllByType('movie');
         $seriesCategories = CategoryService::getAllByType('series');

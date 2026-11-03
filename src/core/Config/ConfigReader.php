@@ -1,15 +1,15 @@
 <?php
 
 /**
- * Доступ к config.ini (singleton-кеш)
+ * Acceso a config.ini (caché singleton)
  *
- * Читает и кеширует config.ini один раз за процесс.
+ * Lee y cachea config.ini una vez por proceso.
  */
 class ConfigReader {
 	private static $config = null;
 
 	/**
-	 * @return array Полный массив из config.ini
+	 		 * @return array Array completo de config.ini
 	 */
 	public static function getAll() {
 		if (self::$config === null) {
@@ -19,8 +19,8 @@ class ConfigReader {
 	}
 
 	/**
-	 * @param string $key Ключ конфигурации
-	 * @param mixed $default Значение по умолчанию
+	 		 * @param string $key Clave de configuración
+	 		 * @param mixed $default Valor por defecto
 	 * @return mixed
 	 */
 	public static function get($key, $default = null) {

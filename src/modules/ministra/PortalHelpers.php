@@ -1,16 +1,16 @@
 <?php
 
 /**
- * PortalHelpers — статические хелперы для Ministra/Stalker портала.
+ * PortalHelpers — helpers estáticos para el portal Ministra/Stalker.
  *
- * (каналы, фильмы, сериалы, радио, EPG) и управления устройствами.
+ * (canales, películas, series, radio, EPG) y gestión de dispositivos.
  */
 class PortalHelpers {
-    // ─── Устройство / кэш ───────────────────────────────────────────
+        // ─── Dispositivo / caché ───────────────────────────────────────
 
     /**
-     * Получить устройство MAG по ID или MAC.
-     * Загружает из кэша (igbinary) или БД, собирает права из букетов.
+          * Obtener el dispositivo MAG por ID o MAC.
+          * Carga desde caché (igbinary) o BD, recopila los permisos desde los bouquets.
      */
     public static function getDevice($rID = null, $rMAC = null) {
         global $db, $rIP, $rBouquets, $rSettings, $rCached;
@@ -107,7 +107,7 @@ class PortalHelpers {
     }
 
     /**
-     * Сохранить кэш устройства в файл.
+          * Guardar la caché del dispositivo en archivo.
      */
     public static function updateCache(&$rDevice) {
         file_put_contents(MINISTRA_TMP_PATH . 'ministra_' . $rDevice['mag_id'], igbinary_serialize($rDevice));
@@ -116,7 +116,7 @@ class PortalHelpers {
     // ─── EPG ─────────────────────────────────────────────────────────
 
     /**
-     * Получить EPG для стрима.
+          * Obtener el EPG de un stream.
      */
     public static function getEPG($rStreamID, $rStartDate = null, $rFinishDate = null, $rByID = false) {
         $rReturn = array();
@@ -139,7 +139,7 @@ class PortalHelpers {
     }
 
     /**
-     * Получить EPG для нескольких стримов.
+          * Obtener el EPG de varios streams.
      */
     public static function getEPGs($rStreamIDs, $rStartDate = null, $rFinishDate = null) {
         $rReturn = array();
@@ -152,7 +152,7 @@ class PortalHelpers {
     }
 
     /**
-     * Получить конкретную программу.
+          * Obtener un programa concreto.
      */
     public static function getProgramme($rStreamID, $rProgrammeID) {
         $rData = self::getEPG($rStreamID, null, null, true);
@@ -163,10 +163,10 @@ class PortalHelpers {
         }
     }
 
-    // ─── Контент: общий запрос ───────────────────────────────────────
+        // ─── Contenido: consulta común ───────────────────────────────
 
     /**
-     * Преобразовать строковые типы в числовые.
+          * Convertir los tipos string en numéricos.
      */
     public static function convertTypes($rTypes) {
         $rReturn = array();
@@ -180,8 +180,8 @@ class PortalHelpers {
     }
 
     /**
-     * Универсальный запрос контента.
-     * Используется для каналов, фильмов, радио, эпизодов.
+          * Consulta universal de contenido.
+          * Se usa para canales, películas, radio, episodios.
      */
     public static function getItems($rDevice, $rTypes = array(), $rCategoryID = null, $rFav = null, $rOrderBy = null, $rSearchBy = null, $rPicking = array(), $rStart = 0, $rLimit = 10, $additionalOptions = null) {
         global $db, $rSettings, $rCategories;
@@ -338,10 +338,10 @@ class PortalHelpers {
         return $rStreams;
     }
 
-    // ─── Контент: сериалы ────────────────────────────────────────────
+        // ─── Contenido: series ──────────────────────────────────────────
 
     /**
-     * Получить список сериалов с фильтрацией и сортировкой.
+          * Obtener la lista de series con filtrado y ordenación.
      */
     public static function getSeriesItems($rDevice, $rUserID, $rType = 'series', $rCategoryID = null, $rFav = null, $rOrderBy = null, $rSearchBy = null, $rPicking = array()) {
         global $db;
@@ -407,7 +407,7 @@ class PortalHelpers {
     }
 
     /**
-     * Получить сезоны определённого сериала.
+          * Obtener las temporadas de una serie concreta.
      */
     public static function getSeasons($rSeriesID) {
         global $db;
@@ -416,10 +416,10 @@ class PortalHelpers {
         return $db->get_rows(true, 'season_num', false);
     }
 
-    // ─── Вывод: фильмы ──────────────────────────────────────────────
+        // ─── Salida: películas ─────────────────────────────────────────
 
     /**
-     * Получить список фильмов в формате Stalker API.
+          * Obtener la lista de películas en formato Stalker API.
      */
     public static function getMovies($rDevice, $rPageItems, $rForceProtocol, $rCategoryID = null, $rFav = null, $rOrderBy = null, $rSearchBy = null, $rPicking = array()) {
         global $rRequest;
@@ -484,10 +484,10 @@ class PortalHelpers {
         return json_encode($rOutput, JSON_PARTIAL_OUTPUT_ON_ERROR);
     }
 
-    // ─── Вывод: сериалы ──────────────────────────────────────────────
+        // ─── Salida: series ──────────────────────────────────────────────
 
     /**
-     * Получить список сериалов/сезонов в формате Stalker API.
+          * Obtener la lista de series/temporadas en formato Stalker API.
      */
     public static function getSeries($rDevice, $rPageItems, $rForceProtocol, $rMovieID = null, $rCategoryID = null, $rFav = null, $rOrderBy = null, $rSearchBy = null, $rPicking = array()) {
         global $db, $rRequest;
@@ -597,10 +597,10 @@ class PortalHelpers {
         return json_encode($rOutput, JSON_PARTIAL_OUTPUT_ON_ERROR);
     }
 
-    // ─── Вывод: радио ────────────────────────────────────────────────
+        // ─── Salida: radio ────────────────────────────────────────────────
 
     /**
-     * Получить список радиостанций в формате Stalker API.
+          * Obtener la lista de emisoras de radio en formato Stalker API.
      */
     public static function getStations($rDevice, $rPlayer, $rPageItems, $rCategoryID = null, $rFav = null, $rOrderBy = null) {
         global $rSettings, $rServers, $rRequest;
@@ -648,10 +648,10 @@ class PortalHelpers {
         return json_encode($rOutput, JSON_PARTIAL_OUTPUT_ON_ERROR);
     }
 
-    // ─── Вывод: live каналы ──────────────────────────────────────────
+        // ─── Salida: canales live ──────────────────────────────────────
 
     /**
-     * Получить список live-каналов в формате Stalker API.
+          * Obtener la lista de canales live en formato Stalker API.
      */
     public static function getStreams($rDevice, $rPlayer, $rPageItems, $rTimezone, $rForceProtocol, $rCategoryID = null, $rAll = false, $rFav = null, $rOrderBy = null, $rSearchBy = null) {
         global $rSettings, $rServers, $rRequest;
@@ -745,7 +745,7 @@ class PortalHelpers {
         return json_encode($rOutput, JSON_PARTIAL_OUTPUT_ON_ERROR);
     }
 
-    // ─── Сортировка ──────────────────────────────────────────────────
+        // ─── Ordenación ──────────────────────────────────────────────────
 
     public static function sortArrayStreamRating($a, $b) {
         if (isset($a['rating'])) {
@@ -808,10 +808,10 @@ class PortalHelpers {
         return strcmp($a[$rColumn], $b[$rColumn]);
     }
 
-    // ─── Утилиты ─────────────────────────────────────────────────────
+        // ─── Utilidades ─────────────────────────────────────────────────────
 
     /**
-     * Извлечь HTTP-заголовки из $_SERVER.
+          * Extraer las cabeceras HTTP de $_SERVER.
      */
     public static function getHeaders() {
         $rHeaders = array();
@@ -827,7 +827,7 @@ class PortalHelpers {
     }
 
     /**
-     * Shutdown callback: закрыть MySQL-соединение.
+          * Callback de shutdown: cerrar la conexión MySQL.
      */
     public static function shutdown() {
         global $db;

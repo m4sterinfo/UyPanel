@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Обёртка для процесса
+ * Envoltorio para procesos
  *
- * Управление дочерним процессом через proc_open().
- * Используется совместно с Multithread для параллельного выполнения.
+ * Gestión de un proceso hijo vía proc_open().
+ * Se usa junto con Multithread para la ejecución paralela.
  *
  * @see Multithread
  */
@@ -17,19 +17,19 @@ class Thread {
     /** @var array Pipes (stdin, stdout, stderr) */
     public $pipes = null;
 
-    /** @var string Внутренний буфер */
+        /** @var string Buffer interno */
     public $buffer = null;
 
-    /** @var string Накопленный stdout */
+        /** @var string stdout acumulado */
     public $output = null;
 
-    /** @var string Накопленный stderr */
+        /** @var string stderr acumulado */
     public $error = null;
 
-    /** @var int Таймаут в секундах (0 = без ограничений) */
+        /** @var int Timeout en segundos (0 = sin límites) */
     public $timeout = null;
 
-    /** @var int Время запуска процесса */
+        /** @var int Hora de arranque del proceso */
     public $start_time = null;
 
     public function __construct() {
@@ -43,9 +43,9 @@ class Thread {
     }
 
     /**
-     * Создать новый процесс из команды
+          * Crear un proceso nuevo a partir de un comando
      *
-     * @param string $command Shell-команда
+          * @param string $command Comando shell
      * @return Thread
      */
     public static function create($command) {
@@ -58,7 +58,7 @@ class Thread {
     }
 
     /**
-     * Проверить, активен ли процесс
+          * Comprobar si el proceso está activo
      *
      * @return bool
      */
@@ -69,7 +69,7 @@ class Thread {
     }
 
     /**
-     * Закрыть процесс
+          * Cerrar el proceso
      *
      * @return int Exit code
      */
@@ -80,7 +80,7 @@ class Thread {
     }
 
     /**
-     * Отправить данные в stdin процесса
+          * Enviar datos al stdin del proceso
      *
      * @param string $thought
      */
@@ -89,7 +89,7 @@ class Thread {
     }
 
     /**
-     * Прочитать вывод из stdout
+          * Leer la salida del stdout
      *
      * @return string
      */
@@ -104,7 +104,7 @@ class Thread {
     }
 
     /**
-     * Получить статус процесса
+          * Obtener el estado del proceso
      *
      * @return array
      */
@@ -113,7 +113,7 @@ class Thread {
     }
 
     /**
-     * Проверить, превышен ли таймаут
+          * Comprobar si se superó el timeout
      *
      * @return bool
      */
@@ -122,7 +122,7 @@ class Thread {
     }
 
     /**
-     * Прочитать stderr
+          * Leer el stderr
      *
      * @return string
      */

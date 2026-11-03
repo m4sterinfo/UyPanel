@@ -3,9 +3,9 @@
 /**
  * HmacController — HMAC Keys (admin/hmacs.php).
  *
- * Листинг HMAC-токенов с edit/delete.
+ * Listado de tokens HMAC con edit/delete.
  *
- * Legacy: admin/hmacs.php (273 строки)
+ * Legacy: admin/hmacs.php (273 líneas)
  * Route:  GET /admin/hmacs → index()
  */
 class HmacController extends BaseAdminController {

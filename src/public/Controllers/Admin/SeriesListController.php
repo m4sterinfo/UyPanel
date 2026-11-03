@@ -1,6 +1,6 @@
 <?php
 /**
- * SeriesListController — список сериалов.
+ * SeriesListController — lista de series.
  */
 class SeriesListController extends BaseAdminController
 {

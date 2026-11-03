@@ -384,7 +384,7 @@ class MagService {
 		return array('status' => STATUS_INVALID_INPUT, 'data' => $rData);
 	}
 
-	// ──────────── Из DeviceSync ────────────
+			// ──────────── De DeviceSync ────────────
 
 	public static function syncLineDevices($rUserID, $rDeviceID = null) {
 		global $db;

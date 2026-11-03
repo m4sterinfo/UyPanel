@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Коды ошибок
+ * Códigos de error
  *
- * Массив $rErrorCodes: код ошибки → описание на английском.
- * Используется в generateError() для отображения в debug-режиме.
+ * Array $rErrorCodes: código de error → descripción en inglés.
+ * Se usa en generateError() para mostrarlo en modo debug.
  *
- * Коды добавляются сюда централизованно.
- * stream/init.php имеет дополнительные коды (CACHE_INCOMPLETE, etc.),
- * которые при миграции будут перенесены сюда.
+ * Los códigos se añaden aquí de forma centralizada.
+ * stream/init.php tiene códigos adicionales (CACHE_INCOMPLETE, etc.),
+ * que en la migración se trasladarán aquí.
  */
 
 global $rErrorCodes;
@@ -75,7 +75,7 @@ $rErrorCodes = array(
     'VOD_DOESNT_EXIST'         => "VOD file doesn't exist.",
     'WAIT_TIME_EXPIRED'        => 'Stream start has timed out, failed to start.',
 
-    // ── Дополнительные коды (из stream/init.php) ──────────────
+        // ── Códigos adicionales (de stream/init.php) ──────────────
     'CACHE_INCOMPLETE'         => 'Cache is being generated...',
     'SUBTITLE_DOESNT_EXIST'    => "Subtitle file doesn't exist.",
     'NO_SERVERS_AVAILABLE'     => 'No servers are currently available for this stream.',

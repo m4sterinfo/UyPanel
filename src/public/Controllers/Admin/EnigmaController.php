@@ -1,6 +1,6 @@
 <?php
 /**
- * Контроллер редактирования Enigma-устройства (admin/enigma.php)
+ * Controlador de edición de dispositivo Enigma (admin/enigma.php)
  */
 
 class EnigmaController extends BaseAdminController {

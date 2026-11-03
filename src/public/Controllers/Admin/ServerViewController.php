@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ServerViewController — просмотр сервера (admin/server_view.php).
+ * ServerViewController — visualización del servidor (admin/server_view.php).
  *
  * GET /server_view?id=N
  * 3 server-side DataTables (streams, connections, live).

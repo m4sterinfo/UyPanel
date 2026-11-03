@@ -1,11 +1,11 @@
 <?php
 
 /**
- * ServerListController — список серверов (admin/servers.php).
+ * ServerListController — lista de servidores (admin/servers.php).
  *
  * GET /servers
- * Client-side DataTable — PHP рендерит <tbody>.
- * Данные: ServerRepository::getAll(true).
+ * Client-side DataTable — PHP renderiza el <tbody>.
+ * Datos: ServerRepository::getAll(true).
  */
 class ServerListController extends BaseAdminController
 {

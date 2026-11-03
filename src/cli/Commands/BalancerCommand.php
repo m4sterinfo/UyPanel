@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Установка/настройка LB-сервера через SSH.
+ * Instalación/configuración de un servidor LB vía SSH.
  *
- * Запуск: php console.php balancer <type> <server_id> <port> <username> <password> [http_port] [https_port] [sysctl] [private_ip] [parent_ids_json]
+ * Ejecución: php console.php balancer <type> <server_id> <port> <username> <password> [http_port] [https_port] [sysctl] [private_ip] [parent_ids_json]
  *
- * Вызывается из ServerService::installServer().
+ * Se invoca desde ServerService::installServer().
  */
 class BalancerCommand implements CommandInterface {
 

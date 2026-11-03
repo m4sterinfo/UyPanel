@@ -1,6 +1,6 @@
 <?php
 /**
- * Контроллер редактирования EPG (admin/epg.php)
+ * Controlador de edición de EPG (admin/epg.php)
  */
 
 class EpgController extends BaseAdminController {

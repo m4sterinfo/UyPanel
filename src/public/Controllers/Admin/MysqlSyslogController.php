@@ -3,9 +3,9 @@
 /**
  * MysqlSyslogController — System Logs (admin/mysql_syslog.php).
  *
- * Server-side DataTable с системными логами. API block IP.
+ * Server-side DataTable con logs de sistema. API block IP.
  *
- * Legacy: admin/mysql_syslog.php (251 строк)
+ * Legacy: admin/mysql_syslog.php (251 líneas)
  * Route:  GET /admin/mysql_syslog → index()
  */
 class MysqlSyslogController extends BaseAdminController

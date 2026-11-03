@@ -1,22 +1,22 @@
 <?php
 
 /**
- * Контракт логирования
+ * Contrato de logging
  *
- * Единый интерфейс для всех реализаций логгеров (файл, БД, и т.д.).
- * Каждая реализация сама решает, куда и в каком формате писать.
+ * Interfaz única para todas las implementaciones de loggers (archivo, BD, etc.).
+ * Cada implementación decide por sí misma dónde y en qué formato escribir.
  *
- * @see FileLogger      Логирование в файл (ошибки PDO, EPG, и т.д.)
- * @see DatabaseLogger  Логирование клиентских запросов стриминга
+ * @see FileLogger      Logging en archivo (errores PDO, EPG, etc.)
+ * @see DatabaseLogger  Logging de peticiones de streaming de clientes
  */
 interface LoggerInterface {
     /**
-     * Записать лог-сообщение.
+          * Escribir un mensaje de log.
      *
-     * @param string     $type    Тип события (например: 'pdo', 'epg', 'AUTH_FAILED')
-     * @param string     $message Текст сообщения
-     * @param string|int $extra   Дополнительные данные (trace, query, и т.д.)
-     * @param int        $line    Номер строки (опционально)
+          * @param string     $type    Tipo de evento (por ejemplo: 'pdo', 'epg', 'AUTH_FAILED')
+          * @param string     $message Texto del mensaje
+          * @param string|int $extra   Datos adicionales (trace, query, etc.)
+          * @param int        $line    Número de línea (opcional)
      *
      * @return void
      */

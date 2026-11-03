@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Параллельное выполнение команд
+ * Ejecución paralela de comandos
  *
- * Запускает набор shell-команд в параллель через Thread.
- * Поддерживает пул с ограничением одновременных процессов.
+ * Lanza un conjunto de comandos shell en paralelo vía Thread.
+ * Soporta un pool con límite de procesos simultáneos.
  *
- * Использование:
+ * Uso:
  *   $mt = new Multithread(['cmd1', 'cmd2', 'cmd3'], $poolSize);
  *   $output = $mt->run();
  *
@@ -15,27 +15,27 @@
 
 class Multithread {
 
-    /** @var array Вывод каждой команды */
+        /** @var array Salida de cada comando */
     public $output = array();
 
-    /** @var array Ошибки каждой команды */
+        /** @var array Errores de cada comando */
     public $error = array();
 
-    /** @var Thread[]|null Активные потоки */
+        /** @var Thread[]|null Threads activos */
     public $thread = null;
 
-    /** @var array Команды в работе */
+        /** @var array Comandos en curso */
     public $commands = array();
 
-    /** @var bool Используется ли пул */
+        /** @var bool Si se usa el pool */
     public $hasPool = false;
 
-    /** @var array Очередь команд для пула */
+        /** @var array Cola de comandos para el pool */
     public $toExecuted = array();
 
     /**
-     * @param array $commands Массив shell-команд
-     * @param int $sizePool Размер пула (0 = без ограничений)
+          * @param array $commands Array de comandos shell
+          * @param int $sizePool Tamaño del pool (0 = sin límites)
      */
     public function __construct($commands, $sizePool = 0) {
         $this->hasPool = 0 < $sizePool;
@@ -50,9 +50,9 @@ class Multithread {
     }
 
     /**
-     * Выполнить все команды и дождаться завершения
+          * Ejecutar todos los comandos y esperar a que terminen
      *
-     * @return array Массив выводов
+          * @return array Array de salidas
      */
     public function run() {
         while (0 < count($this->commands)) {
@@ -89,7 +89,7 @@ class Multithread {
     }
 
     /**
-     * Запустить следующую команду из очереди
+          * Lanzar el siguiente comando de la cola
      *
      * @return bool|void
      */

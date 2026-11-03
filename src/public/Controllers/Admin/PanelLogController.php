@@ -3,9 +3,9 @@
 /**
  * PanelLogController — Panel Errors (admin/panel_logs.php).
  *
- * Server-side DataTable с логами ошибок панели. Download/Clear logs.
+ * Server-side DataTable con los logs de errores del panel. Download/Clear logs.
  *
- * Legacy: admin/panel_logs.php (292 строк)
+ * Legacy: admin/panel_logs.php (292 líneas)
  * Route:  GET /admin/panel_logs → index()
  */
 class PanelLogController extends BaseAdminController

@@ -3,34 +3,34 @@
 /**
  * Plex Module
  *
- * Модуль Plex Sync Integration.
- * Регистрирует сервисы, маршруты, API-действия и крон-задачи.
+ * Módulo Plex Sync Integration.
+ * Registra servicios, rutas, acciones API y tareas cron.
  *
  * ──────────────────────────────────────────────────────────────────
- * Что включает:
+ * Qué incluye:
  * ──────────────────────────────────────────────────────────────────
  *
- *   Сервисы:
- *     - PlexService     — CRUD Plex Sync, настройки, force
- *     - PlexRepository  — получение Plex серверов и секций
- *     - PlexAuth        — аутентификация Plex (getToken, checkToken)
- *     - PlexCron        — крон синхронизации
- *     - PlexItem        — CLI обработка элементов
+ *   Servicios:
+ *     - PlexService     — CRUD Plex Sync, ajustes, force
+ *     - PlexRepository  — obtención de servidores y secciones Plex
+ *     - PlexAuth        — autenticación Plex (getToken, checkToken)
+ *     - PlexCron        — cron de sincronización
+ *     - PlexItem        — procesamiento CLI de elementos
  *
- *   Контроллер:
- *     - PlexController  — обработка HTTP-запросов и API
+ *   Controlador:
+ *     - PlexController  — procesamiento de peticiones HTTP y API
  *
- *   Страницы:
- *     - plex            — список Plex серверов
- *     - plex/add        — добавление/редактирование библиотеки
- *     - plex/settings   — настройки Plex (settings_plex)
+ *   Páginas:
+ *     - plex            — lista de servidores Plex
+ *     - plex/add        — añadir/editar biblioteca
+ *     - plex/settings   — ajustes de Plex (settings_plex)
  *
- *   API-действия:
- *     - enable_plex     — включить все серверы
- *     - disable_plex    — отключить все серверы
- *     - kill_plex       — убить процессы
- *     - library         — удалить/запустить библиотеку
- *     - plex_sections   — получить секции Plex-сервера
+ *   Acciones API:
+ *     - enable_plex     — activar todos los servidores
+ *     - disable_plex    — desactivar todos los servidores
+ *     - kill_plex       — matar procesos
+ *     - library         — eliminar/lanzar biblioteca
+ *     - plex_sections   — obtener las secciones del servidor Plex
  *
  * @see PlexService
  * @see PlexRepository
@@ -55,7 +55,7 @@ class PlexModule implements ModuleInterface {
     }
 
     /**
-     * Регистрация сервисов модуля в DI-контейнере
+          * Registro de los servicios del módulo en el contenedor DI
      *
      * @param ServiceContainer $container
      */
@@ -69,9 +69,9 @@ class PlexModule implements ModuleInterface {
     }
 
     /**
-     * Регистрация маршрутов модуля
+          * Registro de las rutas del módulo
      *
-     * Страницы:
+          * Páginas:
      *   GET plex              → PlexController::index
      *   GET plex/add          → PlexController::add
      *   GET settings/plex     → PlexController::settings
@@ -86,7 +86,7 @@ class PlexModule implements ModuleInterface {
      * @param Router $router
      */
     public function registerRoutes(Router $router): void {
-        // ── Страницы ──────────────────────────────────────────
+                // ── Páginas ──────────────────────────────────────────
         $router->group('plex', function (Router $r) {
             $r->get('', [PlexController::class, 'index'], [
                 'permission' => ['adv', 'folder_watch'],
@@ -96,12 +96,12 @@ class PlexModule implements ModuleInterface {
             ]);
         });
 
-        // settings_plex → settings/plex (через normalizePage)
+                // settings_plex → settings/plex (vía normalizePage)
         $router->get('settings/plex', [PlexController::class, 'settings'], [
             'permission' => ['adv', 'folder_watch_settings'],
         ]);
 
-        // ── API-действия ──────────────────────────────────────
+                // ── Acciones API ──────────────────────────────────────
         $router->api('enable_plex', [PlexController::class, 'apiEnable'], [
             'permission' => ['adv', 'folder_watch_settings'],
         ]);
@@ -120,7 +120,7 @@ class PlexModule implements ModuleInterface {
     }
 
     /**
-     * CLI-команды модуля
+          * Comandos CLI del módulo
      *
      * @param CommandRegistry $registry
      */
@@ -130,7 +130,7 @@ class PlexModule implements ModuleInterface {
     }
 
     /**
-     * Подписки на события ядра
+          * Suscripciones a eventos del core
      *
      * @return array
      */

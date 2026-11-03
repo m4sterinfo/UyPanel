@@ -3,9 +3,9 @@
 /**
  * RestreamLogController — Restream Detection Logs (admin/restream_logs.php).
  *
- * Server-side DataTable с логами обнаружения рестриминга. API block IP.
+ * Server-side DataTable con los logs de detección de restreaming. API block IP.
  *
- * Legacy: admin/restream_logs.php (197 строк)
+ * Legacy: admin/restream_logs.php (197 líneas)
  * Route:  GET /admin/restream_logs → index()
  */
 class RestreamLogController extends BaseAdminController

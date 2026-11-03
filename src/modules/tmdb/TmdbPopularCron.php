@@ -3,24 +3,24 @@
 /**
  * TmdbPopularCron
  *
- * Крон сбора популярных фильмов/сериалов из TMDB.
+ * Cron de recolección de películas/series populares de TMDB.
  *
- * Ответственность:
- *   - Сбор популярных фильмов и сериалов из TMDB API
- *   - Сопоставление с локальной БД (streams, streams_series)
- *   - Сбор «похожих» (similar) фильмов/сериалов
- *   - Сбор популярных live-потоков по активности
- *   - Запись результатов в файлы (tmdb_popular, live_popular)
+ * Responsabilidad:
+ *   - Recolección de películas y series populares desde la API de TMDB
+ *   - Correspondencia con la BD local (streams, streams_series)
+ *   - Recolección de «similares» (similar) de películas/series
+ *   - Recolección de streams live populares por actividad
+ *   - Escritura de resultados en archivos (tmdb_popular, live_popular)
  */
 class TmdbPopularCron {
     /**
-     * Собрать популярные фильмы и сериалы из TMDB.
+          * Recopilar películas y series populares de TMDB.
      *
-     * Сопоставляет TMDB ID с локальными записями.
+          * Correlaciona los TMDB ID con los registros locales.
      *
-     * @param TMDB  $tmdb    Инстанс клиента
-     * @param array $tmdbIDs Маппинг tmdb_id => local_id
-     * @param int   $pages   Количество страниц для запроса
+          * @param TMDB  $tmdb    Instancia del cliente
+          * @param array $tmdbIDs Mapeo tmdb_id => local_id
+          * @param int   $pages   Número de páginas a consultar
      * @return array ['movies' => int[], 'series' => int[]]
      */
     private static function collectPopular(TMDB $tmdb, array $tmdbIDs, int $pages = 100): array {
@@ -50,9 +50,9 @@ class TmdbPopularCron {
     }
 
     /**
-     * Заполнить поле `similar` для фильмов.
+          * Rellenar el campo `similar` de las películas.
      *
-     * @param TMDB $tmdb Инстанс клиента
+          * @param TMDB $tmdb Instancia del cliente
      */
     private static function processSimilarMovies(TMDB $tmdb): void {
         global $db;
@@ -91,9 +91,9 @@ class TmdbPopularCron {
     }
 
     /**
-     * Заполнить поле `similar` для сериалов.
+          * Rellenar el campo `similar` de las series.
      *
-     * @param TMDB $tmdb Инстанс клиента
+          * @param TMDB $tmdb Instancia del cliente
      */
     private static function processSimilarSeries(TMDB $tmdb): void {
         global $db;
@@ -132,7 +132,7 @@ class TmdbPopularCron {
     }
 
     /**
-     * Собрать популярные live-потоки по активности за 28 дней.
+          * Recopilar los streams live populares por actividad de 28 días.
      */
     private static function collectPopularLive(): void {
         global $db;
@@ -155,13 +155,13 @@ class TmdbPopularCron {
     }
 
     /**
-     * Главная точка входа крона.
+          * Punto de entrada principal del cron.
      *
-     * Выполняет:
-     *   1. Сбор популярных фильмов/сериалов из TMDB
-     *   2. Заполнение similar для фильмов
-     *   3. Заполнение similar для сериалов
-     *   4. Сбор популярных live-потоков
+          * Ejecuta:
+          *   1. Recolección de películas/series populares de TMDB
+          *   2. Relleno de similar para películas
+          *   3. Relleno de similar para series
+          *   4. Recolección de streams live populares
      */
     public static function run(): void {
         global $db;

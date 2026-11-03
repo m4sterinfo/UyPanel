@@ -1,6 +1,6 @@
 <?php
 /**
- * SerieController — редактирование/добавление сериала.
+ * SerieController — edición/añadido de serie.
  */
 class SerieController extends BaseAdminController
 {

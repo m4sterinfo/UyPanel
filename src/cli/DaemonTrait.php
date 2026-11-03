@@ -1,24 +1,24 @@
 <?php
 
 /**
- * Общий функционал для CLI-демонов (signals, watchdog, queue, cache_handler).
+ * Funcionalidad común para demonios CLI (signals, watchdog, queue, cache_handler).
  *
- * Выносит повторяющийся boilerplate: проверка пользователя, убийство предыдущих
- * инстансов, обнаружение изменений файла, авторестарт через console.php.
+ * Extrae el boilerplate repetitivo: comprobación de usuario, matado de
+ * instancias previas, detección de cambios de archivo, auto-restart vía console.php.
  */
 trait DaemonTrait {
 
-	/** @var string MD5 файла команды при запуске */
+			/** @var string MD5 del archivo del comando al arrancar */
 	protected $rDaemonMD5;
 
-	/** @var int|null Последний тайм-штамп обновления настроек */
+			/** @var int|null Último timestamp de actualización de los ajustes */
 	protected $rLastCheck;
 
-	/** @var int Интервал обновления настроек (секунды) */
+			/** @var int Intervalo de actualización de los ajustes (segundos) */
 	protected $rRefreshInterval = 60;
 
 	/**
-	 * Проверить что процесс запущен от пользователя uypanel.
+	 		 * Comprobar que el proceso corre como usuario uypanel.
 	 */
 	protected function assertRunAsXcVm(): bool {
 		if (posix_getpwuid(posix_geteuid())['name'] !== 'uypanel') {
@@ -29,9 +29,9 @@ trait DaemonTrait {
 	}
 
 	/**
-	 * Убить предыдущие инстансы этого демона.
+	 		 * Matar las instancias previas de este demonio.
 	 *
-	 * @param string $rPattern Grep-паттерн для поиска процессов
+	 		 * @param string $rPattern Patrón grep para buscar procesos
 	 */
 	protected function killStaleProcesses(string $rPattern): void {
 		$rPID = intval(getmypid());
@@ -42,21 +42,21 @@ trait DaemonTrait {
 	}
 
 	/**
-	 * Запомнить MD5 файла команды для обнаружения обновлений.
+	 		 * Recordar el MD5 del archivo del comando para detectar actualizaciones.
 	 */
 	protected function initDaemonMD5(): void {
 		$this->rDaemonMD5 = md5_file((new ReflectionClass($this))->getFileName());
 	}
 
 	/**
-	 * Проверить, изменился ли файл команды с момента запуска.
+	 		 * Comprobar si el archivo del comando cambió desde el arranque.
 	 */
 	protected function hasFileChanged(): bool {
 		return md5_file((new ReflectionClass($this))->getFileName()) !== $this->rDaemonMD5;
 	}
 
 	/**
-	 * Проверить нужно ли обновить настройки (по таймеру).
+	 		 * Comprobar si hay que actualizar los ajustes (por temporizador).
 	 */
 	protected function shouldRefreshSettings(): bool {
 		if ($this->rLastCheck && $this->rRefreshInterval > time() - $this->rLastCheck) {
@@ -66,9 +66,9 @@ trait DaemonTrait {
 	}
 
 	/**
-	 * Обновить настройки и сервера, проверить nginx и MD5.
+	 		 * Actualizar ajustes y servidores, comprobar nginx y el MD5.
 	 *
-	 * @return bool true = всё ОК, false = нужен break (файл изменился или nginx не работает)
+	 		 * @return bool true = todo OK, false = hay que hacer break (el archivo cambió o nginx no funciona)
 	 */
 	protected function refreshOrBreak(): bool {
 		if (!$this->shouldRefreshSettings()) {
@@ -91,9 +91,9 @@ trait DaemonTrait {
 	}
 
 	/**
-	 * Закрыть БД и перезапустить демон через console.php.
+	 		 * Cerrar la BD y reiniciar el demonio vía console.php.
 	 *
-	 * @param string $rCommandName Имя команды (например 'signals', 'watchdog')
+	 		 * @param string $rCommandName Nombre del comando (p. ej. 'signals', 'watchdog')
 	 */
 	protected function restartDaemon(string $rCommandName): void {
 		global $db;
@@ -104,9 +104,9 @@ trait DaemonTrait {
 	}
 
 	/**
-	 * Установить заголовок процесса.
+	 		 * Establecer el título del proceso.
 	 *
-	 * @param string $rTitle Например 'UyPanel[Signals]'
+	 		 * @param string $rTitle Por ejemplo 'UyPanel[Signals]'
 	 */
 	protected function setProcessTitle(string $rTitle): void {
 		set_time_limit(0);
@@ -114,7 +114,7 @@ trait DaemonTrait {
 	}
 
 	/**
-	 * Инициализировать Redis если включён в настройках.
+	 		 * Inicializar Redis si está activado en los ajustes.
 	 */
 	protected function initRedisIfEnabled(): void {
 		if (SettingsManager::getAll()['redis_handler'] ?? false) {
@@ -123,9 +123,9 @@ trait DaemonTrait {
 	}
 
 	/**
-	 * Проверить что Redis жив (если включён).
+	 		 * Comprobar que Redis está vivo (si está activado).
 	 *
-	 * @return bool true = OK или Redis не используется, false = соединение потеряно
+	 		 * @return bool true = OK o Redis no se usa, false = conexión perdida
 	 */
 	protected function checkRedisHealth(): bool {
 		if (!(SettingsManager::getAll()['redis_handler'] ?? false)) {

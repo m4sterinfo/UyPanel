@@ -1,6 +1,6 @@
 <?php
 /**
- * LineController — добавление / редактирование линии.
+ * LineController — añadido / edición de línea.
  */
 class LineController extends BaseAdminController
 {

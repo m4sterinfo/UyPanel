@@ -3,9 +3,9 @@
 /**
  * IspController — Blocked ISP's (admin/isps.php).
  *
- * Листинг заблокированных ISP с edit/delete.
+ * Listado de ISP bloqueados con edit/delete.
  *
- * Legacy: admin/isps.php (264 строки)
+ * Legacy: admin/isps.php (264 líneas)
  * Route:  GET /admin/isps → index()
  */
 class IspController extends BaseAdminController

@@ -1,6 +1,6 @@
 <?php
 /**
- * LineActivityController — логи активности линий.
+ * LineActivityController — logs de actividad de las líneas.
  */
 class LineActivityController extends BaseAdminController
 {

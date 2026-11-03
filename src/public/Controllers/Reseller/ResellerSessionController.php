@@ -1,14 +1,14 @@
 <?php
 
 /**
- * ResellerSessionController — JSON-эндпоинт проверки сессии.
+ * ResellerSessionController — endpoint JSON de comprobación de sesión.
  *
- * Используется JS-функцией pingSession() (из footer) для keep-alive
- * проверки: GET /reseller/session → {"result": true}.
+ * Lo usa la función JS pingSession() (del footer) como keep-alive
+ * de comprobación: GET /reseller/session → {"result": true}.
  *
- * Если сессия истекла или невалидна, bootstrap (session.php)
- * перенаправит на login ДО того, как мы дойдём сюда.
- * Поэтому если контроллер выполняется — сессия активна.
+ * Si la sesión expiró o no es válida, el bootstrap (session.php)
+ * redirigirá al login ANTES de que lleguemos aquí.
+ * Por eso, si el controlador se ejecuta — la sesión está activa.
  *
  * @see src/reseller/session.php  (legacy endpoint, nginx direct access)
  * @see src/public/Views/layouts/reseller/footer.php  (pingSession JS)

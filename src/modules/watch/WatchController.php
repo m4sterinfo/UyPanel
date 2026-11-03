@@ -3,16 +3,16 @@
 /**
  * Watch Module Controller
  *
- * Обрабатывает все маршруты модуля Watch:
- * - Список Watch Folder'ов (index)
- * - Добавление/редактирование (add)
- * - Настройки Watch (settings)
- * - Логи Watch (output)
- * - Запись (record)
+ * Procesa todas las rutas del módulo Watch:
+ * - Lista de Watch Folders (index)
+ * - Añadir/editar (add)
+ * - Ajustes de Watch (settings)
+ * - Logs de Watch (output)
+ * - Grabación (record)
  * - API: enable/disable/kill/folder actions
  *
  * ──────────────────────────────────────────────────────────────────
- * Заменяет:
+ * Sustituye:
  * ──────────────────────────────────────────────────────────────────
  *
  *   admin/watch.php          → index()
@@ -27,7 +27,7 @@
  *     folder (sub=delete|force) → apiFolder()
  *
  * ──────────────────────────────────────────────────────────────────
- * Использование (через Router):
+ * Uso (vía Router):
  * ──────────────────────────────────────────────────────────────────
  *
  *   $router->group('watch', function(Router $r) {
@@ -46,7 +46,7 @@
 class WatchController {
 
     /**
-     * Путь к директории views модуля
+          * Ruta al directorio views del módulo
      * @var string
      */
     protected $viewsPath;
@@ -56,23 +56,23 @@ class WatchController {
     }
 
     // ───────────────────────────────────────────────────────────
-    //  Страницы (GET)
+        //  Páginas (GET)
     // ───────────────────────────────────────────────────────────
 
     /**
-     * Список Watch Folder'ов
+          * Lista de Watch Folders
      *
-     * Заменяет admin/watch.php
+          * Sustituye admin/watch.php
      */
     public function index() {
         include $this->viewsPath . '/watch.php';
     }
 
     /**
-     * Форма добавления/редактирования Watch Folder
+          * Formulario de añadir/editar Watch Folder
      *
-     * Заменяет admin/watch_add.php
-     * Подготавливает данные: $rFolder (при edit), $rBouquets
+          * Sustituye admin/watch_add.php
+          * Prepara los datos: $rFolder (en edit), $rBouquets
      */
     public function add() {
         global $db;
@@ -93,10 +93,10 @@ class WatchController {
     }
 
     /**
-     * Настройки Watch Folder
+          * Ajustes de Watch Folder
      *
-     * Заменяет admin/settings_watch.php
-     * Подготавливает: $rBouquets, категории
+          * Sustituye admin/settings_watch.php
+          * Prepara: $rBouquets, categorías
      */
     public function settings() {
         $rBouquets = BouquetService::getAllSimple();
@@ -107,9 +107,9 @@ class WatchController {
     }
 
     /**
-     * Логи Watch Folder / Plex Sync
+          * Logs de Watch Folder / Plex Sync
      *
-     * Заменяет admin/watch_output.php
+          * Sustituye admin/watch_output.php
      */
     public function output() {
         $_TITLE = 'Watch Folder Logs';
@@ -119,10 +119,10 @@ class WatchController {
     }
 
     /**
-     * Форма записи (Recording)
+          * Formulario de grabación (Recording)
      *
-     * Заменяет admin/record.php
-     * Подготавливает: $rStream, $rProgramme, $rAvailableServers
+          * Sustituye admin/record.php
+          * Prepara: $rStream, $rProgramme, $rAvailableServers
      */
     public function record() {
         global $db;
@@ -186,13 +186,13 @@ class WatchController {
     }
 
     // ───────────────────────────────────────────────────────────
-    //  API-действия (JSON)
+        //  Acciones API (JSON)
     // ───────────────────────────────────────────────────────────
 
     /**
-     * Включить все Watch Folder'ы
+          * Activar todos los Watch Folders
      *
-     * Заменяет admin/api.php action=enable_watch
+          * Sustituye admin/api.php action=enable_watch
      */
     public function apiEnable() {
         global $db;
@@ -202,9 +202,9 @@ class WatchController {
     }
 
     /**
-     * Отключить все Watch Folder'ы
+          * Desactivar todos los Watch Folders
      *
-     * Заменяет admin/api.php action=disable_watch
+          * Sustituye admin/api.php action=disable_watch
      */
     public function apiDisable() {
         global $db;
@@ -214,9 +214,9 @@ class WatchController {
     }
 
     /**
-     * Убить все процессы Watch Folder
+          * Matar todos los procesos Watch Folder
      *
-     * Заменяет admin/api.php action=kill_watch
+          * Sustituye admin/api.php action=kill_watch
      */
     public function apiKill() {
         global $db;
@@ -226,9 +226,9 @@ class WatchController {
     }
 
     /**
-     * Действия с отдельным Folder'ом (delete / force)
+          * Acciones sobre un Folder concreto (delete / force)
      *
-     * Заменяет admin/api.php action=folder&sub=delete|force
+          * Sustituye admin/api.php action=folder&sub=delete|force
      */
     public function apiFolder() {
         global $db;

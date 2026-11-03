@@ -3,20 +3,20 @@
 /**
  * MAGSCAN Module
  *
- * Модуль настроек MAGSCAN.
- * Управляет белыми/чёрными списками для сканирования MAG-устройств
- * (MAC-адреса и IP-адреса).
+ * Módulo de ajustes MAGSCAN.
+ * Gestiona las listas blancas/negras para el escaneo de dispositivos MAG
+ * (direcciones MAC e IP).
  *
  * ──────────────────────────────────────────────────────────────────
- * Что включает:
+ * Qué incluye:
  * ──────────────────────────────────────────────────────────────────
  *
- *   Страницы:
- *     - magscan_settings — управление белым/чёрным списком MAC
- *                          + белый список IP (три вкладки)
+ *   Páginas:
+ *     - magscan_settings — gestión de la lista blanca/negra de MAC
+ *                          + lista blanca de IP (tres pestañas)
  *
- *   Обработчик формы:
- *     - submit_magscan   — POST-обработка сохранения настроек
+ *   Procesador de formulario:
+ *     - submit_magscan   — procesamiento POST del guardado de ajustes
  *
  * @see admin/magscan_settings.php
  */
@@ -38,33 +38,33 @@ class MagscanModule implements ModuleInterface {
     }
 
     /**
-     * Регистрация сервисов модуля в DI-контейнере
+          * Registro de los servicios del módulo en el contenedor DI
      *
-     * MAGSCAN использует общую инфраструктуру admin-панели —
-     * отдельные сервисы не регистрируются.
+          * MAGSCAN usa la infraestructura común del panel admin —
+          * no se registran servicios propios.
      *
      * @param ServiceContainer $container
      */
     public function boot(ServiceContainer $container): void {
-        // Собственных сервисов нет — используется общая admin-инфраструктура
+                // No hay servicios propios — se usa la infraestructura admin común
     }
 
     /**
-     * Регистрация маршрутов модуля
+          * Registro de las rutas del módulo
      *
-     * Маршрутизация осуществляется через навигацию admin-панели
-     * (magscan_settings.php загружается напрямую).
+          * El enrutado se realiza a través de la navegación del panel admin
+          * (magscan_settings.php se carga directamente).
      *
      * @param Router $router
      */
     public function registerRoutes(Router $router): void {
-        // Маршрутизация — через admin page navigation (magscan_settings.php)
+                // Enrutado — vía navegación de páginas admin (magscan_settings.php)
     }
 
     /**
-     * CLI-команды модуля
+          * Comandos CLI del módulo
      *
-     * MAGSCAN не имеет CLI-команд.
+          * MAGSCAN no tiene comandos CLI.
      *
      * @param CommandRegistry $registry
      */
@@ -72,7 +72,7 @@ class MagscanModule implements ModuleInterface {
     }
 
     /**
-     * Подписки на события ядра
+          * Suscripciones a eventos del core
      *
      * @return array
      */

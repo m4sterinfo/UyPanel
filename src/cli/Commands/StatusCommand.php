@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Проверка статуса, DB-миграции, конфигурация системы.
+ * Comprobación de estado, migraciones de BD, configuración del sistema.
  *
- * Команда: status [first-run]
- * Требует: root
+ * Comando: status [first-run]
+ * Requiere: root
  *
- * Заменяет src/status. При первом запуске (аргумент "first-run")
- * пропускает вывод статуса и сразу выполняет миграции/конфигурацию.
+ * Sustituye src/status. En el primer arranque (argumento "first-run")
+ * omite la salida de estado y ejecuta directamente migraciones/configuración.
  */
 class StatusCommand implements CommandInterface {
 

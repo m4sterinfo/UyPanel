@@ -5,7 +5,7 @@ ENV container=docker
 ENV LC_ALL=C
 ENV TZ=UTC
 
-# systemd — необходим для инсталлятора (systemctl enable/start uypanel)
+# systemd — necesario para el instalador (systemctl enable/start uypanel)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     systemd systemd-sysv dbus \
     lsb-release sudo python3 python3-pip wget curl unzip \
@@ -13,8 +13,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Убираем только действительно ненужные в контейнере юниты
-# НЕ трогаем sysinit.target.wants (journald, tmpfiles, sysctl — нужны)
+# Eliminamos solo las unidades realmente innecesarias en el contenedor
+# NO tocamos sysinit.target.wants (journald, tmpfiles, sysctl — son necesarios)
 RUN rm -f /lib/systemd/system/multi-user.target.wants/* \
     /lib/systemd/system/local-fs.target.wants/* \
     /lib/systemd/system/sockets.target.wants/*udev* \
@@ -27,9 +27,9 @@ STOPSIGNAL SIGRTMIN+3
 
 WORKDIR /opt/xcvm-install
 
-# Скрипт автоматической установки (подаёт ответы на интерактивные вопросы)
+# Script de instalación automática (responde a las preguntas interactivas)
 COPY auto_install.sh /opt/xcvm-install/auto_install.sh
 RUN chmod +x /opt/xcvm-install/auto_install.sh
 
-# Точка входа — systemd (PID 1), установка запускается вручную или через скрипт
+# Punto de entrada — systemd (PID 1), la instalación se lanza a mano o vía script
 CMD ["/sbin/init"]

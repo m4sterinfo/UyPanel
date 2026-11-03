@@ -1,6 +1,6 @@
 <?php
 /**
- * RadioController — редактирование/добавление радиостанции.
+ * RadioController — edición/añadido de emisora de radio.
  */
 class RadioController extends BaseAdminController
 {

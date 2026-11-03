@@ -1,11 +1,11 @@
 <?php
 
 /**
- * StreamConfigRepository — аргументы потоков и профили транскодирования.
+ * StreamConfigRepository — argumentos de streams y perfiles de transcodificación.
  */
 class StreamConfigRepository {
 	/**
-	 * Получить все аргументы потоков (streams_arguments), индексированные по argument_key.
+	 		 * Obtener todos los argumentos de streams (streams_arguments), indexados por argument_key.
 	 */
 	public static function getStreamArguments() {
 		global $db;
@@ -22,7 +22,7 @@ class StreamConfigRepository {
 	}
 
 	/**
-	 * Получить все профили транскодирования (profiles).
+	 		 * Obtener todos los perfiles de transcodificación (profiles).
 	 */
 	public static function getTranscodeProfiles() {
 		global $db;

@@ -1,20 +1,20 @@
 <?php
 
 /**
- * Общий streaming auth middleware для live/vod/timeshift.
+ * Middleware común de streaming auth para live/vod/timeshift.
  *
- * Извлекает дублированные блоки:
- *  - Заголовки ответа (CORS, Server, Protection, Alt-Svc, unique cookie)
- *  - Дешифровка и базовая валидация токена
+ * Extrae los bloques duplicados:
+ *  - Cabeceras de respuesta (CORS, Server, Protection, Alt-Svc, unique cookie)
+ *  - Descifrado y validación básica del token
  *
- * Ограничение: static-only, без DI-container. Globals через параметры.
+ * Limitación: static-only, sin contenedor DI. Globals vía parámetros.
  */
 class StreamAuthMiddleware {
 
     /**
-     * Отправка общих streaming response headers.
+          * Envío de las cabeceras comunes de respuesta de streaming.
      *
-     * Дублировалось в live.php, vod.php, timeshift.php (~25 строк каждый).
+          * Estaba duplicado en live.php, vod.php, timeshift.php (~25 líneas cada uno).
      */
     public static function sendStreamHeaders($rSettings, $rServers) {
         header('Access-Control-Allow-Origin: *');
@@ -43,13 +43,13 @@ class StreamAuthMiddleware {
     }
 
     /**
-     * Дешифровка токена и базовая валидация (формат + срок действия).
+          * Descifrado del token y validación básica (formato + caducidad).
      *
-     * @param string $rToken       Зашифрованный токен из запроса
-     * @param array  $rSettings    Настройки (нужен live_streaming_pass)
-     * @param array  $rServers     Серверы (нужен time_offset)
-     * @param string $rIP          IP клиента для логирования
-     * @return array               Расшифрованные данные токена
+          * @param string $rToken       Token cifrado de la petición
+          * @param array  $rSettings    Ajustes (necesita live_streaming_pass)
+          * @param array  $rServers     Servidores (necesita time_offset)
+          * @param string $rIP          IP del cliente para el log
+          * @return array               Datos descifrados del token
      */
     public static function decryptToken($rToken, $rSettings, $rServers, $rIP) {
         $rTokenData = json_decode(

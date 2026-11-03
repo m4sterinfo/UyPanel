@@ -1,6 +1,6 @@
 <?php
 /**
- * StreamListController — список стримов.
+ * StreamListController — lista de streams.
  */
 class StreamListController extends BaseAdminController
 {
