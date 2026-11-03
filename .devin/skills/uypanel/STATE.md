@@ -125,6 +125,22 @@
   íntegro: logos nuevos, favicon corregido, donaciones propias, seed limpio.
   Verificado extrayendo el payload del zip.
 
+### 2026-11-03 — Documentación traducida al español
+- **Traducidos a español**: `MIGRATION.md`, `ARCHITECTURE.md`,
+  `specs/MODULE_SYSTEM_SPEC.md` (estaban en ruso) y el sitio `docs/ru/`
+  (18 archivos) → nuevo sitio `docs/es/`; `docs/ru/` eliminado.
+- Docsify: `index.html` con ruta `/es-es/`, redirect raíz → guía española,
+  `_navbar.md` con switcher Español/English.
+- README: enlaces de documentación a `m4sterinfo.github.io/UyPanel` (español
+  primero); eliminada la entrada rusa. NOTA: el sitio GitHub Pages hay que
+  activarlo en el repo (Settings → Pages, rama main /docs) para que funcione.
+- `tools/run_scan.sh`: quitada la ruta hardcodeada del disco del autor original.
+- **Packs de idioma conservados** (`src/includes/langs/ru.ini`, `bg.ini`,
+  ministra js langs): son traducciones runtime para usuarios finales, no docs.
+- **PENDIENTE — comentarios en ruso en ~200 archivos PHP** (bootstrap.php,
+  Router.php, ServiceContainer.php, etc.): traducir o limpiar en una pasada
+  futura; es un trabajo voluminoso y separable.
+
 ### Pendiente de hacer en el servidor (no requiere código)
 - Nota: el PHP/nginx/redis en producción son los binarios Ubuntu del tarball
   2.0.1 con librerías adaptadas (`libcurl3t64-gnutls`, `libjpeg.so.8` ABI 8 en
