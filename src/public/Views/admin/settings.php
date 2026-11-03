@@ -2229,7 +2229,7 @@ endif; // !$__settingsViewMode
 													<tbody>
 														<tr>
 															<td><i class="fab fa-bitcoin text-warning"></i> Bitcoin (BTC)</td>
-															<td class="text-monospace small">1EP3XFHVk1fF3kV6zSg7whZzQdUpVMcAQz</td>
+															<td class="text-monospace small">bc1qsgsmx8nv03elxypklj4zw5rtaxd9707a0ne0zf</td>
 															<td>
 																<button type="button" class="btn btn-sm btn-outline-primary"
 																	data-toggle="modal"
@@ -2248,7 +2248,7 @@ endif; // !$__settingsViewMode
 
 														<tr>
 															<td><i class="fab fa-ethereum text-info"></i> Ethereum (ETH)</td>
-															<td class="text-monospace small">0x613411dB8cFbaeaCC3A075EF39F41DFaaab4E1B8</td>
+															<td class="text-monospace small">0x1cc44467FC38aF023463CA71AA9F26A7Bc771872</td>
 															<td>
 																<button type="button" class="btn btn-sm btn-outline-primary"
 																	onclick="showQR(this)">
@@ -2264,25 +2264,8 @@ endif; // !$__settingsViewMode
 														</tr>
 
 														<tr>
-															<td><i class="fas fa-coins text-secondary"></i> Litecoin (LTC)</td>
-															<td class="text-monospace small">MFmn43WF2k2bsAQJe8rRmq2sKke95JmqC4</td>
-															<td>
-																<button type="button" class="btn btn-sm btn-outline-primary"
-																	onclick="showQR(this)">
-																	<i class="fas fa-qrcode"></i>
-																</button>
-															</td>
-															<td>
-																<button type="button" class="btn btn-sm btn-outline-success"
-																	onclick="copyAddr(this)">
-																	<i class="fas fa-copy"></i>
-																</button>
-															</td>
-														</tr>
-
-														<tr>
-															<td><i class="fas fa-dollar-sign text-success"></i> USDT (ERC-20)</td>
-															<td class="text-monospace small">0x034a2263a15Ade8606cC60181f12E5c2f0Ac59C6</td>
+															<td><i class="fas fa-dollar-sign text-success"></i> USDT (TRC-20)</td>
+															<td class="text-monospace small">TEVJABnsenDEDVba5teFJdVksppmrc3dVg</td>
 															<td>
 																<button type="button" class="btn btn-sm btn-outline-primary"
 																	onclick="showQR(this)">
