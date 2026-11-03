@@ -36,13 +36,13 @@
       location.hash === '#' ||
       location.hash === '#/'
     ) {
-      location.replace('#/en-us/');
+      location.replace('#/es-es/');
     }
   </script>
 
   <script>
     // Language detection
-    var lang = location.hash.match(/#\/(ru-ru|en-us)\//);
+    var lang = location.hash.match(/#\/(ru-ru|en-us|es-es)\//);
 
     if (lang) {
       document.documentElement.setAttribute('lang', lang[1]);
@@ -53,6 +53,7 @@
         '/.*/_navbar.md': '/_navbar.md',
         '/ru-ru/(.*)': '/ru/$1',
         '/en-us/(.*)': '/en/$1',
+        '/es-es/(.*)': '/es/$1',
       },
       auto2top: true,
       executeScript: true,
@@ -65,7 +66,8 @@
       nameLink: {
         '/ru-ru/': '#/ru-ru/',
         '/en-us/': '#/en-us/',
-        '/': '#/en-us/',
+        '/es-es/': '#/es-es/',
+        '/': '#/es-es/',
       },
       search: {
         placeholder: 'Search...',

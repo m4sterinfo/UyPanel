@@ -1,63 +1,63 @@
-<h1 align="center">🚀 UyPanel — Сборка FFmpeg</h1>
+<h1 align="center">🚀 UyPanel — Compilación de FFmpeg</h1>
 
 <p align="center">
-  Это руководство по сборке FFmpeg с аппаратным ускорением NVIDIA (NVENC/CUVID) и статической интеграцией библиотек для полной переносимости в рамках проекта UyPanel.
+  Guía para compilar FFmpeg con aceleración por hardware NVIDIA (NVENC/CUVID) e integración estática de librerías, para portabilidad total dentro del proyecto UyPanel.
 </p>
 
 ---
 
-## 📚 Навигация
+## 📚 Navegación
 
-- [📋 Требования](#требования)
-- [🔧 Конфигурация](#конфигурация)
-- [🛠 Установка инструментов для сборки](#установка-инструментов-для-сборки)
-- [🎶 Сборка и включение кодеков](#сборка-и-включение-кодеков)
-- [🖥 Установка NVIDIA и CUDA](#установка-nvidia-и-cuda)
-- [🔨 Сборка FFmpeg](#сборка-ffmpeg)
-- [📦 Установка](#установка)
-- [✅ Проверка](#проверка)
-- [🧾 Примечания](#примечания)
-- [🔄 Совместимость версий](#совместимость-версий)
-
----
-
-## 📋 Требования
-
-* **Ubuntu 22.04 или новее** — рекомендованная ОС для стабильной сборки.
-* Видеокарта NVIDIA с поддержкой **NVENC** (опционально, но рекомендуется для аппаратного ускорения).
-* ~15 ГБ свободного места на диске для исходников и временных файлов.
-* Стабильное интернет-соединение для загрузки зависимостей.
-
-> 💡 **Совет:** Убедитесь, что система обновлена перед началом, чтобы избежать конфликтов пакетов.
+- [📋 Requisitos](#requisitos)
+- [🔧 Configuración](#configuración)
+- [🛠 Instalación de herramientas de build](#instalación-de-herramientas-de-build)
+- [🎶 Compilación e inclusión de códecs](#compilación-e-inclusión-de-códecs)
+- [🖥 Instalación de NVIDIA y CUDA](#instalación-de-nvidia-y-cuda)
+- [🔨 Compilación de FFmpeg](#compilación-de-ffmpeg)
+- [📦 Instalación](#instalación)
+- [✅ Verificación](#verificación)
+- [🧾 Notas](#notas)
+- [🔄 Compatibilidad de versiones](#compatibilidad-de-versiones)
 
 ---
 
-## 🔧 Конфигурация
+## 📋 Requisitos
 
-Установите переменные окружения для кастомизации сборки. Это позволит легко изменить версии и пути.
+* **Ubuntu 22.04 o superior** — SO recomendado para un build estable.
+* Tarjeta gráfica NVIDIA con soporte **NVENC** (opcional, pero recomendado para aceleración por hardware).
+* ~15 GB de espacio libre en disco para fuentes y archivos temporales.
+* Conexión a internet estable para descargar dependencias.
+
+> 💡 **Consejo:** Asegúrate de que el sistema está actualizado antes de empezar para evitar conflictos de paquetes.
+
+---
+
+## 🔧 Configuración
+
+Define las variables de entorno para personalizar el build. Esto facilita cambiar versiones y rutas.
 
 ```bash
-# Версия FFmpeg для сборки
+# Versión de FFmpeg a compilar
 export FFMPEG_VERSION="8.0"
 
-# Директория для установки
+# Directorio de instalación
 export INSTALL_DIR="/home/uypanel/bin/ffmpeg_bin"
 
-# Директория для сборки
+# Directorio de compilación
 export BUILD_DIR="$HOME/ffmpeg_sources"
 
-# Версия CUDA
+# Versión de CUDA
 export CUDA_VERSION="12-2"
 
-# Версия драйвера NVIDIA
+# Versión del driver NVIDIA
 export NVIDIA_DRIVER_VERSION="535"
 ```
 
 ---
 
-## 🛠 Установка инструментов для сборки
+## 🛠 Instalación de herramientas de build
 
-Обновите систему и установите базовые пакеты для разработки. Это обеспечит наличие всех необходимых инструментов.
+Actualiza el sistema e instala los paquetes base de desarrollo. Así tendrás todas las herramientas necesarias.
 
 ```bash
 sudo apt-get update -qq && sudo apt-get -y install \
@@ -71,11 +71,11 @@ sudo apt-get update -qq && sudo apt-get -y install \
 
 ---
 
-## 🎶 Сборка и включение кодеков
+## 🎶 Compilación e inclusión de códecs
 
-Соберите библиотеки из исходников для статической интеграции в FFmpeg. Это обеспечит поддержку популярных форматов без внешних зависимостей.
+Compila las librerías desde las fuentes para integrarlas estáticamente en FFmpeg. Esto da soporte de los formatos populares sin dependencias externas.
 
-### 2.1 Создание директории для сборки
+### 2.1 Creación del directorio de build
 
 ```bash
 mkdir -p ${BUILD_DIR:-~/ffmpeg_sources} && cd ${BUILD_DIR:-~/ffmpeg_sources}
@@ -114,7 +114,7 @@ sudo make install
 cd ..
 ```
 
-### 2.5 Opus Audio (libopus)
+### 2.5 Audio Opus (libopus)
 
 ```bash
 wget https://downloads.xiph.org/releases/opus/opus-1.5.2.tar.gz
@@ -126,9 +126,9 @@ sudo make install
 cd ..
 ```
 
-### 2.6 Дополнительные библиотеки
+### 2.6 Librerías adicionales
 
-- **libass** (субтитры):
+- **libass** (subtítulos):
 
 ```bash
 git clone https://github.com/libass/libass.git
@@ -140,7 +140,7 @@ sudo make install
 cd ..
 ```
 
-- **libfreetype** (шрифты):
+- **libfreetype** (fuentes):
 
 ```bash
 wget https://download.savannah.gnu.org/releases/freetype/freetype-2.13.2.tar.gz
@@ -152,7 +152,7 @@ sudo make install
 cd ..
 ```
 
-- **libvorbis** (аудио):
+- **libvorbis** (audio):
 
 ```bash
 wget https://downloads.xiph.org/releases/vorbis/libvorbis-1.3.7.tar.xz
@@ -198,7 +198,7 @@ sudo make prefix="${INSTALL_DIR:-$HOME/ffmpeg_build}" install
 cd ..
 ```
 
-- **libunistring** (для gnutls и librtmp):
+- **libunistring** (para gnutls y librtmp):
 
 ```bash
 wget https://ftp.gnu.org/gnu/libunistring/libunistring-1.2.tar.gz
@@ -223,11 +223,11 @@ cd ..
 
 ---
 
-## 🖥 Установка NVIDIA и CUDA
+## 🖥 Instalación de NVIDIA y CUDA
 
-Для аппаратного ускорения установите драйверы и инструменты NVIDIA.
+Para la aceleración por hardware, instala los drivers y herramientas de NVIDIA.
 
-### 3.1 Установка драйверов NVIDIA
+### 3.1 Instalación de los drivers NVIDIA
 
 ```bash
 sudo add-apt-repository ppa:graphics-drivers/ppa
@@ -235,9 +235,9 @@ sudo apt update
 sudo apt install nvidia-driver-${NVIDIA_DRIVER_VERSION:-535}
 ```
 
-> ⚠️ **Важно:** Перезагрузите систему после установки и проверьте совместимость с вашей видеокартой.
+> ⚠️ **Importante:** Reinicia el sistema tras la instalación y comprueba la compatibilidad con tu tarjeta gráfica.
 
-### 3.2 Установка CUDA Toolkit
+### 3.2 Instalación de CUDA Toolkit
 
 ```bash
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
@@ -246,7 +246,7 @@ sudo apt update
 sudo apt install -y cuda-toolkit-${CUDA_VERSION:-12-2}
 ```
 
-### 3.3 Установка заголовков NVENC
+### 3.3 Instalación de las cabeceras NVENC
 
 ```bash
 cd ${BUILD_DIR:-~/ffmpeg_sources}
@@ -257,7 +257,7 @@ sudo make PREFIX="${INSTALL_DIR:-$HOME/ffmpeg_build}" install
 cd ..
 ```
 
-### 3.4 Опциональные инструменты NVIDIA
+### 3.4 Herramientas NVIDIA opcionales
 
 ```bash
 sudo apt install -y nvidia-cuda-toolkit nvidia-cuda-dev
@@ -265,9 +265,9 @@ sudo apt install -y nvidia-cuda-toolkit nvidia-cuda-dev
 
 ---
 
-## 🔨 Сборка FFmpeg
+## 🔨 Compilación de FFmpeg
 
-### 4.1 Загрузка исходного кода
+### 4.1 Descarga del código fuente
 
 ```bash
 cd ${BUILD_DIR:-~/ffmpeg_sources}
@@ -276,7 +276,7 @@ tar xjvf ffmpeg-${FFMPEG_VERSION:-8.0}.tar.bz2
 cd ffmpeg-${FFMPEG_VERSION:-8.0}
 ```
 
-### 4.2 Конфигурация
+### 4.2 Configuración
 
 ```bash
 export PATH="${INSTALL_DIR:-$HOME/bin}:$PATH"
@@ -328,7 +328,7 @@ export PKG_CONFIG_PATH="${INSTALL_DIR:-$HOME/ffmpeg_build}/lib/pkgconfig"
   --target-os=linux
 ```
 
-### 4.3 Компиляция
+### 4.3 Compilación
 
 ```bash
 make -j$(nproc)
@@ -336,7 +336,7 @@ make -j$(nproc)
 
 ---
 
-## 📦 Установка
+## 📦 Instalación
 
 ```bash
 mkdir -p ${INSTALL_DIR:-/home/uypanel/bin/ffmpeg_bin}/${FFMPEG_VERSION:-8.0}/
@@ -345,16 +345,16 @@ cp ffmpeg ffprobe ${INSTALL_DIR:-/home/uypanel/bin/ffmpeg_bin}/${FFMPEG_VERSION:
 
 ---
 
-## ✅ Проверка
+## ✅ Verificación
 
-Проверьте версию и поддержку NVIDIA после сборки.
+Comprueba la versión y el soporte NVIDIA tras el build.
 
 ```bash
 ${INSTALL_DIR:-/home/uypanel/bin/ffmpeg_bin}/${FFMPEG_VERSION:-8.0}/ffmpeg -version
 ${INSTALL_DIR:-/home/uypanel/bin/ffmpeg_bin}/${FFMPEG_VERSION:-8.0}/ffprobe -version
 ```
 
-Проверка поддержки NVIDIA:
+Comprobación del soporte NVIDIA:
 
 ```bash
 ${INSTALL_DIR:-/home/uypanel/bin/ffmpeg_bin}/${FFMPEG_VERSION:-8.0}/ffmpeg -encoders | grep nvenc
@@ -363,28 +363,28 @@ ${INSTALL_DIR:-/home/uypanel/bin/ffmpeg_bin}/${FFMPEG_VERSION:-8.0}/ffmpeg -deco
 
 ---
 
-## 🧾 Примечания
+## 🧾 Notas
 
-* Все библиотеки собраны статически и включены в бинарный файл FFmpeg, что обеспечивает полную переносимость.
-* Драйвер NVIDIA должен быть совместим с вашей видеокартой.
-* После установки драйверов может потребоваться **перезагрузка**.
-* Сборка FFmpeg потребляет значительные ресурсы CPU и памяти.
-* Итоговый бинарный файл будет большим из-за включения всех зависимостей.
-* Настройте переменные окружения в соответствии с вашей системой.
-* Для разных версий FFmpeg могут потребоваться корректировки флагов конфигурации.
+* Todas las librerías se compilan estáticamente y quedan incluidas en el binario FFmpeg, lo que garantiza portabilidad total.
+* El driver NVIDIA debe ser compatible con tu tarjeta gráfica.
+* Tras instalar los drivers puede hacer falta **reiniciar**.
+* La compilación de FFmpeg consume bastantes recursos de CPU y memoria.
+* El binario final será grande por incluir todas las dependencias.
+* Ajusta las variables de entorno según tu sistema.
+* Para distintas versiones de FFmpeg pueden requerirse ajustes en los flags de configuración.
 
-> 💬 **Совет:** Если возникнут проблемы, проверьте логи сборки или создайте issue в [репозитории](https://github.com/m4sterinfo/UyPanel/issues).
+> 💬 **Consejo:** Si tienes problemas, revisa los logs del build o abre un issue en el [repositorio](https://github.com/m4sterinfo/UyPanel/issues).
 
 ---
 
-## 🔄 Совместимость версий
+## 🔄 Compatibilidad de versiones
 
-| Версия FFmpeg | Рекомендуемая CUDA | Примечания |
+| Versión FFmpeg | CUDA recomendada | Notas |
 |---------------|--------------------|------------|
-| 8.x           | 12.2+              | Новейшие функции |
-| 7.x           | 12.0+              | Стабильная |
-| 6.x           | 11.8+              | Устаревшая |
+| 8.x           | 12.2+              | Funciones más recientes |
+| 7.x           | 12.0+              | Estable |
+| 6.x           | 11.8+              | Antigua |
 
-Проверяйте [документацию FFmpeg](https://ffmpeg.org/) для конкретных требований версий.
+Consulta la [documentación de FFmpeg](https://ffmpeg.org/) para los requisitos concretos de cada versión.
 
 ---

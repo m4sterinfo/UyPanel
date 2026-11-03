@@ -1,30 +1,30 @@
-<h1 align="center">🧱 UyPanel — Сборка бинарных файлов</h1>
+<h1 align="center">🧱 UyPanel — Compilación de binarios</h1>
 
 <p align="center">
-  Это руководство поможет собрать бинарные файлы для UyPanel. Процесс подходит для разработчиков и администраторов, желающих настроить систему под свои нужды.
+  Esta guía te ayuda a compilar los binarios para UyPanel. El proceso está pensado para desarrolladores y administradores que quieran adaptar el sistema a sus necesidades.
 </p>
 
 ---
 
-## 📚 Навигация
+## 📚 Navegación
 
-- [🔧 Предварительная подготовка](#предварительная-подготовка)
-- [🌐 Сборка NGINX](#сборка-nginx)
-- [📺 Сборка NGINX с RTMP](#сборка-nginx-с-rtmp)
-- [🐘 Сборка PHP-FPM](#сборка-php-fpm)
-- [📦 Установка PHP-расширений](#установка-php-расширений)
-- [⚙️ Сборка бинарника network](#сборка-бинарника-network)
-- [✅ Заключение](#заключение)
+- [🔧 Preparación previa](#preparación-previa)
+- [🌐 Compilación de NGINX](#compilación-de-nginx)
+- [📺 Compilación de NGINX con RTMP](#compilación-de-nginx-con-rtmp)
+- [🐘 Compilación de PHP-FPM](#compilación-de-php-fpm)
+- [📦 Instalación de extensiones PHP](#instalación-de-extensiones-php)
+- [⚙️ Compilación del binario network](#compilación-del-binario-network)
+- [✅ Conclusión](#conclusión)
 
 ---
 
-## 🔧 Предварительная подготовка
+## 🔧 Preparación previa
 
-> ⚠️ **Внимание:** Все действия выполняются **на сервере**, где установлен `uypanel`.
+> ⚠️ **Atención:** Todo se hace **en el servidor** donde está instalado `uypanel`.
 
-### 1. Установите зависимости
+### 1. Instala las dependencias
 
-Установите необходимые пакеты для сборки. Это обеспечит наличие всех инструментов и библиотек.
+Instala los paquetes necesarios para compilar. Así tendrás todas las herramientas y librerías.
 
 ```bash
 sudo apt-get install -y \
@@ -35,9 +35,9 @@ sudo apt-get install -y \
 
 ---
 
-## 🌐 Сборка NGINX
+## 🌐 Compilación de NGINX
 
-### 1. Загрузите исходники
+### 1. Descarga las fuentes
 
 #### OpenSSL
 
@@ -60,7 +60,7 @@ wget https://sourceforge.net/projects/pcre/files/pcre/8.45/pcre-8.45.tar.gz
 tar -xzvf pcre-8.45.tar.gz
 ```
 
-#### FLV-модуль
+#### Módulo FLV
 
 ```bash
 wget https://github.com/winshining/nginx-http-flv-module/archive/refs/tags/v1.2.12.zip
@@ -75,9 +75,9 @@ tar -zxvf nginx-1.28.0.tar.gz
 cd nginx-1.28.0
 ```
 
-### 2. Настройка сборки
+### 2. Configuración del build
 
-Настройте конфигурацию для статической сборки с необходимыми модулями.
+Configura la compilación estática con los módulos necesarios.
 
 ```bash
 ./configure \
@@ -105,7 +105,7 @@ cd nginx-1.28.0
   --with-openssl-opt=no-nextprotoneg
 ```
 
-### 3. Сборка и установка
+### 3. Compilación e instalación
 
 ```bash
 make
@@ -114,16 +114,16 @@ make install
 
 ---
 
-## 📺 Сборка NGINX с RTMP
+## 📺 Compilación de NGINX con RTMP
 
-### 1. Загрузите RTMP-модуль
+### 1. Descarga el módulo RTMP
 
 ```bash
 wget https://github.com/arut/nginx-rtmp-module/archive/refs/tags/v1.2.2.tar.gz
 tar -xzvf v1.2.2.tar.gz
 ```
 
-### 2. Сконфигурируйте сборку
+### 2. Configura el build
 
 ```bash
 cd nginx-1.28.0
@@ -148,14 +148,14 @@ cd nginx-1.28.0
   --with-ld-opt='-static -Wl,-z,relro -Wl,-z,now -pie'
 ```
 
-### 3. Сборка и установка
+### 3. Compilación e instalación
 
 ```bash
 make
 make install
 ```
 
-### 4. Переименование исполняемого файла
+### 4. Renombra el ejecutable
 
 ```bash
 mv /home/uypanel/bin/nginx_rtmp/sbin/nginx /home/uypanel/bin/nginx_rtmp/sbin/nginx_rtmp
@@ -163,9 +163,9 @@ mv /home/uypanel/bin/nginx_rtmp/sbin/nginx /home/uypanel/bin/nginx_rtmp/sbin/ngi
 
 ---
 
-## 🐘 Сборка PHP-FPM
+## 🐘 Compilación de PHP-FPM
 
-### 1. Установите зависимости
+### 1. Instala las dependencias
 
 ```bash
 sudo apt-get install -y \
@@ -173,7 +173,7 @@ sudo apt-get install -y \
   libtool m4 gcc make pkg-config libmaxminddb-dev libssh2-1-dev
 ```
 
-### 2. Загрузите исходники
+### 2. Descarga las fuentes
 
 ```bash
 wget -O php-8.1.33.tar.gz http://php.net/get/php-8.1.33.tar.gz/from/this/mirror
@@ -181,7 +181,7 @@ tar -xzvf php-8.1.33.tar.gz
 cd php-8.1.33
 ```
 
-### 3. Настройка сборки
+### 3. Configuración del build
 
 ```bash
 ./configure \
@@ -226,7 +226,7 @@ cd php-8.1.33
   --enable-mbstring
 ```
 
-### 4. Сборка и установка
+### 4. Compilación e instalación
 
 ```bash
 make
@@ -235,9 +235,9 @@ make install
 
 ---
 
-## 📦 Установка PHP-расширений
+## 📦 Instalación de extensiones PHP
 
-Используйте встроенный `pecl` из вашей сборки PHP для установки расширений.
+Usa el `pecl` incluido en tu build de PHP para instalar las extensiones.
 
 ```bash
 /home/uypanel/bin/php/bin/pecl install maxminddb
@@ -246,9 +246,9 @@ make install
 /home/uypanel/bin/php/bin/pecl install redis
 ```
 
-### Настройка Redis-расширения
+### Configuración de la extensión Redis
 
-Во время установки PECL задаёт вопросы:
+Durante la instalación, PECL hace preguntas:
 
 ```
 enable igbinary serializer support? [no] : yes
@@ -259,38 +259,38 @@ enable lz4 compression? [no] :
 use system liblz4? [yes] :
 ```
 
-Рекомендуемые ответы: `yes` на igbinary, остальные — по желанию.
+Respuestas recomendadas: `yes` en igbinary, el resto a gusto.
 
 ---
 
-## ⚙️ Сборка бинарника network
+## ⚙️ Compilación del binario network
 
-### 1. Установите `PyInstaller` (однократно)
+### 1. Instala `PyInstaller` (una sola vez)
 
 ```bash
 pip install -U pyinstaller
 ```
 
-### 2. Соберите бинарный файл
+### 2. Compila el binario
 
 ```bash
 cd /home/uypanel/bin
 pyinstaller --onefile network.py
 ```
 
-После сборки исполняемый файл появится в директории:
+Tras compilar, el ejecutable aparecerá en:
 
 ```bash
 /home/uypanel/bin/dist/network
 ```
 
-### 3. Переместите бинарник в нужное место
+### 3. Mueve el binario a su sitio
 
 ```bash
 mv /home/uypanel/bin/dist/network /home/uypanel/bin/network
 ```
 
-### 4. Очистите временные директории
+### 4. Limpia los directorios temporales
 
 ```bash
 rm -rf build dist network.spec __pycache__
@@ -298,16 +298,16 @@ rm -rf build dist network.spec __pycache__
 
 ---
 
-## ✅ Заключение
+## ✅ Conclusión
 
-После завершения всех шагов вы получите собственные статически собранные бинарные файлы:
+Al terminar todos los pasos tendrás tus propios binarios compilados estáticamente:
 
 - `nginx`
 - `nginx_rtmp`
 - `php-fpm`
-- `pecl`-расширения
-- `network` (бинарник Python-скрипта)
+- extensiones `pecl`
+- `network` (binario del script Python)
 
-> 💡 **Совет:** Если возникнут проблемы, проверьте логи сборки или обратитесь в [Issues](https://github.com/m4sterinfo/UyPanel/issues).
+> 💡 **Consejo:** Si tienes problemas, revisa los logs del build o consulta los [Issues](https://github.com/m4sterinfo/UyPanel/issues).
 
 ---
