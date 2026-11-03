@@ -1,25 +1,55 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-02.
+> cada cambio significativo. Última actualización: 2026-11-03 (fin de sesión).
+
+## ⏭️ CONTINUAR AQUÍ (próxima sesión)
+
+1. **Pregunta pendiente al usuario**: ¿traducir los comentarios en ruso de
+   ~200 archivos PHP (bootstrap.php, Router.php, ServiceContainer.php, etc.)?
+   Es un barrido voluminoso y separable. El usuario pidió traducir "todos los
+   documentos en ruso" — los documentos ya están hechos; los comentarios de
+   código quedan como siguiente candidato.
+2. **Video del login (acción del USUARIO)**: el usuario va a pegar su propio
+   video en `/home/uypanel/public/assets/admin/videos/login-bg.mp4` (servidor,
+   el dir ya tiene permisos debian:debian) y en el repo
+   `src/public/assets/admin/videos/login-bg.mp4`. Cuando lo pegue en el repo:
+   commitear + pushear (es archivo LFS). El video ACTUAL en ambos sitios es el
+   del original y muestra el logo 3D de XC_VM en su frame central (~3.5s).
+3. **GitHub Pages**: activar en el repo (Settings → Pages → rama main,
+   carpeta /docs) para que el sitio de docs (docs/es + docs/en) funcione en
+   https://m4sterinfo.github.io/UyPanel
+4. **Roadmap** (ver sección Trabajo pendiente): rebuild de binarios con prefix
+   uypanel, EPG re-import, revisión de Settings, READMEs de los forks de soporte.
 
 ## Identidad
 
 - **Nombre**: UyPanel
 - **Base**: fork de XC_VM tag `2.0.1` (commit `e21f9063`), historial git completo conservado
 - **Rama de trabajo**: `main` (nuestra)
-- **Upstream**: `origin` = https://github.com/Vateron-Media/XC_VM (solo lectura)
-- **Repo propio**: https://github.com/m4sterinfo/UyPanel (público, AGPL-3.0, rama main = c19dbf69; pusheado el 2026-11-02)
+- **Repo propio (origin)**: https://github.com/m4sterinfo/UyPanel (público, AGPL-3.0)
+- **Último commit pusheado**: `4b861388` (docs: translate Russian documentation to Spanish)
+- **Upstream original**: Vateron-Media/XC_VM — NO está configurado como remote;
+  añadir como `upstream` solo si se quiere mirar fixes (`git remote add upstream ...`)
 - **Auth GitHub**: gh CLI autenticado como `m4sterinfo` (credenciales de git vía gh)
+- **Identidad git (config local del repo)**: m4sterinfo <jferrjferreira@masterinfo.org>
 - **Licencia**: AGPL-3.0 (heredada, mantener — NO cambiar a GPL-3.0)
 
 ## Entorno
 
 - Servidor: Debian 13 (trixie), 8 cores, 32 GB RAM, 1.7 TB disco, IP `198.27.81.133`
-- Panel 2.0.1 instalado en `/home/xc_vm` y en producción
-- DB migrada desde XUI el 2026-11-02 (27,672 líneas, 240,557 streams, 2,087 users)
+- Panel instalado en `/home/uypanel` (renombrado desde /home/xc_vm), servicio
+  systemd `uypanel.service`, usuario/grupo sistema `uypanel` (uid 105)
+- BDs MariaDB: `uypanel` + `uypanel_migrate` (renombradas por RENAME TABLE)
+- BD migrada desde XUI el 2026-11-02 (27,672 líneas, 240,557 streams, 2,087 users)
 - Acceso admin: `http://198.27.81.133/x9access9x` (código migrado del panel antiguo)
-- Copia del backup original: `/home/debian/backup_2026-11-02_15_16_01.sql` (1.2 GB)
+- Credenciales MariaDB: `/home/debian/credentials.txt` (NO commitear nunca)
+- Backups: `/home/debian/pre_rename_backup/dbs_pre_rename.sql.gz` (147 MB, pre-rename)
+  y `/home/debian/backup_2026-11-02_15_16_01.sql` (1.2 GB, XUI original)
+- **SHIM temporal**: symlink `/home/xc_vm -> /home/uypanel` — los binarios
+  PHP/nginx/nginx_rtmp tienen el prefix `/home/xc_vm` COMPILADO DENTRO (ini
+  path, extension_dir, prefix nginx). NO borrar el symlink hasta reconstruir
+  los binarios con prefix `/home/uypanel` vía `third_party/UyPanel_Binaries`.
 
 ## Decisiones tomadas
 
@@ -29,151 +59,126 @@
 | 2026-11-02 | Conservar historial git upstream | Permite diff/cherry-pick de fixes del original |
 | 2026-11-02 | Binarios/FFmpeg como submódulos en `third_party/` | Repo ligero, actualizables, sin vendor de binarios |
 | 2026-11-02 | Instalador con soporte Debian 12/13 | El original 2.0.1 solo soportaba Ubuntu |
+| 2026-11-02 | Identificadores técnicos en minúsculas (`uypanel`) | Convención Linux (el original usaba minúsculas para lo técnico) |
+| 2026-11-02 | Copyrights del original conservados | Obligación legal AGPL al hacer fork |
+| 2026-11-02 | Telemetría al original desactivada | Separación total; los logs quedan locales |
+| 2026-11-03 | Packs de idioma ru/bg conservados | Son traducciones runtime para usuarios finales, no docs |
 
 ## Registro de cambios (nuestros)
 
+### 2026-11-02 — Instalación y migración de datos
+- XC_VM 2.0.1 instalado en Debian 13 con instalador parcheado (soporte Debian
+  12/13: detección de distro, paquetes t64, MariaDB/MaxMind del sistema,
+  libcap2-bin). Librerías del PHP incluido resueltas: `libcurl3t64-gnutls` +
+  `libjpeg.so.8` ABI 8 (de .deb Ubuntu) en `/usr/local/lib`.
+- redis.conf: eliminada `lazyfree-lazy-server-delay` (KeyDB 6.3.4 no la soporta).
+- BD XUI (1.2 GB, 66 tablas) restaurada en `xc_vm_migrate` y migrada con
+  `console.php migrate`: 27,672 lines, 2,087 users, 240,557 streams,
+  239,594 streams_servers, 5,062 series, 220,005 episodes, 57 bouquets,
+  219 categorías, 18 servers, 22 EPG URLs, 62 packages, 12 groups.
+- Optimización usada durante la migración: `SET GLOBAL
+  innodb_flush_log_at_trx_commit=2` (13.5x más rápido); revertido a 1 al terminar.
+
 ### 2026-11-02 — Creación del fork UyPanel
 - Fork desde tag `2.0.1` con historial completo; rama `main` propia.
-- Submódulos añadidos: `third_party/XC_VM_Binaries` (@ `ff034e5`),
-  `third_party/XC_VM_FFMPEG` (@ `43b01ca`).
-- `install`: soporte Debian 12/13 (detección de distro vía `/etc/os-release`,
-  paquetes t64 `libcurl4t64`/`libssh2-1t64`, sin PPA MaxMind ni repo MariaDB
-  externo en Debian, `libcap2-bin` para setcap). Validado instalando el panel
-  en producción con este instalador.
+- Submódulos: `third_party/UyPanel_Binaries` (@ `ff034e5`),
+  `third_party/UyPanel_FFMPEG` (@ `43b01ca`) — forks propios de upstream renombrados.
 - Skill `.devin/skills/uypanel/` creado (SKILL.md + STATE.md).
+- Repo GitHub creado (se creó con errata "UyPnel" → renombrado a UyPanel) y
+  pusheado. Initial commit de GitHub (LICENSE GPL-3.0 incorrecta) reemplazado
+  por force push con el historial del fork (AGPL-3.0 correcta).
 
 ### 2026-11-02 — Rebranding completo y separación total del original
-- **Barrido de rebranding** en 176 archivos: `XC_VM` → `UyPanel`,
-  `Vateron-Media` → `m4sterinfo` (README, docs en/ru, UI, langs, CLI, Makefile,
-  instalador, workflows, test_installer). Copyrights del original conservados
-  (obligatorio AGPL). Logo del original eliminado de los READMEs (pendiente
-  logo propio).
-- **Repos de soporte propios** (forks de upstream, renombrados):
-  `m4sterinfo/UyPanel_Update` (changelog, GeoLite lists, api_server),
-  `m4sterinfo/UyPanel_Binaries` (build PHP/nginx/redis/nginx_rtmp),
-  `m4sterinfo/UyPanel_FFMPEG` (build FFmpeg).
-- **Submódulos** renombrados y reapuntados: `third_party/UyPanel_Binaries`,
-  `third_party/UyPanel_FFMPEG` (mismos commits pineados).
-- **Git LFS**: el repo usa LFS para binarios grandes (20 archivos, ~665 MB:
-  ffmpeg x6, redis-server, proxy.tar.gz 56 MB, GeoIP2-ISP, database.sql,
-  yt-dlp, guess, cidr.db, login-bg.mp4). Objetos descargados del LFS del
-  original; al pushear se suben al LFS propio. Añadidos GeoLite2-City/Country
-  (extraídos del payload oficial 2.0.1, en LFS) — eran los únicos archivos del
-  payload oficial no trackeados en git.
-- **Telemetría desactivada**: `CertbotCronJob` ya no llama a
-  `DiagnosticsService::submitPanelLogs()` (enviaba logs de errores al servidor
-  central del original). La función sigue existiendo pero sin llamante.
-- **Constantes de update** (`src/core/Config/AppConfig.php`):
-  `GIT_OWNER=m4sterinfo`, `GIT_REPO_MAIN=UyPanel`, `GIT_REPO_UPDATE=UyPanel_Update`.
-- **Release propio publicado**: https://github.com/m4sterinfo/UyPanel/releases/tag/2.0.1
-  con `UyPanel.zip` (434 MB, payload íntegro verificado: 6,321 archivos,
-  binarios reales), `loadbalancer.tar.gz` (291 MB) y `hashes.md5`. El Quick
-  Install del README ya funciona apuntando a nuestro repo.
-- **Validación**: php -l en todos los PHP modificados, py_compile del
-  instalador, `make main` + `make lb` completos.
+- Barrido en 176 archivos: `XC_VM` → `UyPanel`, `Vateron-Media` → `m4sterinfo`
+  (README, docs, UI, langs, CLI, Makefile, instalador, workflows, test_installer).
+- Repos de soporte propios (forks renombrados): `m4sterinfo/UyPanel_Update`
+  (changelog, GeoLite lists, api_server), `UyPanel_Binaries`, `UyPanel_FFMPEG`.
+- Git LFS: 20 archivos (~665 MB) — objetos descargados del LFS del original;
+  al pushear se suben al LFS propio. Añadidos GeoLite2-City/Country (extraídos
+  del payload oficial 2.0.1) — eran los únicos archivos del payload no trackeados.
+- Telemetría desactivada: `CertbotCronJob` ya no llama a
+  `DiagnosticsService::submitPanelLogs()`.
+- Constantes de update (`src/core/Config/AppConfig.php`): `GIT_OWNER=m4sterinfo`,
+  `GIT_REPO_MAIN=UyPanel`, `GIT_REPO_UPDATE=UyPanel_Update`.
+- Release 2.0.1 publicado: https://github.com/m4sterinfo/UyPanel/releases/tag/2.0.1
+  (UyPanel.zip 435 MB + loadbalancer.tar.gz 292 MB + hashes.md5). El workflow
+  build-release se disparó solo y subió un XC_VM.zip del código original —
+  eliminado del release; assets re-subidos a mano.
 
-### 2026-11-02 — Renombrado técnico completo en producción (xc_vm → uypanel)
-- **Logo propio**: `docs/_media/UyPanel_logo.jpg` (descargado de
-  uy.v2apk.com/logos/UyPanel_logo.jpg), referenciado en los 3 READMEs.
-- **Repo**: renombradas rutas con `xc_vm` en el nombre (ministra/template/uypanel,
+### 2026-11-02 — Renombrado técnico en producción (xc_vm → uypanel)
+- Repo: renombradas rutas con `xc_vm` en el nombre (ministra/template/uypanel,
   nginx realip_uypanel.conf) y barrido de identificadores técnicos en 143
-  archivos: `/home/uypanel`, servicio systemd `uypanel`, BDs `uypanel` +
-  `uypanel_migrate`, usuario/grupo `uypanel`, tarball `uypanel.tar.gz`.
-  También quitada del instalador la directiva redis `lazyfree-lazy-server-delay`.
-- **Migración del servidor en producción** (con backup previo
-  `/home/debian/pre_rename_backup/dbs_pre_rename.sql.gz`, 147 MB):
-  BDs renombradas por RENAME TABLE (65+66 tablas) + grants nuevos + drop de las
-  viejas; usuario/grupo del sistema renombrados (uid 105); directorio movido a
-  `/home/uypanel`; payload rebrandeado desplegado; config.ini actualizado
-  (database=uypanel); redis.conf con rutas nuevas; crontabs root y uypanel
-  actualizados; fstab tmpfs con rutas nuevas; unidad systemd `uypanel.service`
-  (xc_vm.service eliminada); setcap nginx; message_of_day "Welcome to UyPanel".
-- **IMPORTANTE — shim temporal**: los binarios PHP/nginx/nginx_rtmp tienen el
-  prefix `/home/xc_vm` COMPILADO DENTRO (ini path, extension_dir, prefix de
-  nginx). Existe symlink `/home/xc_vm -> /home/uypanel` para que funcionen.
-  Tarea de roadmap: reconstruir binarios con prefix `/home/uypanel` usando
-  `third_party/UyPanel_Binaries` (ajustar scripts de build) y entonces eliminar
-  el symlink. NO borrar el symlink sin los binarios nuevos.
-- Verificado: servicio active, DB conectada, sin migraciones pendientes,
-  extensiones PHP cargando, panel HTTP 200/302 login, crons ejecutando,
-  nginx_rtmp arriba, puertos 80/443/6379.
-
-### 2026-11-02 — Branding propio en el panel y donaciones
-- **Logos del panel reemplazados** (admin + player, logo.png y logo-topbar.png):
-  procesados desde `docs/_media/UyPanel_logo.jpg` (recorte 650x640 + fondo
-  oscuro a transparencia vía GD). Desplegado en el servidor.
-- **Donaciones** (Settings > Info, `src/public/Views/admin/settings.php`):
+  archivos: `/home/uypanel`, servicio `uypanel`, BDs `uypanel`/`uypanel_migrate`,
+  usuario/grupo `uypanel`, tarball `uypanel.tar.gz`.
+- Servidor migrado: BDs por RENAME TABLE + grants nuevos + drop viejas; usuario/
+  grupo renombrados; directorio movido; payload rebrandeado desplegado;
+  config.ini (database=uypanel); redis.conf rutas nuevas; crontabs root y
+  uypanel actualizados (el del root tiene chattr +i — quitar/poner para editar);
+  fstab tmpfs rutas nuevas; unidad `uypanel.service`; setcap nginx;
+  message_of_day "Welcome to UyPanel".
+- Logo propio: `docs/_media/UyPanel_logo.jpg` (de uy.v2apk.com/logos/
+  UyPanel_logo.jpg), referenciado en los 3 READMEs.
+- Logos del panel reemplazados (admin + player, logo.png y logo-topbar.png):
+  procesados desde el logo propio (recorte 650x640 + fondo oscuro a
+  transparencia vía GD). Desplegado en el servidor.
+- Favicon regenerado (ICO 32x32+16x16 desde el icono "U") — la primera versión
+  tenía offsets mal (22 en vez de 38) y el navegador la ignoraba; corregido.
+- Donaciones (Settings > Info, `src/public/Views/admin/settings.php`):
   BTC `bc1qsgsmx8nv03elxypklj4zw5rtaxd9707a0ne0zf`, ETH
   `0x1cc44467FC38aF023463CA71AA9F26A7Bc771872`, USDT **TRC-20**
-  `TEVJABnsenDEDVba5teFJdVksppmrc3dVg`; fila Litecoin eliminada. El QR se
-  genera dinámicamente desde la dirección (no requiere más cambios).
-- **Video del login**: `src/public/assets/admin/videos/login-bg.mp4` (repo) =
-  `/home/uypanel/public/assets/admin/videos/login-bg.mp4` (servidor). El
-  usuario pegará ahí su propio video (mismo nombre). Es archivo LFS en el repo.
+  `TEVJABnsenDEDVba5teFJdVksppmrc3dVg`; fila Litecoin eliminada. QR dinámico.
+- Eliminado `login-bg.webm` (branding original) y su referencia en la vista.
 
-### 2026-11-03 — Seed database.sql rebrandeado (LFS escapó al barrido) + release actualizado
+### 2026-11-03 — Seed database.sql rebrandeado + release actualizado
 - `database.sql` es LFS: al hacer los barridos era un puntero (grep lo saltó).
-  Referencias corregidas: placeholder `{XC_VM_ID}` → `{UyPanel_ID}` (el código
-  de PlaylistGenerator ya esperaba el nuevo — sin este fix la generación de
+  Corregido: placeholder `{XC_VM_ID}` → `{UyPanel_ID}` (el código de
+  PlaylistGenerator ya esperaba el nuevo — sin este fix la generación de
   playlists en instalaciones nuevas mostraba el literal), `server_name` y
   `Welcome to UyPanel`.
-- **BD de producción**: escaneo completo de 322 columnas de texto — la única
-  referencia residual estaba en `output_devices` (plantilla M3U Plus:
-  `xc_vm-id="{XC_VM_ID}"`), corregida en caliente. La generación de playlists
-  en producción vuelve a funcionar.
-- **Release 2.0.1 re-construido y re-subido** (00:22 UTC) con el payload
-  íntegro: logos nuevos, favicon corregido, donaciones propias, seed limpio.
-  Verificado extrayendo el payload del zip.
+- BD de producción: escaneo de 322 columnas de texto — única referencia
+  residual en `output_devices` (plantilla M3U Plus: `xc_vm-id="{XC_VM_ID}"`),
+  corregida en caliente. Playlists funcionando en producción.
 
 ### 2026-11-03 — Documentación traducida al español
-- **Traducidos a español**: `MIGRATION.md`, `ARCHITECTURE.md`,
-  `specs/MODULE_SYSTEM_SPEC.md` (estaban en ruso) y el sitio `docs/ru/`
-  (18 archivos) → nuevo sitio `docs/es/`; `docs/ru/` eliminado.
+- Traducidos: `MIGRATION.md`, `ARCHITECTURE.md`, `specs/MODULE_SYSTEM_SPEC.md`
+  (en ruso) y el sitio `docs/ru/` (18 archivos) → nuevo sitio `docs/es/`;
+  `docs/ru/` eliminado.
 - Docsify: `index.html` con ruta `/es-es/`, redirect raíz → guía española,
   `_navbar.md` con switcher Español/English.
-- README: enlaces de documentación a `m4sterinfo.github.io/UyPanel` (español
-  primero); eliminada la entrada rusa. NOTA: el sitio GitHub Pages hay que
-  activarlo en el repo (Settings → Pages, rama main /docs) para que funcione.
+- README: enlaces de docs a `m4sterinfo.github.io/UyPanel` (español primero).
 - `tools/run_scan.sh`: quitada la ruta hardcodeada del disco del autor original.
-- **Packs de idioma conservados** (`src/includes/langs/ru.ini`, `bg.ini`,
-  ministra js langs): son traducciones runtime para usuarios finales, no docs.
-- **PENDIENTE — comentarios en ruso en ~200 archivos PHP** (bootstrap.php,
-  Router.php, ServiceContainer.php, etc.): traducir o limpiar en una pasada
-  futura; es un trabajo voluminoso y separable.
-
-### Pendiente de hacer en el servidor (no requiere código)
-- Nota: el PHP/nginx/redis en producción son los binarios Ubuntu del tarball
-  2.0.1 con librerías adaptadas (`libcurl3t64-gnutls`, `libjpeg.so.8` ABI 8 en
-  `/usr/local/lib`). Si se reconstruyen binarios Debian desde
-  `third_party/XC_VM_Binaries`, esas librerías dejan de ser necesarias.
-
-### 2026-11-02 — Nota sobre submódulos (desalineación de versiones)
-- Los submódulos apuntan al estado actual de sus `main`, que ya construyen
-  binarios más nuevos que los del 2.0.1 (PHP 8.3 + extensión privada
-  `xcvm_core` en Rust, nginx más nuevo; ver `third_party/XC_VM_Binaries/CLAUDE.md`).
-- Para reconstruir binarios compatibles con el panel 2.0.1 actual habría que
-  retroceder los submódulos a commits de la época (~marzo 2026). Decidir
-  cuando toque: o se actualiza el panel a la nueva generación de binarios, o
-  se pinean submódulos antiguos.
 
 ## Trabajo pendiente / Roadmap
 
-- [x] Crear repo propio en GitHub y pushear (hecho 2026-11-02: m4sterinfo/UyPanel)
-- [x] Separación total del original: forks de soporte propios + rebranding + release 2.0.1
-- [x] Renombrado técnico en producción: /home/uypanel, servicio uypanel, BDs uypanel*
+- [ ] **Comentarios en ruso en ~200 archivos PHP** — preguntar al usuario si
+      los traducimos (voluminoso, separable)
+- [ ] **Video del login**: usuario pega el suyo (servidor + repo) → commit+push
+- [ ] **GitHub Pages**: activar en el repo (main, /docs) para el sitio de docs
 - [ ] **Reconstruir binarios con prefix /home/uypanel** (third_party/UyPanel_Binaries,
       ajustar scripts de build) y eliminar el symlink /home/xc_vm — ver nota shim
 - [ ] Personalizar READMEs/branding de los forks de soporte cuando se toque
 - [ ] Re-importar EPG desde las 22 URLs migradas (los datos EPG no se migran)
 - [ ] Revisar página de Settings del panel (quedó en defaults tras migración)
+- [ ] Nota: si se reconstruyen binarios Debian, las librerías adaptadas
+      (`libcurl3t64-gnutls`, `libjpeg.so.8`) dejan de ser necesarias
 
 ## Notas técnicas importantes
 
-- El Makefile construye payloads: `make main` (panel), `make lb` (load
-  balancer, excluye `modules/` y código admin), `make main_update`/`lb_update`.
+- El Makefile construye payloads: `make main` (panel → dist/uypanel.tar.gz +
+  dist/UyPanel.zip), `make lb` (load balancer → dist/loadbalancer.tar.gz,
+  excluye `modules/` y código admin), `make main_update`/`lb_update`.
 - Arquitectura obligatoria: Controller → Service → Repository → Database;
-  reglas en `.github/instructions/` y `ARCHITECTURE.md`.
+  reglas en `.github/instructions/` y `ARCHITECTURE.md` (ya en español).
 - Los módulos (`src/modules/`) son solo del panel principal; el LB no los lleva.
 - KeyDB 6.3.4 (= Redis 6.2): no soporta directivas de Redis 7+ como
-  `lazyfree-lazy-server-delay` (ya eliminada del redis.conf en producción).
+  `lazyfree-lazy-server-delay` (eliminada del redis.conf y del instalador).
 - MariaDB 11.8 en el servidor; el instalador escribe `/etc/mysql/my.cnf` propio.
+- LFS: los archivos grandes (binarios, mmdb, database.sql, videos) son LFS —
+  al hacer grep/sed de barridos masivos, EXCLUIR o verificar primero que no
+  sean punteros LFS (lección aprendida: database.sql escapó a dos barridos).
+- El workflow `build-release.yml` se dispara al publicar un release y sube
+  assets construidos desde el tag — para releases propios funciona bien, pero
+  el tag 2.0.1 apunta al commit del original (los assets se subieron a mano).
+- Submódulos pineados a builds más nuevos que el 2.0.1 (PHP 8.3 + extensión
+  `xcvm_core` en Rust): al reconstruir binarios, decidir si se pinean commits
+  de la época (~marzo 2026) o se adopta la generación nueva.
