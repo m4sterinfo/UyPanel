@@ -38,10 +38,11 @@
 - Credenciales MariaDB: `/home/debian/credentials.txt` (NO commitear nunca)
 - Backups: `/home/debian/pre_rename_backup/dbs_pre_rename.sql.gz` (147 MB, pre-rename)
   y `/home/debian/backup_2026-11-02_15_16_01.sql` (1.2 GB, XUI original)
-- **SHIM temporal**: symlink `/home/xc_vm -> /home/uypanel` — los binarios
-  PHP/nginx/nginx_rtmp tienen el prefix `/home/xc_vm` COMPILADO DENTRO (ini
-  path, extension_dir, prefix nginx). NO borrar el symlink hasta reconstruir
-  los binarios con prefix `/home/uypanel` vía `third_party/UyPanel_Binaries`.
+- **Binarios propios (2026-11-03)**: PHP 8.3.36 + nginx/nginx_rtmp 1.29.6 con
+  prefix `/home/uypanel` compilado — NO requieren symlink. Rama de build:
+  `build/debian13-php83-uypanel` en third_party/UyPanel_Binaries (`b224e4b`).
+  Docker necesario para recompilar (`sudo ./build_all.sh debian13`; borrar
+  out/debian_13.tar.gz para forzar rebuild).
 
 ## Decisiones tomadas
 
@@ -162,14 +163,46 @@
   Sitio: https://m4sterinfo.github.io/UyPanel/ — verificado: raíz 200
   (redirect a guía española), ruta `#/es-es/` 200, `es/README.md` 200.
 
+### 2026-11-03 — Binarios reconstruidos con prefix uypanel + PHP 8.3.36 (fix PHP2Shell)
+- **Symlink `/home/xc_vm` ELIMINADO** — los binarios nuevos tienen el prefix
+  `/home/uypanel` compilado dentro (php ini path/extension_dir, nginx prefix).
+- Build 1 (generación de la época): submódulo pineado a `42d5096` (PHP 8.1.34)
+  + parche prefix → rama `build/debian13-uypanel-prefix` (83fdff6, luego 9014732
+  con pin nginx 1.29.6 + flv 1.2.13 tras fallar nginx 1.31.8 contra flv 1.2.14:
+  `NGX_USE_IOCP_EVENT` undeclared). Desplegado y verificado.
+- Build 2 (generación nueva): submódulo `ff034e5` (PHP 8.3.36, pecl pins,
+  xcvm_extention 2.5.2 Rust ya sincronizado en el fork) + prefix + mismo pin
+  nginx → rama `build/debian13-php83-uypanel` (`b224e4b`). Desplegado.
+- **Motivo del salto a 8.3: PHP2Shell** (CVE-2026-109618/109619, RCE crítico
+  no autenticado, explotado activamente; parcheado 21-oct-2026 en 8.2–8.5).
+  PHP 8.1 EOL desde dic-2025 → sin parche posible. 8.3.36 = parcheado.
+- Hardening añadido a php.ini: `session.upload_progress.enabled = Off`
+  (vector del PoC público; el panel no usa barras de progreso).
+- Compatibilidad 2.0.1 con 8.3 verificada: console.php status OK, lint de
+  todo src OK (único fallo: doc de igbinary, no ejecutable), login 200 sin
+  warnings, 4 pools + nginx 80/443 OK, DB OK, JPEG OK (WebP FAIL = igual que antes).
+- `utf8_decode()` (deprecado en 8.2) reemplazado por `mb_convert_encoding()`
+  en api.php (commit `db5763a6`).
+- Docker instalado en el host (docker.io 26.1.5 de Debian 13) para los builds.
+- Backups: `/home/debian/bin_backup_2026-11-03/` (php/nginx/nginx_rtmp 8.1.33
+  originales + `php_8.1.34/` intermedio). Rollback = parar panel, restaurar
+  bin/, arrancar (requiere recrear symlink /home/xc_vm si se vuelve a 8.1.33).
+- Nota: el nuevo PHP enlaza contra libjpeg.so.62 NATIVA de Debian 13 — el hack
+  de libjpeg.so.8 en /usr/local/lib ya no es necesario para los binarios nuevos
+  (se conserva por si se hace rollback a los binarios viejos).
+- Nota: el puerto 80 lo bindea uypanel vía sysctl
+  `net.ipv4.ip_unprivileged_port_start=0` (/etc/sysctl.d/50-allports-nonroot.conf),
+  NO vía setcap.
+- Submódulo repuntado a `b224e4b` en el repo principal.
+
 ## Trabajo pendiente / Roadmap
 
 - [x] **Comentarios en ruso en ~200 archivos PHP** — traducidos al español
       (2026-11-03, commit 037f50f6; datos funcionales MAG/langs conservados)
 - [ ] **Video del login**: usuario pega el suyo (servidor + repo) → commit+push
 - [x] **GitHub Pages** — activado (main, /docs); sitio verificado en línea
-- [ ] **Reconstruir binarios con prefix /home/uypanel** (third_party/UyPanel_Binaries,
-      ajustar scripts de build) y eliminar el symlink /home/xc_vm — ver nota shim
+- [x] **Reconstruir binarios con prefix /home/uypanel** — HECHO (2026-11-03,
+      PHP 8.3.36 + nginx 1.29.6, symlink /home/xc_vm eliminado)
 - [ ] Personalizar READMEs/branding de los forks de soporte cuando se toque
 - [ ] Re-importar EPG desde las 22 URLs migradas (los datos EPG no se migran)
 - [ ] Revisar página de Settings del panel (quedó en defaults tras migración)
