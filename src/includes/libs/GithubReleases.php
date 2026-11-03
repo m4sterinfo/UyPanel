@@ -22,7 +22,7 @@ class GitHubReleases {
     private $headers;
     private $timeout = 5; // Request timeout in seconds
     private $cache_file = '/home/uypanel/tmp/gitapi'; // Cache file path
-    private string $channel = 'stable'; // 'stable' или 'unstable'
+        private string $channel = 'stable'; // 'stable' o 'unstable'
     private $hash_file = 'hashes.md5';
     private $cache_ttl = 1800; // Cache TTL in seconds (30 minutes)
 
@@ -38,7 +38,7 @@ class GitHubReleases {
         $this->owner = $owner;
         $this->repo = $repo;
         $this->channel = in_array($channel, ['stable', 'unstable']) ? $channel : 'stable';
-        $this->cache_file = "{$this->cache_file}_{$repo}_{$this->channel}"; // Уникальный кэш для канала
+                $this->cache_file = "{$this->cache_file}_{$repo}_{$this->channel}"; // Caché única por canal
         $this->api_url = "https://api.github.com/repos/{$owner}/{$repo}/releases";
         $this->headers = $token ? [
             "Authorization: Bearer {$token}",
@@ -151,7 +151,7 @@ class GitHubReleases {
             }
 
             $filtered = $this->filterReleasesByChannel($data);
-            $this->saveCache($data); // Сохраняем полные данные, фильтруем при использовании
+                        $this->saveCache($data); // Guardamos los datos completos, filtramos al usarlos
 
             $releases = array_values(array_map(fn($r) => $r['tag_name'], $filtered));
             error_log("Retrieved " . count($releases) . " releases for channel '{$this->channel}'");
@@ -469,10 +469,10 @@ class GitHubReleases {
      */
     private function filterReleasesByChannel(array $releases): array {
         if ($this->channel === 'unstable') {
-            return $releases; // Все релизы
+                        return $releases; // Todos los releases
         }
 
-        // stable: только не pre-release
+                // stable: solo los no pre-release
         return array_filter($releases, function ($release) {
             return empty($release['prerelease']);
         });
@@ -517,64 +517,64 @@ class GitHubReleases {
 
 /**
  * ------------------------------------------------------------
- * 🔧 Инициализация:
+  * 🔧 Inicialización:
  *
  *   $gh = new GitHubReleases("m4sterinfo", "UyPanel", 'stable');
- *   // Можно передать токен для увеличения лимита API:
+  *   // Se puede pasar un token para aumentar el límite de la API:
  *   // $gh = new GitHubReleases("owner", "repo", "ghp_XXXXXXX");
  *
  * ------------------------------------------------------------
  *
- * 1. Получить список релизов:
+  * 1. Obtener la lista de releases:
  *
  *   $releases = $gh->getReleases();
  *   print_r($releases);
  *
  * ------------------------------------------------------------
- * 2. Проверить следующую версию после текущей:
+  * 2. Comprobar la siguiente versión a partir de la actual:
  *
  *   $next = $gh->getNextVersion("1.0.0");
  *   echo $next;
  *
  * ------------------------------------------------------------
- * 3. Проверить хэш файла из релиза:
+  * 3. Comprobar el hash del archivo del release:
  *
  *   $hash = $gh->getAssetHash("1.2.0", "update.tar.gz");
  *   echo $hash;
  *
  * ------------------------------------------------------------
- * 4. Загрузить changelog:
+  * 4. Descargar el changelog:
  *
  *   $changelog = $gh->getChangelog("https://raw.githubusercontent.com/m4sterinfo/UyPanel_Update/refs/heads/main/changelog.json");
  *   print_r($changelog);
  *
  * ------------------------------------------------------------
- * 5. Проверка корректности версии:
+  * 5. Comprobación de la validez de la versión:
  *
  *   var_dump(GitHubReleases::isValidVersion("1.0.0")); // true
  *   var_dump(GitHubReleases::isValidVersion("01.0.0")); // false
  *
  * ------------------------------------------------------------
- * 6. Получение архива обновления:
+  * 6. Obtención del archivo de actualización:
  *
  *   $upd = $gh->getUpdateFile("main", "1.0.0");
  *   print_r($upd);
  *
  * ------------------------------------------------------------
- * 7. Проверить наличие обновления:
+  * 7. Comprobar si hay actualización:
  *
  *   $update = $gh->getUpdate("1.0.0");
  *   print_r($update);
  *
  * ------------------------------------------------------------
- * 8. Получить информацию о GeoLite базах:
+  * 8. Obtener la información de las bases GeoLite:
  *
  *   $gh = new GitHubReleases("m4sterinfo", "UyPanel_Update");
  *   $geo = $gh->getGeolite();
  *   print_r($geo);
  *
  * ------------------------------------------------------------
- * ⚠️ Важно:
- * - Кеш хранится в /home/uypanel/tmp/gitapi_repo
- * - TTL кеша: 30 минут (1800 сек)
+  * ⚠️ Importante:
+  * - La caché se guarda en /home/uypanel/tmp/gitapi_repo
+  * - TTL de la caché: 30 minutos (1800 seg)
  */

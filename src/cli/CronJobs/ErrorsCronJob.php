@@ -64,7 +64,7 @@ class ErrorsCronJob implements CommandInterface {
             $row = json_decode(base64_decode($line), true);
             if (!is_array($row)) continue;
 
-            // Поддержка обоих форматов: legacy (log_*) и текущий (message/extra)
+                        // Soporte de ambos formatos: legacy (log_*) y actual (message/extra)
             $rLogMessage = (string) ($row['log_message'] ?? ($row['message'] ?? ''));
             $rLogExtra = (string) ($row['log_extra'] ?? ($row['extra'] ?? ''));
             $rLogType = (string) ($row['type'] ?? 'unknown');

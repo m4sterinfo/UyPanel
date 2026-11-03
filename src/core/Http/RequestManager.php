@@ -1,31 +1,31 @@
 <?php
 
 /**
- * RequestManager — singleton-хранилище распарсенных параметров запроса.
+ * RequestManager — almacén singleton de los parámetros parseados de la petición.
  *
- * Entry point — LegacyInitializer::initCore() вызывает set().
- * Потребители используют getAll() или get().
+ * El entry point — LegacyInitializer::initCore() — invoca set().
+ * Los consumidores usan getAll() o get().
  */
 class RequestManager {
 	/** @var array */
 	private static $request = array();
 
 	/**
-	 * Сохраняет весь массив параметров запроса.
+	 		 * Guarda el array completo de parámetros de la petición.
 	 */
 	public static function set(array $request): void {
 		self::$request = $request;
 	}
 
 	/**
-	 * Возвращает весь массив параметров запроса.
+	 		 * Devuelve el array completo de parámetros de la petición.
 	 */
 	public static function getAll(): array {
 		return self::$request;
 	}
 
 	/**
-	 * Возвращает значение по ключу.
+	 		 * Devuelve el valor por clave.
 	 *
 	 * @param string $key
 	 * @param mixed  $default
@@ -36,7 +36,7 @@ class RequestManager {
 	}
 
 	/**
-	 * Обновляет отдельный ключ.
+	 		 * Actualiza una clave individual.
 	 */
 	public static function update(string $key, $value): void {
 		self::$request[$key] = $value;

@@ -1,21 +1,21 @@
 <?php
 
 /**
- * Константы путей
+ * Constantes de rutas
  *
- * Все define() для файловой структуры проекта.
- * Зависимость: MAIN_HOME должен быть определён до подключения этого файла.
+ * Todos los define() para la estructura de archivos del proyecto.
+ * Dependencia: MAIN_HOME debe estar definido antes de incluir este archivo.
  *
- * Группы:
- *   1. Базовые пути (content/, tmp/)
- *   2. Системные директории (config/, bin/, includes/, www/, signals/)
- *   3. Контент-директории (streams/, epg/, vod/, archive/, ...)
- *   4. Временные директории (cache/, flood/, logs/, ...)
- *   5. Веб-ресурсы (images/, enigma2/)
+ * Grupos:
+ *   1. Rutas base (content/, tmp/)
+ *   2. Directorios de sistema (config/, bin/, includes/, www/, signals/)
+ *   3. Directorios de contenido (streams/, epg/, vod/, archive/, ...)
+ *   4. Directorios temporales (cache/, flood/, logs/, ...)
+ *   5. Recursos web (images/, enigma2/)
  */
 
 // ─────────────────────────────────────────────────────────────────
-//  1. Базовые пути (с защитой от повторного определения)
+//  1. Rutas base (con protección contra redefinición)
 // ─────────────────────────────────────────────────────────────────
 
 if (!defined('CONTENT_PATH')) {
@@ -27,7 +27,7 @@ if (!defined('TMP_PATH')) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  2. Системные директории
+//  2. Directorios de sistema
 // ─────────────────────────────────────────────────────────────────
 
 define('CONFIG_PATH',   MAIN_HOME . 'config/');
@@ -37,7 +37,7 @@ define('WWW_PATH',      MAIN_HOME . 'www/');
 define('SIGNALS_PATH',  MAIN_HOME . 'signals/');
 
 // ─────────────────────────────────────────────────────────────────
-//  3. Контент-директории
+//  3. Directorios de contenido
 // ─────────────────────────────────────────────────────────────────
 
 define('STREAMS_PATH',  CONTENT_PATH . 'streams/');
@@ -50,7 +50,7 @@ define('VIDEO_PATH',    CONTENT_PATH . 'video/');
 define('PLAYLIST_PATH', CONTENT_PATH . 'playlists/');
 
 // ─────────────────────────────────────────────────────────────────
-//  4. Временные директории
+//  4. Directorios temporales
 // ─────────────────────────────────────────────────────────────────
 
 define('CONS_TMP_PATH',       TMP_PATH . 'opened_cons/');
@@ -69,7 +69,7 @@ define('LOGS_TMP_PATH',       TMP_PATH . 'logs/');
 define('WATCH_TMP_PATH',      TMP_PATH . 'watch/');
 
 // ─────────────────────────────────────────────────────────────────
-//  5. Веб-ресурсы
+//  5. Recursos web
 // ─────────────────────────────────────────────────────────────────
 
 define('IMAGES_PATH',    WWW_PATH . 'images/');

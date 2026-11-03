@@ -7,7 +7,7 @@
  *
  * Session keys: 'hash' (user ID), 'ip', 'code', 'verify', 'last_activity'
  *
- * @see admin/session.php — оригинал (для direct nginx access)
+ * @see admin/session.php — original (para acceso nginx directo)
  * @since Phase 10.5
  */
 

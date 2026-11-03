@@ -1,30 +1,30 @@
 <?php
 
 /**
- * SettingsManager — singleton-хранилище настроек приложения.
+ * SettingsManager — almacén singleton de los ajustes de la aplicación.
  *
- * Entry points вызывают set(), потребители — getAll() или get().
+ * Los entry points invocan set(), los consumidores — getAll() o get().
  */
 class SettingsManager {
 	/** @var array */
 	private static $settings = array();
 
 	/**
-	 * Сохраняет весь массив настроек.
+	 		 * Guarda el array completo de ajustes.
 	 */
 	public static function set(array $settings): void {
 		self::$settings = $settings;
 	}
 
 	/**
-	 * Возвращает весь массив настроек.
+	 		 * Devuelve el array completo de ajustes.
 	 */
 	public static function getAll(): array {
 		return self::$settings;
 	}
 
 	/**
-	 * Возвращает значение по ключу.
+	 		 * Devuelve el valor por clave.
 	 *
 	 * @param string $key
 	 * @param mixed  $default
@@ -35,7 +35,7 @@ class SettingsManager {
 	}
 
 	/**
-	 * Обновляет отдельный ключ настроек.
+	 		 * Actualiza una clave individual de los ajustes.
 	 */
 	public static function update(string $key, $value): void {
 		self::$settings[$key] = $value;

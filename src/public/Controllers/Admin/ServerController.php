@@ -1,10 +1,10 @@
 <?php
 
 /**
- * ServerController — редактирование сервера (admin/server.php).
+ * ServerController — edición de servidor (admin/server.php).
  *
  * GET /server?id=N
- * Форма: 5 табов (Details, Domains & IPs, Advanced, Performance, SSL Certificate).
+ * Formulario: 5 pestañas (Details, Domains & IPs, Advanced, Performance, SSL Certificate).
  */
 class ServerController extends BaseAdminController
 {

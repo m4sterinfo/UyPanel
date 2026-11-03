@@ -727,7 +727,7 @@ if (!isset($rModal) || !$rModal) {
 				}
 			});
 
-			// Инициализация Select2 с AJAX
+							// Inicialización de Select2 con AJAX
 			$(".quick_search").unbind("select2:opening select2:closing select2:selecting select2:draw");
 			$(".quick_search").select2({
 				ajax: {

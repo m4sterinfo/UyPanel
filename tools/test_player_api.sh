@@ -5,20 +5,20 @@ set -euo pipefail
 #  Player API Test Suite
 # ═══════════════════════════════════════════════════════════════════
 #
-#  Тестирует все endpoints PlayerApiController через HTTP.
-#  Каждый тест проверяет HTTP-статус, Content-Type и структуру JSON.
+#  Prueba todos los endpoints de PlayerApiController vía HTTP.
+#  Cada test comprueba el HTTP-status, el Content-Type y la estructura JSON.
 #
-#  Использование:
+#  Uso:
 #    ./tools/test_player_api.sh <base_url> <username> <password>
 #    ./tools/test_player_api.sh https://example.com testuser testpass
 #
-#  Опционально (env variables):
-#    STREAM_ID=123    — ID live-стрима для EPG-тестов
-#    VOD_ID=456       — ID VOD для get_vod_info
-#    SERIES_ID=789    — ID сериала для get_series_info
-#    CATEGORY_ID=10   — ID категории для фильтрации
-#    VERBOSE=1        — показывать тела ответов
-#    TIMEOUT=10       — таймаут curl в секундах
+#  Opcional (env variables):
+#    STREAM_ID=123    — ID de stream live para los tests de EPG
+#    VOD_ID=456       — ID de VOD para get_vod_info
+#    SERIES_ID=789    — ID de serie para get_series_info
+#    CATEGORY_ID=10   — ID de categoría para el filtrado
+#    VERBOSE=1        — mostrar los cuerpos de las respuestas
+#    TIMEOUT=10       — timeout de curl en segundos
 #
 # ═══════════════════════════════════════════════════════════════════
 #
@@ -26,17 +26,17 @@ set -euo pipefail
 #
 # ═══════════════════════════════════════════════════════════════════
 #
-#  Аутентификация:
+#  Autenticación:
 #    GET /player_api.php?username=XXX&password=YYY
 #    GET /player_api.php?token=ZZZ
 #
-#  Все параметры передаются через query string (GET).
+#  Todos los parámetros se pasan vía query string (GET).
 #
 # ───────────────────────────────────────────────────────────────────
 #  Endpoints (action=...)
 # ───────────────────────────────────────────────────────────────────
 #
-#  1. (без action) — Информация о пользователе и сервере
+#  1. (sin action) — Información del usuario y del servidor
 #     Params: —
 #     Response: {
 #       "user_info": {
@@ -50,20 +50,20 @@ set -euo pipefail
 #       }
 #     }
 #
-#  2. get_live_categories — Категории Live/Radio потоков
+#  2. get_live_categories — Categorías de streams Live/Radio
 #     Params: —
 #     Response: [{ "category_id", "category_name", "parent_id" }]
 #
-#  3. get_vod_categories — Категории VOD (фильмов)
+#  3. get_vod_categories — Categorías de VOD (películas)
 #     Params: —
 #     Response: [{ "category_id", "category_name", "parent_id" }]
 #
-#  4. get_series_categories — Категории сериалов
+#  4. get_series_categories — Categorías de series
 #     Params: —
 #     Response: [{ "category_id", "category_name", "parent_id" }]
 #
-#  5. get_live_streams — Список live-потоков
-#     Params: category_id (опц.), params[offset], params[items_per_page]
+#  5. get_live_streams — Lista de streams live
+#     Params: category_id (opc.), params[offset], params[items_per_page]
 #     Response: [{
 #       "num", "name", "stream_type", "stream_id", "stream_icon",
 #       "epg_channel_id", "added", "custom_sid", "tv_archive",
@@ -71,8 +71,8 @@ set -euo pipefail
 #       "category_ids", "thumbnail"
 #     }]
 #
-#  6. get_vod_streams — Список VOD (фильмов)
-#     Params: category_id (опц.), params[offset], params[items_per_page]
+#  6. get_vod_streams — Lista de VOD (películas)
+#     Params: category_id (opc.), params[offset], params[items_per_page]
 #     Response: [{
 #       "num", "name", "title", "year", "stream_type", "stream_id",
 #       "stream_icon", "rating", "rating_5based", "added", "plot",
@@ -81,8 +81,8 @@ set -euo pipefail
 #       "container_extension", "custom_sid", "direct_source"
 #     }]
 #
-#  7. get_series — Список сериалов
-#     Params: category_id (опц.)
+#  7. get_series — Lista de series
+#     Params: category_id (opc.)
 #     Response: [{
 #       "num", "name", "title", "year", "stream_type", "series_id",
 #       "cover", "plot", "cast", "director", "genre", "release_date",
@@ -91,16 +91,16 @@ set -euo pipefail
 #       "category_id", "category_ids"
 #     }]
 #
-#  8. get_series_info — Детальная информация о сериале
-#     Params: series_id (обяз.)
+#  8. get_series_info — Información detallada de la serie
+#     Params: series_id (oblig.)
 #     Response: {
 #       "seasons": [{ "cover", "cover_big", ... }],
 #       "info": { "name", "title", "year", "cover", "plot", ... },
 #       "episodes": { "1": [{ "id", "episode_num", "title", ... }] }
 #     }
 #
-#  9. get_vod_info — Детальная информация о VOD
-#     Params: vod_id (обяз.)
+#  9. get_vod_info — Información detallada del VOD
+#     Params: vod_id (oblig.)
 #     Response: {
 #       "info": { "tmdb_id", "episode_run_time", "releasedate",
 #         "cover_big", "movie_image", "rating", "backdrop_path",
@@ -112,20 +112,20 @@ set -euo pipefail
 #       }
 #     }
 #
-#  10. get_epg — Полная EPG-программа для потока(ов)
-#      Params: stream_id (обяз., одиночный или через запятую)
-#              from_now (опц., фильтр только будущие)
+#  10. get_epg — Programación EPG completa para stream(s)
+#      Params: stream_id (oblig., único o separado por comas)
+#              from_now (opc., filtrar solo futuros)
 #      Response (single):  [{ "title", "description", "start", "end" }]
 #      Response (multi):   { "123": [...], "456": [...] }
 #
-#  11. get_short_epg — Текущая и ближайшие программы
-#      Params: stream_id (обяз.), limit (опц., default=4)
+#  11. get_short_epg — Programa actual y próximas
+#      Params: stream_id (oblig.), limit (opc., default=4)
 #      Response: { "epg_listings": [{ "title", "description",
 #        "start", "stop", "end", "start_timestamp", "stop_timestamp",
 #        "end_timestamp" }] }
 #
-#  12. get_simple_data_table — EPG с архивной информацией
-#      Params: stream_id (обяз.)
+#  12. get_simple_data_table — EPG con información de archivo
+#      Params: stream_id (oblig.)
 #      Response: { "epg_listings": [{
 #        "title", "description", "start", "end",
 #        "start_timestamp", "stop_timestamp",
@@ -133,7 +133,7 @@ set -euo pipefail
 #      }] }
 #
 # ───────────────────────────────────────────────────────────────────
-#  Числовые алиасы action
+#  Alias numéricos de action
 # ───────────────────────────────────────────────────────────────────
 #
 #  200 → get_vod_categories    205 → get_short_epg
@@ -146,14 +146,14 @@ set -euo pipefail
 #  Panel API (legacy)
 # ───────────────────────────────────────────────────────────────────
 #
-#  URL: /panel_api.php (вместо /player_api.php)
-#  Требует: настройка legacy_panel_api=1
-#  Без action: возвращает default info + автозагрузку каналов
-#  С action: аналогично player_api
+#  URL: /panel_api.php (en lugar de /player_api.php)
+#  Requiere: ajuste legacy_panel_api=1
+#  Sin action: devuelve la info default + autocarga de canales
+#  Con action: igual que player_api
 #
 # ═══════════════════════════════════════════════════════════════════
 
-# ─── Цвета ────────────────────────────────────────────────────────
+# ─── Colores ────────────────────────────────────────────────────────
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -162,14 +162,14 @@ CYAN='\033[0;36m'
 BOLD='\033[1m'
 NC='\033[0m'
 
-# ─── Аргументы ────────────────────────────────────────────────────
+# ─── Argumentos ────────────────────────────────────────────────────
 
 if [[ $# -lt 3 ]]; then
     echo -e "${BOLD}Usage:${NC} $0 <base_url> <username> <password>"
     echo ""
-    echo "  base_url   — URL сервера (https://example.com)"
-    echo "  username   — логин пользователя"
-    echo "  password   — пароль пользователя"
+        echo "  base_url   — URL del servidor (https://example.com)"
+        echo "  username   — login del usuario"
+        echo "  password   — contraseña del usuario"
     echo ""
     echo "  Env vars:  STREAM_ID, VOD_ID, SERIES_ID, CATEGORY_ID, VERBOSE, TIMEOUT"
     exit 1
@@ -189,14 +189,14 @@ TIMEOUT="${TIMEOUT:-10}"
 API_URL="${BASE_URL}/player_api.php"
 AUTH="username=${USERNAME}&password=${PASSWORD}"
 
-# ─── Счётчики ─────────────────────────────────────────────────────
+# ─── Contadores ─────────────────────────────────────────────────
 
 PASS=0
 FAIL=0
 SKIP=0
 WARN=0
 
-# ─── Утилиты ──────────────────────────────────────────────────────
+# ─── Utilidades ──────────────────────────────────────────────────
 
 log_pass() { echo -e "  ${GREEN}✓ PASS${NC} $1"; ((PASS++)) || true; }
 log_fail() { echo -e "  ${RED}✗ FAIL${NC} $1"; ((FAIL++)) || true; }
@@ -204,17 +204,17 @@ log_skip() { echo -e "  ${YELLOW}○ SKIP${NC} $1"; ((SKIP++)) || true; }
 log_warn() { echo -e "  ${YELLOW}⚠ WARN${NC} $1"; ((WARN++)) || true; }
 log_head() { echo -e "\n${CYAN}${BOLD}═══ $1 ═══${NC}"; }
 
-# ─── HTTP-запрос с проверкой ──────────────────────────────────────
+# ─── Petición HTTP con comprobación ──────────────────────────────
 #
 # api_test <test_name> <url_params> <required_keys...>
 #
-# Выполняет GET-запрос, проверяет:
+# Ejecuta una petición GET y comprueba:
 #   1. HTTP 200
 #   2. Content-Type: application/json
-#   3. Ответ — валидный JSON
-#   4. Наличие обязательных ключей (если указаны)
+#   3. La respuesta — JSON válido
+#   4. Presencia de las claves obligatorias (si se indican)
 #
-# Возвращает тело ответа через глобальный RESPONSE.
+# Devuelve el cuerpo de la respuesta vía la global RESPONSE.
 
 RESPONSE=""
 HTTP_CODE=""
@@ -307,7 +307,7 @@ for k in keys:
     return 0
 }
 
-# Проверить что ответ — JSON-массив
+# Comprobar que la respuesta es un array JSON
 assert_array() {
     local test_name="$1"
     if echo "$RESPONSE" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if isinstance(d,list) else 1)" 2>/dev/null; then
@@ -317,7 +317,7 @@ assert_array() {
     fi
 }
 
-# Проверить что ответ — JSON-объект
+# Comprobar que la respuesta es un objeto JSON
 assert_object() {
     local test_name="$1"
     if echo "$RESPONSE" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if isinstance(d,dict) else 1)" 2>/dev/null; then
@@ -327,13 +327,13 @@ assert_object() {
     fi
 }
 
-# Получить количество элементов в ответе
+# Obtener el número de elementos de la respuesta
 response_count() {
     echo "$RESPONSE" | python3 -c "import json,sys; d=json.load(sys.stdin); print(len(d) if isinstance(d,list) else len(d.keys()))" 2>/dev/null || echo "?"
 }
 
 # ═══════════════════════════════════════════════════════════════════
-#  ТЕСТЫ
+#  TESTS
 # ═══════════════════════════════════════════════════════════════════
 
 echo -e "${BOLD}Player API Test Suite${NC}"
@@ -369,7 +369,7 @@ api_test "default info" "" \
     "server_info.port" \
     "server_info.timestamp_now"
 
-# Проверяем username в ответе
+# Comprobamos el username en la respuesta
 if echo "$RESPONSE" | python3 -c "
 import json, sys
 d = json.load(sys.stdin)
@@ -384,7 +384,7 @@ fi
 
 log_head "2. Auth Error Handling"
 
-# Неверные креды
+# Credenciales incorrectas
 local_url="${API_URL}?username=__invalid__&password=__invalid__"
 local_resp=$(curl -s -w '\n%{http_code}' --max-time "$TIMEOUT" "$local_url" 2>/dev/null) || true
 local_code=$(echo "$local_resp" | tail -1)
@@ -399,7 +399,7 @@ else
     log_warn "invalid credentials may not be properly rejected"
 fi
 
-# Пустые креды
+# Credenciales vacías
 local_url="${API_URL}?username=&password="
 local_resp=$(curl -s --max-time "$TIMEOUT" "$local_url" 2>/dev/null) || true
 log_pass "empty credentials handled (no crash)"
@@ -429,7 +429,7 @@ if [[ "$HTTP_CODE" == "200" ]]; then
     echo -e "       count: $(response_count)"
 fi
 
-# Числовые алиасы
+# Alias numéricos
 api_test "numeric alias 201=get_live_categories" "action=201"
 api_test "numeric alias 200=get_vod_categories" "action=200"
 api_test "numeric alias 206=get_series_categories" "action=206"
@@ -445,7 +445,7 @@ if [[ "$HTTP_CODE" == "200" ]]; then
     count=$(response_count)
     echo -e "       count: ${count}"
 
-    # Сохраняем первый stream_id для EPG тестов
+        # Guardamos el primer stream_id para los tests de EPG
     if [[ -z "$STREAM_ID" ]]; then
         STREAM_ID=$(echo "$RESPONSE" | python3 -c "
 import json, sys
@@ -459,7 +459,7 @@ else: print('')
     fi
 fi
 
-# С фильтром по категории
+# Con filtro por categoría
 if [[ -n "$CATEGORY_ID" ]]; then
     api_test "get_live_streams (category_id=${CATEGORY_ID})" \
         "action=get_live_streams&category_id=${CATEGORY_ID}" \
@@ -468,7 +468,7 @@ else
     log_skip "get_live_streams + category_id (set CATEGORY_ID env)"
 fi
 
-# Числовой алиас
+# Alias numérico
 api_test "numeric alias 202=get_live_streams" "action=202"
 
 # ─── 5. VOD Streams ──────────────────────────────────────────────
@@ -482,7 +482,7 @@ if [[ "$HTTP_CODE" == "200" ]]; then
     count=$(response_count)
     echo -e "       count: ${count}"
 
-    # Сохраняем первый vod_id
+        # Guardamos el primer vod_id
     if [[ -z "$VOD_ID" ]]; then
         VOD_ID=$(echo "$RESPONSE" | python3 -c "
 import json, sys
@@ -509,7 +509,7 @@ if [[ "$HTTP_CODE" == "200" ]]; then
     count=$(response_count)
     echo -e "       count: ${count}"
 
-    # Сохраняем первый series_id
+        # Guardamos el primer series_id
     if [[ -z "$SERIES_ID" ]]; then
         SERIES_ID=$(echo "$RESPONSE" | python3 -c "
 import json, sys
@@ -535,7 +535,7 @@ if [[ -n "$SERIES_ID" ]]; then
         "info.name" "seasons"
     if [[ "$HTTP_CODE" == "200" ]]; then
         assert_object "get_series_info"
-        # Проверяем episodes
+                # Comprobamos episodes
         has_episodes=$(echo "$RESPONSE" | python3 -c "
 import json, sys
 d = json.load(sys.stdin)
@@ -565,7 +565,7 @@ if [[ -n "$VOD_ID" ]]; then
         "info" "movie_data.stream_id"
     if [[ "$HTTP_CODE" == "200" ]]; then
         assert_object "get_vod_info"
-        # Проверяем subtitles
+                # Comprobamos subtitles
         has_subtitles=$(echo "$RESPONSE" | python3 -c "
 import json, sys
 d = json.load(sys.stdin)
@@ -622,7 +622,7 @@ if [[ -n "$STREAM_ID" ]]; then
         assert_object "get_simple_data_table"
     fi
 
-    # Числовой алиас
+        # Alias numérico
     api_test "numeric alias 205=get_short_epg" \
         "action=205&stream_id=${STREAM_ID}"
     api_test "numeric alias 207=get_simple_data_table" \
@@ -639,7 +639,7 @@ fi
 log_head "10. Multi-stream EPG"
 
 if [[ -n "$STREAM_ID" ]]; then
-    # Multi через запятую
+        # Multi separado por comas
     api_test "get_epg multi (stream_id=${STREAM_ID},${STREAM_ID})" \
         "action=get_epg&stream_id=${STREAM_ID},${STREAM_ID}"
     if [[ "$HTTP_CODE" == "200" ]]; then
@@ -674,29 +674,29 @@ api_test "get_vod_streams offset=0, limit=2" \
 
 log_head "12. Edge Cases"
 
-# Неизвестный action → default info
+# Action desconocido → default info
 api_test "unknown action → default info" \
     "action=nonexistent_action" \
     "user_info" "server_info"
 
-# get_vod_info без vod_id → пустой info
+# get_vod_info sin vod_id → info vacío
 api_test "get_vod_info without vod_id" \
     "action=get_vod_info" \
     "info"
 
-# get_series_info без series_id
+# get_series_info sin series_id
 api_test "get_series_info without series_id" \
     "action=get_series_info"
 
-# get_epg без stream_id → пустой массив
+# get_epg sin stream_id → array vacío
 api_test "get_epg without stream_id" \
     "action=get_epg"
 
-# Несуществующий stream_id
+# stream_id inexistente
 api_test "get_epg invalid stream_id" \
     "action=get_epg&stream_id=999999999"
 
-# Несуществующий vod_id
+# vod_id inexistente
 api_test "get_vod_info invalid vod_id" \
     "action=get_vod_info&vod_id=999999999" \
     "info"
@@ -721,7 +721,7 @@ else
 fi
 
 # ═══════════════════════════════════════════════════════════════════
-#  РЕЗУЛЬТАТЫ
+#  RESULTADOS
 # ═══════════════════════════════════════════════════════════════════
 
 echo ""

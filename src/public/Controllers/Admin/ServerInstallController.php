@@ -1,11 +1,11 @@
 <?php
 
 /**
- * ServerInstallController — установка/переустановка сервера (admin/server_install.php).
+ * ServerInstallController — instalación/reinstalación de servidor (admin/server_install.php).
  *
- * GET /server_install?proxy (type=1) или GET /server_install (type=2)
- * Опционально: ?id=N (reinstall), ?update (update).
- * Форма: 1–2 таба (Details + Server Coverage для proxy).
+ * GET /server_install?proxy (type=1) o GET /server_install (type=2)
+ * Opcional: ?id=N (reinstall), ?update (update).
+ * Formulario: 1-2 pestañas (Details + Server Coverage para proxy).
  */
 class ServerInstallController extends BaseAdminController
 {

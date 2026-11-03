@@ -1,63 +1,63 @@
 <?php
 
 /**
- * Минимальный DI-контейнер (Service Container)
+ * Contenedor DI mínimo (Service Container)
  *
- * Заменяет паттерн `global $db` / `SettingsManager::getAll()` / `API::$db`
- * единым реестром сервисов с ленивой инициализацией.
- *
- * ──────────────────────────────────────────────────────────────────
- * Концепция:
- * ──────────────────────────────────────────────────────────────────
- *
- *   Контейнер хранит сервисы в двух формах:
- *
- *   1. Фабрика (callable) — функция, которая создаёт сервис.
- *      Вызывается ОДИН раз при первом get(). Результат кэшируется.
- *
- *   2. Готовое значение — уже созданный объект или скалярное значение.
- *      Доступно сразу без вызова фабрики.
- *
- *   Все сервисы — синглтоны по умолчанию (один экземпляр на запрос).
- *   Для фабрик, возвращающих новый экземпляр каждый раз, используйте factory().
+ * Sustituye el patrón `global $db` / `SettingsManager::getAll()` / `API::$db`
+ * por un registro único de servicios con inicialización perezosa.
  *
  * ──────────────────────────────────────────────────────────────────
- * Использование:
+ * Concepto:
+ * ──────────────────────────────────────────────────────────────────
+ *
+ *   El contenedor almacena los servicios en dos formas:
+ *
+ *   1. Fábrica (callable) — función que crea el servicio.
+ *      Se invoca UNA sola vez en el primer get(). El resultado se cachea.
+ *
+ *   2. Valor listo — objeto ya creado o valor escalar.
+ *      Disponible de inmediato sin invocar la fábrica.
+ *
+ *   Todos los servicios son singletons por defecto (una instancia por petición).
+ *   Para fábricas que devuelven una instancia nueva cada vez, use factory().
+ *
+ * ──────────────────────────────────────────────────────────────────
+ * Uso:
  * ──────────────────────────────────────────────────────────────────
  *
  *   $c = ServiceContainer::getInstance();
  *
- *   // Регистрация фабрики (ленивая, создаётся при первом get)
+ *   // Registro de una fábrica (perezosa, se crea en el primer get)
  *   $c->set('db', function($c) {
  *       $cfg = $c->get('config');
  *       return DatabaseHandler::create($cfg);
  *   });
  *
- *   // Регистрация готового значения
+ *   // Registro de un valor listo
  *   $c->set('config', $_INFO);
  *
- *   // Получение сервиса
+ *   // Obtención de un servicio
  *   $db = $c->get('db');
  *
- *   // Фабрика (новый экземпляр при каждом вызове)
+ *   // Fábrica (instancia nueva en cada invocación)
  *   $c->factory('request', function($c) {
  *       return new Request($_GET, $_POST);
  *   });
  *
- *   // Проверка наличия
+ *   // Comprobación de existencia
  *   if ($c->has('redis')) { ... }
  *
  * ──────────────────────────────────────────────────────────────────
- * Обратная совместимость:
+ * Compatibilidad hacia atrás:
  * ──────────────────────────────────────────────────────────────────
  *
- *   Старый код использует `global $db`. Контейнер не ломает это —
- *   bootstrap.php регистрирует $db и в контейнер, и в global scope.
- *   Новый код использует $container->get('db').
- *   По мере миграции global $db выводится из употребления.
+ *   El código antiguo usa `global $db`. El contenedor no rompe esto —
+ *   bootstrap.php registra $db tanto en el contenedor como en el scope global.
+ *   El código nuevo usa $container->get('db').
+ *   A medida que avance la migración, global $db quedará en desuso.
  *
  * ──────────────────────────────────────────────────────────────────
- * Для модулей:
+ * Para módulos:
  * ──────────────────────────────────────────────────────────────────
  *
  *   class PlexModule implements ModuleInterface {
@@ -74,37 +74,37 @@
 class ServiceContainer {
 
     /**
-     * Единственный экземпляр контейнера (singleton)
+          * La única instancia del contenedor (singleton)
      * @var ServiceContainer|null
      */
     private static $instance = null;
 
     /**
-     * Зарегистрированные фабрики: id => callable
+          * Fábricas registradas: id => callable
      * @var array<string, callable>
      */
     private $factories = [];
 
     /**
-     * Разрешённые (готовые) сервисы: id => mixed
+          * Servicios resueltos (listos): id => mixed
      * @var array<string, mixed>
      */
     private $resolved = [];
 
     /**
-     * Сервисы, помеченные как «фабричные» (новый экземпляр каждый раз)
+          * Servicios marcados como «de fábrica» (instancia nueva cada vez)
      * @var array<string, bool>
      */
     private $isFactory = [];
 
     /**
-     * Флаг: сервис сейчас в процессе создания (для детекции циклов)
+          * Flag: servicio actualmente en proceso de creación (para detectar ciclos)
      * @var array<string, bool>
      */
     private $creating = [];
 
     /**
-     * Теги для группировки сервисов: tag => [id, id, ...]
+          * Tags para agrupar servicios: tag => [id, id, ...]
      * @var array<string, string[]>
      */
     private $tags = [];
@@ -114,7 +114,7 @@ class ServiceContainer {
     // ─────────────────────────────────────────────────────────
 
     /**
-     * Получить единственный экземпляр.
+          * Obtener la única instancia.
      *
      * @return ServiceContainer
      */
@@ -126,7 +126,7 @@ class ServiceContainer {
     }
 
     /**
-     * Сбросить контейнер (для тестов).
+          * Reset del contenedor (para tests).
      */
     public static function resetInstance() {
         if (self::$instance !== null) {
@@ -140,37 +140,37 @@ class ServiceContainer {
     }
 
     /**
-     * Приватный конструктор (singleton).
+          * Constructor privado (singleton).
      */
     private function __construct() {
     }
 
     // ─────────────────────────────────────────────────────────
-    //  Регистрация
+        //  Registro
     // ─────────────────────────────────────────────────────────
 
     /**
-     * Зарегистрировать сервис.
+          * Registrar un servicio.
      *
-     * Если $value — callable (замыкание или [class, method]),
-     * он будет вызван ОДИН раз при первом get(). Результат кэшируется.
+          * Si $value es callable (closure o [class, method]),
+          * se invocará UNA sola vez en el primer get(). El resultado se cachea.
      *
-     * Если $value — не callable, сохраняется как готовое значение.
+          * Si $value no es callable, se guarda como valor listo.
      *
-     * @param string $id    Уникальный идентификатор (например, 'db', 'settings')
-     * @param mixed  $value Фабрика (callable) или готовое значение
+          * @param string $id    Identificador único (p. ej., 'db', 'settings')
+          * @param mixed  $value Fábrica (callable) o valor listo
      * @return $this
      */
     public function set($id, $value) {
-        // Удаляем ранее разрешённый сервис при перерегистрации
+                // Eliminamos el servicio previamente resuelto al re-registrar
         unset($this->resolved[$id]);
         unset($this->isFactory[$id]);
 
         if (is_callable($value) && !is_string($value) && !is_array($value)) {
-            // Замыкание → ленивая фабрика (singleton)
+                        // Closure → fábrica perezosa (singleton)
             $this->factories[$id] = $value;
         } else {
-            // Готовое значение → сразу в resolved
+                        // Valor listo → directamente a resolved
             $this->resolved[$id] = $value;
         }
 
@@ -178,10 +178,10 @@ class ServiceContainer {
     }
 
     /**
-     * Зарегистрировать фабричный сервис (новый экземпляр при каждом get).
+          * Registrar un servicio de fábrica (instancia nueva en cada get).
      *
-     * @param string   $id      Идентификатор
-     * @param callable $factory Фабрика: function(ServiceContainer $c): mixed
+          * @param string   $id      Identificador
+          * @param callable $factory Fábrica: function(ServiceContainer $c): mixed
      * @return $this
      */
     public function factory($id, $factory) {
@@ -193,14 +193,14 @@ class ServiceContainer {
     }
 
     /**
-     * Добавить тег к сервису.
+          * Añadir un tag a un servicio.
      *
-     * Теги позволяют группировать связанные сервисы и получать их пакетно.
-     * Используются модульной системой для сбора event subscribers,
-     * cron-задач, маршрутов и т.д.
+          * Los tags permiten agrupar servicios relacionados y obtenerlos por lotes.
+          * Los usa el sistema modular para recolectar event subscribers,
+          * tareas cron, rutas, etc.
      *
-     * @param string $id  Идентификатор сервиса
-     * @param string $tag Имя тега (например, 'event.subscriber', 'cron')
+          * @param string $id  Identificador del servicio
+          * @param string $tag Nombre del tag (p. ej., 'event.subscriber', 'cron')
      * @return $this
      */
     public function tag($id, $tag) {
@@ -215,29 +215,29 @@ class ServiceContainer {
     }
 
     // ─────────────────────────────────────────────────────────
-    //  Получение
+        //  Obtención
     // ─────────────────────────────────────────────────────────
 
     /**
-     * Получить сервис по идентификатору.
+          * Obtener un servicio por identificador.
      *
-     * @param string $id Идентификатор
+          * @param string $id Identificador
      * @return mixed
-     * @throws RuntimeException Если сервис не найден или обнаружена циклическая зависимость
+          * @throws RuntimeException Si el servicio no se encuentra o se detecta una dependencia circular
      */
     public function get($id) {
-        // 1. Уже разрешён (singleton) — мгновенный возврат
+                // 1. Ya resuelto (singleton) — retorno inmediato
         if (array_key_exists($id, $this->resolved) && empty($this->isFactory[$id])) {
             return $this->resolved[$id];
         }
 
-        // 2. Есть фабрика — вызываем
+                // 2. Hay fábrica — la invocamos
         if (isset($this->factories[$id])) {
-            // Детекция циклических зависимостей
+                        // Detección de dependencias circulares
             if (isset($this->creating[$id])) {
                 throw new RuntimeException(
-                    "ServiceContainer: циклическая зависимость при создании сервиса '{$id}'. "
-                        . "Цепочка: " . implode(' → ', array_keys($this->creating)) . " → {$id}"
+                    "ServiceContainer: dependencia circular al crear el servicio '{$id}'. "
+                        . "Cadena: " . implode(' → ', array_keys($this->creating)) . " → {$id}"
                 );
             }
 
@@ -248,7 +248,7 @@ class ServiceContainer {
             } catch (Exception $e) {
                 unset($this->creating[$id]);
                 throw new RuntimeException(
-                    "ServiceContainer: ошибка при создании сервиса '{$id}': " . $e->getMessage(),
+                    "ServiceContainer: error al crear el servicio '{$id}': " . $e->getMessage(),
                     0,
                     $e
                 );
@@ -256,7 +256,7 @@ class ServiceContainer {
 
             unset($this->creating[$id]);
 
-            // Фабричные сервисы не кэшируются
+                        // Los servicios de fábrica no se cachean
             if (empty($this->isFactory[$id])) {
                 $this->resolved[$id] = $service;
             }
@@ -265,16 +265,16 @@ class ServiceContainer {
         }
 
         throw new RuntimeException(
-            "ServiceContainer: сервис '{$id}' не зарегистрирован. "
-                . "Доступные сервисы: " . implode(', ', $this->keys())
+            "ServiceContainer: el servicio '{$id}' no está registrado. "
+                . "Servicios disponibles: " . implode(', ', $this->keys())
         );
     }
 
     /**
-     * Получить сервис или вернуть значение по умолчанию.
+          * Obtener un servicio o devolver un valor por defecto.
      *
-     * @param string $id      Идентификатор
-     * @param mixed  $default Значение по умолчанию (если сервис не найден)
+          * @param string $id      Identificador
+          * @param mixed  $default Valor por defecto (si el servicio no se encuentra)
      * @return mixed
      */
     public function getOrDefault($id, $default = null) {
@@ -285,10 +285,10 @@ class ServiceContainer {
     }
 
     /**
-     * Получить все сервисы с указанным тегом.
+          * Obtener todos los servicios con el tag indicado.
      *
-     * @param string $tag Имя тега
-     * @return array Массив сервисов [id => service]
+          * @param string $tag Nombre del tag
+          * @return array Array de servicios [id => service]
      */
     public function getTagged($tag) {
         $services = [];
@@ -303,9 +303,9 @@ class ServiceContainer {
     }
 
     /**
-     * Проверить, зарегистрирован ли сервис.
+          * Comprobar si un servicio está registrado.
      *
-     * @param string $id Идентификатор
+          * @param string $id Identificador
      * @return bool
      */
     public function has($id) {
@@ -313,7 +313,7 @@ class ServiceContainer {
     }
 
     /**
-     * Список всех зарегистрированных идентификаторов.
+          * Lista de todos los identificadores registrados.
      *
      * @return string[]
      */
@@ -327,9 +327,9 @@ class ServiceContainer {
     }
 
     /**
-     * Удалить сервис из контейнера.
+          * Eliminar un servicio del contenedor.
      *
-     * @param string $id Идентификатор
+          * @param string $id Identificador
      * @return $this
      */
     public function remove($id) {
@@ -339,7 +339,7 @@ class ServiceContainer {
             $this->isFactory[$id]
         );
 
-        // Удалить из тегов
+                // Eliminar de los tags
         foreach ($this->tags as $tag => &$ids) {
             $ids = array_values(array_filter($ids, function ($v) use ($id) {
                 return $v !== $id;
@@ -350,13 +350,13 @@ class ServiceContainer {
     }
 
     // ─────────────────────────────────────────────────────────
-    //  Массовая регистрация
+        //  Registro masivo
     // ─────────────────────────────────────────────────────────
 
     /**
-     * Зарегистрировать несколько сервисов из массива.
+          * Registrar varios servicios desde un array.
      *
-     * @param array $services Массив [id => value/callable, ...]
+          * @param array $services Array [id => value/callable, ...]
      * @return $this
      */
     public function register(array $services) {
@@ -367,11 +367,11 @@ class ServiceContainer {
     }
 
     // ─────────────────────────────────────────────────────────
-    //  ArrayAccess-подобный синтаксис (без implements — не нужны интерфейсы)
+        //  Sintaxis tipo ArrayAccess (sin implements — no hacen falta interfaces)
     // ─────────────────────────────────────────────────────────
 
     /**
-     * Магический доступ: $container->db вместо $container->get('db')
+          * Acceso mágico: $container->db en vez de $container->get('db')
      *
      * @param string $id
      * @return mixed
@@ -381,7 +381,7 @@ class ServiceContainer {
     }
 
     /**
-     * Магическая проверка: isset($container->db)
+          * Comprobación mágica: isset($container->db)
      *
      * @param string $id
      * @return bool
@@ -391,11 +391,11 @@ class ServiceContainer {
     }
 
     // ─────────────────────────────────────────────────────────
-    //  Отладка
+        //  Depuración
     // ─────────────────────────────────────────────────────────
 
     /**
-     * Дамп содержимого контейнера (для отладки).
+          * Volcado del contenido del contenedor (para depurar).
      *
      * @return array
      */
@@ -427,7 +427,7 @@ class ServiceContainer {
     }
 
     /**
-     * Получить все теги для сервиса.
+          * Obtener todos los tags de un servicio.
      *
      * @param string $id
      * @return string[]

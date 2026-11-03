@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Реестр CLI-команд.
+ * Registro de comandos CLI.
  *
- * Хранит маппинг имя → экземпляр CommandInterface.
- * Dispatch: ищет команду по имени из $argv и вызывает execute().
+ * Guarda el mapeo nombre → instancia de CommandInterface.
+ * Dispatch: busca el comando por nombre desde $argv e invoca execute().
  *
- * Команды обнаруживаются автоматически: console.php сканирует
- * cli/Commands/ и cli/CronJobs/ и регистрирует все классы,
- * реализующие CommandInterface.
+ * Los comandos se detectan automáticamente: console.php escanea
+ * cli/Commands/ y cli/CronJobs/ y registra todas las clases
+ * que implementan CommandInterface.
  */
 class CommandRegistry {
 
@@ -16,16 +16,16 @@ class CommandRegistry {
 	private $rCommands = [];
 
 	/**
-	 * Зарегистрировать команду.
+	 		 * Registrar un comando.
 	 */
 	public function register(CommandInterface $rCommand): void {
 		$this->rCommands[$rCommand->getName()] = $rCommand;
 	}
 
 	/**
-	 * Dispatch: найти команду по $argv и выполнить.
+	 		 * Dispatch: encontrar el comando por $argv y ejecutarlo.
 	 *
-	 * @param array $rArgv  Полный $argv из CLI
+	 		 * @param array $rArgv  $argv completo desde CLI
 	 * @return int  Exit code
 	 */
 	public function dispatch(array $rArgv): int {
@@ -52,14 +52,14 @@ class CommandRegistry {
 	}
 
 	/**
-	 * Получить команду по имени (для тестов и проверок).
+	 		 * Obtener un comando por nombre (para tests y comprobaciones).
 	 */
 	public function get(string $rName): ?CommandInterface {
 		return $this->rCommands[$rName] ?? null;
 	}
 
 	/**
-	 * Все зарегистрированные команды.
+	 		 * Todos los comandos registrados.
 	 *
 	 * @return CommandInterface[]
 	 */

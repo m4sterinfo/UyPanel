@@ -1,6 +1,6 @@
 <?php
 /**
- * MovieController — редактирование/добавление фильма.
+ * MovieController — edición/añadido de película.
  */
 class MovieController extends BaseAdminController
 {

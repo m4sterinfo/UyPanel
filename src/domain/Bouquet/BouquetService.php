@@ -171,7 +171,7 @@ class BouquetService {
 		);
 	}
 
-	// ──────────── Из BouquetMapper ────────────
+			// ──────────── De BouquetMapper ────────────
 
 	public static function getMapEntry($rStreamID) {
 		$rBouquetMap = igbinary_unserialize(file_get_contents(CACHE_TMP_PATH . 'bouquet_map'));
@@ -180,7 +180,7 @@ class BouquetService {
 		return $rReturn;
 	}
 
-	// ──────────── Из BouquetRepository ────────────
+			// ──────────── De BouquetRepository ────────────
 
 	public static function getAll($rForce = false) {
 		global $db;

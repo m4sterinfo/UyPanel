@@ -1,6 +1,6 @@
 <?php
 /**
- * CreatedChannelController — редактирование/добавление канала.
+ * CreatedChannelController — edición/añadido de canal.
  */
 class CreatedChannelController extends BaseAdminController
 {

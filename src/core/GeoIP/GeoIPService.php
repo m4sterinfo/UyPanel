@@ -1,16 +1,16 @@
 <?php
 
 /**
- * GeoIPService — GeoIP/ISP lookup и CIDR matching.
+ * GeoIPService — lookup GeoIP/ISP y matching CIDR.
  *
- * Использует MaxMind GeoLite2 и GeoISP базы с файловым кэшированием.
+ * Usa las bases MaxMind GeoLite2 y GeoISP con cacheo en archivos.
  */
 class GeoIPService {
 
 	/**
-	 * Получить GeoIP-информацию по IP-адресу (GeoLite2).
+	 		 * Obtener la información GeoIP por dirección IP (GeoLite2).
 	 *
-	 * Результат кэшируется в файл CONS_TMP_PATH/md5(ip)_geo2.
+	 		 * El resultado se cachea en el archivo CONS_TMP_PATH/md5(ip)_geo2.
 	 *
 	 * @param string $rIP
 	 * @return array|false
@@ -32,9 +32,9 @@ class GeoIPService {
 	}
 
 	/**
-	 * Получить ISP-информацию по IP-адресу (GeoISP).
+	 		 * Obtener la información ISP por dirección IP (GeoISP).
 	 *
-	 * Результат кэшируется в файл CONS_TMP_PATH/md5(ip)_isp.
+	 		 * El resultado se cachea en el archivo CONS_TMP_PATH/md5(ip)_isp.
 	 *
 	 * @param string $rIP
 	 * @return array|false
@@ -56,7 +56,7 @@ class GeoIPService {
 	}
 
 	/**
-	 * Проверить IP на соответствие CIDR-блокам для ASN.
+	 		 * Comprobar la IP contra bloques CIDR para ASN.
 	 *
 	 * @param string $rASN ASN identifier
 	 * @param string $rIP IP address

@@ -1,14 +1,14 @@
 <?php
 
 /**
- * PlexItem — модуль обработки отдельного элемента Plex (фильм/сериал).
+ * PlexItem — módulo de procesamiento de un elemento Plex individual (película/serie).
  *
- * Содержит логику импорта/обновления фильмов и эпизодов из Plex.
+ * Contiene la lógica de importación/actualización de películas y episodios desde Plex.
  */
 
 class PlexItem {
     /**
-     * Подготовить имя колонки (только буквы, цифры, подчёркивание).
+          * Preparar el nombre de columna (solo letras, números, guion bajo).
      *
      * @param string $rValue
      * @return string
@@ -18,7 +18,7 @@ class PlexItem {
     }
 
     /**
-     * Подготовить массив данных для SQL INSERT/UPDATE.
+          * Preparar el array de datos para SQL INSERT/UPDATE.
      *
      * @param array $rArray
      * @return array
@@ -45,7 +45,7 @@ class PlexItem {
     }
 
     /**
-     * Верифицировать данные по схеме таблицы.
+          * Verificar los datos contra el esquema de la tabla.
      *
      * @param string $rTable
      * @param array $rData
@@ -94,7 +94,7 @@ class PlexItem {
     }
 
     /**
-     * Получить сериал по Plex UUID или TMDB ID.
+          * Obtener la serie por Plex UUID o TMDB ID.
      *
      * @param string $rPlexID
      * @param int|null $rTMDBID
@@ -120,7 +120,7 @@ class PlexItem {
     }
 
     /**
-     * Получить сериал по ID.
+          * Obtener la serie por ID.
      *
      * @param int $rID
      * @return array|null
@@ -136,7 +136,7 @@ class PlexItem {
     }
 
     /**
-     * Получить следующий порядковый номер для streams.
+          * Obtener el siguiente número ordinal para streams.
      *
      * @return int
      */
@@ -152,7 +152,7 @@ class PlexItem {
     }
 
     /**
-     * Записать файл букета во временную директорию.
+          * Escribir el archivo de bouquet en el directorio temporal.
      *
      * @param string $rType
      * @param int $rBouquetID
@@ -164,7 +164,7 @@ class PlexItem {
     }
 
     /**
-     * Получить фильм из кэша по Plex UUID или TMDB ID.
+          * Obtener la película de la caché por Plex UUID o TMDB ID.
      *
      * @param string $rPlexID
      * @param int|null $rTMDBID
@@ -181,7 +181,7 @@ class PlexItem {
     }
 
     /**
-     * Получить эпизод из кэша.
+          * Obtener el episodio de la caché.
      *
      * @param string $rPlexID
      * @param int|null $rTMDBID
@@ -208,7 +208,7 @@ class PlexItem {
     }
 
     /**
-     * Сохранить категорию во временный файл.
+          * Guardar la categoría en un archivo temporal.
      *
      * @param string $rType
      * @param string $rGenreTag
@@ -218,7 +218,7 @@ class PlexItem {
     }
 
     /**
-     * Выполнить HTTP-запрос через cURL.
+          * Ejecutar una petición HTTP vía cURL.
      *
      * @param string $rURL
      * @return string|false
@@ -233,7 +233,7 @@ class PlexItem {
     }
 
     /**
-     * Нормализовать XML-массив.
+          * Normalizar el array XML.
      *
      * @param array $rArray
      * @return array
@@ -247,7 +247,7 @@ class PlexItem {
     }
 
     /**
-     * Извлечь теги из XML-данных Plex.
+          * Extraer los tags de los datos XML de Plex.
      *
      * @param array $data
      * @param string $tag
@@ -264,7 +264,7 @@ class PlexItem {
     }
 
     /**
-     * Универсальная функция поиска TMDB ID из данных Plex.
+          * Función universal de búsqueda del TMDB ID desde los datos de Plex.
      *
      * @param array $rContent
      * @return array ['tmdb_id' => int|null, 'language' => string|null]
@@ -316,8 +316,8 @@ class PlexItem {
     }
 
     /**
-     * Основная точка входа обработки элемента Plex.
-     * Заменяет loadcli().
+          * Punto de entrada principal del procesamiento de un elemento Plex.
+          * Sustituye loadcli().
      */
     public static function run() {
         global $db;

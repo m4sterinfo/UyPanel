@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Streaming micro-router (подготовительный).
+ * Micro-enrutador de streaming (preparatorio).
  *
- * Текущая конфигурация nginx направляет запросы напрямую на конкретные файлы
- * (live.php, vod.php и т.д.). Этот файл используется как fallback при прямом
- * обращении к /stream/ и готов к опциональному переключению nginx на единый
+ * La configuración actual de nginx dirige las peticiones directamente a archivos concretos
+ * (live.php, vod.php, etc.). Este archivo se usa como fallback en el acceso directo
+ * a /stream/ y está listo para el cambio opcional de nginx a un punto
  * entry point.
  *
- * Overhead: один array lookup (< 0.1ms).
+ * Overhead: un array lookup (< 0.1ms).
  */
 
 $rHandler = isset($_GET['handler']) ? $_GET['handler'] : null;

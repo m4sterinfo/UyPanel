@@ -1,6 +1,6 @@
 <?php
 /**
- * StreamViewController — просмотр стрима.
+ * StreamViewController — visualización de stream.
  */
 class StreamViewController extends BaseAdminController
 {

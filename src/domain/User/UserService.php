@@ -179,7 +179,7 @@ class UserService {
 		}
 	}
 
-	// ──────────── Из ProfileService ────────────
+			// ──────────── De ProfileService ────────────
 
 	public static function editAdminProfile($rData, $rUserInfo, $allowedLangs) {
 		global $db;
@@ -206,7 +206,7 @@ class UserService {
 		return array('status' => STATUS_SUCCESS);
 	}
 
-	// ──────────── Из TicketService ────────────
+			// ──────────── De TicketService ────────────
 
 	public static function submitTicket($rData, $rUserInfo) {
 		global $db;

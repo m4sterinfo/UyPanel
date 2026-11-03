@@ -1,6 +1,6 @@
 <?php
 /**
- * StreamRankController — рейтинг стримов.
+ * StreamRankController — ranking de streams.
  */
 class StreamRankController extends BaseAdminController
 {

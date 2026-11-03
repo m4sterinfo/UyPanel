@@ -337,7 +337,7 @@ downloads_dialog_constructor.prototype.fillUSBDevices = function (arr, set_first
             'full_gb': arr[i].info.size / 1024 / 1024 / 1024,
             'free_gb': arr[i].info.freeSize / 1024 / 1024 / 1024
         };
-        /* если 1 раздел - не писать партишщшон */
+                /* si hay 1 partición — no escribir partición */
         div_item.innerHTML =
             arr[i].info.vendor + ' ' +
             arr[i].info.model + '' +

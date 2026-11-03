@@ -1,12 +1,12 @@
 #!/bin/bash
-# test_release.sh — сборка и запуск тестового контейнера для проверки установки UyPanel
+# test_release.sh — compilación y arranque de un contenedor de prueba para verificar la instalación de UyPanel
 #
-# Использование:
-#   ./tools/test-install/test_release.sh          — собрать и запустить
-#   ./tools/test-install/test_release.sh build     — только собрать образ
-#   ./tools/test-install/test_release.sh run       — запустить контейнер (интерактивно)
-#   ./tools/test-install/test_release.sh install   — запустить и выполнить автоустановку
-#   ./tools/test-install/test_release.sh clean     — удалить контейнер и образ
+# Uso:
+#   ./tools/test-install/test_release.sh          — compilar y arrancar
+#   ./tools/test-install/test_release.sh build     — solo compilar la imagen
+#   ./tools/test-install/test_release.sh run       — arrancar el contenedor (interactivo)
+#   ./tools/test-install/test_release.sh install   — arrancar y ejecutar la autoinstalación
+#   ./tools/test-install/test_release.sh clean     — eliminar el contenedor y la imagen
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -17,7 +17,7 @@ IMAGE="xcvm-test:latest"
 
 cd "$PROJECT_ROOT"
 
-# Проверяем наличие dist/UyPanel.zip
+# Comprobamos que exista dist/UyPanel.zip
 check_zip() {
     if [[ ! -f dist/UyPanel.zip ]]; then
         echo "ERROR: dist/UyPanel.zip not found."
@@ -82,10 +82,10 @@ cmd_run() {
 cmd_install() {
     check_zip
 
-    # Проверяем запущен ли контейнер
+        # Comprobamos si el contenedor está arrancado
     if ! docker ps --format '{{.Names}}' | grep -q "^${CONTAINER}$"; then
         echo "==> Container not running, starting..."
-        # Удаляем старый остановленный контейнер если есть
+                # Eliminamos el contenedor parado antiguo si existe
         docker rm -f "$CONTAINER" 2>/dev/null || true
         docker run -d \
             --name "$CONTAINER" \

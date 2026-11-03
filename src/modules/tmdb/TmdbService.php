@@ -3,26 +3,26 @@
 /**
  * TmdbService
  *
- * Сервис для работы с TMDB API.
+ * Servicio para trabajar con la API de TMDB.
  *
- * Ответственность:
- *   - Создание экземпляра TMDB с правильной локализацией
- *   - Поиск фильмов/сериалов по названию или TMDB ID
- *   - Получение детальной информации (getMovie, getTVShow, getSeason)
- *   - Трейлеры сериалов
+ * Responsabilidad:
+ *   - Creación de instancias TMDB con la localización correcta
+ *   - Búsqueda de películas/series por título o TMDB ID
+ *   - Obtención de información detallada (getMovie, getTVShow, getSeason)
+ *   - Tráilers de series
  *
- * Зависимости:
- *   - includes/libs/tmdb.php (класс TMDB)
+ * Dependencias:
+ *   - includes/libs/tmdb.php (clase TMDB)
  *   - includes/libs/tmdb_release.php (parserelease)
  *   - includes/admin.php (getSeriesTrailer)
  */
 class TmdbService {
 
     /**
-     * Создать экземпляр TMDB API-клиента
+          * Crear una instancia del cliente de la API TMDB
      *
      * @param string      $apiKey   TMDB API key
-     * @param string|null $language Язык запроса (приоритет: явный → настройка → default)
+          * @param string|null $language Idioma de la consulta (prioridad: explícito → ajuste → default)
      * @return TMDB
      */
     public static function createClient(string $apiKey, ?string $language = null): TMDB {
@@ -39,16 +39,16 @@ class TmdbService {
     }
 
     /**
-     * Поиск по TMDB (фильмы, сериалы, эпизоды)
+          * Búsqueda en TMDB (películas, series, episodios)
      *
-     * Поддерживает поиск:
-     *   - По числовому ID (прямой getMovie/getTVShow/getSeason)
-     *   - По текстовому запросу (searchMovie/searchTVShow)
+          * Soporta la búsqueda:
+          *   - Por ID numérico (getMovie/getTVShow/getSeason directo)
+          *   - Por consulta de texto (searchMovie/searchTVShow)
      *
-     * @param string      $term     Поисковый запрос или TMDB ID
-     * @param string      $type     Тип: movie|series|episode
-     * @param string|null $language Язык запроса
-     * @param int|null    $season   Номер сезона (для episode)
+          * @param string      $term     Consulta de búsqueda o TMDB ID
+          * @param string      $type     Tipo: movie|series|episode
+          * @param string|null $language Idioma de la consulta
+          * @param int|null    $season   Número de temporada (para episode)
      * @return array ['result' => bool, 'data' => array|null]
      */
     public static function search(string $term, string $type, ?string $language = null, ?int $season = null): array {
@@ -60,7 +60,7 @@ class TmdbService {
         self::requireLibrary();
         $rTMDB = self::createClient($apiKey, $language);
 
-        // Прямой поиск по числовому TMDB ID
+                // Búsqueda directa por TMDB ID numérico
         if (is_numeric($term) && in_array($type, ['movie', 'series', 'episode'])) {
             $rResult = self::fetchByID($rTMDB, $term, $type, $season);
             if (is_array($rResult)) {
@@ -68,7 +68,7 @@ class TmdbService {
             }
         }
 
-        // Текстовый поиск
+                // Búsqueda por texto
         $rRelease = parserelease($term);
         $searchTerm = $rRelease['title'];
         $rJSON = [];
@@ -91,11 +91,11 @@ class TmdbService {
     }
 
     /**
-     * Получить детальную информацию о фильме/сериале по TMDB ID
+          * Obtener información detallada de una película/serie por TMDB ID
      *
      * @param int         $id       TMDB ID
-     * @param string      $type     Тип: movie|series
-     * @param string|null $language Язык запроса
+          * @param string      $type     Tipo: movie|series
+          * @param string|null $language Idioma de la consulta
      * @return array ['result' => bool, 'data' => array|null]
      */
     public static function getDetails(int $id, string $type, ?string $language = null): array {
@@ -127,12 +127,12 @@ class TmdbService {
     }
 
     /**
-     * Получить данные по числовому ID
+          * Obtener datos por ID numérico
      *
-     * @param TMDB     $tmdb   Экземпляр TMDB
+          * @param TMDB     $tmdb   Instancia de TMDB
      * @param string   $id     TMDB ID
-     * @param string   $type   Тип: movie|series|episode
-     * @param int|null $season Номер сезона
+          * @param string   $type   Tipo: movie|series|episode
+          * @param int|null $season Número de temporada
      * @return array|null
      */
     private static function fetchByID(TMDB $tmdb, string $id, string $type, ?int $season): ?array {
@@ -156,7 +156,7 @@ class TmdbService {
     }
 
     /**
-     * Подключить библиотеку TMDB (один раз)
+          * Incluir la librería TMDB (una sola vez)
      */
     private static function requireLibrary(): void {
         static $loaded = false;

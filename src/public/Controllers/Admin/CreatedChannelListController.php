@@ -1,6 +1,6 @@
 <?php
 /**
- * CreatedChannelListController — список созданных каналов.
+ * CreatedChannelListController — lista de canales creados.
  */
 class CreatedChannelListController extends BaseAdminController
 {

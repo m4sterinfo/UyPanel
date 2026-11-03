@@ -1,6 +1,6 @@
 <?php
 /**
- * StreamMassController — массовое редактирование стримов.
+ * StreamMassController — edición masiva de streams.
  */
 class StreamMassController extends BaseAdminController
 {

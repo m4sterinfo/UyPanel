@@ -125,10 +125,10 @@ class Encryption {
     }
 
     /**
-     * Генерирует уникальный код панели на основе пароля.
+          * Genera el código único del panel a partir de la contraseña.
      *
-     * @param string $pass  Пароль (live_streaming_pass)
-     * @return string 15-символьный хеш
+          * @param string $pass  Contraseña (live_streaming_pass)
+          * @return string hash de 15 caracteres
      */
     public static function generateUniqueCode($pass) {
         return substr(md5($pass), 0, 15);

@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Мониторинг одного стрима (из cli/monitor.php).
+ * Monitorización de un stream (desde cli/monitor.php).
  *
- * Запуск: php console.php monitor <stream_id> [restart]
+ * Ejecución: php console.php monitor <stream_id> [restart]
  *
- * ВНИМАНИЕ: Этот файл содержит goto/label flow-control — следы обфускации.
- * Планируется рефакторинг в Phase 14 (→ domain/Stream/StreamMonitor.php).
- * На данном этапе логика перенесена as-is.
+ * ATENCIÓN: Este archivo contiene goto/label flow-control — restos de ofuscación.
+ * Está previsto refactorizarlo en Phase 14 (→ domain/Stream/StreamMonitor.php).
+ * En esta fase la lógica se trasladó as-is.
  */
 
 class MonitorCommand implements CommandInterface {
@@ -115,7 +115,7 @@ class MonitorCommand implements CommandInterface {
 		}
 
 		// ── Main monitoring loop (goto-based control flow) ───
-		// ПРИМЕЧАНИЕ: goto/label — следы обфускации. Рефакторинг запланирован в Phase 14.
+					// NOTA: goto/label — restos de ofuscación. Refactor previsto en Phase 14.
 		goto label235;
 		label235:
 		if (true) {

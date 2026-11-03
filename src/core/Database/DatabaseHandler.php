@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Менеджер базы данных (PDO)
+ * Gestor de base de datos (PDO)
  *
- * Расширяет базовый класс Database:
+ * Extiende la clase base Database:
  *   - Transaction support (begin/commit/rollback)
  *   - Named parameter binding
  *   - Reconnection on disconnect

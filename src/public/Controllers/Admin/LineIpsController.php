@@ -1,6 +1,6 @@
 <?php
 /**
- * LineIpsController — IP-использование линий.
+ * LineIpsController — uso de IP de las líneas.
  */
 class LineIpsController extends BaseAdminController
 {

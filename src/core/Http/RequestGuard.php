@@ -1,24 +1,24 @@
 <?php
 
 /**
- * Защита HTTP-запросов и инициализация логгера
+ * Protección de peticiones HTTP e inicialización del logger
  *
- * Выполняет:
- *   1. Flood-protection — блокировка забаненных IP
- *   2. Host verification — проверка домена через кэш allowed_domains
- *   3. Загрузка настроек ($rSettings) из файлового кэша
- *   4. Определение PHP_ERRORS
- *   5. Инициализация Logger
+ * Ejecuta:
+ *   1. Flood-protection — bloqueo de IPs baneadas
+ *   2. Host verification — comprobación del dominio vía caché allowed_domains
+ *   3. Carga de ajustes ($rSettings) desde la caché de archivos
+ *   4. Determinación de PHP_ERRORS
+ *   5. Inicialización del Logger
  *
- * Зависимости:
- *   FLOOD_TMP_PATH, CACHE_TMP_PATH, INCLUDES_PATH (из Paths.php)
- *   DEVELOPMENT (из AppConfig.php)
- *   LOGS_TMP_PATH (из Paths.php)
- *   generateError() (из ErrorHandler.php)
+ * Dependencias:
+ *   FLOOD_TMP_PATH, CACHE_TMP_PATH, INCLUDES_PATH (de Paths.php)
+ *   DEVELOPMENT (de AppConfig.php)
+ *   LOGS_TMP_PATH (de Paths.php)
+ *   generateError() (de ErrorHandler.php)
  *
- * Заполняет глобальные переменные:
- *   $rSettings   — массив настроек панели (из файлового кэша)
- *   $rShowErrors — флаг показа ошибок
+ * Rellena las variables globales:
+ *   $rSettings   — array de ajustes del panel (desde la caché de archivos)
+ *   $rShowErrors — flag de mostrar errores
  */
 
 $rShowErrors = false;

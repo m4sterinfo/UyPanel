@@ -1,10 +1,10 @@
 <?php
 
 /**
- * PlayerEmbedController — Встроенный плеер для просмотра потоков.
+ * PlayerEmbedController — Reproductor integrado para ver streams.
  *
- * Плеер открывается из admin UI (stream_view, live_connections и т.д.)
- * в popup/iframe. Имеет собственный HTML-документ (не layout header/footer).
+ * El reproductor se abre desde la UI admin (stream_view, live_connections, etc.)
+ * en popup/iframe. Tiene su propio documento HTML (sin layout header/footer).
  */
 class PlayerEmbedController extends BaseAdminController
 {

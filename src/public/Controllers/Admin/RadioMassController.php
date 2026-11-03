@@ -1,6 +1,6 @@
 <?php
 /**
- * RadioMassController — массовое редактирование радиостанций.
+ * RadioMassController — edición masiva de emisoras de radio.
  */
 class RadioMassController extends BaseAdminController
 {

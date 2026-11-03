@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Общий shutdown handler для streaming endpoints (live, vod, timeshift).
+ * Shutdown handler común para los endpoints de streaming (live, vod, timeshift).
  *
- * Заменяет дублированные function shutdown() в трёх файлах.
- * auth.php и rtmp.php используют собственный (другую логику — BruteforceGuard).
+ * Sustituye las function shutdown() duplicadas en los tres archivos.
+ * auth.php y rtmp.php usan el suyo propio (otra lógica — BruteforceGuard).
  *
- * Использование:
+ * Uso:
  *   register_shutdown_function([ShutdownHandler::class, 'handle'], 'live');
  */
 class ShutdownHandler {
@@ -43,19 +43,19 @@ class ShutdownHandler {
                 );
             }
 
-            // Только live: очистка tmp-файлов соединения
+                        // Solo live: limpieza de los archivos tmp de la conexión
             if ($rContext === 'live') {
                 @unlink(CONS_TMP_PATH . $rTokenData['uuid']);
                 @unlink(CONS_TMP_PATH . $rStreamID . '/' . $rTokenData['uuid']);
             }
         }
 
-        // Только live: on-demand instant off
+                // Solo live: on-demand instant off
         if ($rContext === 'live' && $rSettings['on_demand_instant_off'] && $rChannelInfo['on_demand'] == 1) {
             ConnectionTracker::removeFromQueue($rStreamID, $rPID);
         }
 
-        // Закрытие ресурсов
+                // Cierre de recursos
         if (!$rSettings['redis_handler'] && is_object($db)) {
             DatabaseFactory::close();
         } elseif ($rSettings['redis_handler'] && RedisManager::isConnected()) {

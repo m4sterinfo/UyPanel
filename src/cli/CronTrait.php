@@ -1,18 +1,18 @@
 <?php
 
 /**
- * Общий функционал для cron-задач.
+ * Funcionalidad común para tareas cron.
  *
- * Выносит повторяющийся boilerplate: проверка пользователя, cron lock,
- * shutdown handler (закрытие БД + удаление lock-файла).
+ * Extrae el boilerplate repetitivo: comprobación de usuario, cron lock,
+ * shutdown handler (cierre de BD + eliminación del lock-file).
  */
 trait CronTrait {
 
-    /** @var string|null Путь к lock-файлу */
+        /** @var string|null Ruta al lock-file */
     protected $rIdentifier;
 
     /**
-     * Проверить что процесс запущен от пользователя uypanel.
+          * Comprobar que el proceso corre como usuario uypanel.
      */
     protected function assertRunAsXcVm(): bool {
         if ((posix_getpwuid(posix_geteuid())['name'] ?? null) !== 'uypanel') {
@@ -23,7 +23,7 @@ trait CronTrait {
     }
 
     /**
-     * Проверить что процесс запущен от root.
+          * Comprobar que el proceso corre como root.
      */
     protected function assertRunAsRoot(): bool {
         if ((posix_getpwuid(posix_geteuid())['name'] ?? null) !== 'root') {
@@ -34,7 +34,7 @@ trait CronTrait {
     }
 
     /**
-     * Установить заголовок процесса + time limit.
+          * Establecer el título del proceso + time limit.
      */
     protected function setProcessTitle(string $rTitle): void {
         set_time_limit(0);
@@ -42,8 +42,8 @@ trait CronTrait {
     }
 
     /**
-     * Получить cron lock (уникальный файл в CRONS_TMP_PATH).
-     * Если lock уже занят — выходит с кодом 0.
+          * Obtener el cron lock (archivo único en CRONS_TMP_PATH).
+          * Si el lock ya está ocupado — sale con código 0.
      */
     protected function acquireCronLock(): void {
         $this->rIdentifier = CRONS_TMP_PATH . md5(
@@ -53,7 +53,7 @@ trait CronTrait {
     }
 
     /**
-     * Зарегистрировать shutdown handler: закрытие БД + удаление lock.
+          * Registrar el shutdown handler: cierre de BD + eliminación del lock.
      */
     protected function registerShutdown(): void {
         $rIdentifier = &$this->rIdentifier;
@@ -69,9 +69,9 @@ trait CronTrait {
     }
 
     /**
-     * Стандартная инициализация cron-задачи.
+          * Inicialización estándar de la tarea cron.
      *
-     * @param string $rTitle Заголовок процесса (например 'UyPanel[Activity]')
+          * @param string $rTitle Título del proceso (p. ej. 'UyPanel[Activity]')
      */
     protected function initCron(string $rTitle): void {
         $this->registerShutdown();

@@ -890,7 +890,7 @@ class MovieService {
 		return array('status' => STATUS_SUCCESS);
 	}
 
-	// ──────────── Из MovieRepository ────────────
+			// ──────────── De MovieRepository ────────────
 
 	public static function getSimilar($rID, $rPage = 1) {
 		require_once MAIN_HOME . 'includes/libs/tmdb.php';

@@ -1,6 +1,6 @@
 <?php
 /**
- * EpisodeMassController — массовое редактирование эпизодов.
+ * EpisodeMassController — edición masiva de episodios.
  */
 class EpisodeMassController extends BaseAdminController
 {

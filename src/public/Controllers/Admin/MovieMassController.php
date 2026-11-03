@@ -1,6 +1,6 @@
 <?php
 /**
- * MovieMassController — массовое редактирование фильмов.
+ * MovieMassController — edición masiva de películas.
  */
 class MovieMassController extends BaseAdminController
 {

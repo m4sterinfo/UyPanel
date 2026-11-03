@@ -3,9 +3,9 @@
 /**
  * BouquetListController — Bouquets listing (admin/bouquets.php).
  *
- * Листинг букетов с действиями delete.
+ * Listado de bouquets con acciones delete.
  *
- * Legacy: admin/bouquets.php (163 строк)
+ * Legacy: admin/bouquets.php (163 líneas)
  * Route:  GET /admin/bouquets → index()
  */
 class BouquetListController extends BaseAdminController

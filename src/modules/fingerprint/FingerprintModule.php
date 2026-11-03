@@ -3,22 +3,22 @@
 /**
  * Fingerprint Module
  *
- * Модуль «Отпечаток стрима» (Fingerprint Stream).
- * Позволяет администратору накладывать текст (ID активности, имя пользователя
- * или произвольное сообщение) поверх живых потоков для идентификации зрителя.
+ * Módulo «Huella del stream» (Fingerprint Stream).
+ * Permite al administrador superponer texto (ID de actividad, nombre de usuario
+ * o un mensaje arbitrario) sobre los streams en vivo para identificar al espectador.
  *
  * ──────────────────────────────────────────────────────────────────
- * Что включает:
+ * Qué incluye:
  * ──────────────────────────────────────────────────────────────────
  *
- *   Страницы:
- *     - fingerprint     — выбор потока (поиск + категория + DataTable)
- *                         + активация отпечатка (тип/размер/цвет/позиция)
- *                         + таблица активности
+ *   Páginas:
+ *     - fingerprint     — selección de stream (búsqueda + categoría + DataTable)
+ *                         + activación de la huella (tipo/tamaño/color/posición)
+ *                         + tabla de actividad
  *
- *   API-действия:
- *     - fingerprint     — отправка сигнала на активные серверы
- *     - line_activity   — принудительное завершение соединения
+ *   Acciones API:
+ *     - fingerprint     — envío de la señal a los servidores activos
+ *     - line_activity   — cierre forzado de la conexión
  *
  * @see admin/fingerprint.php
  */
@@ -40,33 +40,33 @@ class FingerprintModule implements ModuleInterface {
     }
 
     /**
-     * Регистрация сервисов модуля в DI-контейнере
+          * Registro de los servicios del módulo en el contenedor DI
      *
-     * Fingerprint использует общую инфраструктуру admin-панели
-     * (session, functions.php, api.php) — отдельные сервисы не нужны.
+          * Fingerprint usa la infraestructura común del panel admin
+          * (session, functions.php, api.php) — no se necesitan servicios propios.
      *
      * @param ServiceContainer $container
      */
     public function boot(ServiceContainer $container): void {
-        // Собственных сервисов нет — используется общая admin-инфраструктура
+                // No hay servicios propios — se usa la infraestructura admin común
     }
 
     /**
-     * Регистрация маршрутов модуля
+          * Registro de las rutas del módulo
      *
-     * Маршрутизация осуществляется через навигацию admin-панели
-     * (fingerprint.php загружается напрямую).
+          * El enrutado se realiza a través de la navegación del panel admin
+          * (fingerprint.php se carga directamente).
      *
      * @param Router $router
      */
     public function registerRoutes(Router $router): void {
-        // Маршрутизация — через admin page navigation (fingerprint.php)
+                // Enrutado — vía navegación de páginas admin (fingerprint.php)
     }
 
     /**
-     * CLI-команды модуля
+          * Comandos CLI del módulo
      *
-     * Fingerprint не имеет CLI-команд.
+          * Fingerprint no tiene comandos CLI.
      *
      * @param CommandRegistry $registry
      */
@@ -74,7 +74,7 @@ class FingerprintModule implements ModuleInterface {
     }
 
     /**
-     * Подписки на события ядра
+          * Suscripciones a eventos del core
      *
      * @return array
      */

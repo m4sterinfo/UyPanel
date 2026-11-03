@@ -1,16 +1,16 @@
 <?php
 
 /**
- * Логгер клиентских запросов (запись в файл для последующей вставки в БД)
+ * Logger de peticiones de clientes (escritura en archivo para inserción posterior en BD)
  *
- * Записывает события клиентского стриминга в файл client_request.log.
- * Формат: base64-encoded JSON, одна строка на запись.
+ * Registra los eventos de streaming de clientes en el archivo client_request.log.
+ * Formato: JSON base64-encoded, una línea por registro.
  *
- * Записи периодически обрабатываются cron-задачей и вставляются в таблицу
- * client_logs в базе данных.
+ * Los registros se procesan periódicamente con una tarea cron y se insertan
+ * en la tabla client_logs de la base de datos.
  *
- * Типичные события: AUTH_FAILED, USER_EXPIRED, USER_BAN, IP_MISMATCH,
- *                   COUNTRY_DISALLOW, RESTREAM_DETECT, LINE_CREATE_FAIL и т.д.
+ * Eventos típicos: AUTH_FAILED, USER_EXPIRED, USER_BAN, IP_MISMATCH,
+ *                   COUNTRY_DISALLOW, RESTREAM_DETECT, LINE_CREATE_FAIL, etc.
  *
  * @see LoggerInterface
  */
@@ -19,40 +19,40 @@ require_once __DIR__ . '/LoggerInterface.php';
 
 class DatabaseLogger implements LoggerInterface {
     /**
-     * Путь к файлу лога клиентских запросов.
+          * Ruta al archivo de log de peticiones de clientes.
      *
      * @var string|null
      */
     private static ?string $logFile = null;
 
     /**
-     * Настройка: включено ли сохранение клиентских логов.
-     * Соответствует настройке client_logs_save из $rSettings.
+          * Ajuste: si está activado el guardado de logs de clientes.
+          * Corresponde al ajuste client_logs_save de $rSettings.
      *
-     * @var int|null null = не задано (проверяем через StreamingUtilities), 0 = выкл, 1+ = вкл
+          * @var int|null null = sin definir (se comprueba vía StreamingUtilities), 0 = off, 1+ = on
      */
     private static ?int $enabled = null;
 
     /**
-     * Установить путь к файлу лога.
+          * Establecer la ruta al archivo de log.
      *
-     * @param string $path Полный путь к файлу
+          * @param string $path Ruta completa al archivo
      */
     public static function setLogFile(string $path): void {
         self::$logFile = $path;
     }
 
     /**
-     * Установить, включено ли логирование клиентских запросов.
+          * Establecer si está activado el logging de peticiones de clientes.
      *
-     * @param int $value 0 — выключено, 1+ — включено
+          * @param int $value 0 — desactivado, 1+ — activado
      */
     public static function setEnabled(int $value): void {
         self::$enabled = $value;
     }
 
     /**
-     * Получить текущий путь к файлу лога.
+          * Obtener la ruta actual al archivo de log.
      *
      * @return string
      */
@@ -69,18 +69,18 @@ class DatabaseLogger implements LoggerInterface {
     }
 
     /**
-     * Записать клиентское событие стриминга.
+          * Registrar un evento de streaming de cliente.
      *
-     * Соответствует старому формату StreamingUtilities::clientLog().
-     * Сигнатура через LoggerInterface, но внутренне хранит расширенные данные.
+          * Corresponde al formato antiguo de StreamingUtilities::clientLog().
+          * Firma vía LoggerInterface, pero internamente guarda datos extendidos.
      *
-     * @param string     $type    Действие (AUTH_FAILED, USER_EXPIRED, и т.д.)
-     * @param string     $message Не используется для клиентских логов (передавать '')
-     * @param string|int $extra   Дополнительные данные
-     * @param int        $line    Не используется (совместимость с LoggerInterface)
+          * @param string     $type    Acción (AUTH_FAILED, USER_EXPIRED, etc.)
+          * @param string     $message No se usa para logs de clientes (pasar '')
+          * @param string|int $extra   Datos adicionales
+          * @param int        $line    No se usa (compatibilidad con LoggerInterface)
      */
     public static function log(string $type, string $message, $extra = '', int $line = 0): void {
-        // По умолчанию логирование включено (если не задано явно)
+                // Por defecto el logging está activado (si no se define explícitamente)
         if (self::$enabled !== null && self::$enabled == 0) {
             return;
         }
@@ -112,16 +112,16 @@ class DatabaseLogger implements LoggerInterface {
     }
 
     /**
-     * Записать клиентское событие стриминга (расширенная версия).
+          * Registrar un evento de streaming de cliente (versión extendida).
      *
-     * Прямой аналог StreamingUtilities::clientLog() с полными параметрами.
+          * Análogo directo de StreamingUtilities::clientLog() con parámetros completos.
      *
-     * @param int    $streamID ID потока
-     * @param int    $userID   ID пользователя
-     * @param string $action   Действие (AUTH_FAILED, USER_EXPIRED, и т.д.)
-     * @param string $ip       IP-адрес клиента
-     * @param string $data     Дополнительные данные (JSON или строка)
-     * @param bool   $bypass   Записать даже если логирование выключено
+          * @param int    $streamID ID del stream
+          * @param int    $userID   ID del usuario
+          * @param string $action   Acción (AUTH_FAILED, USER_EXPIRED, etc.)
+          * @param string $ip       Dirección IP del cliente
+          * @param string $data     Datos adicionales (JSON o string)
+          * @param bool   $bypass   Registrar incluso si el logging está desactivado
      */
     public static function clientLog(
         int $streamID,
@@ -131,14 +131,14 @@ class DatabaseLogger implements LoggerInterface {
         string $data = '',
         bool $bypass = false
     ): void {
-        // Проверяем настройку: включено ли логирование
+                // Comprobamos el ajuste: ¿está activado el logging?
         if (!$bypass) {
-            // Если задано через setEnabled
+                        // Si se definió vía setEnabled
             if (self::$enabled !== null && self::$enabled == 0) {
                 return;
             }
 
-            // Если не задано — проверяем через глобальные настройки (обратная совместимость)
+                        // Si no está definido — comprobamos vía ajustes globales (compatibilidad hacia atrás)
             if (self::$enabled === null && !empty($GLOBALS['rSettings'])) {
                 if (
                     isset($GLOBALS['rSettings']['client_logs_save'])

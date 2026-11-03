@@ -1,6 +1,6 @@
 <?php
 /**
- * StreamCategoryController — редактирование категории стрима.
+ * StreamCategoryController — edición de categoría de stream.
  */
 class StreamCategoryController extends BaseAdminController
 {

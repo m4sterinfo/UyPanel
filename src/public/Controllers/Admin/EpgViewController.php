@@ -1,6 +1,6 @@
 <?php
 /**
- * Контроллер просмотра TV Guide (admin/epg_view.php)
+ * Controlador de visualización de TV Guide (admin/epg_view.php)
  */
 
 class EpgViewController extends BaseAdminController {
