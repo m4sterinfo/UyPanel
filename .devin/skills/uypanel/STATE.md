@@ -72,6 +72,32 @@
 - **Validación**: php -l en todos los PHP modificados, py_compile del
   instalador, `make main` + `make lb` completos.
 
+### 2026-11-02 — Renombrado técnico completo en producción (xc_vm → uypanel)
+- **Logo propio**: `docs/_media/UyPanel_logo.jpg` (descargado de
+  uy.v2apk.com/logos/UyPanel_logo.jpg), referenciado en los 3 READMEs.
+- **Repo**: renombradas rutas con `xc_vm` en el nombre (ministra/template/uypanel,
+  nginx realip_uypanel.conf) y barrido de identificadores técnicos en 143
+  archivos: `/home/uypanel`, servicio systemd `uypanel`, BDs `uypanel` +
+  `uypanel_migrate`, usuario/grupo `uypanel`, tarball `uypanel.tar.gz`.
+  También quitada del instalador la directiva redis `lazyfree-lazy-server-delay`.
+- **Migración del servidor en producción** (con backup previo
+  `/home/debian/pre_rename_backup/dbs_pre_rename.sql.gz`, 147 MB):
+  BDs renombradas por RENAME TABLE (65+66 tablas) + grants nuevos + drop de las
+  viejas; usuario/grupo del sistema renombrados (uid 105); directorio movido a
+  `/home/uypanel`; payload rebrandeado desplegado; config.ini actualizado
+  (database=uypanel); redis.conf con rutas nuevas; crontabs root y uypanel
+  actualizados; fstab tmpfs con rutas nuevas; unidad systemd `uypanel.service`
+  (xc_vm.service eliminada); setcap nginx; message_of_day "Welcome to UyPanel".
+- **IMPORTANTE — shim temporal**: los binarios PHP/nginx/nginx_rtmp tienen el
+  prefix `/home/xc_vm` COMPILADO DENTRO (ini path, extension_dir, prefix de
+  nginx). Existe symlink `/home/xc_vm -> /home/uypanel` para que funcionen.
+  Tarea de roadmap: reconstruir binarios con prefix `/home/uypanel` usando
+  `third_party/UyPanel_Binaries` (ajustar scripts de build) y entonces eliminar
+  el symlink. NO borrar el symlink sin los binarios nuevos.
+- Verificado: servicio active, DB conectada, sin migraciones pendientes,
+  extensiones PHP cargando, panel HTTP 200/302 login, crons ejecutando,
+  nginx_rtmp arriba, puertos 80/443/6379.
+
 ### Pendiente de hacer en el servidor (no requiere código)
 - Nota: el PHP/nginx/redis en producción son los binarios Ubuntu del tarball
   2.0.1 con librerías adaptadas (`libcurl3t64-gnutls`, `libjpeg.so.8` ABI 8 en
@@ -91,12 +117,10 @@
 
 - [x] Crear repo propio en GitHub y pushear (hecho 2026-11-02: m4sterinfo/UyPanel)
 - [x] Separación total del original: forks de soporte propios + rebranding + release 2.0.1
-- [ ] Logo propio de UyPanel (READMEs sin logo actualmente)
-- [ ] Identificadores técnicos `xc_vm` minúsculas (rutas /home/xc_vm, servicio
-      systemd, BD, usuario): SIN cambiar — decisión pendiente; requiere plan de
-      migración del servidor en producción
-- [ ] Los forks de soporte (UyPanel_Binaries/FFMPEG/Update) heredan contenido
-      upstream; personalizar sus READMEs/branding cuando se toque
+- [x] Renombrado técnico en producción: /home/uypanel, servicio uypanel, BDs uypanel*
+- [ ] **Reconstruir binarios con prefix /home/uypanel** (third_party/UyPanel_Binaries,
+      ajustar scripts de build) y eliminar el symlink /home/xc_vm — ver nota shim
+- [ ] Personalizar READMEs/branding de los forks de soporte cuando se toque
 - [ ] Re-importar EPG desde las 22 URLs migradas (los datos EPG no se migran)
 - [ ] Revisar página de Settings del panel (quedó en defaults tras migración)
 
