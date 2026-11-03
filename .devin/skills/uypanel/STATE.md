@@ -111,6 +111,20 @@
   `/home/uypanel/public/assets/admin/videos/login-bg.mp4` (servidor). El
   usuario pegará ahí su propio video (mismo nombre). Es archivo LFS en el repo.
 
+### 2026-11-03 — Seed database.sql rebrandeado (LFS escapó al barrido) + release actualizado
+- `database.sql` es LFS: al hacer los barridos era un puntero (grep lo saltó).
+  Referencias corregidas: placeholder `{XC_VM_ID}` → `{UyPanel_ID}` (el código
+  de PlaylistGenerator ya esperaba el nuevo — sin este fix la generación de
+  playlists en instalaciones nuevas mostraba el literal), `server_name` y
+  `Welcome to UyPanel`.
+- **BD de producción**: escaneo completo de 322 columnas de texto — la única
+  referencia residual estaba en `output_devices` (plantilla M3U Plus:
+  `xc_vm-id="{XC_VM_ID}"`), corregida en caliente. La generación de playlists
+  en producción vuelve a funcionar.
+- **Release 2.0.1 re-construido y re-subido** (00:22 UTC) con el payload
+  íntegro: logos nuevos, favicon corregido, donaciones propias, seed limpio.
+  Verificado extrayendo el payload del zip.
+
 ### Pendiente de hacer en el servidor (no requiere código)
 - Nota: el PHP/nginx/redis en producción son los binarios Ubuntu del tarball
   2.0.1 con librerías adaptadas (`libcurl3t64-gnutls`, `libjpeg.so.8` ABI 8 en
