@@ -1,100 +1,100 @@
-# UyPanel — Техническое задание: Система модулей (постепенная интеграция)
+# UyPanel — Especificación técnica: Sistema de módulos (integración gradual)
 
-> **Версия:** 1.0.0 | **Дата:** 2026-03-17
-
----
-
-## Содержание
-
-0. [Анализ текущего состояния](#0-анализ-текущего-состояния)
-1. [Архитектура модулей](#1-архитектура-модулей)
-2. [Совместимость с текущим кодом](#2-совместимость-с-текущим-кодом)
-3. [Поддержка окружений (MAIN / LB)](#3-поддержка-окружений-main--lb)
-4. [Система управления модулями](#4-система-управления-модулями)
-5. [Система настроек модулей](#5-система-настроек-модулей)
-6. [Расширение интерфейса (Navbar)](#6-расширение-интерфейса-navbar)
-7. [Роутинг модулей](#7-роутинг-модулей)
-8. [Изоляция и зависимости](#8-изоляция-и-зависимости)
-9. [Обнаруженные проблемы и баги](#9-обнаруженные-проблемы-и-баги)
-10. [Поэтапный план реализации](#10-поэтапный-план-реализации)
-11. [Риски](#11-риски)
+> **Versión:** 1.0.0 | **Fecha:** 2026-03-17
 
 ---
 
-## 0. Анализ текущего состояния
+## Contenido
 
-### 0.1. Что уже существует
+0. [Análisis del estado actual](#0-análisis-del-estado-actual)
+1. [Arquitectura de módulos](#1-arquitectura-de-módulos)
+2. [Compatibilidad con el código actual](#2-compatibilidad-con-el-código-actual)
+3. [Soporte de entornos (MAIN / LB)](#3-soporte-de-entornos-main--lb)
+4. [Sistema de gestión de módulos](#4-sistema-de-gestión-de-módulos)
+5. [Sistema de configuración de módulos](#5-sistema-de-configuración-de-módulos)
+6. [Extensión de la interfaz (Navbar)](#6-extensión-de-la-interfaz-navbar)
+7. [Enrutado de módulos](#7-enrutado-de-módulos)
+8. [Aislamiento y dependencias](#8-aislamiento-y-dependencias)
+9. [Problemas y bugs detectados](#9-problemas-y-bugs-detectados)
+10. [Plan de implementación por etapas](#10-plan-de-implementación-por-etapas)
+11. [Riesgos](#11-riesgos)
 
-Система модулей **частично реализована** в Phases 5–6 MIGRATION.md. Существуют:
+---
 
-| Компонент | Файл | Состояние |
+## 0. Análisis del estado actual
+
+### 0.1. Qué ya existe
+
+El sistema de módulos está **parcialmente implementado** en las Fases 5–6 de MIGRATION.md. Existen:
+
+| Componente | Archivo | Estado |
 |-----------|------|-----------|
-| Контракт модуля | `src/core/Module/ModuleInterface.php` | ✅ Полный интерфейс: 8 методов |
-| Загрузчик модулей | `src/core/Module/ModuleLoader.php` | ⚠️ Работает в CLI, **НЕ вызывается в web** |
-| Конфигурация overrides | `src/config/modules.php` | ✅ Работает (enabled/disabled/class override) |
-| DI-контейнер | `src/core/Container/ServiceContainer.php` | ✅ Singleton, set/get/factory/tag |
-| Event Dispatcher | `src/core/Events/EventDispatcher.php` | ⚠️ Полностью static, API mismatch (см. §9.1) |
+| Contrato de módulo | `src/core/Module/ModuleInterface.php` | ✅ Interfaz completa: 8 métodos |
+| Cargador de módulos | `src/core/Module/ModuleLoader.php` | ⚠️ Funciona en CLI, **NO se invoca en web** |
+| Configuración overrides | `src/config/modules.php` | ✅ Funciona (enabled/disabled/class override) |
+| Contenedor DI | `src/core/Container/ServiceContainer.php` | ✅ Singleton, set/get/factory/tag |
+| Event Dispatcher | `src/core/Events/EventDispatcher.php` | ⚠️ Completamente static, API mismatch (ver §9.1) |
 | HTTP Router | `src/core/Http/Router.php` | ✅ get/post/api/group/dispatch/dispatchApi |
-| CLI Registry | `src/cli/CommandRegistry.php` | ✅ Модули регистрируют команды через `console.php` |
-| 7 модулей | `src/modules/{name}/` | ⚠️ Только CLI-команды работают, веб-маршруты — мёртвый код |
+| CLI Registry | `src/cli/CommandRegistry.php` | ✅ Los módulos registran comandos vía `console.php` |
+| 7 módulos | `src/modules/{name}/` | ⚠️ Solo los comandos CLI funcionan; las rutas web son código muerto |
 
-### 0.2. Существующие 7 модулей
+### 0.2. Los 7 módulos existentes
 
-| Модуль | module.json | Класс | boot() | registerRoutes() | registerCommands() | getEventSubscribers() |
+| Módulo | module.json | Clase | boot() | registerRoutes() | registerCommands() | getEventSubscribers() |
 |--------|:-----------:|:-----:|:------:|:----------------:|:------------------:|:--------------------:|
-| `watch` | ✅ | ✅ | Регистрирует 3 сервиса | 5 GET + 4 API | `WatchCronJob`, `WatchItemCommand` | `[]` |
-| `plex` | ✅ | ✅ | Регистрирует 3 сервиса | 3 GET + 5 API | `PlexCronJob`, `PlexItemCommand` | `[]` |
-| `tmdb` | ✅ | ✅ | Регистрирует 1 сервис | Пусто (TODO) | `TmdbCronJob`, `TmdbPopularCronJob` | `[]` |
-| `ministra` | ✅ | ✅ | Пусто | Пусто (standalone) | Пусто | `[]` |
-| `fingerprint` | ✅ | ✅ | Пусто | 1 GET + 1 API | Пусто | `[]` |
-| `theft-detection` | ✅ | ✅ | Пусто | 1 GET | Пусто | `[]` |
-| `magscan` | ✅ | ✅ | Пусто | 1 GET + 1 API | Пусто | `[]` |
+| `watch` | ✅ | ✅ | Registra 3 servicios | 5 GET + 4 API | `WatchCronJob`, `WatchItemCommand` | `[]` |
+| `plex` | ✅ | ✅ | Registra 3 servicios | 3 GET + 5 API | `PlexCronJob`, `PlexItemCommand` | `[]` |
+| `tmdb` | ✅ | ✅ | Registra 1 servicio | Vacío (TODO) | `TmdbCronJob`, `TmdbPopularCronJob` | `[]` |
+| `ministra` | ✅ | ✅ | Vacío | Vacío (standalone) | Vacío | `[]` |
+| `fingerprint` | ✅ | ✅ | Vacío | 1 GET + 1 API | Vacío | `[]` |
+| `theft-detection` | ✅ | ✅ | Vacío | 1 GET | Vacío | `[]` |
+| `magscan` | ✅ | ✅ | Vacío | 1 GET + 1 API | Vacío | `[]` |
 
-### 0.3. Критические разрывы
+### 0.3. Brechas críticas
 
-1. **ModuleLoader НЕ вызывается в web-контексте.** `public/index.php` загружает маршруты только из `public/routes/{scope}.php`. `ModuleLoader::bootAll($container, $router)` нигде не вызывается в HTTP-пути. Маршруты, зарегистрированные модулями через `registerRoutes()`, **никогда не попадают в Router**.
+1. **ModuleLoader NO se invoca en el contexto web.** `public/index.php` carga las rutas solo desde `public/routes/{scope}.php`. `ModuleLoader::bootAll($container, $router)` no se llama en ningún punto de la vía HTTP. Las rutas registradas por los módulos vía `registerRoutes()` **nunca llegan al Router**.
 
-2. **Модульные маршруты продублированы в статических файлах.** Маршруты watch, plex, fingerprint и т.д. зарегистрированы и в `WatchModule::registerRoutes()`, и в `public/routes/admin.php`. Модульная регистрация — мёртвый код.
+2. **Las rutas de módulos están duplicadas en archivos estáticos.** Las rutas de watch, plex, fingerprint, etc. están registradas tanto en `WatchModule::registerRoutes()` como en `public/routes/admin.php`. El registro modular es código muerto.
 
-3. **EventDispatcher API mismatch.** `ModuleLoader::bootAll()` (строка 141) вызывает `$dispatcher->listen()`, но `EventDispatcher` имеет метод `subscribe()`, а не `listen()`. Первый модуль с event subscribers вызовет Fatal Error.
+3. **EventDispatcher API mismatch.** `ModuleLoader::bootAll()` (línea 141) llama a `$dispatcher->listen()`, pero `EventDispatcher` tiene el método `subscribe()`, no `listen()`. El primer módulo con event subscribers provocará un Fatal Error.
 
-4. **Navbar — hardcoded HTML.** Навигация в `public/Views/admin/header.php` (~500 строк HTML) полностью статическая. Модули не могут добавить пункты меню динамически. Пункты watch/plex/fingerprint зашиты прямо в HTML header.php.
+4. **Navbar — HTML hardcoded.** La navegación en `public/Views/admin/header.php` (~500 líneas de HTML) es completamente estática. Los módulos no pueden añadir entradas de menú dinámicamente. Las entradas de watch/plex/fingerprint están cosidas directamente en el HTML de header.php.
 
-5. **Нет web-интеграции `boot()`.** Модульные сервисы (зарегистрированные в `boot()`) недоступны в web-контексте, потому что `bootAll()` не вызывается.
+5. **No hay integración web de `boot()`.** Los servicios modulares (registrados en `boot()`) no están disponibles en el contexto web porque `bootAll()` no se invoca.
 
-6. **`events` не зарегистрирован в контейнере.** `bootstrap.php::populateContainer()` не регистрирует `EventDispatcher` под ключом `events`. Даже если `bootAll()` вызвать, `$container->has('events')` вернёт `false`.
+6. **`events` no está registrado en el contenedor.** `bootstrap.php::populateContainer()` no registra `EventDispatcher` bajo la clave `events`. Aunque se llamara a `bootAll()`, `$container->has('events')` devolvería `false`.
 
-### 0.4. Что работает прямо сейчас
+### 0.4. Qué funciona ahora mismo
 
-- ✅ CLI-команды модулей (`console.php` → `ModuleLoader::loadAll()` → `registerAllCommands()`)
-- ✅ Auto-discovery модулей через `modules/*/module.json`
-- ✅ Отключение модулей через `config/modules.php`
-- ✅ Маршруты модулей **фактически** работают, но зарегистрированы статически в `routes/admin.php`, а не через `ModuleInterface::registerRoutes()`
+- ✅ Comandos CLI de módulos (`console.php` → `ModuleLoader::loadAll()` → `registerAllCommands()`)
+- ✅ Auto-discovery de módulos vía `modules/*/module.json`
+- ✅ Desactivación de módulos vía `config/modules.php`
+- ✅ Las rutas de módulos **de facto** funcionan, pero registradas estáticamente en `routes/admin.php`, no vía `ModuleInterface::registerRoutes()`
 
 ---
 
-## 1. Архитектура модулей
+## 1. Arquitectura de módulos
 
-### 1.1. Формат модуля (существующий — без изменений)
+### 1.1. Formato del módulo (existente — sin cambios)
 
 ```
 src/modules/{module-name}/
-├── module.json                    # Метаданные (name, version, description, requires_core, environment)
-├── {ModuleName}Module.php         # Точка входа: implements ModuleInterface
-├── {ModuleName}Service.php        # Бизнес-логика (опционально)
-├── {ModuleName}Repository.php     # SQL-запросы (опционально)
-├── {ModuleName}Controller.php     # HTTP-обработчики (опционально)
-├── config.php                     # Настройки модуля (NEW — §5)
-├── navbar.php                     # Элементы меню (NEW — §6)
-├── views/                         # Шаблоны страниц (опционально)
+├── module.json                    # Metadatos (name, version, description, requires_core, environment)
+├── {ModuleName}Module.php         # Punto de entrada: implements ModuleInterface
+├── {ModuleName}Service.php        # Lógica de negocio (opcional)
+├── {ModuleName}Repository.php     # Consultas SQL (opcional)
+├── {ModuleName}Controller.php     # Handlers HTTP (opcional)
+├── config.php                     # Configuración del módulo (NUEVO — §5)
+├── navbar.php                     # Entradas de menú (NUEVO — §6)
+├── views/                         # Plantillas de páginas (opcional)
 │   ├── {page}.php
 │   └── {page}_scripts.php
-└── assets/                        # CSS/JS/изображения (опционально)
+└── assets/                        # CSS/JS/imágenes (opcional)
 ```
 
-### 1.2. module.json (расширение формата)
+### 1.2. module.json (extensión del formato)
 
-**Текущий формат:**
+**Formato actual:**
 ```json
 {
     "name": "watch",
@@ -104,7 +104,7 @@ src/modules/{module-name}/
 }
 ```
 
-**Расширение (backward-compatible):**
+**Extensión (retrocompatible):**
 ```json
 {
     "name": "watch",
@@ -118,21 +118,21 @@ src/modules/{module-name}/
 }
 ```
 
-| Поле | Тип | Обязательно | По умолчанию | Описание |
+| Campo | Tipo | Obligatorio | Por defecto | Descripción |
 |------|-----|:-----------:|:------------:|----------|
-| `name` | string | ✅ | — | Совпадает с именем директории |
-| `description` | string | ❌ | `""` | Для UI управления |
+| `name` | string | ✅ | — | Coincide con el nombre del directorio |
+| `description` | string | ❌ | `""` | Para gestión en la UI |
 | `version` | string | ✅ | — | semver |
-| `requires_core` | string | ❌ | `"*"` | Версия ядра |
-| `environment` | string | ❌ | `"main"` | `"main"` \| `"lb"` \| `"any"` (NEW — §3) |
-| `has_settings` | bool | ❌ | `false` | Есть ли config.php (NEW — §5) |
-| `has_navbar` | bool | ❌ | `false` | Есть ли navbar.php (NEW — §6) |
-| `dependencies` | string[] | ❌ | `[]` | Другие модули (для порядка загрузки) |
+| `requires_core` | string | ❌ | `"*"` | Versión del núcleo |
+| `environment` | string | ❌ | `"main"` | `"main"` \| `"lb"` \| `"any"` (NUEVO — §3) |
+| `has_settings` | bool | ❌ | `false` | Tiene config.php (NUEVO — §5) |
+| `has_navbar` | bool | ❌ | `false` | Tiene navbar.php (NUEVO — §6) |
+| `dependencies` | string[] | ❌ | `[]` | Otros módulos (para el orden de carga) |
 
-### 1.3. Контракт модуля (существующий `ModuleInterface` — без изменений)
+### 1.3. Contrato del módulo (`ModuleInterface` existente — sin cambios)
 
 ```php
-// src/core/Module/ModuleInterface.php — UЖЕ СУЩЕСТВУЕТ
+// src/core/Module/ModuleInterface.php — YA EXISTE
 interface ModuleInterface {
     public function getName(): string;
     public function getVersion(): string;
@@ -145,110 +145,110 @@ interface ModuleInterface {
 }
 ```
 
-### 1.4. Жизненный цикл (существующий — уточнение порядка)
+### 1.4. Ciclo de vida (existente — precisión del orden)
 
 ```
-1. ModuleLoader::loadAll() — сканирует modules/*/module.json
-   ├── Считывает config/modules.php (overrides: enabled => false)
-   ├── Фильтрует по environment (NEW — §3)
-   ├── Разрешает зависимости (topological sort, NEW — §8.3)
-   └── Создаёт экземпляры: new {ModuleName}Module()
+1. ModuleLoader::loadAll() — escanea modules/*/module.json
+   ├── Lee config/modules.php (overrides: enabled => false)
+   ├── Filtra por environment (NUEVO — §3)
+   ├── Resuelve dependencias (topological sort, NUEVO — §8.3)
+   └── Crea instancias: new {ModuleName}Module()
 
 2. ModuleLoader::bootAll($container, $router)
-   ├── module->boot($container)          — регистрация сервисов (try-catch per module)
-   ├── module->registerRoutes($router)   — HTTP-маршруты
-   └── EventDispatcher::subscribe(...)   — подписки на события
+   ├── module->boot($container)          — registro de servicios (try-catch por módulo)
+   ├── module->registerRoutes($router)   — rutas HTTP
+   └── EventDispatcher::subscribe(...)   — suscripciones a eventos
 
 3. NavbarBuilder::getItems($cache, $loader)
-   ├── Вычислить modules_hash (sorted name:version)
-   ├── Проверить FileCache  →  HIT → вернуть items
+   ├── Calcula modules_hash (name:version ordenados)
+   ├── Consulta FileCache  →  HIT → devuelve items
    └── MISS → buildFromModules()
-       ├── Для каждого модуля: require navbar.php (try-catch per module)
-       ├── validateItem() → strict schema, id uniqueness, max depth
-       └── Группировка по position, сортировка по order
+       ├── Para cada módulo: require navbar.php (try-catch por módulo)
+       ├── validateItem() → schema estricto, unicidad de id, profundidad máxima
+       └── Agrupación por position, ordenamiento por order
 
-4. (CLI only) ModuleLoader::registerAllCommands($registry)
+4. (solo CLI) ModuleLoader::registerAllCommands($registry)
    └── module->registerCommands($registry)
 
 5. Runtime — Router dispatch → Controller → Service → Repository
    └── header.php → NavbarBuilder::render($position, $can)
-       ├── Фильтрация по пермиссиям через $can closure
-       └── HTML-рендеринг модульных пунктов в injection points
+       ├── Filtrado por permisos vía closure $can
+       └── Render HTML de las entradas modulares en los injection points
 
-6. (При отключении)
-   ├── module->uninstall() — очистка таблиц/данных
-   └── NavbarBuilder::invalidate($cache) — сброс кеша navbar
+6. (al desactivar)
+   ├── module->uninstall() — limpieza de tablas/datos
+   └── NavbarBuilder::invalidate($cache) — invalidación de la caché del navbar
 ```
 
 ---
 
-## 2. Совместимость с текущим кодом
+## 2. Compatibilidad con el código actual
 
-### 2.1. Принцип: «одновременная работа двух путей»
+### 2.1. Principio: «dos vías funcionando simultáneamente»
 
-Фаза интеграции **не переключает** маршрутизацию с legacy на модульную за один шаг. Вместо этого:
+La fase de integración **no conmuta** el enrutado de legacy a modular de un solo golpe. En su lugar:
 
-1. Legacy-маршруты в `routes/admin.php` продолжают работать
-2. `ModuleLoader::bootAll()` регистрирует модульные маршруты параллельно
-3. При dispatch — Router сначала ищет модульный маршрут, затем fallback на legacy
-4. По мере миграции legacy-маршруты удаляются из `routes/admin.php`
+1. Las rutas legacy en `routes/admin.php` siguen funcionando
+2. `ModuleLoader::bootAll()` registra las rutas modulares en paralelo
+3. En el dispatch — el Router busca primero la ruta modular, luego fallback a legacy
+4. A medida que se migra, las rutas legacy se eliminan de `routes/admin.php`
 
-### 2.2. Карта изменений
+### 2.2. Mapa de cambios
 
-| Файл | Действие | Фаза |
+| Archivo | Acción | Fase |
 |------|----------|:----:|
-| `src/public/index.php` | Добавить вызов `ModuleLoader::loadAll()` + `bootAll()` | M-1 |
-| `src/bootstrap.php` :: `populateContainer()` | Зарегистрировать `events` в контейнере | M-1 |
-| `src/core/Module/ModuleLoader.php` :: `bootAll()` | Исправить `listen` → `subscribe` | M-1 |
-| `src/core/Events/EventDispatcher.php` | Добавить alias `listen()` → `subscribe()` | M-1 |
-| `src/core/Http/NavbarPositions.php` | Создать: константы injection points (NEW) | M-3 |
-| `src/core/Http/NavbarBuilder.php` | Создать: builder с FileCache + validation (NEW) | M-3 |
-| `src/public/Views/admin/header.php` | Добавить 4 injection points `NavbarBuilder::render()` | M-3 |
-| `src/core/Module/ModuleLoader.php` | Добавить `environment` фильтрацию, dependency sort | M-2 |
-| `src/config/modules.php` | Без изменений | — |
-| `src/core/Module/ModuleInterface.php` | Без изменений | — |
-| `src/core/Container/ServiceContainer.php` | Без изменений | — |
-| `src/core/Http/Router.php` | Без изменений | — |
-| `src/cli/CommandRegistry.php` | Без изменений | — |
-| `src/console.php` | Без изменений | — |
+| `src/public/index.php` | Añadir llamada a `ModuleLoader::loadAll()` + `bootAll()` | M-1 |
+| `src/bootstrap.php` :: `populateContainer()` | Registrar `events` en el contenedor | M-1 |
+| `src/core/Module/ModuleLoader.php` :: `bootAll()` | Corregir `listen` → `subscribe` | M-1 |
+| `src/core/Events/EventDispatcher.php` | Añadir alias `listen()` → `subscribe()` | M-1 |
+| `src/core/Http/NavbarPositions.php` | Crear: constantes de injection points (NUEVO) | M-3 |
+| `src/core/Http/NavbarBuilder.php` | Crear: builder con FileCache + validación (NUEVO) | M-3 |
+| `src/public/Views/admin/header.php` | Añadir 4 injection points `NavbarBuilder::render()` | M-3 |
+| `src/core/Module/ModuleLoader.php` | Añadir filtrado `environment`, orden por dependencias | M-2 |
+| `src/config/modules.php` | Sin cambios | — |
+| `src/core/Module/ModuleInterface.php` | Sin cambios | — |
+| `src/core/Container/ServiceContainer.php` | Sin cambios | — |
+| `src/core/Http/Router.php` | Sin cambios | — |
+| `src/cli/CommandRegistry.php` | Sin cambios | — |
+| `src/console.php` | Sin cambios | — |
 
-### 2.3. Файлы без изменений
+### 2.3. Archivos sin cambios
 
-- Все 7 существующих `{Module}Module.php` — без изменений после M-1
-- `domain/`, `core/` (кроме указанных выше) — без изменений
-- `streaming/` — без изменений
-- `infrastructure/` — без изменений
-- `includes/` — без изменений
+- Los 7 `{Module}Module.php` existentes — sin cambios después de M-1
+- `domain/`, `core/` (excepto lo indicado arriba) — sin cambios
+- `streaming/` — sin cambios
+- `infrastructure/` — sin cambios
+- `includes/` — sin cambios
 
 ---
 
-## 3. Поддержка окружений (MAIN / LB)
+## 3. Soporte de entornos (MAIN / LB)
 
-### 3.1. Текущее определение окружения
+### 3.1. Definición actual de entorno
 
-Окружение определяется на этапе сборки (`Makefile`):
-- **MAIN** — полная сборка (admin + streaming + modules)
-- **LB (LoadBalancer)** — только streaming, без `modules/`, без `public/`, без admin
+El entorno se define en la fase de build (`Makefile`):
+- **MAIN** — build completo (admin + streaming + módulos)
+- **LB (LoadBalancer)** — solo streaming, sin `modules/`, sin `public/`, sin admin
 
-На runtime: константа-файл или `SERVER_TYPE` из БД (`servers` table, `is_main` flag).
+En runtime: archivo-constante o `SERVER_TYPE` de la BD (tabla `servers`, flag `is_main`).
 
-### 3.2. Фильтрация модулей по окружению
+### 3.2. Filtrado de módulos por entorno
 
-**Текущее поведение:** `modules/` полностью исключена из LB-сборки в Makefile. На LB модули вообще не существуют физически.
+**Comportamiento actual:** `modules/` está completamente excluida del build LB en el Makefile. En el LB los módulos no existen físicamente.
 
-**Расширение (для будущих LB-модулей):**
+**Extensión (para futuros módulos LB):**
 
-Добавить в `ModuleLoader::loadAll()` проверку поля `environment` из `module.json`:
+Añadir en `ModuleLoader::loadAll()` la comprobación del campo `environment` de `module.json`:
 
 ```php
-// В ModuleLoader::loadAll(), после чтения module.json:
+// En ModuleLoader::loadAll(), tras leer module.json:
 $manifest = json_decode(file_get_contents($jsonFile), true);
 $env = $manifest['environment'] ?? 'main';
 
-// Определяем текущее окружение
+// Determinamos el entorno actual
 $currentEnv = defined('SERVER_TYPE') && SERVER_TYPE === 'lb' ? 'lb' : 'main';
 
-// Фильтрация
+// Filtrado
 if ($env !== 'any' && $env !== $currentEnv) {
     continue;
 }
@@ -256,39 +256,39 @@ if ($env !== 'any' && $env !== $currentEnv) {
 
 | `environment` | MAIN | LB |
 |:------------:|:----:|:--:|
-| `"main"` | ✅ Загружается | ❌ Пропускается |
-| `"lb"` | ❌ Пропускается | ✅ Загружается |
-| `"any"` | ✅ Загружается | ✅ Загружается |
+| `"main"` | ✅ Se carga | ❌ Se omite |
+| `"lb"` | ❌ Se omite | ✅ Se carga |
+| `"any"` | ✅ Se carga | ✅ Se carga |
 
-### 3.3. Где хранится
+### 3.3. Dónde se guarda
 
-- `module.json` → поле `environment` (per-module declaration)
-- Runtime: `SERVER_TYPE` / `MAIN_SERVER` constant (определяется в `core/Config/AppConfig.php`)
-- Build time: `Makefile` → `LB_DIRS_TO_REMOVE` (физическое исключение)
+- `module.json` → campo `environment` (declaración por módulo)
+- Runtime: `SERVER_TYPE` / constante `MAIN_SERVER` (definida en `core/Config/AppConfig.php`)
+- Build time: `Makefile` → `LB_DIRS_TO_REMOVE` (exclusión física)
 
-### 3.4. Влияние на Makefile
+### 3.4. Impacto en el Makefile
 
-Если в будущем понадобятся LB-модули:
+Si en el futuro hacen falta módulos LB:
 
 ```makefile
-# Сейчас — модули полностью исключены из LB:
-# modules/ отсутствует в LB_DIRS
+# Ahora — los módulos están completamente excluidos del LB:
+# modules/ no está en LB_DIRS
 
-# В будущем — копировать modules/ в LB, удалять main-only:
+# En el futuro — copiar modules/ al LB, eliminando los main-only:
 LB_DIRS += modules
 LB_MODULE_DIRS_TO_REMOVE := modules/watch modules/plex modules/tmdb \
     modules/fingerprint modules/theft-detection modules/magscan
 ```
 
-**На данном этапе изменения Makefile не требуются.** Все 7 текущих модулей — `environment: "main"`.
+**En esta etapa no se requieren cambios en el Makefile.** Los 7 módulos actuales son `environment: "main"`.
 
 ---
 
-## 4. Система управления модулями
+## 4. Sistema de gestión de módulos
 
-### 4.1. Хранение состояния (вкл/выкл)
+### 4.1. Almacenamiento del estado (on/off)
 
-**Текущая реализация (сохраняется):**
+**Implementación actual (se conserva):**
 
 ```php
 // src/config/modules.php
@@ -297,37 +297,37 @@ return [
 ];
 ```
 
-По умолчанию все обнаруженные модули **включены**. `config/modules.php` хранит только отключения.
+Por defecto, todos los módulos detectados están **activados**. `config/modules.php` solo guarda las desactivaciones.
 
-### 4.2. Загрузка/отключение (уже работает)
+### 4.2. Activación/desactivación (ya funciona)
 
 ```
-Включение:   1. Разместить модуль в modules/{name}/
-              2. Добавить module.json
-              3. Модуль обнаруживается автоматически при следующем запросе
+Activar:     1. Colocar el módulo en modules/{name}/
+              2. Añadir module.json
+              3. El módulo se detecta automáticamente en la siguiente petición
 
-Отключение:  1. Добавить в config/modules.php: 'name' => ['enabled' => false]
-              2. Модуль не загружается, но файлы остаются
+Desactivar:  1. Añadir en config/modules.php: 'name' => ['enabled' => false]
+              2. El módulo no se carga, pero los archivos quedan
 
-Удаление:    1. Вызвать module->uninstall() (если нужна очистка БД)
-              2. Удалить директорию modules/{name}/
+Eliminar:    1. Llamar module->uninstall() (si hace falta limpiar la BD)
+              2. Eliminar el directorio modules/{name}/
 ```
 
-### 4.3. API для управления (NEW)
+### 4.3. API de gestión (NUEVO)
 
-Новый контроллер: `public/Controllers/Admin/ModuleManagerController.php`
+Nuevo controlador: `public/Controllers/Admin/ModuleManagerController.php`
 
 ```php
 class ModuleManagerController {
 
     /**
-     * GET /modules — список модулей с их состоянием
+     * GET /modules — lista de módulos con su estado
      */
     public function index() {
         $loader = new ModuleLoader();
         $loader->loadAll();
 
-        // Собираем информацию обо всех модулях (включая отключённые)
+        // Recopilamos la información de todos los módulos (incluidos los desactivados)
         $allModules = [];
         $modulesDir = MAIN_HOME . 'modules';
         foreach (glob($modulesDir . '/*/module.json') as $jsonFile) {
@@ -343,27 +343,27 @@ class ModuleManagerController {
             ];
         }
 
-        // Передаём во view
+        // Pasamos a la view
         $rModules = $allModules;
         include VIEW_PATH . '/admin/modules/list.php';
     }
 
     /**
-     * API: enable/disable модуля
+     * API: enable/disable del módulo
      * POST action=module_toggle, module={name}, enabled={0|1}
      */
     public function apiToggle() {
         $name = $_POST['module'] ?? '';
         $enabled = (bool)($_POST['enabled'] ?? true);
 
-        // Валидация: модуль существует
+        // Validación: el módulo existe
         $modulePath = MAIN_HOME . 'modules/' . basename($name);
         if (!is_dir($modulePath) || !file_exists($modulePath . '/module.json')) {
             echo json_encode(['result' => false, 'error' => 'Module not found']);
             exit;
         }
 
-        // Обновляем config/modules.php
+        // Actualizamos config/modules.php
         $configPath = CONFIG_PATH . 'modules.php';
         $overrides = file_exists($configPath) ? require $configPath : [];
         if (!is_array($overrides)) {
@@ -376,7 +376,7 @@ class ModuleManagerController {
             $overrides[$name] = ['enabled' => false];
         }
 
-        // Записываем
+        // Guardamos
         $content = "<?php\nreturn " . var_export($overrides, true) . ";\n";
         file_put_contents($configPath, $content, LOCK_EX);
 
@@ -386,9 +386,9 @@ class ModuleManagerController {
 }
 ```
 
-**Маршруты:**
+**Rutas:**
 ```php
-// В public/routes/admin.php:
+// En public/routes/admin.php:
 $router->get('modules', [ModuleManagerController::class, 'index'], [
     'permission' => ['adv', 'settings'],
 ]);
@@ -397,29 +397,29 @@ $router->api('module_toggle', [ModuleManagerController::class, 'apiToggle'], [
 ]);
 ```
 
-### 4.4. Graceful degradation
+### 4.4. Degradación elegante
 
-Когда модуль отключён или удалён:
+Cuando un módulo está desactivado o eliminado:
 
-1. `ModuleLoader` пропускает его при `loadAll()` — маршруты не регистрируются
-2. Navbar items из `navbar.php` не загружаются
-3. CLI-команды не регистрируются
-4. Контроллер модуля не инстанцируется → 404 при попытке доступа к странице модуля
-5. Event subscribers не подписываются → ядро не вызывает модуль
+1. `ModuleLoader` lo omite en `loadAll()` — sus rutas no se registran
+2. Los navbar items de `navbar.php` no se cargan
+3. Los comandos CLI no se registran
+4. El controlador del módulo no se instancia → 404 al intentar acceder a la página del módulo
+5. Los event subscribers no se suscriben → el núcleo no llama al módulo
 
-**Критерий:** удаление `rm -rf modules/watch` не вызывает ни одной ошибки ни в web, ни в CLI.
+**Criterio:** eliminar `rm -rf modules/watch` no provoca ningún error ni en web ni en CLI.
 
 ---
 
-## 5. Система настроек модулей
+## 5. Sistema de configuración de módulos
 
-### 5.1. Условия наличия настроек
+### 5.1. Condiciones para tener configuración
 
-Модуль **имеет настройки** если:
-- `module.json` содержит `"has_settings": true`
-- Файл `modules/{name}/config.php` существует и возвращает массив полей
+Un módulo **tiene configuración** si:
+- `module.json` contiene `"has_settings": true`
+- El archivo `modules/{name}/config.php` existe y devuelve un array de campos
 
-### 5.2. Контракт config.php (формат описания полей)
+### 5.2. Contrato de config.php (formato de descripción de campos)
 
 ```php
 // modules/watch/config.php
@@ -452,31 +452,31 @@ return [
 ];
 ```
 
-### 5.3. Хранение данных
+### 5.3. Almacenamiento de datos
 
-Настройки модулей хранятся в **существующей таблице `settings`** с префиксом `module_{name}_`:
+La configuración de los módulos se guarda en la **tabla `settings` existente** con el prefijo `module_{name}_`:
 
 ```sql
--- Пример для модуля watch:
+-- Ejemplo para el módulo watch:
 INSERT INTO settings (`key`, `value`) VALUES ('module_watch_enabled', '1');
 INSERT INTO settings (`key`, `value`) VALUES ('module_watch_interval', '300');
 ```
 
-Доступ через существующий `SettingsManager`:
+Acceso vía el `SettingsManager` existente:
 
 ```php
-// Чтение:
+// Lectura:
 $enabled = SettingsManager::get('module_watch_enabled', 0);
 
-// Запись (из контроллера настроек):
+// Escritura (desde el controlador de configuración):
 SettingsManager::update('module_watch_enabled', $value);
 ```
 
-### 5.4. Генерация UI (автоматическая)
+### 5.4. Generación de UI (automática)
 
-Новый partial: `public/Views/admin/modules/settings_form.php`
+Nuevo partial: `public/Views/admin/modules/settings_form.php`
 
-Генерирует HTML-форму из `config.php` дескриптора, аналогично тому, как текущие `settings_*.php` работают в ядре. Тип поля → HTML input:
+Genera el formulario HTML desde el descriptor `config.php`, de forma análoga a como los actuales `settings_*.php` funcionan en el núcleo. Tipo de campo → input HTML:
 
 | `type` | HTML |
 |--------|------|
@@ -486,23 +486,23 @@ SettingsManager::update('module_watch_enabled', $value);
 | `select` | `<select class="form-control">` |
 | `textarea` | `<textarea class="form-control">` |
 
-**Маршрут:** Каждый модуль с `has_settings: true` автоматически получает `settings/{name}` маршрут, обрабатываемый `ModuleManagerController::settings($name)`.
+**Ruta:** Cada módulo con `has_settings: true` obtiene automáticamente la ruta `settings/{name}`, atendida por `ModuleManagerController::settings($name)`.
 
-### 5.5. Альтернатива: собственная страница настроек
+### 5.5. Alternativa: página de configuración propia
 
-Модуль **может** НЕ использовать auto-generated UI и вместо этого предоставить собственный view через `registerRoutes()`. Пример: `WatchModule` уже регистрирует `settings/watch` → `WatchController::settings()` с кастомным view.
+El módulo **puede** NO usar la UI auto-generada y en su lugar proveer una view propia vía `registerRoutes()`. Ejemplo: `WatchModule` ya registra `settings/watch` → `WatchController::settings()` con una view propia.
 
-Автогенерация — fallback для простых модулей без собственного контроллера настроек.
+La auto-generación es el fallback para módulos simples sin controlador de configuración propio.
 
 ---
 
-## 6. Расширение интерфейса (Navbar)
+## 6. Extensión de la interfaz (Navbar)
 
-### 6.1. Анализ текущей реализации
+### 6.1. Análisis de la implementación actual
 
-Файл: `src/public/Views/admin/header.php`, строки 273–714.
+Archivo: `src/public/Views/admin/header.php`, líneas 273–714.
 
-Навигация — **полностью hardcoded HTML** внутри `<ul class="navigation-menu">`. Структура:
+La navegación es **HTML totalmente hardcoded** dentro de `<ul class="navigation-menu">`. Estructura:
 
 ```
 Dashboard → (submenu)
@@ -512,44 +512,44 @@ Content → Streams, Created Channels, Movies, Series, Radio, Archive, EPG View
 Bouquets → Add, Manage, Order
 Management → Service Setup (Packages, Categories, Groups, EPG, Profiles, Plex, Watch),
              Access Codes, Security, Tools (Channel Order, Fingerprint, Mass Delete, ...),
-             Logs (17 пунктов), Tickets
+             Logs (17 entradas), Tickets
 Providers → Add, Manage
 ```
 
-Каждый пункт обёрнут в `Authorization::check('adv', '...')`. Модульные пункты (Plex, Watch, Fingerprint, Theft Detection) зашиты в HTML напрямую.
+Cada entrada está envuelta en `Authorization::check('adv', '...')`. Las entradas modulares (Plex, Watch, Fingerprint, Theft Detection) están cosidas directamente en el HTML.
 
-### 6.2. Почему нужен data-driven подход
+### 6.2. Por qué hace falta un enfoque data-driven
 
-Текущая структура — монолитный HTML. Модули не могут добавить пункты меню без хардкода в header.php.
+La estructura actual es HTML monolítico. Los módulos no pueden añadir entradas de menú sin hardcodear en header.php.
 
-Требования:
-- Модули декларируют navbar items через `navbar.php`
-- Данные (структура items) кешируются — пересборка только при изменении списка модулей
-- HTML рендерится на каждый запрос с фильтрацией по пермиссиям текущего пользователя (кешировать HTML нельзя — у каждого админа свои права)
-- Битый модуль не ломает весь navbar — fail-safe per-module
-- Строгая валидация формата items — невалидный модуль логируется и пропускается
+Requisitos:
+- Los módulos declaran navbar items vía `navbar.php`
+- Los datos (estructura de items) se cachean — rebuild solo cuando cambia la lista de módulos
+- El HTML se renderiza en cada petición con filtrado por los permisos del usuario actual (no se puede cachear el HTML — cada admin tiene sus permisos)
+- Un módulo roto no rompe todo el navbar — fail-safe por módulo
+- Validación estricta del formato de items — el módulo inválido se loguea y se omite
 
-### 6.3. Архитектура: 4 точки инъекции в header.php
+### 6.3. Arquitectura: 4 puntos de inyección en header.php
 
-**Стратегия: точечная инъекция, а не полное переписывание.**
+**Estrategia: inyección puntual, no reescritura completa.**
 
-Не трогаем 90% header.php (core-пункты: Dashboard, Servers, Users, Content, Bouquets, Management, Providers). Добавляем **4 injection points** внутри существующих секций, где сейчас живут hardcoded модульные пункты:
+No tocamos el 90% de header.php (entradas core: Dashboard, Servers, Users, Content, Bouquets, Management, Providers). Añadimos **4 injection points** dentro de las secciones existentes, donde ahora viven las entradas modulares hardcodeadas:
 
 ```php
-// header.php — внутри Management > Service Setup, после "Watch Folders":
+// header.php — dentro de Management > Service Setup, tras "Watch Folders":
 <?php NavbarBuilder::render(NavbarPositions::MANAGEMENT_SERVICE_SETUP, $can); ?>
 
-// header.php — внутри Management > Tools, после "Stream Tools":
+// header.php — dentro de Management > Tools, tras "Stream Tools":
 <?php NavbarBuilder::render(NavbarPositions::MANAGEMENT_TOOLS, $can); ?>
 
-// header.php — внутри Management > Logs, перед закрывающим </ul>:
+// header.php — dentro de Management > Logs, antes del </ul> de cierre:
 <?php NavbarBuilder::render(NavbarPositions::MANAGEMENT_LOGS, $can); ?>
 
-// header.php — после секции Providers, перед закрывающим </ul> navigation-menu:
+// header.php — tras la sección Providers, antes del </ul> de cierre de navigation-menu:
 <?php NavbarBuilder::render(NavbarPositions::TOP, $can); ?>
 ```
 
-Переменная `$can` определяется один раз в начале header.php:
+La variable `$can` se define una vez al inicio de header.php:
 
 ```php
 $can = function ($type, $code) {
@@ -557,30 +557,30 @@ $can = function ($type, $code) {
 };
 ```
 
-Это injection point: в тестах или при будущем ACL-рефакторинге `$can` заменяется без изменения NavbarBuilder.
+Es un injection point: en tests o en un futuro refactor de ACL, `$can` se sustituye sin cambiar NavbarBuilder.
 
-**Core navbar — transitional architecture.** Injection points через `NavbarPositions` формализуют контракт. Если в будущем core navbar тоже станет data-driven, позиции уже стабильны. Но переписывание core navbar — отдельная задача, не часть M-3.
+**Core navbar — arquitectura transicional.** Los injection points vía `NavbarPositions` formalizan el contrato. Si en el futuro el core navbar también pasa a ser data-driven, las posiciones ya están estables. Pero reescribir el core navbar es una tarea aparte, no parte de M-3.
 
-### 6.4. Класс NavbarPositions
+### 6.4. Clase NavbarPositions
 
-Новый файл: `src/core/Http/NavbarPositions.php`
+Archivo nuevo: `src/core/Http/NavbarPositions.php`
 
 ```php
 class NavbarPositions {
 
-	/** После секции Providers — top-level модульные меню */
+	/** Tras la sección Providers — menús modulares de nivel superior */
 	const TOP = 'top';
 
-	/** Внутри Management → Service Setup */
+	/** Dentro de Management → Service Setup */
 	const MANAGEMENT_SERVICE_SETUP = 'management.service_setup';
 
-	/** Внутри Management → Tools */
+	/** Dentro de Management → Tools */
 	const MANAGEMENT_TOOLS = 'management.tools';
 
-	/** Внутри Management → Logs */
+	/** Dentro de Management → Logs */
 	const MANAGEMENT_LOGS = 'management.logs';
 
-	/** Все допустимые позиции (для валидации) */
+	/** Todas las posiciones válidas (para validación) */
 	const ALL = [
 		self::TOP,
 		self::MANAGEMENT_SERVICE_SETUP,
@@ -588,46 +588,46 @@ class NavbarPositions {
 		self::MANAGEMENT_LOGS,
 	];
 
-	/** Позиция по умолчанию, если модуль не указал */
+	/** Posición por defecto si el módulo no indicó una */
 	const DEFAULT_POSITION = self::TOP;
 }
 ```
 
-### 6.5. Класс NavbarBuilder
+### 6.5. Clase NavbarBuilder
 
-Новый файл: `src/core/Http/NavbarBuilder.php`
+Archivo nuevo: `src/core/Http/NavbarBuilder.php`
 
-Разделение ответственности:
-- **Data layer** (`buildFromModules`, `getItems`) — сбор и кеширование структуры items
-- **Validation** (`validateItem`, `validatePosition`) — строгая проверка формата
-- **Presentation** (`render`) — HTML-рендеринг с фильтрацией по пермиссиям
+Separación de responsabilidades:
+- **Data layer** (`buildFromModules`, `getItems`) — recolección y caché de la estructura de items
+- **Validation** (`validateItem`, `validatePosition`) — comprobación estricta del formato
+- **Presentation** (`render`) — render HTML con filtrado por permisos
 
 ```php
 class NavbarBuilder {
 
-	/** Максимальная глубина вложенности (UI ограничение) */
+	/** Profundidad máxima de anidamiento (límite de UI) */
 	const MAX_DEPTH = 2;
 
-	/** Ключ кеша */
+	/** Clave de caché */
 	const CACHE_KEY = 'navbar_modules';
 
-	/** Safety net TTL — 1 час. Основная инвалидация через modules_hash */
+	/** Safety net TTL — 1 hora. La invalidación principal es vía modules_hash */
 	const CACHE_TTL = 3600;
 
-	/** @var array|null Закешированные items (in-memory per-request) */
+	/** @var array|null Items cacheados (in-memory por petición) */
 	private static $cachedItems = null;
 
 	// ─── Data Layer ────────────────────────────────────────────────
 
 	/**
-	 * Получить items из кеша или собрать заново.
+	 * Obtener items de la caché o reconstruirlos.
 	 *
-	 * Кеш автоматически инвалидируется при изменении списка модулей
-	 * (добавление, удаление, включение, отключение, обновление версии).
+	 * La caché se invalida automáticamente al cambiar la lista de módulos
+	 * (añadir, eliminar, activar, desactivar, actualizar versión).
 	 *
-	 * @param FileCache $cache Кеш-драйвер
-	 * @param ModuleLoader $loader Загрузчик модулей (уже loadAll)
-	 * @return array Items grouped by position
+	 * @param FileCache $cache Driver de caché
+	 * @param ModuleLoader $loader Cargador de módulos (ya con loadAll)
+	 * @return array Items agrupados por position
 	 */
 	public static function getItems(FileCache $cache, ModuleLoader $loader) {
 		if (self::$cachedItems !== null) {
@@ -636,14 +636,14 @@ class NavbarBuilder {
 
 		$currentHash = self::getModulesHash($loader);
 
-		// Чтение кеша
+		// Lectura de caché
 		$cached = $cache->get(self::CACHE_KEY, self::CACHE_TTL);
 		if ($cached !== false && isset($cached['hash']) && $cached['hash'] === $currentHash) {
 			self::$cachedItems = $cached['items'];
 			return self::$cachedItems;
 		}
 
-		// Cache miss или hash mismatch → пересборка
+		// Cache miss o hash mismatch → rebuild
 		$items = self::buildFromModules($loader);
 		$cache->set(self::CACHE_KEY, [
 			'hash' => $currentHash,
@@ -655,13 +655,13 @@ class NavbarBuilder {
 	}
 
 	/**
-	 * Собрать items из navbar.php всех загруженных модулей.
+	 * Construir items desde el navbar.php de todos los módulos cargados.
 	 *
-	 * Fail-safe: ошибка в navbar.php одного модуля не ломает остальные.
-	 * Невалидные items логируются и пропускаются.
+	 * Fail-safe: un error en el navbar.php de un módulo no rompe los demás.
+	 * Los items inválidos se loguean y se omiten.
 	 *
 	 * @param ModuleLoader $loader
-	 * @return array Items grouped by position: ['top' => [...], 'management.tools' => [...]]
+	 * @return array Items agrupados por position: ['top' => [...], 'management.tools' => [...]]
 	 */
 	public static function buildFromModules(ModuleLoader $loader) {
 		$grouped = array_fill_keys(NavbarPositions::ALL, []);
@@ -701,7 +701,7 @@ class NavbarBuilder {
 			}
 		}
 
-		// Сортировка по order внутри каждой позиции
+		// Ordenamiento por order dentro de cada posición
 		foreach ($grouped as $pos => &$items) {
 			usort($items, function ($a, $b) {
 				return ($a['order'] ?? 100) - ($b['order'] ?? 100);
@@ -712,10 +712,10 @@ class NavbarBuilder {
 	}
 
 	/**
-	 * Явная инвалидация кеша navbar.
+	 * Invalidación explícita de la caché del navbar.
 	 *
-	 * Вызывается из ModuleManagerController::apiToggle() при вкл/выкл модуля.
-	 * Safety net: даже без вызова, hash fingerprint обнаружит изменение.
+	 * Se llama desde ModuleManagerController::apiToggle() al activar/desactivar un módulo.
+	 * Safety net: incluso sin la llamada, el hash fingerprint detectará el cambio.
 	 *
 	 * @param FileCache $cache
 	 */
@@ -727,10 +727,10 @@ class NavbarBuilder {
 	// ─── Cache Fingerprint ─────────────────────────────────────────
 
 	/**
-	 * Вычислить hash от текущего списка модулей.
+	 * Calcular el hash de la lista actual de módulos.
 	 *
-	 * Hash меняется при: добавлении/удалении модуля, вкл/выкл,
-	 * обновлении версии, изменении has_navbar в module.json.
+	 * El hash cambia al: añadir/eliminar módulo, activar/desactivar,
+	 * actualizar versión, cambiar has_navbar en module.json.
 	 *
 	 * @param ModuleLoader $loader
 	 * @return string md5 hash
@@ -747,24 +747,24 @@ class NavbarBuilder {
 	// ─── Validation ────────────────────────────────────────────────
 
 	/**
-	 * Валидация одного item.
+	 * Validación de un item.
 	 *
-	 * Проверяет:
-	 * - Обязательные поля (id, label, url)
-	 * - Уникальность id (глобально)
-	 * - Допустимость position (в NavbarPositions::ALL)
-	 * - Максимальная глубина вложенности (MAX_DEPTH)
-	 * - Рекурсивная проверка children
+	 * Comprueba:
+	 * - Campos obligatorios (id, label, url)
+	 * - Unicidad de id (global)
+	 * - Validez de position (en NavbarPositions::ALL)
+	 * - Profundidad máxima de anidamiento (MAX_DEPTH)
+	 * - Comprobación recursiva de children
 	 *
-	 * @param array $item Элемент навигации
-	 * @param int $depth Текущая глубина (0 = top-level)
-	 * @param array &$globalIds Set id, которые уже заняты (для дедупликации)
-	 * @return array Массив ошибок (пустой = валидно)
+	 * @param array $item Elemento de navegación
+	 * @param int $depth Profundidad actual (0 = top-level)
+	 * @param array &$globalIds Set de ids ya ocupados (para deduplicación)
+	 * @return array Array de errores (vacío = válido)
 	 */
 	public static function validateItem(array $item, int $depth, array &$globalIds) {
 		$errors = [];
 
-		// Обязательные поля
+		// Campos obligatorios
 		if (empty($item['id']) || !is_string($item['id'])) {
 			$errors[] = "missing or invalid 'id'";
 		}
@@ -775,7 +775,7 @@ class NavbarBuilder {
 			$errors[] = "missing or invalid 'url'";
 		}
 
-		// Уникальность id
+		// Unicidad de id
 		if (!empty($item['id'])) {
 			if (isset($globalIds[$item['id']])) {
 				$errors[] = "duplicate id '{$item['id']}' (already registered by module '{$globalIds[$item['id']]}')";
@@ -784,21 +784,21 @@ class NavbarBuilder {
 			}
 		}
 
-		// Валидация position (только для top-level items)
+		// Validación de position (solo para items top-level)
 		if ($depth === 0 && !empty($item['position'])) {
 			if (!in_array($item['position'], NavbarPositions::ALL, true)) {
 				$errors[] = "invalid position '{$item['position']}'. Allowed: " . implode(', ', NavbarPositions::ALL);
 			}
 		}
 
-		// Проверка permission формата
+		// Comprobación del formato de permission
 		if (isset($item['permission'])) {
 			if (!is_array($item['permission']) || count($item['permission']) !== 2) {
 				$errors[] = "'permission' must be [type, code] array";
 			}
 		}
 
-		// Рекурсивная проверка children
+		// Comprobación recursiva de children
 		if (!empty($item['children'])) {
 			if ($depth >= self::MAX_DEPTH - 1) {
 				$errors[] = "children exceed max depth " . self::MAX_DEPTH;
@@ -821,12 +821,12 @@ class NavbarBuilder {
 	// ─── Presentation ──────────────────────────────────────────────
 
 	/**
-	 * Отрендерить items для конкретной injection point.
+	 * Renderizar los items de un injection point concreto.
 	 *
-	 * Вызывается из header.php. Фильтрация по пермиссиям — через $can closure.
+	 * Se llama desde header.php. El filtrado por permisos — vía closure $can.
 	 *
-	 * @param string $position Позиция из NavbarPositions (e.g. 'management.tools')
-	 * @param callable $can fn(string $type, string $code): bool — проверка пермиссий
+	 * @param string $position Posición de NavbarPositions (p. ej. 'management.tools')
+	 * @param callable $can fn(string $type, string $code): bool — comprobación de permisos
 	 */
 	public static function render(string $position, callable $can) {
 		if (self::$cachedItems === null) {
@@ -888,7 +888,7 @@ class NavbarBuilder {
 	}
 
 	/**
-	 * Сбросить in-memory кеш (для тестов)
+	 * Reset de la caché in-memory (para tests)
 	 */
 	public static function reset() {
 		self::$cachedItems = null;
@@ -896,52 +896,52 @@ class NavbarBuilder {
 }
 ```
 
-### 6.6. Strict item schema
+### 6.6. Schema estricto de items
 
-Каждый элемент `navbar.php` ДОЛЖЕН соответствовать схеме:
+Cada elemento de `navbar.php` DEBE cumplir el schema:
 
-| Поле | Обязательно | Тип | Ограничение |
+| Campo | Obligatorio | Tipo | Restricción |
 |------|:----------:|------|--------------|
-| `id` | ✅ | string | Уникально глобально, namespaced: `watch.folders`, `plex.sync` |
-| `label` | ✅ | string | Non-empty, отображаемый текст |
-| `url` | ✅ | string | Non-empty, относительный URL или `#` для parent |
-| `permission` | ❌ | array | `[type, code]` — два элемента, или null (= видим всем) |
-| `icon` | ❌ | string | CSS-класс иконки: `fas fa-folder` |
-| `position` | ❌ | string | Одно из `NavbarPositions::ALL` (default: `top`) |
-| `order` | ❌ | int | Сортировка внутри позиции (default: 100) |
-| `children` | ❌ | array | Та же схема, НО без children (max depth = 2) |
+| `id` | ✅ | string | Único globalmente, namespaced: `watch.folders`, `plex.sync` |
+| `label` | ✅ | string | Non-empty, texto visible |
+| `url` | ✅ | string | Non-empty, URL relativa o `#` para parent |
+| `permission` | ❌ | array | `[type, code]` — dos elementos, o null (= visible para todos) |
+| `icon` | ❌ | string | Clase CSS del icono: `fas fa-folder` |
+| `position` | ❌ | string | Una de `NavbarPositions::ALL` (default: `top`) |
+| `order` | ❌ | int | Orden dentro de la posición (default: 100) |
+| `children` | ❌ | array | El mismo schema, PERO sin children (max depth = 2) |
 
-**Валидация выполняется при build.** Невалидный item логируется в `error_log` с именем модуля и пропускается. Весь navbar продолжает работать.
+**La validación se ejecuta en el build.** El item inválido se loguea en `error_log` con el nombre del módulo y se omite. Todo el navbar sigue funcionando.
 
-### 6.7. Кеширование
+### 6.7. Caché
 
-#### Стратегия: modules_hash fingerprint
+#### Estrategia: fingerprint modules_hash
 
-Один механизм вместо трёх:
+Un solo mecanismo en lugar de tres:
 
 ```
 getItems(cache, loader)
-  ├── hash = md5(sorted list of "name:version" all loaded modules)
+  ├── hash = md5(lista ordenada de "name:version" de todos los módulos cargados)
   ├── cached = FileCache::get('navbar_modules', TTL=3600)
   ├── if cached.hash === hash → return cached.items     (HIT)
   └── else → buildFromModules() → validate → cache.set() (MISS)
 ```
 
-**Когда hash меняется автоматически:**
-- Добавление/удаление директории модуля
-- Включение/отключение через `config/modules.php`
-- Обновление версии модуля
+**Cuándo cambia el hash automáticamente:**
+- Añadir/eliminar el directorio de un módulo
+- Activar/desactivar vía `config/modules.php`
+- Actualizar la versión del módulo
 
-**Explicit invalidation (дополнительно):**
-`NavbarBuilder::invalidate($cache)` вызывается из `ModuleManagerController::apiToggle()` для мгновенной реакции в текущем запросе.
+**Invalidación explícita (adicional):**
+`NavbarBuilder::invalidate($cache)` se llama desde `ModuleManagerController::apiToggle()` para reacción instantánea en la petición actual.
 
-**Safety net:** TTL = 3600 секунд. Даже при повреждённом кеше или ручном копировании модулей — пересборка через 1 час максимум.
+**Safety net:** TTL = 3600 segundos. Incluso con caché corrupta o copia manual de módulos — rebuild en 1 hora como máximo.
 
-**Что кешируется:** Только структура данных (массив items, grouped by position). **НЕ** HTML. Рендеринг с фильтрацией по пермиссиям — на каждый запрос.
+**Qué se cachea:** Solo la estructura de datos (array de items, agrupados por position). **NO** el HTML. El render con filtrado por permisos — en cada petición.
 
-**Формат хранения:** igbinary через `FileCache` (как весь проект). Путь: `CACHE_TMP_PATH . 'navbar_modules'`.
+**Formato de almacenamiento:** igbinary vía `FileCache` (como todo el proyecto). Ruta: `CACHE_TMP_PATH . 'navbar_modules'`.
 
-### 6.8. Формат navbar.php модуля
+### 6.8. Formato del navbar.php del módulo
 
 ```php
 // modules/watch/navbar.php
@@ -984,151 +984,152 @@ return [
 ];
 ```
 
-### 6.9. Интеграция в жизненный цикл
+### 6.9. Integración en el ciclo de vida
 
-**В `index.php` (после `ModuleLoader::bootAll()`):**
+**En `index.php` (tras `ModuleLoader::bootAll()`):**
 
 ```php
-// Navbar: собрать items (из кеша или rebuild)
+// Navbar: recolectar items (de caché o rebuild)
 $navbarCache = new FileCache(CACHE_TMP_PATH);
 NavbarBuilder::getItems($navbarCache, $moduleLoader);
 ```
 
-**В `header.php` (4 injection points):**
+**En `header.php` (4 injection points):**
 
 ```php
-// В начале header.php:
+// Al inicio de header.php:
 $can = function ($type, $code) {
 	return Authorization::check($type, $code);
 };
 
-// Внутри Management → Service Setup (после hardcoded Plex/Watch):
+// Dentro de Management → Service Setup (tras el Plex/Watch hardcodeado):
 <?php NavbarBuilder::render(NavbarPositions::MANAGEMENT_SERVICE_SETUP, $can); ?>
 
-// Внутри Management → Tools (после hardcoded Fingerprint):
+// Dentro de Management → Tools (tras el Fingerprint hardcodeado):
 <?php NavbarBuilder::render(NavbarPositions::MANAGEMENT_TOOLS, $can); ?>
 
-// Внутри Management → Logs (после hardcoded Theft Detection):
+// Dentro de Management → Logs (tras el Theft Detection hardcodeado):
 <?php NavbarBuilder::render(NavbarPositions::MANAGEMENT_LOGS, $can); ?>
 
-// После секции Providers:
+// Tras la sección Providers:
 <?php NavbarBuilder::render(NavbarPositions::TOP, $can); ?>
 ```
 
-**В `ModuleManagerController::apiToggle()` (при вкл/выкл модуля):**
+**En `ModuleManagerController::apiToggle()` (al activar/desactivar un módulo):**
 
 ```php
-// После записи config/modules.php:
+// Tras escribir config/modules.php:
 NavbarBuilder::invalidate(new FileCache(CACHE_TMP_PATH));
 ```
 
-### 6.10. Миграция существующих пунктов (постепенная)
+### 6.10. Migración de las entradas existentes (gradual)
 
-**Фаза M-3a:** Создать `NavbarPositions.php` и `NavbarBuilder.php`. Добавить 4 injection points в header.php. Подключить в `index.php` после `bootAll()`.
+**Fase M-3a:** Crear `NavbarPositions.php` y `NavbarBuilder.php`. Añadir los 4 injection points en header.php. Conectar en `index.php` tras `bootAll()`.
 
-**Фаза M-3b:** Создать `navbar.php` для модулей: watch, plex, fingerprint, theft-detection, magscan. Каждый модуль получает корректную `position` и `order`.
+**Fase M-3b:** Crear `navbar.php` para los módulos: watch, plex, fingerprint, theft-detection, magscan. Cada módulo obtiene su `position` y `order` correctos.
 
-**Фаза M-3c:** Удалить hardcoded пункты модулей из header.php (Plex Sync, Watch Folders, Fingerprint, Theft Detection из Management секции). Теперь они приходят через NavbarBuilder.
+**Fase M-3c:** Eliminar las entradas modulares hardcodeadas de header.php (Plex Sync, Watch Folders, Fingerprint, Theft Detection de la sección Management). Ahora llegan vía NavbarBuilder.
 
-**Что НЕ трогаем:** Core-пункты (Dashboard, Servers, Users, Content, Bouquets, Management каркас, Providers) остаются hardcoded. Они — часть ядра, не модулей.
-### 7.2. Проблема: маршруты не загружаются в web (будет исправлено в M-1)
+**Qué NO tocamos:** Las entradas core (Dashboard, Servers, Users, Content, Bouquets, esqueleto de Management, Providers) quedan hardcodeadas. Son parte del núcleo, no de módulos.
 
-Текущий `public/index.php` загружает маршруты только из файлов:
+### 7.2. Problema: las rutas no se cargan en web (se corregirá en M-1)
+
+El actual `public/index.php` carga las rutas solo desde los archivos:
 ```php
 require_once $routesDir . $scope . '.php';   // routes/admin.php
 require_once $routesDir . 'api.php';         // routes/api.php
 ```
 
-**Решение (M-1):** После загрузки статических маршрутов, вызвать `ModuleLoader::bootAll()`:
+**Solución (M-1):** Tras cargar las rutas estáticas, llamar a `ModuleLoader::bootAll()`:
 
 ```php
-// В public/index.php, после require routes/{scope}.php:
+// En public/index.php, tras el require de routes/{scope}.php:
 
 $moduleLoader = new ModuleLoader();
 $moduleLoader->loadAll();
 $moduleLoader->bootAll(ServiceContainer::getInstance(), $router);
 ```
 
-### 7.3. Как избежать конфликтов
+### 7.3. Cómo evitar conflictos
 
-**Правило 1: Модульный префикс.**
-Все маршруты модуля регистрируются через `$router->group($moduleName, ...)`, что автоматически добавляет префикс.
+**Regla 1: Prefijo modular.**
+Todas las rutas de un módulo se registran vía `$router->group($moduleName, ...)`, lo que añade el prefijo automáticamente.
 
-**Правило 2: Модули не перезаписывают core-маршруты.**
-Router хранит маршруты в assoc-array. Первая регистрация побеждает. Поскольку `routes/admin.php` загружается ДО `ModuleLoader::bootAll()`, core-маршруты имеют приоритет.
+**Regla 2: Los módulos no sobrescriben rutas core.**
+El Router guarda las rutas en un assoc-array. El primer registro gana. Como `routes/admin.php` se carga ANTES de `ModuleLoader::bootAll()`, las rutas core tienen prioridad.
 
-**Правило 3: API-действия с модульным префиксом.**
-API-маршруты используют `group()`, Router автоматически добавляет `{prefix}_` к action name:
+**Regla 3: Acciones de API con prefijo modular.**
+Las rutas de API usan `group()`, el Router añade automáticamente `{prefix}_` al nombre del action:
 ```php
 $router->group('watch', function($r) {
     $r->api('enable', ...);  // → action = "watch_enable"
 });
 ```
 
-**Правило 4: Детекция конфликтов.**
-`ModuleLoader::bootAll()` логирует warning при попытке перерегистрации:
+**Regla 4: Detección de conflictos.**
+`ModuleLoader::bootAll()` loguea un warning ante intento de re-registro:
 ```php
-// В Router::get() / Router::post() — добавить проверку:
+// En Router::get() / Router::post() — añadir la comprobación:
 if (isset($this->getRoutes[$fullRoute])) {
     error_log("Router: duplicate route '{$fullRoute}' — keeping first registration");
     return $this;
 }
 ```
 
-### 7.4. Переходный период (дубликаты)
+### 7.4. Período de transición (duplicados)
 
-Сейчас маршруты watch/plex/fingerprint/theft-detection/magscan зарегистрированы в ДВУХ местах:
-1. `public/routes/admin.php` (статически)
-2. `{Module}Module::registerRoutes()` (через ModuleInterface)
+Ahora las rutas de watch/plex/fingerprint/theft-detection/magscan están registradas en DOS sitios:
+1. `public/routes/admin.php` (estáticamente)
+2. `{Module}Module::registerRoutes()` (vía ModuleInterface)
 
-**Стратегия:**
-1. **M-1:** Включить `ModuleLoader::bootAll()` в web-путь. Модули регистрируют маршруты, но дубликаты из `routes/admin.php` имеют приоритет (зарегистрированы первыми).
-2. **M-4:** Удалить модульные маршруты из `routes/admin.php`. Теперь маршруты приходят только из модулей.
+**Estrategia:**
+1. **M-1:** Activar `ModuleLoader::bootAll()` en la vía web. Los módulos registran rutas, pero los duplicados de `routes/admin.php` tienen prioridad (registrados primero).
+2. **M-4:** Eliminar las rutas modulares de `routes/admin.php`. Ahora las rutas llegan solo de los módulos.
 
 ---
 
-## 8. Изоляция и зависимости
+## 8. Aislamiento y dependencias
 
-### 8.1. Правила взаимодействия (из ARCHITECTURE.md §6.2 — без изменений)
+### 8.1. Reglas de interacción (de ARCHITECTURE.md §6.2 — sin cambios)
 
 ```
-✅ Модуль МОЖЕТ:
-   - Зависеть от core/ через constructor injection или static-вызовы
-   - Вызывать Service из domain/ (бизнес-операции)
-   - Вызывать Repository из domain/ (чтение данных)
-   - Регистрировать маршруты, команды, кроны, navbar-items
-   - Подписываться на события ядра
-   - Иметь свои views, assets, config
+✅ El módulo PUEDE:
+   - Depender de core/ vía constructor injection o llamadas static
+   - Llamar a Services de domain/ (operaciones de negocio)
+   - Llamar a Repositories de domain/ (lectura de datos)
+   - Registrar rutas, comandos, crons, navbar-items
+   - Suscribirse a eventos del núcleo
+   - Tener sus views, assets, config
 
-❌ Модуль НЕ МОЖЕТ:
-   - Модифицировать файлы core/ или domain/
-   - Зависеть от другого модуля (без явной декларации в module.json)
-   - Переопределять core-маршруты или core-сервисы
-   - Обращаться к базе данных напрямую (только через Repository)
+❌ El módulo NO PUEDE:
+   - Modificar archivos de core/ o domain/
+   - Depender de otro módulo (sin declaración explícita en module.json)
+   - Sobrescribir rutas o servicios core
+   - Acceder a la base de datos directamente (solo vía Repository)
 ```
 
-### 8.2. Механизмы расширения
+### 8.2. Mecanismos de extensión
 
-| Механизм | Когда использовать | Пример |
+| Mecanismo | Cuándo usarlo | Ejemplo |
 |----------|-------------------|--------|
-| **Router** маршруты | Модуль добавляет свои HTTP-страницы/API | `$router->group('watch', ...)` |
-| **EventDispatcher** подписки | Модуль реагирует на действия ядра | `StreamStartedEvent` → запись DVR |
-| **ServiceContainer** регистрация | Модуль регистрирует свои сервисы | `$container->set('watch.service', ...)` |
-| **CommandRegistry** команды | Модуль добавляет CLI-команды/кроны | `$registry->register(new WatchCronJob())` |
-| **Navbar** пункты меню | Модуль расширяет навигацию | `navbar.php` возвращает массив |
-| **config.php** настройки | Модуль имеет конфигурируемые параметры | `config.php` возвращает дескриптор полей |
+| Rutas **Router** | El módulo añade sus páginas/API HTTP | `$router->group('watch', ...)` |
+| Suscripciones **EventDispatcher** | El módulo reacciona a acciones del núcleo | `StreamStartedEvent` → grabación DVR |
+| Registro en **ServiceContainer** | El módulo registra sus servicios | `$container->set('watch.service', ...)` |
+| Comandos **CommandRegistry** | El módulo añade comandos/crons CLI | `$registry->register(new WatchCronJob())` |
+| Entradas **Navbar** | El módulo extiende la navegación | `navbar.php` devuelve un array |
+| Configuración **config.php** | El módulo tiene parámetros configurables | `config.php` devuelve el descriptor de campos |
 
-### 8.3. Зависимости между модулями
+### 8.3. Dependencias entre módulos
 
-**Текущее состояние:** Ни один из 7 модулей не зависит от другого. `dependencies: []` у всех.
+**Estado actual:** Ninguno de los 7 módulos depende de otro. `dependencies: []` en todos.
 
-**Будущее:** Если модуль A зависит от модуля B, `ModuleLoader` должен загрузить B до A.
+**Futuro:** Si el módulo A depende del módulo B, `ModuleLoader` debe cargar B antes que A.
 
-Реализация:
+Implementación:
 ```php
-// В ModuleLoader::loadAll(), после сбора всех модулей:
+// En ModuleLoader::loadAll(), tras recolectar todos los módulos:
 private function sortByDependencies() {
-    // Topological sort: modules с пустым dependencies — первые
+    // Topological sort: los módulos con dependencies vacías — primero
     $sorted = [];
     $visited = [];
 
@@ -1140,27 +1141,27 @@ private function sortByDependencies() {
 }
 ```
 
-**Ограничение:** Циклические зависимости — Fatal Error с сообщением. Не допускаются.
+**Restricción:** Dependencias circulares — Fatal Error con mensaje. No se admiten.
 
-### 8.4. Прямые зависимости запрещены. Межмодульное взаимодействие — только через ядро
+### 8.4. Dependencias directas prohibidas. Interacción entre módulos — solo vía el núcleo
 
 ```php
-// ❌ ЗАПРЕЩЕНО — модуль watch вызывает plex напрямую:
+// ❌ PROHIBIDO — el módulo watch llama a plex directamente:
 class WatchService {
     public function scan() {
-        $plexService = new PlexService();  // ← нарушение изоляции
+        $plexService = new PlexService();  // ← violación del aislamiento
         $plexService->sync();
     }
 }
 
-// ✅ ПРАВИЛЬНО — через событие ядра:
+// ✅ CORRECTO — vía evento del núcleo:
 class WatchService {
     public function scanComplete($folderId) {
         EventDispatcher::publish('watch.scan_complete', ['folder_id' => $folderId]);
     }
 }
 
-// Модуль plex подписывается:
+// El módulo plex se suscribe:
 class PlexModule implements ModuleInterface {
     public function getEventSubscribers(): array {
         return [
@@ -1172,80 +1173,80 @@ class PlexModule implements ModuleInterface {
 
 ---
 
-## 9. Обнаруженные проблемы и баги
+## 9. Problemas y bugs detectados
 
 ### 9.1. EventDispatcher: `listen()` vs `subscribe()`
 
-**Файл:** `src/core/Module/ModuleLoader.php`, строка 141
-**Баг:** `$dispatcher->listen($event, $handler)` — метод `listen()` не существует в `EventDispatcher`. Правильный метод: `subscribe()`.
+**Archivo:** `src/core/Module/ModuleLoader.php`, línea 141
+**Bug:** `$dispatcher->listen($event, $handler)` — el método `listen()` no existe en `EventDispatcher`. El método correcto: `subscribe()`.
 
-**Исправление:**
+**Corrección:**
 ```php
-// ModuleLoader.php, строка 141, БЫЛО:
+// ModuleLoader.php, línea 141, ANTES:
 $dispatcher->listen($event, $handler);
 
-// СТАЛО:
+// DESPUÉS:
 $dispatcher->subscribe($event, $handler);
 ```
 
-**Альтернативно** (менее инвазивно): добавить alias в `EventDispatcher`:
+**Alternativamente** (menos invasivo): añadir un alias en `EventDispatcher`:
 ```php
-// EventDispatcher.php — добавить метод:
+// EventDispatcher.php — añadir el método:
 public static function listen($eventName, $listener) {
     return self::subscribe($eventName, $listener);
 }
 ```
 
-### 9.2. `events` не зарегистрирован в ServiceContainer
+### 9.2. `events` no registrado en ServiceContainer
 
-**Файл:** `src/bootstrap.php` :: `populateContainer()`
-**Баг:** `$container->has('events')` вернёт `false`, потому что EventDispatcher нигде не регистрируется в контейнере.
+**Archivo:** `src/bootstrap.php` :: `populateContainer()`
+**Bug:** `$container->has('events')` devolverá `false`, porque EventDispatcher no se registra en el contenedor en ningún sitio.
 
-**Исправление:** В `populateContainer()` добавить:
+**Corrección:** En `populateContainer()` añadir:
 ```php
 $container->set('events', EventDispatcher::class);
 ```
 
-### 9.3. ModuleLoader не вызывается в web-контексте
+### 9.3. ModuleLoader no invocado en el contexto web
 
-**Файл:** `src/public/index.php`
-**Описание:** `ModuleLoader::bootAll()` вызывается только в `console.php` (CLI). В web-пути модули не загружаются.
+**Archivo:** `src/public/index.php`
+**Descripción:** `ModuleLoader::bootAll()` solo se llama en `console.php` (CLI). En la vía web los módulos no se cargan.
 
-**Исправление:** интегрировать в секцию 5 `index.php` (после загрузки routes).
+**Corrección:** integrar en la sección 5 de `index.php` (tras la carga de routes).
 
-### 9.4. Navbar — нет точки расширения
+### 9.4. Navbar — sin punto de extensión
 
-**Файл:** `src/public/Views/admin/header.php`
-**Описание:** Модульные пункты меню (watch, plex, fingerprint и т.д.) hardcoded в HTML. Нет механизма динамического добавления.
+**Archivo:** `src/public/Views/admin/header.php`
+**Descripción:** Las entradas de menú modulares (watch, plex, fingerprint, etc.) están hardcodeadas en el HTML. No hay mecanismo de adición dinámica.
 
-**Решение:** Описано в §6.3–6.10.
+**Solución:** descrita en §6.3–6.10.
 
 ---
 
-## 10. Поэтапный план реализации
+## 10. Plan de implementación por etapas
 
-### Фаза M-1: Оживить модульную загрузку в web (Critical Bug Fixes)
+### Fase M-1: Activar la carga modular en web (Critical Bug Fixes)
 
-**Цель:** Маршруты и сервисы модулей загружаются в HTTP-контексте. Event subscribers работают.
+**Objetivo:** Las rutas y servicios de los módulos se cargan en el contexto HTTP. Los event subscribers funcionan.
 
-**Задачи:**
+**Tareas:**
 
-| # | Задача | Файл | Строки | Сложность |
+| # | Tarea | Archivo | Líneas | Dificultad |
 |:-:|--------|------|--------|:---------:|
-| 1 | Исправить `listen` → `subscribe` в `ModuleLoader::bootAll()` | `core/Module/ModuleLoader.php` L141 | 1 | Тривиальная |
-| 2 | Зарегистрировать `events` в `populateContainer()` | `bootstrap.php` :: `populateContainer()` | 1 | Тривиальная |
-| 3 | Вызвать `ModuleLoader::loadAll() + bootAll()` в `index.php` | `public/index.php` секция 5 | ~10 | Средняя |
-| 4 | Добавить duplicate route protection в Router | `core/Http/Router.php` :: `get/post/api` | ~6 | Лёгкая |
+| 1 | Corregir `listen` → `subscribe` en `ModuleLoader::bootAll()` | `core/Module/ModuleLoader.php` L141 | 1 | Trivial |
+| 2 | Registrar `events` en `populateContainer()` | `bootstrap.php` :: `populateContainer()` | 1 | Trivial |
+| 3 | Llamar `ModuleLoader::loadAll() + bootAll()` en `index.php` | `public/index.php` sección 5 | ~10 | Media |
+| 4 | Añadir protección de rutas duplicadas al Router | `core/Http/Router.php` :: `get/post/api` | ~6 | Fácil |
 
-**Точка интеграции в `index.php`:**
+**Punto de integración en `index.php`:**
 
 ```php
-// ─── Секция 5: Загрузка маршрутов ───
+// ─── Sección 5: Carga de rutas ───
 
 $router = Router::getInstance();
 $routesDir = __DIR__ . '/routes/';
 
-// Статические маршруты ядра (имеют приоритет)
+// Rutas estáticas del núcleo (tienen prioridad)
 if (file_exists($routesDir . $scope . '.php')) {
     require_once $routesDir . $scope . '.php';
 }
@@ -1253,192 +1254,192 @@ if (file_exists($routesDir . 'api.php')) {
     require_once $routesDir . 'api.php';
 }
 
-// ── NEW: Загрузка модулей (маршруты + boot + события) ──
+// ── NUEVO: Carga de módulos (rutas + boot + eventos) ──
 $moduleLoader = new ModuleLoader();
 $moduleLoader->loadAll();
 $moduleLoader->bootAll(ServiceContainer::getInstance(), $router);
 ```
 
-**Проверка:** После M-1 модульные и статические маршруты работают параллельно. Дубликаты — core побеждает.
+**Comprobación:** Tras M-1 las rutas modulares y estáticas funcionan en paralelo. Duplicados — gana el core.
 
-**Предусловия:** Нет
-**Риск:** Низкий. Добавление — не замена. Legacy-маршруты остаются.
+**Precondiciones:** Ninguna
+**Riesgo:** Bajo. Es añadir, no reemplazar. Las rutas legacy quedan.
 
 ---
 
-### Фаза M-2: Environment фильтрация + dependency ordering
+### Fase M-2: Filtrado por environment + orden por dependencias
 
-**Цель:** `ModuleLoader` фильтрует модули по `environment` и сортирует по зависимостям.
+**Objetivo:** `ModuleLoader` filtra los módulos por `environment` y los ordena por dependencias.
 
-**Задачи:**
+**Tareas:**
 
-| # | Задача | Файл | Сложность |
+| # | Tarea | Archivo | Dificultad |
 |:-:|--------|------|:---------:|
-| 1 | Чтение `environment` из `module.json` + фильтрация | `ModuleLoader::loadAll()` | Лёгкая |
-| 2 | Чтение `dependencies` + topological sort | `ModuleLoader::sortByDependencies()` | Средняя |
-| 3 | Обновить `module.json` — добавить `environment: "main"` в 7 модулей | `modules/*/module.json` | Тривиальная |
+| 1 | Leer `environment` de `module.json` + filtrado | `ModuleLoader::loadAll()` | Fácil |
+| 2 | Leer `dependencies` + topological sort | `ModuleLoader::sortByDependencies()` | Media |
+| 3 | Actualizar `module.json` — añadir `environment: "main"` a los 7 módulos | `modules/*/module.json` | Trivial |
 
-**Предусловия:** M-1
-**Риск:** Низкий. Обратно совместимо — по умолчанию `environment = "main"`, `dependencies = []`.
+**Precondiciones:** M-1
+**Riesgo:** Bajo. Retrocompatible — por defecto `environment = "main"`, `dependencies = []`.
 
 ---
 
-### Фаза M-3: Динамическая навигация (Navbar)
+### Fase M-3: Navegación dinámica (Navbar)
 
-**Цель:** Модули регистрируют пункты меню через `navbar.php`. Hardcoded модульные пункты удаляются из header.php. Данные кешируются через FileCache с авто-инвалидацией по modules_hash.
+**Objetivo:** Los módulos registran entradas de menú vía `navbar.php`. Las entradas modulares hardcodeadas se eliminan de header.php. Los datos se cachean vía FileCache con auto-invalidación por modules_hash.
 
-**Задачи:**
+**Tareas:**
 
-| # | Задача | Файл | Сложность |
+| # | Tarea | Archivo | Dificultad |
 |:-:|--------|------|:---------:|
-| 1 | Создать `NavbarPositions` — константы injection points | `core/Http/NavbarPositions.php` NEW | Тривиальная |
-| 2 | Создать `NavbarBuilder` — build + cache + validate + render | `core/Http/NavbarBuilder.php` NEW | Высокая |
-| 3 | Добавить 4 injection points в header.php | `public/Views/admin/header.php` | Средняя |
-| 4 | Добавить `NavbarBuilder::getItems()` вызов в `index.php` | `public/index.php` | Лёгкая |
-| 5 | Создать `navbar.php` для watch, plex, fingerprint, theft-detection, magscan | 5 файлов в `modules/*/` | Средняя |
-| 6 | Удалить hardcoded модульные пункты из header.php | `public/Views/admin/header.php` | Средняя |
-| 7 | Добавить `NavbarBuilder::invalidate()` в `ModuleManagerController::apiToggle()` | `public/Controllers/Admin/ModuleManagerController.php` | Лёгкая |
+| 1 | Crear `NavbarPositions` — constantes de injection points | `core/Http/NavbarPositions.php` NUEVO | Trivial |
+| 2 | Crear `NavbarBuilder` — build + cache + validate + render | `core/Http/NavbarBuilder.php` NUEVO | Alta |
+| 3 | Añadir 4 injection points en header.php | `public/Views/admin/header.php` | Media |
+| 4 | Añadir la llamada `NavbarBuilder::getItems()` en `index.php` | `public/index.php` | Fácil |
+| 5 | Crear `navbar.php` para watch, plex, fingerprint, theft-detection, magscan | 5 archivos en `modules/*/` | Media |
+| 6 | Eliminar las entradas modulares hardcodeadas de header.php | `public/Views/admin/header.php` | Media |
+| 7 | Añadir `NavbarBuilder::invalidate()` en `ModuleManagerController::apiToggle()` | `public/Controllers/Admin/ModuleManagerController.php` | Fácil |
 
-**Подфазы:**
-- **M-3a:** Создать `NavbarPositions.php`, `NavbarBuilder.php`. Добавить injection points в header.php. Подключить `getItems()` в index.php. На этом этапе injection points пустые — нет navbar.php в модулях.
-- **M-3b:** Создать `navbar.php` для 5 модулей (watch, plex, fingerprint, theft-detection, magscan). Проверить рендеринг.
-- **M-3c:** Удалить hardcoded модульные пункты из header.php. Проверить навигацию.
+**Subfases:**
+- **M-3a:** Crear `NavbarPositions.php`, `NavbarBuilder.php`. Añadir injection points en header.php. Conectar `getItems()` en index.php. En esta etapa los injection points están vacíos — no hay navbar.php en los módulos.
+- **M-3b:** Crear `navbar.php` para 5 módulos (watch, plex, fingerprint, theft-detection, magscan). Comprobar el render.
+- **M-3c:** Eliminar las entradas modulares hardcodeadas de header.php. Comprobar la navegación.
 
-**Предусловия:** M-1
-**Риск:** Средний. Затрагивает UI. Подфазы позволяют откатить M-3c отдельно при регрессии.
+**Precondiciones:** M-1
+**Riesgo:** Medio. Toca la UI. Las subfases permiten revertir M-3c por separado ante una regresión.
 
 ---
 
-### Фаза M-4: Консолидация маршрутов — удаление дубликатов
+### Fase M-4: Consolidación de rutas — eliminación de duplicados
 
-**Цель:** Модульные маршруты приходят ТОЛЬКО из `ModuleInterface::registerRoutes()`. Дубликаты из `routes/admin.php` удалены.
+**Objetivo:** Las rutas modulares llegan SOLO desde `ModuleInterface::registerRoutes()`. Los duplicados de `routes/admin.php` eliminados.
 
-**Задачи:**
+**Tareas:**
 
-| # | Задача | Файл | Сложность |
+| # | Tarea | Archivo | Dificultad |
 |:-:|--------|------|:---------:|
-| 1 | Удалить маршруты watch/* из `routes/admin.php` | `public/routes/admin.php` | Лёгкая |
-| 2 | Удалить маршруты plex/* из `routes/admin.php` | `public/routes/admin.php` | Лёгкая |
-| 3 | Удалить маршруты fingerprint, theft_detection, magscan из `routes/admin.php` | `public/routes/admin.php` | Лёгкая |
-| 4 | Проверить все модульные страницы доступны через Router | Ручной тест | Средняя |
+| 1 | Eliminar las rutas watch/* de `routes/admin.php` | `public/routes/admin.php` | Fácil |
+| 2 | Eliminar las rutas plex/* de `routes/admin.php` | `public/routes/admin.php` | Fácil |
+| 3 | Eliminar las rutas fingerprint, theft_detection, magscan de `routes/admin.php` | `public/routes/admin.php` | Fácil |
+| 4 | Comprobar que todas las páginas modulares son accesibles vía Router | Test manual | Media |
 
-**Предусловия:** M-1, M-3 (navbar должна работать до удаления статических маршрутов)
-**Риск:** Средний. При ошибке — модульные страницы вернут 404. Решение: feature flag.
+**Precondiciones:** M-1, M-3 (el navbar debe funcionar antes de eliminar las rutas estáticas)
+**Riesgo:** Medio. Con un error — las páginas modulares darán 404. Solución: feature flag.
 
 ---
 
-### Фаза M-5: Система настроек модулей
+### Fase M-5: Sistema de configuración de módulos
 
-**Цель:** Модули декларируют свои настройки в `config.php`. UI генерируется автоматически.
+**Objetivo:** Los módulos declaran su configuración en `config.php`. La UI se genera automáticamente.
 
-**Задачи:**
+**Tareas:**
 
-| # | Задача | Файл | Сложность |
+| # | Tarea | Archivo | Dificultad |
 |:-:|--------|------|:---------:|
-| 1 | Создать `ModuleManagerController` | `public/Controllers/Admin/ModuleManagerController.php` | Средняя |
-| 2 | Создать view `modules/list.php` | `public/Views/admin/modules/list.php` | Средняя |
-| 3 | Создать view `modules/settings_form.php` (auto-render) | `public/Views/admin/modules/settings_form.php` | Средняя |
-| 4 | Маршруты: `modules`, `settings/module/{name}`, `module_toggle` API | `public/routes/admin.php` | Лёгкая |
-| 5 | `config.php` для модулей watch, plex | `modules/watch/config.php`, `modules/plex/config.php` | Средняя |
-| 6 | Обновить `module.json` — добавить `has_settings: true` | `modules/*/module.json` | Тривиальная |
+| 1 | Crear `ModuleManagerController` | `public/Controllers/Admin/ModuleManagerController.php` | Media |
+| 2 | Crear la view `modules/list.php` | `public/Views/admin/modules/list.php` | Media |
+| 3 | Crear la view `modules/settings_form.php` (auto-render) | `public/Views/admin/modules/settings_form.php` | Media |
+| 4 | Rutas: `modules`, `settings/module/{name}`, API `module_toggle` | `public/routes/admin.php` | Fácil |
+| 5 | `config.php` para los módulos watch, plex | `modules/watch/config.php`, `modules/plex/config.php` | Media |
+| 6 | Actualizar `module.json` — añadir `has_settings: true` | `modules/*/module.json` | Trivial |
 
-**Предусловия:** M-1
-**Риск:** Низкий. Новая функциональность, не затрагивает существующие.
+**Precondiciones:** M-1
+**Riesgo:** Bajo. Funcionalidad nueva, no toca la existente.
 
 ---
 
-### Фаза M-6: Полная модульная изоляция — миграция оставшихся hardcoded зависимостей
+### Fase M-6: Aislamiento modular completo — migración de las dependencias hardcodeadas restantes
 
-**Цель:** Ядро не содержит прямых ссылок на модульные классы. Event-based расширение для пунктов, которые сейчас hardcoded в ядре.
+**Objetivo:** El núcleo no contiene referencias directas a clases modulares. Extensión event-based para las entradas que hoy están hardcodeadas en el núcleo.
 
-**Задачи:**
+**Tareas:**
 
-| # | Задача | Файл | Сложность |
+| # | Tarea | Archivo | Dificultad |
 |:-:|--------|------|:---------:|
-| 1 | Заменить `TmdbService::` вызовы в `admin_api` replacement на event | `domain/Vod/MovieService.php` | Средняя |
-| 2 | Audit: `grep -rn 'Plex\|Watch\|Tmdb\|Ministra\|Fingerprint' src/domain/ src/core/` | Весь `domain/` и `core/` | Средняя |
-| 3 | Перенести найденные прямые вызовы на событийную модель | По результатам аудита | Высокая |
+| 1 | Reemplazar las llamadas `TmdbService::` en el replacement de admin_api por evento | `domain/Vod/MovieService.php` | Media |
+| 2 | Auditoría: `grep -rn 'Plex\|Watch\|Tmdb\|Ministra\|Fingerprint' src/domain/ src/core/` | Todo `domain/` y `core/` | Media |
+| 3 | Migrar las llamadas directas encontradas al modelo de eventos | Según el resultado de la auditoría | Alta |
 
-**Предусловия:** M-1, M-3
-**Риск:** Высокий. Может затрагивать бизнес-логику. Требует тщательного тестирования.
+**Precondiciones:** M-1, M-3
+**Riesgo:** Alto. Puede tocar la lógica de negocio. Requiere testeo cuidadoso.
 
 ---
 
-### Сводная таблица фаз
+### Tabla resumen de fases
 
-| Фаза | Название | Зависит от | Файлов меняется | Риск |
+| Fase | Nombre | Depende de | Archivos cambiados | Riesgo |
 |:----:|----------|:----------:|:---------------:|:----:|
-| **M-1** | Оживить web-загрузку модулей | — | 4 | Низкий |
-| **M-2** | Environment + dependencies | M-1 | 8 | Низкий |
-| **M-3** | Динамическая навигация (NavbarBuilder + FileCache) | M-1 | 10 | Средний |
-| **M-4** | Удаление дублирующих маршрутов | M-1, M-3 | 1 | Средний |
-| **M-5** | Система настроек | M-1 | 6+ | Низкий |
-| **M-6** | Полная изоляция ядро↔модули | M-1, M-3 | По аудиту | Высокий |
+| **M-1** | Activar la carga web de módulos | — | 4 | Bajo |
+| **M-2** | Environment + dependencies | M-1 | 8 | Bajo |
+| **M-3** | Navegación dinámica (NavbarBuilder + FileCache) | M-1 | 10 | Medio |
+| **M-4** | Eliminación de rutas duplicadas | M-1, M-3 | 1 | Medio |
+| **M-5** | Sistema de configuración | M-1 | 6+ | Bajo |
+| **M-6** | Aislamiento completo núcleo↔módulos | M-1, M-3 | Según auditoría | Alto |
 
-**Рекомендуемый порядок:** M-1 → M-2 → M-5 → M-3 → M-4 → M-6
+**Orden recomendado:** M-1 → M-2 → M-5 → M-3 → M-4 → M-6
 
-Обоснование: M-5 (настройки) не зависит от navbar и даёт немедленную пользу. M-3 (navbar) требует больше UI-работы. M-6 — последний, самый рискованный.
+Justificación: M-5 (configuración) no depende del navbar y da beneficio inmediato. M-3 (navbar) requiere más trabajo de UI. M-6 — el último, el más arriesgado.
 
 ---
 
-## 11. Риски
+## 11. Riesgos
 
-### 11.1. Технические риски
+### 11.1. Riesgos técnicos
 
-| Риск | Вероятность | Влияние | Митигация |
+| Riesgo | Probabilidad | Impacto | Mitigación |
 |------|:----------:|:-------:|-----------|
-| Модульные маршруты конфликтуют с core | Низкая | Высокое | Duplicate detection в Router (M-1.4) |
-| `bootAll()` замедляет каждый запрос | Средняя | Среднее | `ModuleLoader` кэширует список модулей в FileCache |
-| Navbar rendering ломает layout | Средняя | Высокое | Strict item validation при build + try-catch per module |
-| Navbar кеш desync | Низкая | Среднее | modules_hash auto-invalidation + TTL safety net (3600s) |
-| Невалидный navbar.php ломает всю навигацию | Средняя | Высокое | Per-module try-catch + validateItem() skip + error_log |
-| Конфликт id между модулями | Низкая | Среднее | Global id uniqueness check при build |
-| `EventDispatcher` static = нетестируемый | Низкая | Низкое | Достаточно для текущих нужд. Рефактор — будущее |
-| Модуль с ошибкой ломает весь bootstrap | Средняя | Высокое | try-catch в `ModuleLoader::bootAll()` per-module |
+| Las rutas modulares entran en conflicto con core | Baja | Alto | Detección de duplicados en el Router (M-1.4) |
+| `bootAll()` ralentiza cada petición | Media | Medio | `ModuleLoader` cachea la lista de módulos en FileCache |
+| El render del navbar rompe el layout | Media | Alto | Validación estricta de items en el build + try-catch por módulo |
+| Desync de la caché del navbar | Baja | Medio | Auto-invalidación modules_hash + TTL safety net (3600s) |
+| Un navbar.php inválido rompe toda la navegación | Media | Alto | Try-catch por módulo + validateItem() skip + error_log |
+| Conflicto de ids entre módulos | Baja | Medio | Comprobación de unicidad global de ids en el build |
+| `EventDispatcher` static = no testeable | Baja | Bajo | Suficiente para las necesidades actuales. Refactor — futuro |
+| Un módulo con error rompe todo el bootstrap | Media | Alto | try-catch en `ModuleLoader::bootAll()` por módulo |
 
-### 11.2. Организационные риски
+### 11.2. Riesgos organizativos
 
-| Риск | Митигация |
+| Riesgo | Mitigación |
 |------|-----------|
-| Контрибьюторы продолжат добавлять маршруты в `routes/admin.php` вместо `registerRoutes()` | Документация + CI-проверка: новые маршруты модулей → только через ModuleInterface |
-| Сторонние модули нарушают контракт | `ModuleLoader` проверяет `instanceof ModuleInterface` (уже есть) |
-| Модули с `install()` создают таблицы, но `uninstall()` не чистит | Рекомендация: `uninstall()` обязательно зеркалит `install()`. Но не enforce |
+| Los contribuyentes seguirán añadiendo rutas en `routes/admin.php` en lugar de `registerRoutes()` | Documentación + comprobación CI: las rutas nuevas de módulos → solo vía ModuleInterface |
+| Módulos de terceros violan el contrato | `ModuleLoader` comprueba `instanceof ModuleInterface` (ya existe) |
+| Módulos con `install()` crean tablas pero `uninstall()` no limpia | Recomendación: `uninstall()` debe reflejar `install()`. Pero no se fuerza |
 
-### 11.3. Слабость: static EventDispatcher
+### 11.3. Debilidad: EventDispatcher static
 
-`EventDispatcher` полностью static → нельзя инжектировать через конструктор → нельзя mockить в тестах → нарушает §2.3 ARCHITECTURE.md (strict constructor injection). **Это осознанный компромисс** — рефактор EventDispatcher на instance-based потребует изменения всех подписчиков. Откладывается до появления реальной потребности в тестировании событий.
+`EventDispatcher` es completamente static → no se puede inyectar por constructor → no se puede mockear en tests → viola §2.3 de ARCHITECTURE.md (strict constructor injection). **Es un compromiso consciente** — refactorizar EventDispatcher a instance-based requeriría cambiar todos los suscriptores. Se aplaza hasta que exista una necesidad real de testear eventos.
 
-### 11.4. Слабость: отсутствие версионной совместимости
+### 11.4. Debilidad: falta de compatibilidad por versiones
 
-Поле `requires_core` в module.json проверяется **нигде**. `ModuleLoader` его читает, но не валидирует. Пока все модули в одном репозитории — это не проблема. Станет проблемой при появлении сторонних/коммерческих модулей.
+El campo `requires_core` de module.json **no se comprueba en ningún sitio**. `ModuleLoader` lo lee, pero no lo valida. Mientras todos los módulos estén en el mismo repositorio — no es problema. Se volverá problema al aparecer módulos de terceros/comerciales.
 
 ---
 
-## Приложение A: Чек-лист для создания нового модуля
+## Apéndice A: Checklist para crear un módulo nuevo
 
 ```
-1. [ ] Создать директорию src/modules/{name}/
-2. [ ] Создать module.json (name, version, description, requires_core)
-3. [ ] Создать {Name}Module.php implements ModuleInterface
-4. [ ] Реализовать getName(), getVersion()
-5. [ ] boot() — зарегистрировать сервисы в ServiceContainer (если есть)
-6. [ ] registerRoutes() — зарегистрировать GET/POST/API маршруты
-7. [ ] registerCommands() — зарегистрировать CLI-команды/кроны (если есть)
-8. [ ] getEventSubscribers() — подписаться на события ядра (если нужно)
-9. [ ] install() — создать таблицы/начальные данные (если нужно)
-10. [ ] uninstall() — удалить таблицы/данные (зеркало install)
-11. [ ] (Опционально) Создать navbar.php для навигации
-12. [ ] (Опционально) Создать config.php для настроек
-13. [ ] (Опционально) Создать views/ для HTML-шаблонов
-14. [ ] Протестировать:
+1. [ ] Crear el directorio src/modules/{name}/
+2. [ ] Crear module.json (name, version, description, requires_core)
+3. [ ] Crear {Name}Module.php implements ModuleInterface
+4. [ ] Implementar getName(), getVersion()
+5. [ ] boot() — registrar servicios en ServiceContainer (si hay)
+6. [ ] registerRoutes() — registrar rutas GET/POST/API
+7. [ ] registerCommands() — registrar comandos/crons CLI (si hay)
+8. [ ] getEventSubscribers() — suscribirse a eventos del núcleo (si hace falta)
+9. [ ] install() — crear tablas/datos iniciales (si hace falta)
+10. [ ] uninstall() — eliminar tablas/datos (espejo de install)
+11. [ ] (Opcional) Crear navbar.php para la navegación
+12. [ ] (Opcional) Crear config.php para la configuración
+13. [ ] (Opcional) Crear views/ para las plantillas HTML
+14. [ ] Probar:
         - php -l modules/{name}/{Name}Module.php
-        - Модуль загружается (проверить /modules в admin)
-        - Страницы доступны по маршрутам
-        - Отключение через modules.php не ломает систему
-        - Удаление директории не ломает систему
+        - El módulo se carga (comprobar /modules en el admin)
+        - Las páginas son accesibles por sus rutas
+        - Desactivar vía modules.php no rompe el sistema
+        - Eliminar el directorio no rompe el sistema
 ```
 
-## Приложение B: Пример минимального модуля
+## Apéndice B: Ejemplo de módulo mínimo
 
 ```php
 // modules/example/module.json
@@ -1460,7 +1461,7 @@ class ExampleModule implements ModuleInterface {
     public function getVersion(): string { return '1.0.0'; }
 
     public function boot(ServiceContainer $container): void {
-        // Ничего — нет сервисов
+        // Nada — no hay servicios
     }
 
     public function registerRoutes(Router $router): void {
@@ -1474,7 +1475,7 @@ class ExampleModule implements ModuleInterface {
     public function install(): void {}
     public function uninstall(): void {}
 
-    // Inline handler (для простых модулей без отдельного Controller)
+    // Inline handler (para módulos simples sin Controller aparte)
     public static function page() {
         echo '<h3>Example Module</h3><p>It works!</p>';
     }

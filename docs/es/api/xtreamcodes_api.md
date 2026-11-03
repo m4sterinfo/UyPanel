@@ -1,27 +1,27 @@
 <h1 align="center">📡 XtreamCodes API</h1>
 
 <p align="center">
-  API предоставляет доступ к IPTV-потокам (Live TV, Радио), VOD (фильмы), сериалам и EPG (телепрограмма) в приложениях, совместимых с XtreamCodes. Это ключевой компонент для интеграции с UyPanel.
+  La API da acceso a streams IPTV (Live TV, Radio), VOD (películas), series y EPG (guía de programación) en aplicaciones compatibles con XtreamCodes. Es el componente clave para la integración con UyPanel.
 </p>
 
 ---
 
-## 📚 Навигация
+## 📚 Navegación
 
-- [📂 Расположение файлов](#расположение-файлов)
-- [📑 Содержание](#содержание)
-- [🔑 Авторизация](#авторизация)
-- [📺 Live TV (ТВ и Радио)](#live-tv-тв-и-радио)
-- [🎬 VOD (Фильмы)](#vod-фильмы)
-- [📽 Сериалы](#сериалы)
-- [🎞 Получение медиаконтента](#получение-медиаконтента)
-- [🧾 Примечания](#примечания)
+- [📂 Ubicación de archivos](#ubicación-de-archivos)
+- [📑 Contenido](#contenido)
+- [🔑 Autenticación](#autenticación)
+- [📺 Live TV (TV y Radio)](#live-tv-tv-y-radio)
+- [🎬 VOD (Películas)](#vod-películas)
+- [📽 Series](#series)
+- [🎞 Obtención de contenido multimedia](#obtención-de-contenido-multimedia)
+- [🧾 Notas](#notas)
 
 ---
 
-## 📂 Расположение файлов
+## 📂 Ubicación de archivos
 
-Основной API обрабатывается `PlayerApiController`:
+La API principal la atiende `PlayerApiController`:
 
 ```
 src/public/Controllers/Api/PlayerApiController.php
@@ -29,23 +29,23 @@ src/public/Controllers/Api/PlayerApiController.php
 
 ---
 
-## 📑 Содержание
+## 📑 Contenido
 
-API разделен на ключевые разделы для удобства интеграции. Каждый эндпоинт описан с примерами запросов и ответов.
+La API está dividida en secciones clave para facilitar la integración. Cada endpoint está descrito con ejemplos de peticiones y respuestas.
 
 ---
 
-## 🔑 Авторизация
+## 🔑 Autenticación
 
-Авторизация — первый шаг для доступа к контенту. Она подтверждает учетные данные пользователя и возвращает информацию о сервере.
+La autenticación es el primer paso para acceder al contenido. Valida las credenciales del usuario y devuelve la información del servidor.
 
-### Запрос
+### Petición
 
 ```http
 GET /player_api?username={username}&password={password}
 ```
 
-### Пример ответа
+### Ejemplo de respuesta
 
 ```json
 {
@@ -80,21 +80,21 @@ GET /player_api?username={username}&password={password}
 }
 ```
 
-> 💡 **Совет:** Используйте полученные данные для последующих запросов, чтобы избежать повторной авторизации.
+> 💡 **Consejo:** Usa los datos obtenidos en las peticiones siguientes para evitar re-autenticarte.
 
 ---
 
-## 📺 Live TV (ТВ и Радио)
+## 📺 Live TV (TV y Radio)
 
-Раздел для работы с живыми трансляциями, включая категории, стримы и EPG.
+Sección para trabajar con transmisiones en directo, incluyendo categorías, streams y EPG.
 
-### Получить все категории Live
+### Obtener todas las categorías Live
 
 ```http
 GET /player_api?username={username}&password={password}&action=get_live_categories
 ```
 
-**Пример ответа**
+**Ejemplo de respuesta**
 
 ```json
 [
@@ -111,13 +111,13 @@ GET /player_api?username={username}&password={password}&action=get_live_categori
 ]
 ```
 
-### Получить все Live-стримы
+### Obtener todos los streams Live
 
 ```http
 GET /player_api?username={username}&password={password}&action=get_live_streams
 ```
 
-**Пример ответа**
+**Ejemplo de respuesta**
 
 ```json
 [
@@ -138,19 +138,19 @@ GET /player_api?username={username}&password={password}&action=get_live_streams
 ]
 ```
 
-### Получить стримы категории
+### Obtener los streams de una categoría
 
 ```http
 GET /player_api?username={username}&password={password}&action=get_live_streams&category_id={id}
 ```
 
-### Получить EPG канала (краткая программа)
+### Obtener el EPG de un canal (programa breve)
 
 ```http
 GET /player_api?username={username}&password={password}&action=get_short_epg&stream_id={id}&limit={N}
 ```
 
-**Пример ответа**
+**Ejemplo de respuesta**
 
 ```json
 {
@@ -166,19 +166,19 @@ GET /player_api?username={username}&password={password}&action=get_short_epg&str
 }
 ```
 
-### Получить полную программу канала
+### Obtener la programación completa de un canal
 
 ```http
 GET /player_api?username={username}&password={password}&action=get_simple_data_table&stream_id={id}
 ```
 
-### EPG для всех каналов (XMLTV)
+### EPG para todos los canales (XMLTV)
 
 ```http
 GET /xmltv.php?username={username}&password={password}
 ```
 
-**Пример ответа (XMLTV)**
+**Ejemplo de respuesta (XMLTV)**
 
 ```xml
 <tv>
@@ -194,17 +194,17 @@ GET /xmltv.php?username={username}&password={password}
 
 ---
 
-## 🎬 VOD (Фильмы)
+## 🎬 VOD (Películas)
 
-Раздел для видео по запросу, включая категории и информацию о фильмах.
+Sección para video bajo demanda, incluyendo categorías e información de películas.
 
-### Категории фильмов
+### Categorías de películas
 
 ```http
 GET /player_api?username={username}&password={password}&action=get_vod_categories
 ```
 
-**Пример ответа**
+**Ejemplo de respuesta**
 
 ```json
 [
@@ -221,15 +221,15 @@ GET /player_api?username={username}&password={password}&action=get_vod_categorie
 ]
 ```
 
-> ⚠️ **Примечание:** Полный список категорий может быть большим; в примерах показаны только фрагменты.
+> ⚠️ **Nota:** La lista completa de categorías puede ser extensa; en los ejemplos solo se muestran fragmentos.
 
-### Получить все VOD-стримы
+### Obtener todos los streams VOD
 
 ```http
 GET /player_api?username={username}&password={password}&action=get_vod_streams
 ```
 
-**Пример ответа**
+**Ejemplo de respuesta**
 
 ```json
 [
@@ -262,19 +262,19 @@ GET /player_api?username={username}&password={password}&action=get_vod_streams
 
 ---
 
-### Фильмы по категории
+### Películas por categoría
 
 ```http
 GET /player_api?username={username}&password={password}&action=get_vod_streams&category_id={id}
 ```
 
-### Информация о фильме
+### Información de una película
 
 ```http
 GET /player_api?username={username}&password={password}&action=get_vod_info&vod_id={id}
 ```
 
-**Пример ответа**
+**Ejemplo de respuesta**
 
 ```json
 {
@@ -325,17 +325,17 @@ GET /player_api?username={username}&password={password}&action=get_vod_info&vod_
 
 ---
 
-## 📽 Сериалы
+## 📽 Series
 
-Раздел для работы с сериалами, включая категории, сезоны и эпизоды.
+Sección para trabajar con series, incluyendo categorías, temporadas y episodios.
 
-### Категории сериалов
+### Categorías de series
 
 ```http
 GET /player_api?username={username}&password={password}&action=get_series_categories
 ```
 
-**Пример ответа**
+**Ejemplo de respuesta**
 
 ```json
 [
@@ -349,13 +349,13 @@ GET /player_api?username={username}&password={password}&action=get_series_catego
 
 ---
 
-### Все сериалы
+### Todas las series
 
 ```http
 GET /player_api?username={username}&password={password}&action=get_series
 ```
 
-**Пример ответа**
+**Ejemplo de respuesta**
 
 ```json
 [
@@ -389,19 +389,19 @@ GET /player_api?username={username}&password={password}&action=get_series
 
 ---
 
-### Сериалы по категории
+### Series por categoría
 
 ```http
 GET /player_api?username={username}&password={password}&action=get_series&category_id={id}
 ```
 
-### Информация о сериале
+### Información de una serie
 
 ```http
 GET /player_api?username={username}&password={password}&action=get_series_info&series_id={id}
 ```
 
-**Пример ответа**
+**Ejemplo de respuesta**
 
 ```json
 {
@@ -472,39 +472,39 @@ GET /player_api?username={username}&password={password}&action=get_series_info&s
 
 ---
 
-## 🎞 Получение медиаконтента
+## 🎞 Obtención de contenido multimedia
 
-Получите прямые ссылки на медиафайлы после авторизации.
+Obtén los enlaces directos a los archivos multimedia tras la autenticación.
 
-* **Live TV (канал):**
+* **Live TV (canal):**
 
 ```http
 http://176.124.192.118/live/{username}/{password}/{stream_id}.ts
 ```
 
-* **Фильм (VOD):**
+* **Película (VOD):**
 
 ```http
 http://176.124.192.118/movie/{username}/{password}/{vod_id}.mp4
 ```
 
-* **Серия:**
+* **Episodio:**
 
 ```http
 http://176.124.192.118/series/{username}/{password}/{episode_id}.mp4
 ```
 
-> ⚠️ **Важно:** При первом запросе происходит редирект на `/auth/...` для авторизации, после чего отдаётся контент.
+> ⚠️ **Importante:** En la primera petición se produce un redirect a `/auth/...` para autenticar, después se entrega el contenido.
 
 ---
 
-## 🧾 Примечания
+## 🧾 Notas
 
-- **Форматы вывода:** Поддерживаются m3u8, ts, rtmp — выбирайте в зависимости от устройства.
-- **Безопасность:** Все запросы требуют авторизации; мониторьте логи на предмет ошибок.
-- **Интеграция:** Для тестирования используйте инструменты вроде Postman. В приложении реализуйте кэширование ответов для оптимизации.
+- **Formatos de salida:** Se soportan m3u8, ts, rtmp — elige según el dispositivo.
+- **Seguridad:** Todas las peticiones requieren autenticación; monitorea los logs por si hay errores.
+- **Integración:** Para testear usa herramientas como Postman. En la aplicación implementa caché de respuestas para optimizar.
 
 
-> 💬 Если возникнут вопросы по интеграции, создайте issue в [репозитории](https://github.com/m4sterinfo/UyPanel/issues).
+> 💬 Si tienes dudas de integración, abre un issue en el [repositorio](https://github.com/m4sterinfo/UyPanel/issues).
 
 ---

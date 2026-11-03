@@ -64,11 +64,11 @@ It enables:
 
 ## 📚 Documentation
 
-* 🇬🇧 **English Guide**
-  [https://vateron-media.github.io/UyPanel/#/en-us/](https://vateron-media.github.io/UyPanel/#/en-us/)
+* �� **Guía en español**
+  [https://m4sterinfo.github.io/UyPanel/#/es-es/](https://m4sterinfo.github.io/UyPanel/#/es-es/)
 
-* 🇷🇺 **Руководство на русском**
-  [https://vateron-media.github.io/UyPanel/#/ru-ru/](https://vateron-media.github.io/UyPanel/#/ru-ru/)
+* �� **English Guide**
+  [https://m4sterinfo.github.io/UyPanel/#/en-us/](https://m4sterinfo.github.io/UyPanel/#/en-us/)
 
 ---
 
