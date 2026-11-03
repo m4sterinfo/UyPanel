@@ -70,7 +70,7 @@ make lb          # → dist/loadbalancer.tar.gz (load balancer; excluye modules/
 make main_update # → dist/update.tar.gz (actualización de panel instalado)
 make lb_update   # → dist/loadbalancer_update.tar.gz
 
-# Binarios (PHP 8.1, nginx, redis/KeyDB, nginx_rtmp) y FFmpeg:
+# Binarios (PHP 8.3, nginx, redis/KeyDB, nginx_rtmp) y FFmpeg:
 cd third_party/UyPanel_Binaries && ./build_all.sh  # usa docker/
 cd third_party/UyPanel_FFMPEG && make             # ver su README/Makefile
 
@@ -88,7 +88,7 @@ journalctl -u uypanel -f
 
 - Debian 13 (trixie), 8 cores, 32 GB RAM, IP `198.27.81.133`
 - UyPanel 2.0.1 (base XC_VM 2.0.1) instalado en `/home/uypanel` (nginx 80/443, nginx_rtmp,
-  4 pools php-fpm 8.1.33, KeyDB 6.3.4 en 6379 con auth, MariaDB 11.8)
+  4 pools php-fpm 8.3.36, KeyDB 6.3.4 en 6379 con auth, MariaDB 11.8)
 - Base de datos migrada desde XUI (27,672 líneas, 240,557 streams)
 - Acceso admin: `http://198.27.81.133/x9access9x`
 - Credenciales MariaDB: `/home/debian/credentials.txt` (BD: `uypanel`) (NO commitear nunca)
