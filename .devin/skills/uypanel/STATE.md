@@ -1,24 +1,21 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-03 (fin de sesión).
+> cada cambio significativo. Última actualización: 2026-11-03 (comentarios traducidos).
 
 ## ⏭️ CONTINUAR AQUÍ (próxima sesión)
 
-1. **Pregunta pendiente al usuario**: ¿traducir los comentarios en ruso de
-   ~200 archivos PHP (bootstrap.php, Router.php, ServiceContainer.php, etc.)?
-   Es un barrido voluminoso y separable. El usuario pidió traducir "todos los
-   documentos en ruso" — los documentos ya están hechos; los comentarios de
-   código quedan como siguiente candidato.
-2. **Video del login (acción del USUARIO)**: el usuario va a pegar su propio
+1. **Video del login (acción del USUARIO)**: el usuario va a pegar su propio
    video en `/home/uypanel/public/assets/admin/videos/login-bg.mp4` (servidor,
    el dir ya tiene permisos debian:debian) y en el repo
    `src/public/assets/admin/videos/login-bg.mp4`. Cuando lo pegue en el repo:
    commitear + pushear (es archivo LFS). El video ACTUAL en ambos sitios es el
    del original y muestra el logo 3D de XC_VM en su frame central (~3.5s).
-3. **GitHub Pages**: activar en el repo (Settings → Pages → rama main,
+2. **GitHub Pages**: activar en el repo (Settings → Pages → rama main,
    carpeta /docs) para que el sitio de docs (docs/es + docs/en) funcione en
    https://m4sterinfo.github.io/UyPanel
+3. **Push pendiente**: el commit de traducción de comentarios (`037f50f6`) y
+   los anteriores están sin pushear (el último pusheado es `4b861388`).
 4. **Roadmap** (ver sección Trabajo pendiente): rebuild de binarios con prefix
    uypanel, EPG re-import, revisión de Settings, READMEs de los forks de soporte.
 
@@ -148,10 +145,26 @@
 - README: enlaces de docs a `m4sterinfo.github.io/UyPanel` (español primero).
 - `tools/run_scan.sh`: quitada la ruta hardcodeada del disco del autor original.
 
+### 2026-11-03 — Comentarios en ruso traducidos al español
+- Barrido completo: 1.574 líneas en 179 archivos PHP + archivos no-PHP
+  (lb_configs/nginx.conf, src/bin/nginx/conf/nginx.conf, test_installer,
+  .github/workflows/release-notifier.yml, tools/test-install/*,
+  tools/install_xdebug.sh, tools/test_player_api.sh,
+  tools/update_top_contributors.py, tools/test-install/README.md).
+- Método: inventario por archivo:línea → dicts de traducción (Python) →
+  aplicador que preserva la indentación; php -l OK en los 179 archivos.
+- Incluye los 6 strings rusos: mensajes de excepción de ServiceContainer y
+  un console.error en stream_categories.php.
+- Conservados a propósito (datos funcionales, no comentarios): packs de
+  idioma ru/bg (src/includes/langs/*.ini), mapa de transliteración y teclado
+  cirílico del portal MAG (ministra/global.js, layer.search_box.js), nombres
+  nativos de idiomas (ministra/external/settings/g_play.html).
+- Commit: `037f50f6` (196 archivos, 3926 líneas cambiadas 1:1). Sin push.
+
 ## Trabajo pendiente / Roadmap
 
-- [ ] **Comentarios en ruso en ~200 archivos PHP** — preguntar al usuario si
-      los traducimos (voluminoso, separable)
+- [x] **Comentarios en ruso en ~200 archivos PHP** — traducidos al español
+      (2026-11-03, commit 037f50f6; datos funcionales MAG/langs conservados)
 - [ ] **Video del login**: usuario pega el suyo (servidor + repo) → commit+push
 - [ ] **GitHub Pages**: activar en el repo (main, /docs) para el sitio de docs
 - [ ] **Reconstruir binarios con prefix /home/uypanel** (third_party/UyPanel_Binaries,
