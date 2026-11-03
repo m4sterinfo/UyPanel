@@ -1,6 +1,6 @@
 <!-- markdownlint-disable first-line-h1 -->
 
-- Translations
+- Traducciones
 
+  - [🇪🇸 Español](/es-es/)
   - [🇺🇸 English](/en-us/)
-  - [🇷🇺 Русский](/ru-ru/)
