@@ -244,7 +244,7 @@ function load(params, callback, method, headers) {
         params,
 
         function (result, errors) {
-            // errors - содержит ошибки сервера и debug сообщения
+                        // errors - contiene errores del servidor y mensajes debug
             gSTB.Debug(errors);
 
             callback(result);

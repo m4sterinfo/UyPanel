@@ -1,10 +1,10 @@
 <?php
 
 /**
- * BaseResellerController — базовый контроллер для reseller-страниц.
+ * BaseResellerController — controlador base para las páginas reseller.
  *
- * Наследует BaseAdminController, переопределяя:
- *   - $scope = 'reseller' (для renderUnifiedLayout и путей views)
+ * Hereda BaseAdminController, redefiniendo:
+ *   - $scope = 'reseller' (para renderUnifiedLayout y las rutas de views)
  *   - requirePermission() → checkResellerPermissions()
  *
  * @see BaseAdminController
@@ -15,8 +15,8 @@ class BaseResellerController extends BaseAdminController
     protected $scope = 'reseller';
 
     /**
-     * Проверка прав доступа реселлера (checkResellerPermissions).
-     * При отказе — goHome() + exit.
+          * Comprobación de permisos del reseller (checkResellerPermissions).
+          * En caso de denegación — goHome() + exit.
      */
     protected function requirePermission()
     {
@@ -29,11 +29,11 @@ class BaseResellerController extends BaseAdminController
     }
 
     /**
-     * Проверка расширенных прав реселлера (hasPermissions).
-     * Reseller permissions загружены через getGroupPermissions().
+          * Comprobación de permisos extendidos del reseller (hasPermissions).
+          * Los permisos reseller se cargan vía getGroupPermissions().
      *
-     * @param string $type Тип прав
-     * @param string $key  Ключ прав
+          * @param string $type Tipo de permiso
+          * @param string $key  Clave del permiso
      */
     protected function requireAdvPermission($type, $key)
     {

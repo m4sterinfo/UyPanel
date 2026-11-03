@@ -1,7 +1,7 @@
 <?php
 
-// Импорт глобальных переменных — нужен когда файл включается
-// из метода контроллера (не из глобального scope).
+// Importa las variables globales — necesario cuando el archivo se incluye
+// desde un método del controlador (no desde el scope global).
 global $db, $rSettings, $rMobile, $rServers, $rProxyServers, $rDetect,
        $rTimeout, $rProtocol, $allServers, $rPermissions, $language, $allowedLangs, $_INFO;
 

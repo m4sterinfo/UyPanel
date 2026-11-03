@@ -3,15 +3,15 @@
 /**
  * Unified Layout Footer
  *
- * Единая точка входа для footer/layout admin/reseller/player.
- * На текущем этапе используется как совместимая обёртка над legacy footer.php,
- * чтобы начать миграцию страниц без риска регрессий.
+ * Punto de entrada único para footer/layout admin/reseller/player.
+ * En la fase actual se usa como envoltorio compatible sobre el legacy footer.php,
+ * para empezar la migración de páginas sin riesgo de regresiones.
  *
- * Параметры:
+ * Parámetros:
  * - $scope: 'admin' | 'reseller' | 'player'
- * - $vars:  набор переменных страницы (опционально)
+ * - $vars:  conjunto de variables de la página (opcional)
  *
- * Пример:
+ * Ejemplo:
  *   renderUnifiedLayoutFooter('admin');
  */
 

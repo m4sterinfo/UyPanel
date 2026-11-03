@@ -1,6 +1,6 @@
 <?php
 /**
- * CreatedChannelMassController — массовое редактирование каналов.
+ * CreatedChannelMassController — edición masiva de canales.
  */
 class CreatedChannelMassController extends BaseAdminController
 {

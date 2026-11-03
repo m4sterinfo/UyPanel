@@ -6,7 +6,7 @@
  * Loads includes/admin.php (full bootstrap), then sets up $rUserInfo,
  * $rPermissions, validates session integrity, load user preferences.
  *
- * @see admin/functions.php — оригинал (для direct nginx access)
+ * @see admin/functions.php — original (para acceso nginx directo)
  * @since Phase 10.5
  */
 
@@ -14,11 +14,11 @@ if (!defined('MAIN_HOME')) {
 	define('MAIN_HOME', '/home/uypanel/');
 }
 
-// Импорт глобальных переменных bootstrap'а.
-// bootstrapAdminRuntime() использует `global` для записи переменных.
-// Когда этот файл включается из FC (4b bootstrap в scope index.php),
-// переменные доступны без global. Но при включении из метода контроллера —
-// нужен явный global.
+// Importa las variables globales del bootstrap.
+// bootstrapAdminRuntime() usa `global` para escribir las variables.
+// Cuando este archivo se incluye desde el FC (4b bootstrap en el scope de index.php),
+// las variables están disponibles sin global. Pero al incluirse desde un método del controlador —
+// hace falta un global explícito.
 global $db, $rSettings, $rMobile, $rServers, $rProxyServers, $rDetect,
        $rTimeout, $rProtocol, $allServers, $rPermissions, $language, $allowedLangs,
        $rServerError, $allServersHealthy, $updateRequired, $rUserInfo, $_INFO;

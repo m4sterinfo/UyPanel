@@ -1,6 +1,6 @@
 <?php
 /**
- * Контроллер массового редактирования MAG-устройств (admin/mag_mass.php)
+ * Controlador de edición masiva de dispositivos MAG (admin/mag_mass.php)
  */
 class MagMassController extends BaseAdminController {
     public function index() {

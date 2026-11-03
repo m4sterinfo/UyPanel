@@ -3,11 +3,11 @@
 /**
  * TMDB Library Loader
  *
- * Прокси-файл для загрузки TMDB-библиотеки из includes/libs/.
+ * Archivo proxy para cargar la librería TMDB desde includes/libs/.
  *
- * Библиотека TMDb (includes/libs/tmdb.php + includes/libs/TMDb/)
- * остаётся на месте до полного перехода на автозагрузку.
- * Этот файл обеспечивает единую точку входа из модуля.
+ * La librería TMDb (includes/libs/tmdb.php + includes/libs/TMDb/)
+ * permanece en su sitio hasta el paso completo al autoload.
+ * Este archivo proporciona un punto de entrada único desde el módulo.
  *
  * @see includes/libs/tmdb.php
  * @see includes/libs/TMDb/

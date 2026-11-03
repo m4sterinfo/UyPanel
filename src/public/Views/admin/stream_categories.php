@@ -288,7 +288,7 @@ renderUnifiedLayoutFooter('admin');
 		$.ajax({
 			type: "POST",
 			url: "post.php?action=import_tmdb_categories",
-			data: "", // или FormData если нужно передать файлы/данные
+							data: "", // o FormData si hay que pasar archivos/datos
 			processData: false,
 			contentType: false,
 			success: function(rReturn) {
@@ -300,13 +300,13 @@ renderUnifiedLayoutFooter('admin');
 						"result": false
 					};
 				}
-				// Вызываем callback и перезагружаем страницу
+									// Invocamos el callback y recargamos la página
 				callbackForm(rJSON);
 				window.location.reload();
 			},
 			error: function(xhr, status, error) {
-				// Обработка ошибок с перезагрузкой
-				console.error('Ошибка:', error);
+									// Manejo de errores con recarga
+									console.error('Error:', error);
 				window.location.reload();
 			}
 		});

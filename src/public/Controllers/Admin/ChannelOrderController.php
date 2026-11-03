@@ -1,6 +1,6 @@
 <?php
 /**
- * ChannelOrderController — порядок каналов.
+ * ChannelOrderController — orden de los canales.
  */
 class ChannelOrderController extends BaseAdminController
 {

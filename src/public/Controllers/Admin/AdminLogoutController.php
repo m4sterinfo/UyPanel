@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AdminLogoutController — Уничтожение сессии + редирект на login.
+ * AdminLogoutController — Destrucción de la sesión + redirect al login.
  */
 class AdminLogoutController extends BaseAdminController
 {

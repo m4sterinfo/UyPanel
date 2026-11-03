@@ -1,6 +1,6 @@
 <?php
 /**
- * Контроллер списка MAG-устройств (admin/mags.php)
+ * Controlador de lista de dispositivos MAG (admin/mags.php)
  */
 class MagsController extends BaseAdminController {
     public function index() {

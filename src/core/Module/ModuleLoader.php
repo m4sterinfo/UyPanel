@@ -1,16 +1,16 @@
 <?php
 
 /**
- * Загрузчик модулей
+ * Cargador de módulos
  *
- * Автоматически обнаруживает модули из modules/star/module.json.
- * config/modules.php хранит только overrides (enabled => false).
+ * Detecta automáticamente los módulos desde modules/star/module.json.
+ * config/modules.php solo guarda overrides (enabled => false).
  *
- * Источник истины — PHP-класс модуля (ModuleInterface), не JSON.
- * module.json содержит только метаданные: name, description, version, requires_core.
+ * La fuente de verdad es la clase PHP del módulo (ModuleInterface), no el JSON.
+ * module.json contiene solo metadatos: name, description, version, requires_core.
  *
  * ──────────────────────────────────────────────────────────────────
- * Использование (web):
+ * Uso (web):
  * ──────────────────────────────────────────────────────────────────
  *
  *   $loader = new ModuleLoader();
@@ -18,7 +18,7 @@
  *   $loader->bootAll($container, $router);
  *
  * ──────────────────────────────────────────────────────────────────
- * Использование (CLI):
+ * Uso (CLI):
  * ──────────────────────────────────────────────────────────────────
  *
  *   $loader = new ModuleLoader();
@@ -30,19 +30,19 @@
 
 class ModuleLoader {
 
-    /** @var ModuleInterface[] Загруженные модули: name => instance */
+    /** @var ModuleInterface[] Módulos cargados: name => instance */
     protected $modules = [];
 
-    /** @var array Overrides из config/modules.php */
+    /** @var array Overrides de config/modules.php */
     protected $overrides = [];
 
     /**
-     * Обнаружить и загрузить все модули из modules/star
+          * Detectar y cargar todos los módulos desde modules/star
      *
-     * Сканирует modules/star/module.json, проверяет overrides в config/modules.php.
-     * Создаёт экземпляры ModuleInterface, но НЕ вызывает boot/registerRoutes.
+          * Escanea modules/star/module.json y comprueba los overrides en config/modules.php.
+          * Crea las instancias ModuleInterface, pero NO invoca boot/registerRoutes.
      *
-     * @param string|null $modulesDir Путь к директории modules/
+          * @param string|null $modulesDir Ruta al directorio modules/
      * @return $this
      */
     public function loadAll($modulesDir = null) {
@@ -50,7 +50,7 @@ class ModuleLoader {
             $modulesDir = defined('MAIN_HOME') ? MAIN_HOME . 'modules' : dirname(__DIR__, 2) . '/modules';
         }
 
-        // Overrides — только отключение модулей
+                // Overrides — solo desactivación de módulos
         $overridesPath = defined('CONFIG_PATH') ? CONFIG_PATH . 'modules.php' : dirname(__DIR__, 2) . '/config/modules.php';
         if (file_exists($overridesPath)) {
             $this->overrides = require $overridesPath;
@@ -59,7 +59,7 @@ class ModuleLoader {
             }
         }
 
-        // Auto-discover модулей
+                // Auto-discover de módulos
         $jsonFiles = glob($modulesDir . '/*/module.json');
         if (!$jsonFiles) {
             return $this;
@@ -68,7 +68,7 @@ class ModuleLoader {
         foreach ($jsonFiles as $jsonFile) {
             $name = basename(dirname($jsonFile));
 
-            // Проверяем override: disabled
+                        // Comprobamos el override: disabled
             if (isset($this->overrides[$name]['enabled']) && !$this->overrides[$name]['enabled']) {
                 continue;
             }
@@ -80,10 +80,10 @@ class ModuleLoader {
     }
 
     /**
-     * Загрузить один модуль
+          * Cargar un módulo
      *
-     * @param string $name Имя модуля (имя директории)
-     * @param string|null $modulePath Абсолютный путь к директории модуля
+          * @param string $name Nombre del módulo (nombre del directorio)
+          * @param string|null $modulePath Ruta absoluta al directorio del módulo
      * @return bool
      */
     public function load($name, $modulePath = null) {
@@ -95,10 +95,10 @@ class ModuleLoader {
             $modulePath = $this->getModulePath($name);
         }
 
-        // Определяем имя класса по соглашению: kebab-case → PascalCase + Module
+                // Determinamos el nombre de la clase por convención: kebab-case → PascalCase + Module
         $className = $this->resolveClassName($name);
 
-        // Пытаемся загрузить класс
+                // Intentamos cargar la clase
         if (!class_exists($className)) {
             $classFile = $modulePath . '/' . $className . '.php';
             if (file_exists($classFile)) {
@@ -122,12 +122,12 @@ class ModuleLoader {
     }
 
     /**
-     * Выполнить boot() и registerRoutes() для всех загруженных модулей
+          * Ejecutar boot() y registerRoutes() para todos los módulos cargados
      *
-     * Используется в web-контексте (bootstrap.php).
+          * Se usa en el contexto web (bootstrap.php).
      *
-     * @param ServiceContainer $container DI-контейнер
-     * @param Router|null $router HTTP-роутер (null для CLI)
+          * @param ServiceContainer $container Contenedor DI
+          * @param Router|null $router Enrutador HTTP (null para CLI)
      */
     public function bootAll(ServiceContainer $container, Router $router = null) {
         foreach ($this->modules as $name => $module) {
@@ -148,12 +148,12 @@ class ModuleLoader {
     }
 
     /**
-     * Зарегистрировать CLI-команды всех загруженных модулей
+          * Registrar los comandos CLI de todos los módulos cargados
      *
-     * Используется в console.php. Каждый модуль сам определяет
-     * свои команды в registerCommands() — без filesystem scanning.
+          * Se usa en console.php. Cada módulo define por sí mismo
+          * sus comandos en registerCommands() — sin filesystem scanning.
      *
-     * @param CommandRegistry $registry Реестр CLI-команд
+          * @param CommandRegistry $registry Registro de comandos CLI
      */
     public function registerAllCommands(CommandRegistry $registry) {
         foreach ($this->modules as $module) {
@@ -162,14 +162,14 @@ class ModuleLoader {
     }
 
     /**
-     * Проверить, загружен ли модуль
+          * Comprobar si un módulo está cargado
      */
     public function isLoaded($name) {
         return isset($this->modules[$name]);
     }
 
     /**
-     * Получить экземпляр загруженного модуля
+          * Obtener la instancia de un módulo cargado
      *
      * @return ModuleInterface|null
      */
@@ -178,7 +178,7 @@ class ModuleLoader {
     }
 
     /**
-     * Получить все загруженные модули
+          * Obtener todos los módulos cargados
      *
      * @return ModuleInterface[]
      */
@@ -187,7 +187,7 @@ class ModuleLoader {
     }
 
     /**
-     * Получить путь к директории модуля
+          * Obtener la ruta al directorio del módulo
      */
     public function getModulePath($name) {
         $base = defined('MAIN_HOME') ? MAIN_HOME : dirname(__DIR__, 2) . '/';
@@ -195,21 +195,21 @@ class ModuleLoader {
     }
 
     /**
-     * Преобразовать имя модуля в имя класса
+          * Convertir el nombre del módulo en nombre de clase
      *
      * kebab-case → PascalCase + 'Module'
-     * Примеры: 'plex' → 'PlexModule', 'theft-detection' → 'TheftDetectionModule'
+          * Ejemplos: 'plex' → 'PlexModule', 'theft-detection' → 'TheftDetectionModule'
      *
      * @param string $name
      * @return string
      */
     protected function resolveClassName($name) {
-        // Override из config: 'class' => 'CustomModule'
+                // Override de config: 'class' => 'CustomModule'
         if (isset($this->overrides[$name]['class'])) {
             return $this->overrides[$name]['class'];
         }
 
-        // Конвенция: kebab-case → PascalCase + Module
+                // Convención: kebab-case → PascalCase + Module
         $parts = explode('-', $name);
         return implode('', array_map('ucfirst', $parts)) . 'Module';
     }

@@ -3,9 +3,9 @@
 /**
  * PackageController — Packages (admin/packages.php).
  *
- * Листинг пакетов (без addon'ов) с edit/delete.
+ * Listado de paquetes (sin addons) con edit/delete.
  *
- * Legacy: admin/packages.php (239 строк)
+ * Legacy: admin/packages.php (239 líneas)
  * Route:  GET /admin/packages → index()
  */
 class PackageController extends BaseAdminController
@@ -17,7 +17,7 @@ class PackageController extends BaseAdminController
         $this->setTitle('Packages');
 
         $allPackages = function_exists('getPackages') ? getPackages() : [];
-        // Фильтруем addon-пакеты (показываем только обычные)
+                // Filtramos los paquetes addon (mostramos solo los normales)
         $packages = array_filter($allPackages, function ($p) {
             return empty($p['is_addon']);
         });

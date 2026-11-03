@@ -14,7 +14,7 @@ jobs:
           CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TOPIC_ID: ${{ secrets.TELEGRAM_TOPIC_ID }}
         run: |
-          # Определяем тип релиза и соответствующий эмодзи
+                    # Determinamos el tipo de release y el emoji correspondiente
           if [ "${{ github.event.release.prerelease }}" == "true" ]; then
             RELEASE_TYPE="Prerelease"
             RELEASE_EMOJI="🧪"

@@ -30,8 +30,8 @@ class PlayerLoginController
 			'You are not allowed to access this player.',
 		];
 
-		// Bootstrap: загружаем includes/admin.php для БД, settings,
-		// destroySession() и других глобальных зависимостей.
+					// Bootstrap: cargamos includes/admin.php para la BD, ajustes,
+					// destroySession() y otras dependencias globales.
 		require_once MAIN_HOME . 'includes/admin.php';
 
 		// Start session

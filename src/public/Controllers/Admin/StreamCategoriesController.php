@@ -1,6 +1,6 @@
 <?php
 /**
- * StreamCategoriesController — список категорий стримов.
+ * StreamCategoriesController — lista de categorías de streams.
  */
 class StreamCategoriesController extends BaseAdminController
 {

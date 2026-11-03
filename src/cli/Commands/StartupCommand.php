@@ -14,7 +14,7 @@ class StartupCommand implements CommandInterface {
 	}
 
 	public function execute(array $rArgs): int {
-		// Сброс кэша автозагрузки — гарантирует актуальную карту классов после обновления
+				// Reset de la caché de autoload — garantiza el mapa de clases actualizado tras una actualización
 		XC_Autoloader::clearCache();
 		XC_Autoloader::warmCache();
 
@@ -33,7 +33,7 @@ class StartupCommand implements CommandInterface {
 			exec('sudo ' . MAIN_HOME . 'status 1');
 		}
 
-		// ── Восстановление daemons.sh при повреждении ────────
+				// ── Restauración de daemons.sh en caso de corrupción ────────
 		if (filesize(MAIN_HOME . 'bin/daemons.sh') == 0) {
 			echo "Daemons corrupted! Regenerating...\n";
 			$rNewScript = '#! /bin/bash' . "\n";
@@ -53,7 +53,7 @@ class StartupCommand implements CommandInterface {
 			file_put_contents(MAIN_HOME . 'bin/nginx/conf/balance.conf', $rNewBalance);
 		}
 
-		// ── Установка crontab и запуск кэша ──────────────────
+				// ── Instalación del crontab y arranque de la caché ──────────
 		if (posix_getpwuid(posix_geteuid())['name'] == 'root') {
 			$this->installRootCrontab();
 			if (!$rFixCron) {
@@ -81,7 +81,7 @@ class StartupCommand implements CommandInterface {
 		$rOutput = array();
 		exec('sudo crontab -l', $rOutput);
 
-		// Удаляем старые записи от UyPanel v1.x.x, чтобы не было дубликатов, и проверяем наличие нужных записей
+				// Eliminamos las entradas antiguas de UyPanel v1.x.x para evitar duplicados, y comprobamos que estén las necesarias
 		$rFiltered = array();
 		foreach ($rOutput as $rLine) {
 			if (strpos($rLine, MAIN_HOME . 'crons/root_') !== false) {

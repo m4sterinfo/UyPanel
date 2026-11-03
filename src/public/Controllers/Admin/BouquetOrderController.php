@@ -3,9 +3,9 @@
 /**
  * BouquetOrderController — Bouquet Order (admin/bouquet_order.php).
  *
- * Drag & drop упорядочивание букетов. POST обработка — legacy post.php.
+ * Ordenación de bouquets por drag & drop. El procesamiento POST es legacy post.php.
  *
- * Legacy: admin/bouquet_order.php (167 строк)
+ * Legacy: admin/bouquet_order.php (167 líneas)
  * Route:  GET /admin/bouquet_order → index()
  */
 class BouquetOrderController extends BaseAdminController

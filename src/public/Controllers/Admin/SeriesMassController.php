@@ -1,6 +1,6 @@
 <?php
 /**
- * SeriesMassController — массовое редактирование сериалов.
+ * SeriesMassController — edición masiva de series.
  */
 class SeriesMassController extends BaseAdminController
 {

@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Репозиторий форматов вывода (output_formats).
+ * Repositorio de formatos de salida (output_formats).
  */
 class OutputFormatRepository {
 	/**
-	 * Получить все форматы вывода, отсортированные по access_output_id.
+	 		 * Obtener todos los formatos de salida, ordenados por access_output_id.
 	 *
 	 * @return array
 	 */

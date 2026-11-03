@@ -3,10 +3,10 @@
 /**
  * EpgListController — EPG Files (admin/epgs.php).
  *
- * Листинг EPG-файлов с клиентским DataTable.
+ * Listado de archivos EPG con DataTable del cliente.
  * API: delete, reload, force_epg.
  *
- * Legacy: admin/epgs.php (233 строк)
+ * Legacy: admin/epgs.php (233 líneas)
  * Route:  GET /admin/epgs → index()
  */
 class EpgListController extends BaseAdminController

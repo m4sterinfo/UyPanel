@@ -87,7 +87,7 @@ class GroupService {
 		}
 	}
 
-	// ──────────── Из GroupRepository ────────────
+			// ──────────── De GroupRepository ────────────
 
 	public static function getAll() {
 		global $db;

@@ -1,6 +1,6 @@
 <?php
 /**
- * Контроллер логов пользователей (admin/user_logs.php)
+ * Controlador de logs de usuarios (admin/user_logs.php)
  */
 class UserLogsController extends BaseAdminController {
     public function index() {

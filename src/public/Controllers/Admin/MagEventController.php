@@ -3,9 +3,9 @@
 /**
  * MagEventController — MAG Events (admin/mag_events.php).
  *
- * Server-side DataTable с MAG-событиями. API delete.
+ * Server-side DataTable con eventos MAG. API delete.
  *
- * Legacy: admin/mag_events.php (176 строк)
+ * Legacy: admin/mag_events.php (176 líneas)
  * Route:  GET /admin/mag_events → index()
  */
 class MagEventController extends BaseAdminController

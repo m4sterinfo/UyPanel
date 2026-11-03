@@ -43,8 +43,8 @@ class CategoryService {
 	}
 
 	/**
-	 * Возвращает категории с int-ключами (замена legacy getCategories()).
-	 * Всегда читает из БД ($rForce = true).
+	 		 * Devuelve las categorías con claves int (sustituye el legacy getCategories()).
+	 		 * Siempre lee de la BD ($rForce = true).
 	 *
 	 * @param string $rType 'live'|'movie'|'series'|'radio'|null
 	 * @return array<int, array>
@@ -58,7 +58,7 @@ class CategoryService {
 		return $rReturn;
 	}
 
-	// ──────────── Из CategoryRepository ────────────
+			// ──────────── De CategoryRepository ────────────
 
 	public static function getFromDatabase($rType = null, $rForce = false) {
 		global $db;
@@ -94,9 +94,9 @@ class CategoryService {
 	}
 
 	/**
-	 * Возвращает ID всех категорий, помеченных как «для взрослых».
+	 		 * Devuelve los IDs de todas las categorías marcadas como «para adultos».
 	 *
-	 * @param array $rCategories Массив загруженных категорий
+	 		 * @param array $rCategories Array de categorías cargadas
 	 * @return int[]
 	 */
 	public static function getAdultIDs($rCategories) {

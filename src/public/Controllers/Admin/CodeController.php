@@ -3,9 +3,9 @@
 /**
  * CodeController — Access Codes (admin/codes.php).
  *
- * Листинг access codes с edit/delete.
+ * Listado de access codes con edit/delete.
  *
- * Legacy: admin/codes.php (273 строки)
+ * Legacy: admin/codes.php (273 líneas)
  * Route:  GET /admin/codes → index()
  */
 class CodeController extends BaseAdminController

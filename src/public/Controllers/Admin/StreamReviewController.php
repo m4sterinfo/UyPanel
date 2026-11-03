@@ -1,6 +1,6 @@
 <?php
 /**
- * StreamReviewController — обзор стримов.
+ * StreamReviewController — revisión de streams.
  */
 class StreamReviewController extends BaseAdminController
 {

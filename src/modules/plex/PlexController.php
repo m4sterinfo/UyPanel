@@ -3,14 +3,14 @@
 /**
  * Plex Module Controller
  *
- * Обрабатывает все маршруты модуля Plex:
- * - Список Plex Sync серверов (index)
- * - Добавление/редактирование библиотеки (add)
- * - Настройки Plex (settings)
+ * Procesa todas las rutas del módulo Plex:
+ * - Lista de servidores Plex Sync (index)
+ * - Añadir/editar biblioteca (add)
+ * - Ajustes de Plex (settings)
  * - API: enable/disable/kill/library/sections actions
  *
  * ──────────────────────────────────────────────────────────────────
- * Заменяет:
+ * Sustituye:
  * ──────────────────────────────────────────────────────────────────
  *
  *   admin/plex.php           → index()
@@ -24,7 +24,7 @@
  *     plex_sections → apiSections()
  *
  * ──────────────────────────────────────────────────────────────────
- * Использование (через Router):
+ * Uso (vía Router):
  * ──────────────────────────────────────────────────────────────────
  *
  *   $router->group('plex', function(Router $r) {
@@ -41,7 +41,7 @@
 class PlexController {
 
     /**
-     * Путь к директории views модуля
+          * Ruta al directorio views del módulo
      * @var string
      */
     protected $viewsPath;
@@ -51,14 +51,14 @@ class PlexController {
     }
 
     // ───────────────────────────────────────────────────────────
-    //  Страницы (GET)
+        //  Páginas (GET)
     // ───────────────────────────────────────────────────────────
 
     /**
-     * Список Plex Sync серверов
+          * Lista de servidores Plex Sync
      *
-     * Заменяет admin/plex.php
-     * Подготавливает: $rPlexServers
+          * Sustituye admin/plex.php
+          * Prepara: $rPlexServers
      */
     public function index() {
         $rPlexServers = PlexRepository::getPlexServers();
@@ -71,10 +71,10 @@ class PlexController {
     }
 
     /**
-     * Добавление/редактирование Plex библиотеки
+          * Añadir/editar biblioteca Plex
      *
-     * Заменяет admin/plex_add.php
-     * Подготавливает: $rFolder (при edit), $rBouquets
+          * Sustituye admin/plex_add.php
+          * Prepara: $rFolder (en edit), $rBouquets
      */
     public function add() {
         if (isset(RequestManager::getAll()['id'])) {
@@ -95,10 +95,10 @@ class PlexController {
     }
 
     /**
-     * Настройки Plex Sync
+          * Ajustes de Plex Sync
      *
-     * Заменяет admin/settings_plex.php
-     * Подготавливает: $rBouquets
+          * Sustituye admin/settings_plex.php
+          * Prepara: $rBouquets
      */
     public function settings() {
         $rBouquets = BouquetService::getAllSimple();
@@ -111,13 +111,13 @@ class PlexController {
     }
 
     // ───────────────────────────────────────────────────────────
-    //  API-действия (JSON)
+        //  Acciones API (JSON)
     // ───────────────────────────────────────────────────────────
 
     /**
-     * Включить все Plex Sync серверы
+          * Activar todos los servidores Plex Sync
      *
-     * Заменяет admin/api.php action=enable_plex
+          * Sustituye admin/api.php action=enable_plex
      */
     public function apiEnable() {
         global $db;
@@ -127,9 +127,9 @@ class PlexController {
     }
 
     /**
-     * Отключить все Plex Sync серверы
+          * Desactivar todos los servidores Plex Sync
      *
-     * Заменяет admin/api.php action=disable_plex
+          * Sustituye admin/api.php action=disable_plex
      */
     public function apiDisable() {
         global $db;
@@ -139,9 +139,9 @@ class PlexController {
     }
 
     /**
-     * Убить все процессы Plex Sync
+          * Matar todos los procesos Plex Sync
      *
-     * Заменяет admin/api.php action=kill_plex
+          * Sustituye admin/api.php action=kill_plex
      */
     public function apiKill() {
         killPlexSync();
@@ -150,9 +150,9 @@ class PlexController {
     }
 
     /**
-     * Действия с отдельной библиотекой (delete / force)
+          * Acciones sobre una biblioteca concreta (delete / force)
      *
-     * Заменяет admin/api.php action=library&sub=delete|force
+          * Sustituye admin/api.php action=library&sub=delete|force
      */
     public function apiLibrary() {
         $rSub = RequestManager::getAll()['sub'] ?? '';
@@ -178,9 +178,9 @@ class PlexController {
     }
 
     /**
-     * Получить секции Plex сервера (AJAX)
+          * Obtener las secciones del servidor Plex (AJAX)
      *
-     * Заменяет admin/api.php action=plex_sections
+          * Sustituye admin/api.php action=plex_sections
      */
     public function apiSections() {
         $rIP       = RequestManager::getAll()['ip'] ?? '';

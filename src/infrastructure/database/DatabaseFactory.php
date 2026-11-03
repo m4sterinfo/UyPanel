@@ -1,30 +1,30 @@
 <?php
 
 /**
- * DatabaseFactory — создание, хранение и закрытие глобального подключения к БД.
+ * DatabaseFactory — creación, almacenamiento y cierre de la conexión global a la BD.
  *
- * Singleton-реестр: entry points вызывают set($db), потребители — get().
+ * Registro singleton: los entry points invocan set($db), los consumidores — get().
  */
 class DatabaseFactory {
 	/** @var DatabaseHandler|null */
 	private static $instance = null;
 
 	/**
-	 * Сохраняет экземпляр DatabaseHandler в singleton-реестре.
+	 		 * Guarda la instancia de DatabaseHandler en el registro singleton.
 	 */
 	public static function set(DatabaseHandler $db): void {
 		self::$instance = $db;
 	}
 
 	/**
-	 * Возвращает текущий DatabaseHandler.
+	 		 * Devuelve el DatabaseHandler actual.
 	 */
 	public static function get(): ?DatabaseHandler {
 		return self::$instance;
 	}
 
 	/**
-	 * Создаёт DatabaseHandler из config.ini и кладёт в global $db + singleton.
+	 		 * Crea el DatabaseHandler desde config.ini y lo coloca en global $db + singleton.
 	 */
 	public static function connect() {
 		global $db;
@@ -41,7 +41,7 @@ class DatabaseFactory {
 	}
 
 	/**
-	 * Закрывает глобальное подключение к БД.
+	 		 * Cierra la conexión global a la BD.
 	 */
 	public static function close() {
 		global $db;

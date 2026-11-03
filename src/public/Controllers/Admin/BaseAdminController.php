@@ -1,18 +1,18 @@
 <?php
 
 /**
- * BaseAdminController — базовый контроллер для admin-страниц.
+ * BaseAdminController — controlador base para las páginas admin.
  *
- * Инкапсулирует общий render-flow:
+ * Encapsula el render-flow común:
  *   1. renderUnifiedLayoutHeader('admin')
- *   2. require Views/admin/{view}.php — HTML-контент
+ *   2. require Views/admin/{view}.php — contenido HTML
  *   3. renderUnifiedLayoutFooter('admin')
  *   4. require Views/admin/{view}.scripts.php — page-specific JS
  *
- * Контроллер-наследник:
- *   - Вызывает requirePermission() для проверки доступа
- *   - Устанавливает setTitle() для $_TITLE
- *   - Вызывает render('view_name', $data) для отрисовки
+ * Controlador heredero:
+ *   - Invoca requirePermission() para comprobar el acceso
+ *   - Establece setTitle() para $_TITLE
+ *   - Invoca render('view_name', $data) para la renderización
  *
  * @see public/Views/layouts/admin.php  — renderUnifiedLayoutHeader()
  * @see public/Views/layouts/footer.php — renderUnifiedLayoutFooter()
@@ -20,14 +20,14 @@
  */
 class BaseAdminController
 {
-    /** @var string Scope: 'admin' или 'reseller' */
+        /** @var string Scope: 'admin' o 'reseller' */
     protected $scope = 'admin';
 
-    /** @var string Заголовок страницы */
+        /** @var string Título de la página */
     protected $title = '';
 
     /**
-     * Установить заголовок страницы ($_TITLE для legacy header).
+          * Establecer el título de la página ($_TITLE para el header legacy).
      */
     protected function setTitle($title)
     {
@@ -36,8 +36,8 @@ class BaseAdminController
     }
 
     /**
-     * Проверка общих прав доступа (checkPermissions).
-     * При отказе — goHome() + exit.
+          * Comprobación de permisos generales (checkPermissions).
+          * En caso de denegación — goHome() + exit.
      */
     protected function requirePermission()
     {
@@ -50,11 +50,11 @@ class BaseAdminController
     }
 
     /**
-     * Проверка расширенных прав (hasPermissions).
-     * При отказе — goHome() + exit.
+          * Comprobación de permisos extendidos (hasPermissions).
+          * En caso de denegación — goHome() + exit.
      *
-     * @param string $type Тип прав ('adv' и т.д.)
-     * @param string $key  Ключ прав ('edit_user' и т.д.)
+          * @param string $type Tipo de permiso ('adv', etc.)
+          * @param string $key  Clave del permiso ('edit_user', etc.)
      */
     protected function requireAdvPermission($type, $key)
     {
@@ -69,8 +69,8 @@ class BaseAdminController
     /**
      * Render: header → view → footer → scripts.
      *
-     * @param string $view Имя view-файла (без .php), напр. 'ips'
-     * @param array  $data Данные для view (extract'd в scope)
+          * @param string $view Nombre del archivo view (sin .php), p. ej. 'ips'
+          * @param array  $data Datos para la view (extract'd al scope)
      */
     protected function render($view, array $data = [])
     {
@@ -78,9 +78,9 @@ class BaseAdminController
         require_once MAIN_HOME . 'public/Views/layouts/admin.php';
         require_once MAIN_HOME . 'public/Views/layouts/footer.php';
 
-        // Глобальные переменные, нужные view-шаблонам и legacy-файлам.
-        // Полный набор, включая переменные из bootstrap, functions.php
-        // и admin_constants.php, чтобы legacy body code мог их использовать.
+                // Variables globales necesarias para las plantillas view y los archivos legacy.
+                // Conjunto completo, incluidas las variables del bootstrap, functions.php
+                // y admin_constants.php, para que el body code legacy pueda usarlas.
         $viewGlobals = [
             // Core rendering
             'language', 'db', 'rSettings', 'rMobile', 'rUserInfo',
@@ -150,7 +150,7 @@ class BaseAdminController
     }
 
     /**
-     * JSON-ответ.
+          * Respuesta JSON.
      */
     protected function json(array $data, $code = 200)
     {
@@ -161,7 +161,7 @@ class BaseAdminController
     }
 
     /**
-     * Редирект.
+          * Redirect.
      */
     protected function redirect($url)
     {
@@ -170,7 +170,7 @@ class BaseAdminController
     }
 
     /**
-     * Получить параметр запроса (GET/POST/RequestManager::getAll()).
+          * Obtener un parámetro de la petición (GET/POST/RequestManager::getAll()).
      *
      * @param string $key
      * @param mixed  $default
@@ -178,7 +178,7 @@ class BaseAdminController
      */
     protected function input($key, $default = null)
     {
-        // Приоритет: RequestManager → $_REQUEST
+                // Prioridad: RequestManager → $_REQUEST
         if (isset(RequestManager::getAll()[$key])) {
             return RequestManager::getAll()[$key];
         }
@@ -186,7 +186,7 @@ class BaseAdminController
     }
 
     /**
-     * Получить текущий статус из запроса (?status=...).
+          * Obtener el status actual de la petición (?status=...).
      *
      * @return mixed|null
      */

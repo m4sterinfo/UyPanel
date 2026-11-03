@@ -3,20 +3,20 @@
 /**
  * TmdbCron
  *
- * Крон обработки очереди TMDB (watch_refresh).
+ * Cron de procesamiento de la cola TMDB (watch_refresh).
  *
- * Ответственность:
- *   - Обработка очереди watch_refresh (фильмы, сериалы, эпизоды)
- *   - Поиск совпадений в TMDB API
- *   - Обновление метаданных в БД
+ * Responsabilidad:
+ *   - Procesamiento de la cola watch_refresh (películas, series, episodios)
+ *   - Búsqueda de coincidencias en la API de TMDB
+ *   - Actualización de metadatos en la BD
  */
 class TmdbCron {
     /**
-     * Создать TMDB-клиент с корректным языком.
+          * Crear el cliente TMDB con el idioma correcto.
      *
-     * Приоритет: язык потока → глобальная настройка → без языка.
+          * Prioridad: idioma del stream → ajuste global → sin idioma.
      *
-     * @param string|null $streamLang Язык потока (tmdb_language)
+          * @param string|null $streamLang Idioma del stream (tmdb_language)
      * @return TMDB
      */
     private static function createTmdbClient(?string $streamLang = null): TMDB {
@@ -30,17 +30,17 @@ class TmdbCron {
     }
 
     /**
-     * Найти лучшее совпадение в TMDB по названию.
+          * Buscar la mejor coincidencia en TMDB por título.
      *
-     * Выполняет поиск дважды: сначала с годом, затем без.
-     * Возвращает TMDB ID или 0.
+          * Ejecuta la búsqueda dos veces: primero con año, luego sin.
+          * Devuelve el TMDB ID o 0.
      *
-     * @param TMDB        $tmdb       Инстанс клиента
-     * @param string      $title      Основной заголовок
-     * @param string|null $altTitle    Альтернативный заголовок
-     * @param string|null $year       Год выпуска
-     * @param string      $searchType 'movie' или 'tv'
-     * @return int TMDB ID (0 — не найден)
+          * @param TMDB        $tmdb       Instancia del cliente
+          * @param string      $title      Título principal
+          * @param string|null $altTitle    Título alternativo
+          * @param string|null $year       Año de estreno
+          * @param string      $searchType 'movie' o 'tv'
+          * @return int TMDB ID (0 — no encontrado)
      */
     private static function findBestMatch(TMDB $tmdb, string $title, ?string $altTitle, ?string $year, string $searchType = 'movie'): int {
         $rMatch = null;
@@ -120,12 +120,12 @@ class TmdbCron {
     }
 
     /**
-     * Обработать обновление фильма (type=1).
+          * Procesar la actualización de una película (type=1).
      *
-     * Ищет в TMDB по названию/файлу, загружает метаданные,
-     * обновляет streams и watch_refresh.
+          * Busca en TMDB por título/archivo, descarga los metadatos,
+          * actualiza streams y watch_refresh.
      *
-     * @param array $row Строка из watch_refresh
+          * @param array $row Fila de watch_refresh
      */
     private static function processMovie(array $row): void {
         global $db;
@@ -139,7 +139,7 @@ class TmdbCron {
         $rStream = $db->get_row();
         $rTMDB = self::createTmdbClient($rStream['tmdb_language']);
 
-        /* --- Определяем TMDB ID --- */
+                /* --- Determinamos el TMDB ID --- */
         if ($rStream['tmdb_id']) {
             $rTMDBID = $rStream['tmdb_id'];
         } else {
@@ -150,7 +150,7 @@ class TmdbCron {
             }
         }
 
-        /* --- Если TMDB ID неизвестен — ищем --- */
+                /* --- Si el TMDB ID es desconocido — buscamos --- */
         if ($rTMDBID == 0) {
             $rFilename = pathinfo(json_decode($rStream['stream_source'], true)[0])['filename'];
             foreach (array($rFilename, $rStream['stream_display_name']) as $rStreamTitle) {
@@ -190,7 +190,7 @@ class TmdbCron {
             }
         }
 
-        /* --- Загружаем данные фильма --- */
+                /* --- Descargamos los datos de la película --- */
         if (0 < $rTMDBID) {
             $rMovie = $rTMDB->getMovie($rTMDBID);
             $rMovieData = json_decode($rMovie->getJSON(), true);
@@ -309,13 +309,13 @@ class TmdbCron {
     }
 
     /**
-     * Обработать обновление сериала (type=2).
+          * Procesar la actualización de una serie (type=2).
      *
-     * Ищет в TMDB по названию, загружает метаданные шоу,
-     * обновляет streams_series и watch_refresh.
+          * Busca en TMDB por título, descarga los metadatos del show,
+          * actualiza streams_series y watch_refresh.
      *
-     * @param array $row           Строка из watch_refresh
-     * @param array &$updateSeries Массив ID сериалов для последующего updateSeries()
+          * @param array $row           Fila de watch_refresh
+          * @param array &$updateSeries Array de IDs de series para el posterior updateSeries()
      */
     private static function processSeries(array $row, array &$updateSeries): void {
         global $db;
@@ -330,7 +330,7 @@ class TmdbCron {
         $rTMDB = self::createTmdbClient($rStream['tmdb_language']);
         $rTMDBID = intval($rStream['tmdb_id']);
 
-        /* --- Если TMDB ID неизвестен — ищем --- */
+                /* --- Si el TMDB ID es desconocido — buscamos --- */
         if ($rTMDBID == 0) {
             $rFilename = $rStream['title'];
             $rRelease = parserelease($rFilename);
@@ -360,7 +360,7 @@ class TmdbCron {
             $rTMDBID = self::findBestMatch($rTMDB, $rTitle, $rAltTitle, $rYear, 'tv');
         }
 
-        /* --- Загружаем данные шоу --- */
+                /* --- Descargamos los datos del show --- */
         if (0 < $rTMDBID) {
             $rShow = $rTMDB->getTVShow($rTMDBID);
             $rShowData = json_decode($rShow->getJSON(), true);
@@ -448,13 +448,13 @@ class TmdbCron {
     }
 
     /**
-     * Обработать обновление эпизода (type=3).
+          * Procesar la actualización de un episodio (type=3).
      *
-     * Получает данные сезона/эпизода из TMDB,
-     * обновляет streams, streams_episodes и watch_refresh.
+          * Obtiene los datos de temporada/episodio desde TMDB,
+          * actualiza streams, streams_episodes y watch_refresh.
      *
-     * @param array $row           Строка из watch_refresh
-     * @param array &$updateSeries Массив ID сериалов для последующего updateSeries()
+          * @param array $row           Fila de watch_refresh
+          * @param array &$updateSeries Array de IDs de series para el posterior updateSeries()
      */
     private static function processEpisode(array $row, array &$updateSeries): void {
         global $db;
@@ -586,10 +586,10 @@ class TmdbCron {
     }
 
     /**
-     * Основная точка входа — обработка всей очереди watch_refresh.
+          * Punto de entrada principal — procesamiento de toda la cola watch_refresh.
      *
-     * Подключает библиотеки TMDB, выбирает записи из очереди
-     * и делегирует обработку по типу.
+          * Incluye las librerías TMDB, selecciona los registros de la cola
+          * y delega el procesamiento por tipo.
      */
     public static function run(): void {
         global $db;
@@ -609,7 +609,7 @@ class TmdbCron {
             } else if ($rRow['type'] == 3) {
                 self::processEpisode($rRow, $rUpdateSeries);
             } else {
-                /* type=4 — запрос на updateSeries */
+                                /* type=4 — petición de updateSeries */
                 if (in_array($rRow['stream_id'], $rUpdateSeries)) {
                 } else {
                     $db->query('UPDATE `watch_refresh` SET `status` = 1 WHERE `id` = ?;', $rRow['id']);

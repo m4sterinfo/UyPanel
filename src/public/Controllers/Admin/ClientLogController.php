@@ -1,6 +1,6 @@
 <?php
 /**
- * ClientLogController — клиентские логи.
+ * ClientLogController — logs de clientes.
  */
 class ClientLogController extends BaseAdminController
 {

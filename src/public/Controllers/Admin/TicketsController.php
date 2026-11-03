@@ -1,6 +1,6 @@
 <?php
 /**
- * Контроллер списка тикетов (admin/tickets.php)
+ * Controlador de lista de tickets (admin/tickets.php)
  */
 
 class TicketsController extends BaseAdminController {

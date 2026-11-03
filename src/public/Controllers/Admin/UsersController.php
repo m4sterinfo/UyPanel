@@ -1,6 +1,6 @@
 <?php
 /**
- * Контроллер списка пользователей (admin/users.php)
+ * Controlador de lista de usuarios (admin/users.php)
  */
 class UsersController extends BaseAdminController {
     public function index() {

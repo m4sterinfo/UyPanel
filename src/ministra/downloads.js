@@ -549,7 +549,7 @@
             this.interval = null;*/
         };
         this.drawCreateDialog = function () {
-            this.dialog.show({ "parent": this });//,"url":'http://cs13112.vkontakte.ru/u72912054/video/a372ac588e.720.mp4',"name":'Part 9 "И чо".mp4'
+                        this.dialog.show({ "parent": this });//,"url":'http://cs13112.vkontakte.ru/u72912054/video/a372ac588e.720.mp4',"name":'Part 9 "Y qué".mp4'
         };
 
         this.layer_z_index = 0;

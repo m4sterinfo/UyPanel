@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Консолидированный сервис аутентификации.
- * Объединяет: CodeService, HMACService, HMACValidator.
+ * Servicio consolidado de autenticación.
+ * Une: CodeService, HMACService, HMACValidator.
  */
 class AuthService {
 	// ──────────────────────────────────────────────
-	// Из CodeService
+			// De CodeService
 	// ──────────────────────────────────────────────
 
 	public static function processCode($rData) {
@@ -78,7 +78,7 @@ class AuthService {
 	}
 
 	// ──────────────────────────────────────────────
-	// Из HMACService
+			// De HMACService
 	// ──────────────────────────────────────────────
 
 	public static function processHMAC($rData) {
@@ -134,7 +134,7 @@ class AuthService {
 	}
 
 	// ──────────────────────────────────────────────
-	// Из HMACValidator
+			// De HMACValidator
 	// ──────────────────────────────────────────────
 
 	public static function validateHMAC($rHMAC, $rExpiry, $rStreamID, $rExtension, $rIP = '', $rMACIP = '', $rIdentifier = '', $rMaxConnections = 0) {

@@ -118,7 +118,7 @@ class NetworkUtils {
     }
 
     /**
-     * Возвращает IP-адрес текущего клиента (REMOTE_ADDR).
+          * Devuelve la dirección IP del cliente actual (REMOTE_ADDR).
      *
      * @return string
      */

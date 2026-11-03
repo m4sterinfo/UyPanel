@@ -1,6 +1,6 @@
 <?php
 /**
- * RtmpMonitorController — мониторинг RTMP.
+ * RtmpMonitorController — monitorización RTMP.
  */
 class RtmpMonitorController extends BaseAdminController
 {

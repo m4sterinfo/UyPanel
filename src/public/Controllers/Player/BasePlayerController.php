@@ -1,16 +1,16 @@
 <?php
 
 /**
- * BasePlayerController — базовый контроллер для player-страниц.
+ * BasePlayerController — controlador base para las páginas player.
  *
- * Наследует BaseAdminController, переопределяя:
- *   - $scope = 'player' (для renderUnifiedLayout и путей views)
- *   - requirePermission() — пустой (player не использует RBAC)
- *   - render() — поддерживает player-специфичные глобальные переменные
+ * Hereda BaseAdminController, redefiniendo:
+ *   - $scope = 'player' (para renderUnifiedLayout y las rutas de views)
+ *   - requirePermission() — vacío (player no usa RBAC)
+ *   - render() — soporta las variables globales específicas del player
  *
  * Player layout:
  *   1. renderUnifiedLayoutHeader('player') → player/header.php
- *   2. require Views/player/{view}.php — HTML-контент
+ *   2. requiere Views/player/{view}.php — contenido HTML
  *   3. renderUnifiedLayoutFooter('player') → player/footer.php
  *
  * @see BaseAdminController
@@ -21,30 +21,30 @@ class BasePlayerController extends BaseAdminController
     protected $scope = 'player';
 
     /**
-     * Player не использует RBAC — проверка не нужна.
+          * Player no usa RBAC — la comprobación no es necesaria.
      */
     protected function requirePermission()
     {
-        // Player авторизация обрабатывается bootstrap (player_session.php).
-        // Если пользователь дошёл до контроллера — он уже аутентифицирован.
+                // La autorización del player la procesa el bootstrap (player_session.php).
+                // Si el usuario llegó hasta el controlador — ya está autenticado.
     }
 
     /**
      * Render: header → view → footer.
      *
-     * Переопределяет admin render для player-specific глобалов.
-     * Player footer.php содержит page-specific JS, поэтому
-     * все глобалы должны быть доступны на момент его вызова.
+          * Redefine el render admin para las globales específicas del player.
+          * El footer.php del player contiene JS específico de página, por lo que
+          * todas las globales deben estar disponibles en el momento de su invocación.
      *
-     * @param string $view Имя view-файла (без .php)
-     * @param array  $data Данные для view (extract'd в scope)
+          * @param string $view Nombre del archivo view (sin .php)
+          * @param array  $data Datos para la view (extract'd al scope)
      */
     protected function render($view, array $data = [])
     {
         require_once MAIN_HOME . 'public/Views/layouts/admin.php';
         require_once MAIN_HOME . 'public/Views/layouts/footer.php';
 
-        // Player-специфичные глобалы (для header.php и footer.php)
+                // Globales específicas del player (para header.php y footer.php)
         $viewGlobals = [
             // Core
             'db', 'rSettings', 'rUserInfo', '_TITLE', '_PAGE',
@@ -60,7 +60,7 @@ class BasePlayerController extends BaseAdminController
         }
         unset($_g);
 
-        // Экспортируем $data в $GLOBALS чтобы footer.php мог их видеть
+                // Exportamos $data a $GLOBALS para que footer.php pueda verlos
         foreach ($data as $key => $value) {
             $GLOBALS[$key] = $value;
         }
@@ -78,12 +78,12 @@ class BasePlayerController extends BaseAdminController
             require $__viewFile;
         }
 
-        // 3. Footer (player footer.php содержит page-specific JS)
+                // 3. Footer (el footer.php del player contiene JS específico de página)
         renderUnifiedLayoutFooter($this->scope);
     }
 
     /**
-     * Редирект на player home.
+          * Redirigir al home del player.
      */
     protected function goPlayerHome()
     {

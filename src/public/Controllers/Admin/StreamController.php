@@ -1,6 +1,6 @@
 <?php
 /**
- * StreamController — редактирование/добавление стрима.
+ * StreamController — edición/añadido de stream.
  */
 class StreamController extends BaseAdminController
 {

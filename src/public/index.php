@@ -3,30 +3,30 @@
 /**
  * Front Controller
  *
- * Единая точка входа для admin/reseller.
- * Заменяет паттерн «каждая страница — отдельный PHP-файл» на
- * централизованный dispatch через Router.
+ * Punto de entrada único para admin/reseller.
+ * Sustituye el patrón «cada página — un archivo PHP aparte» por
+ * un dispatch centralizado a través del Router.
  *
  * ──────────────────────────────────────────────────────────────────
- * Как это работает:
+ * Cómo funciona:
  * ──────────────────────────────────────────────────────────────────
  *
- *   1. nginx перенаправляет запрос сюда (через access code или напрямую)
- *   2. Определяется scope (admin|reseller) и pageName:
- *      — Через access code: nginx передаёт XC_SCOPE и XC_CODE через fastcgi_param
- *      — Напрямую: URL /admin/... или /reseller/... → scope из пути
- *   3. Загружается bootstrap (session → functions → includes/admin)
- *   4. Загружаются маршруты из public/routes/{scope}.php
- *   5. Router пытается dispatch(pageName, method):
- *      — Если маршрут зарегистрирован → вызывает Controller
- *      — Если нет → fallback: include legacy файл admin/{pageName}.php
+ *   1. nginx redirige la petición aquí (vía access code o directamente)
+ *   2. Se determina el scope (admin|reseller) y el pageName:
+ *      — Vía access code: nginx pasa XC_SCOPE y XC_CODE mediante fastcgi_param
+ *      — Directo: URL /admin/... o /reseller/... → scope desde la ruta
+ *   3. Se carga el bootstrap (session → functions → includes/admin)
+ *   4. Se cargan las rutas de public/routes/{scope}.php
+ *   5. El Router intenta dispatch(pageName, method):
+ *      — Si la ruta está registrada → invoca el Controller
+ *      — Si no → fallback: include del archivo legacy admin/{pageName}.php
  *
  * ──────────────────────────────────────────────────────────────────
  * Access Codes (bin/nginx/conf/codes/):
  * ──────────────────────────────────────────────────────────────────
  *
- *   Панель доступна не по /admin/, а по /RANDOMCODE/.
- *   Коды генерируются из шаблона bin/nginx/conf/codes/template:
+ *   El panel no se accede por /admin/, sino por /RANDOMCODE/.
+ *   Los códigos se generan a partir de la plantilla bin/nginx/conf/codes/template:
  *
  *     location ^~ /#CODE# {
  *         alias /home/uypanel/#TYPE#;
@@ -34,18 +34,18 @@
  *         ...
  *     }
  *
- *   Типы кодов (#TYPE#):
+ *   Tipos de códigos (#TYPE#):
  *     0 → admin           3 → includes/api/admin
  *     1 → reseller         4 → includes/api/reseller
  *     2 → ministra         5 → ministra/new
  *                          6 → player
  *
- *   Для Front Controller шаблон передаёт scope через fastcgi_param:
- *     fastcgi_param XC_SCOPE admin;   (или reseller)
+ *   Para el Front Controller la plantilla pasa el scope vía fastcgi_param:
+ *     fastcgi_param XC_SCOPE admin;   (o reseller)
  *     fastcgi_param XC_CODE  xxxxxx;  (access code)
  *
  * ──────────────────────────────────────────────────────────────────
- * Активация (будущий шаблон template):
+ * Activación (futura plantilla template):
  * ──────────────────────────────────────────────────────────────────
  *
  *   location ^~ /#CODE# {
@@ -63,15 +63,15 @@
  *   }
  *
  * ──────────────────────────────────────────────────────────────────
- * Обратная совместимость:
+ * Compatibilidad hacia atrás:
  * ──────────────────────────────────────────────────────────────────
  *
- *   Пока nginx шаблон не обновлён — старые URL через access codes
- *   (/MYCODE/dashboard → admin/dashboard.php) продолжают работать.
- *   Front Controller активируется только после обновления template.
+ *   Mientras la plantilla nginx no se actualice — las URLs antiguas vía access codes
+ *   (/MYCODE/dashboard → admin/dashboard.php) siguen funcionando.
+ *   El Front Controller se activa solo tras actualizar template.
  *
- *   Fallback-механизм: если Router не знает маршрут, контроллер
- *   подключает legacy PHP-файл напрямую (include admin/dashboard.php).
+ *   Mecanismo de fallback: si el Router no conoce la ruta, el controlador
+ *   incluye el archivo PHP legacy directamente (include admin/dashboard.php).
  *
  * @see core/Http/Router.php
  * @see domain/Auth/CodeRepository.php
@@ -81,34 +81,34 @@
  */
 
 // ─────────────────────────────────────────────────────────────────
-//  1. Определяем MAIN_HOME до всего остального
+//  1. Definimos MAIN_HOME antes que todo lo demás
 // ─────────────────────────────────────────────────────────────────
 
 if (!defined('MAIN_HOME')) {
-    // public/index.php → 1 уровень до корня (src/)
+        // public/index.php → 1 nivel hasta la raíz (src/)
     define('MAIN_HOME', dirname(__DIR__) . '/');
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  1b. Autoloader — загружаем ДО всего dispatch-кода
+//  1b. Autoloader — lo cargamos ANTES de todo el código de dispatch
 // ─────────────────────────────────────────────────────────────────
-//  Гарантирует доступность классов (Router, Controller-ы, Domain)
-//  на ВСЕХ путях исполнения: 3a REST, 3b Streaming, 4a noBootstrap, 4b full.
+//  Garantiza la disponibilidad de las clases (Router, Controllers, Domain)
+//  en TODOS los caminos de ejecución: 3a REST, 3b Streaming, 4a noBootstrap, 4b full.
 // ─────────────────────────────────────────────────────────────────
 
 require_once MAIN_HOME . 'autoload.php';
 
 // ─────────────────────────────────────────────────────────────────
-//  2. Разбор URL → scope + pageName
+//  2. Parseo de URL → scope + pageName
 // ─────────────────────────────────────────────────────────────────
 //
-//  Два режима:
+//  Dos modos:
 //
-//  A) Access Code (основной): nginx передаёт XC_SCOPE и XC_CODE
+//  A) Access Code (principal): nginx pasa XC_SCOPE y XC_CODE
 //     URL: /MYCODE/dashboard → scope='admin', pageName='dashboard'
-//     nginx alias направляет в правильную директорию
+//     el alias de nginx dirige al directorio correcto
 //
-//  B) Прямой доступ (fallback/dev): URL содержит /admin/ или /reseller/
+//  B) Acceso directo (fallback/dev): la URL contiene /admin/ o /reseller/
 //     URL: /admin/dashboard → scope='admin', pageName='dashboard'
 // ─────────────────────────────────────────────────────────────────
 
@@ -121,13 +121,13 @@ $pageName   = '';
 $accessCode = null;
 $rawScope   = null;
 
-// Режим A: access code — nginx передаёт scope через fastcgi_param
+// Modo A: access code — nginx pasa el scope vía fastcgi_param
 if (!empty($_SERVER['XC_SCOPE'])) {
-    // Scope из nginx: 'admin', 'reseller', 'ministra', etc.
+        // Scope desde nginx: 'admin', 'reseller', 'ministra', etc.
     $rawScope   = $_SERVER['XC_SCOPE'];
     $accessCode = $_SERVER['XC_CODE'] ?? null;
 
-    // Маппинг #TYPE# → scope для маршрутизации
+        // Mapeo #TYPE# → scope para el enrutado
     $scopeMap = [
         'admin'                => 'admin',
         'reseller'             => 'reseller',
@@ -140,70 +140,70 @@ if (!empty($_SERVER['XC_SCOPE'])) {
 
     $scope = $scopeMap[$rawScope] ?? 'admin';
 
-    // pageName: убираем access code prefix из URL
-    // URL: /MYCODE/dashboard → после strip code → 'dashboard'
+        // pageName: quitamos el prefijo del access code de la URL
+        // URL: /MYCODE/dashboard → tras quitar el code → 'dashboard'
     if ($accessCode && preg_match('#^/' . preg_quote($accessCode, '#') . '(?:/(.*))?$#', $urlPath, $m)) {
         $pageName = isset($m[1]) ? trim($m[1], '/') : '';
     } else {
-        // Fallback: последний сегмент
+                // Fallback: último segmento
         $pageName = trim($urlPath, '/');
-        // Убираем первый сегмент (это access code)
+                // Quitamos el primer segmento (es el access code)
         $parts = explode('/', $pageName, 2);
         $pageName = $parts[1] ?? '';
     }
 }
-// Режим B: прямой URL /admin/... или /reseller/...
+// Modo B: URL directa /admin/... o /reseller/...
 elseif (preg_match('#^/(admin|reseller)(?:/(.*))?$#', $urlPath, $m)) {
     $scope    = $m[1];
     $pageName = isset($m[2]) ? trim($m[2], '/') : '';
 }
-// Режим C: access code без XC_SCOPE (старый template)
-// Определяем scope через PHP_SELF (как делает AuthRepository::getCurrentCode)
+// Modo C: access code sin XC_SCOPE (template antiguo)
+// Determinamos el scope vía PHP_SELF (como hace AuthRepository::getCurrentCode)
 else {
     $selfDir = basename(dirname($_SERVER['PHP_SELF'] ?? ''));
 
-    // Если PHP_SELF содержит код (не 'admin'/'reseller'),
-    // нужна дополнительная информация для определения scope.
-    // Без XC_SCOPE предполагаем admin (безопасный fallback).
+        // Si PHP_SELF contiene un código (no 'admin'/'reseller'),
+        // se necesita información adicional para determinar el scope.
+        // Sin XC_SCOPE asumimos admin (fallback seguro).
     if (!in_array($selfDir, ['admin', 'reseller'], true)) {
         $accessCode = $selfDir;
     } else {
         $scope = $selfDir;
     }
 
-    // Извлекаем pageName из URI
+        // Extraemos el pageName de la URI
     $parts = explode('/', trim($urlPath, '/'));
-    // Первый сегмент — это access code или scope, остальное — pageName
+        // El primer segmento es el access code o el scope, el resto es el pageName
     array_shift($parts);
     $pageName = implode('/', $parts);
 }
 
-// Убираем расширение .php если есть
+// Quitamos la extensión .php si existe
 $pageName = preg_replace('/\.php$/', '', $pageName);
 
-// Пустая страница → index (login redirect)
+// Página vacía → index (redirect al login)
 if ($pageName === '') {
     $pageName = 'index';
 }
 
-// Корень access code (/CODE или /CODE/) → redirect на login.
-// Без redirect браузер остаётся на /CODE, и relative assets
-// резолвятся от / вместо /CODE/ — все CSS/JS/images ломаются.
+// Raíz del access code (/CODE o /CODE/) → redirect al login.
+// Sin redirect el navegador se queda en /CODE, y los assets relativos
+// se resuelven desde / en vez de /CODE/ — todos los CSS/JS/images se rompen.
 if ($pageName === 'index' && $accessCode && in_array($scope, ['admin', 'reseller'], true)
     && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET') {
     header('Location: /' . $accessCode . '/login');
     exit;
 }
 
-// Делаем имя страницы доступным глобально для legacy вспомогательных функций
-// (например, getPageName() в includes/admin.php), которые иначе видят только index.php.
+// Hacemos el nombre de página disponible globalmente para las funciones auxiliares legacy
+// (p. ej., getPageName() en includes/admin.php), que si no solo ven index.php.
 if (!defined('PAGE_NAME')) {
     define('PAGE_NAME', $pageName);
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  3. Статические ресурсы — пропускаем (не должны доходить сюда,
-//     но на случай неверной nginx-конфигурации)
+//  3. Recursos estáticos — los saltamos (no deberían llegar aquí,
+//     pero por si acaso la configuración de nginx es incorrecta)
 // ─────────────────────────────────────────────────────────────────
 
 $ext = pathinfo($pageName, PATHINFO_EXTENSION);
@@ -217,7 +217,7 @@ if (in_array($ext, ['css', 'js', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'ico', 'wof
 // ─────────────────────────────────────────────────────────────────
 //
 //  Access code type 3/4 → nginx fallback @fc_{code} → FC.
-//  index.php удалён из includes/api/, bootstrap + controller напрямую.
+//  index.php eliminado de includes/api/, bootstrap + controller directamente.
 // ─────────────────────────────────────────────────────────────────
 
 if (isset($rawScope) && in_array($rawScope, ['includes/api/admin', 'includes/api/reseller'], true)) {
@@ -232,11 +232,11 @@ if (isset($rawScope) && in_array($rawScope, ['includes/api/admin', 'includes/api
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  3b. Streaming API — player_api, enigma2, epg, playlist и др.
+//  3b. Streaming API — player_api, enigma2, epg, playlist, etc.
 // ─────────────────────────────────────────────────────────────────
 //
-//  nginx location перехватывает /{endpoint}.php → FC с XC_SCOPE=api,
-//  XC_API={endpoint}. Загружаем streaming bootstrap, dispatch controller.
+//  la location de nginx intercepta /{endpoint}.php → FC con XC_SCOPE=api,
+//  XC_API={endpoint}. Cargamos el bootstrap de streaming, dispatch del controller.
 // ─────────────────────────────────────────────────────────────────
 
 if (isset($rawScope) && $rawScope === 'api' && !empty($_SERVER['XC_API'])) {
@@ -255,8 +255,8 @@ if (isset($rawScope) && $rawScope === 'api' && !empty($_SERVER['XC_API'])) {
 		exit;
 	}
 
-	// $rFilename задаётся напрямую — init.php/stream/init.php
-	// проверяют isset($rFilename) и не вычисляют из basename.
+	// $rFilename se define directamente — init.php/stream/init.php
+	// comprueban isset($rFilename) y no lo calculan desde basename.
 	$rFilename = ($rApiName === 'internal') ? 'api' : $rApiName;
 
 	chdir(MAIN_HOME . 'www/');
@@ -274,11 +274,11 @@ if (isset($rawScope) && $rawScope === 'api' && !empty($_SERVER['XC_API'])) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  4. Bootstrap — сессия + глобальные данные (legacy chain)
+//  4. Bootstrap — sesión + datos globales (cadena legacy)
 // ─────────────────────────────────────────────────────────────────
 
-// Директория страниц текущего scope.
-// Admin-файлы перемещены в public/Views/admin/ (Phase 10.6).
+// Directorio de páginas del scope actual.
+// Los archivos admin se movieron a public/Views/admin/ (Phase 10.6).
 if ($scope === 'admin') {
     $adminDir = MAIN_HOME . 'public/Views/admin/';
 } else {
@@ -286,11 +286,11 @@ if ($scope === 'admin') {
 }
 $cwdTarget = is_dir($adminDir) ? $adminDir : MAIN_HOME;
 
-// Поддерживаем legacy относительные include внутри файлов страниц
-// (некоторые страницы всё ещё используют include 'header.php' и т.п.).
+// Mantenemos los includes relativos legacy dentro de los archivos de páginas
+// (algunas páginas aún usan include 'header.php', etc.).
 @chdir($cwdTarget);
 
-// Для reseller scope: bootstrap из infrastructure/bootstrap/
+// Para el scope reseller: bootstrap desde infrastructure/bootstrap/
 if ($scope === 'reseller') {
     $sessionFile    = MAIN_HOME . 'infrastructure/bootstrap/reseller_session.php';
     $functionsFile  = MAIN_HOME . 'infrastructure/bootstrap/reseller_functions.php';
@@ -302,8 +302,8 @@ if ($scope === 'reseller') {
     $functionsFile  = MAIN_HOME . 'infrastructure/bootstrap/admin_functions_fc.php';
 }
 
-// Некоторые страницы пропускают bootstrap (login, setup, database)
-// Для player scope: только login (index = home page, не login)
+// Algunas páginas se saltan el bootstrap (login, setup, database)
+// Para el scope player: solo login (index = home page, no login)
 if ($scope === 'player') {
     $noBootstrapPages = ['login'];
 } else {
@@ -311,18 +311,18 @@ if ($scope === 'player') {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  4a. Страницы без bootstrap
+//  4a. Páginas sin bootstrap
 // ─────────────────────────────────────────────────────────────────
 //
-//  login, setup, database, index — имеют свой собственный bootstrap.
-//  Все scope (admin, reseller, player) маршрутизируются через Router.
-//  Контроллеры noBootstrapPages делегируют в legacy-файлы напрямую.
+//  login, setup, database, index — tienen su propio bootstrap.
+//  Todos los scope (admin, reseller, player) se enrutan a través del Router.
+//  Los controladores de noBootstrapPages delegan directamente en los archivos legacy.
 //
-//  ВАЖНО: НЕ загружаем includes/admin.php здесь!
-//  Если загрузить includes/admin.php через require_once, то когда
-//  legacy-файл попытается загрузить его повторно (через functions.php),
-//  require_once пропустит загрузку и переменные ($db, $rMobile и т.д.)
-//  не будут определены в scope контроллера.
+//  IMPORTANTE: ¡NO cargamos includes/admin.php aquí!
+//  Si se carga includes/admin.php con require_once, cuando
+//  el archivo legacy intente cargarlo de nuevo (vía functions.php),
+//  require_once saltará la carga y las variables ($db, $rMobile, etc.)
+//  no quedarán definidas en el scope del controlador.
 // ─────────────────────────────────────────────────────────────────
 
 if (in_array($pageName, $noBootstrapPages, true)) {
@@ -338,11 +338,11 @@ if (in_array($pageName, $noBootstrapPages, true)) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  4b. Bootstrap — сессия + глобальные данные (legacy chain)
+//  4b. Bootstrap — sesión + datos globales (cadena legacy)
 // ─────────────────────────────────────────────────────────────────
 //
 //  session.php → functions.php → includes/admin.php → autoload.php
-//  После этого доступны: Router, Request, Response, все domain-классы.
+//  Tras esto quedan disponibles: Router, Request, Response, todas las clases domain.
 // ─────────────────────────────────────────────────────────────────
 
 if (file_exists($sessionFile)) {
@@ -354,47 +354,47 @@ if (file_exists($functionsFile)) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  5. Загрузка маршрутов
+//  5. Carga de rutas
 // ─────────────────────────────────────────────────────────────────
 
 $router = Router::getInstance();
 $routesDir = __DIR__ . '/routes/';
 
-// Загружаем маршруты для текущего scope
+// Cargamos las rutas del scope actual
 $routeFile = $routesDir . $scope . '.php';
 if (file_exists($routeFile)) {
     require_once $routeFile;
 }
 
-// API-маршруты (общие для admin и reseller)
+// Rutas API (comunes para admin y reseller)
 $apiRouteFile = $routesDir . 'api.php';
 if (file_exists($apiRouteFile)) {
     require_once $apiRouteFile;
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  6. Dispatch через Router
+//  6. Dispatch a través del Router
 // ─────────────────────────────────────────────────────────────────
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $useLegacyFallback = ($rSettings['use_legacy_fallback'] ?? true);
 
-// Страничные маршруты (reseller: api/table/post и прочие идут сюда)
+// Rutas de páginas (reseller: api/table/post y demás van aquí)
 if ($router->dispatch($pageName, $method)) {
-    exit; // Router обработал запрос
+        exit; // El Router procesó la petición
 }
 
-// API-запросы: /admin/api?action=... обрабатываются отдельно (admin legacy)
-// Примечание: если маршрут 'api' зарегистрирован в Router (Phase 10.4),
-// dispatch() выше уже обработал запрос и мы сюда не попадём.
+// Peticiones API: /admin/api?action=... se procesan aparte (admin legacy)
+// Nota: si la ruta 'api' está registrada en el Router (Phase 10.4),
+// el dispatch() de arriba ya procesó la petición y no llegamos aquí.
 if ($pageName === 'api' && !empty($_REQUEST['action'])) {
     $action = $_REQUEST['action'];
 
     if ($router->dispatchApi($action)) {
-        exit; // Router обработал API-запрос
+                exit; // El Router procesó la petición API
     }
 
-    // Fallback: передаём в legacy admin/api.php (feature-flagged)
+        // Fallback: pasamos al legacy admin/api.php (feature-flagged)
     if ($useLegacyFallback) {
         $legacyApi = $adminDir . 'api.php';
         if (file_exists($legacyApi)) {
@@ -410,18 +410,18 @@ if ($pageName === 'api' && !empty($_REQUEST['action'])) {
 //  7. Fallback — legacy include (feature-flagged)
 // ─────────────────────────────────────────────────────────────────
 //
-//  Если Router не знает маршрут, подключаем legacy PHP-файл.
-//  Bootstrap уже загружен (шаг 4b), поэтому session/functions доступны.
+//  Si el Router no conoce la ruta, incluimos el archivo PHP legacy.
+//  El bootstrap ya está cargado (paso 4b), así que session/functions están disponibles.
 //
 //  Feature flag: use_legacy_fallback (default: true).
-//  Когда все страницы зарегистрированы в Router, переключить на false
-//  чтобы полностью отключить fallback.
+//  Cuando todas las páginas estén registradas en el Router, cambiar a false
+//  para desactivar totalmente el fallback.
 // ─────────────────────────────────────────────────────────────────
 
 if ($useLegacyFallback) {
     $legacyFile = $adminDir . $pageName . '.php';
     if (file_exists($legacyFile)) {
-        // Предотвращаем повторный bootstrap — FC уже загрузил сессию и функции (шаг 4b).
+                // Evitamos un bootstrap repetido — el FC ya cargó sesión y funciones (paso 4b).
         $__viewMode = true;
         require $legacyFile;
         exit;
@@ -429,7 +429,7 @@ if ($useLegacyFallback) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  8. 404 — страница не найдена
+//  8. 404 — página no encontrada
 // ─────────────────────────────────────────────────────────────────
 
 http_response_code(404);

@@ -1,6 +1,6 @@
 <?php
 /**
- * LiveConnectionsController — активные подключения.
+ * LiveConnectionsController — conexiones activas.
  */
 class LiveConnectionsController extends BaseAdminController
 {

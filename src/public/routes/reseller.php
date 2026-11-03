@@ -3,9 +3,9 @@
 /**
  * Reseller Routes
  *
- * Маршруты панели реселлера.
- * Файл подключается Front Controller'ом (index.php) при scope = 'reseller'.
- * Переменная $router (Router::getInstance()) доступна из вызывающего контекста.
+ * Rutas del panel de reseller.
+ * El archivo lo incluye el Front Controller (index.php) cuando scope = 'reseller'.
+ * La variable $router (Router::getInstance()) está disponible desde el contexto que la invoca.
  *
  * @see public/index.php
  * @see core/Http/Router.php

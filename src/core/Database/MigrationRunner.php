@@ -89,7 +89,7 @@ class MigrationRunner {
 			}
 		}
 
-		// Удаляем опустевшие директории (только если они пусты)
+					// Eliminamos los directorios que quedaron vacíos (solo si están vacíos)
 		foreach (array_keys($rDirs) as $rDir) {
 			if (is_dir($rDir) && count(glob($rDir . '/*')) === 0) {
 				rmdir($rDir);

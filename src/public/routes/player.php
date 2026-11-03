@@ -3,9 +3,9 @@
 /**
  * Player Routes
  *
- * Маршруты веб-плеера.
- * Файл подключается Front Controller'ом (index.php) при scope = 'player'.
- * Переменная $router (Router::getInstance()) доступна из вызывающего контекста.
+ * Rutas del reproductor web.
+ * El archivo lo incluye el Front Controller (index.php) cuando scope = 'player'.
+ * La variable $router (Router::getInstance()) está disponible desde el contexto que la invoca.
  *
  * @see public/index.php
  * @see core/Http/Router.php

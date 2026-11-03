@@ -1,30 +1,30 @@
 <?php
 
 /**
- * Обработка ошибок
+ * Manejo de errores
  *
- * Функции generateError() и generate404() для отображения ошибок.
+ * Funciones generateError() y generate404() para mostrar errores.
  *
- * generateError() — показывает ошибку с кодом и описанием (в debug-режиме)
- *                    или стандартную 404 страницу (в production).
+ * generateError() — muestra el error con código y descripción (en modo debug)
+ *                    o la página 404 estándar (en producción).
  *
- * generate404()   — стандартная страница «404 Not Found» под видом nginx.
+ * generate404()   — página estándar «404 Not Found» aparentando ser nginx.
  *
- * Зависимости:
- *   $rErrorCodes (глобальный массив из ErrorCodes.php)
- *   $rSettings   (глобальный массив настроек, загружается позже)
+ * Dependencias:
+ *   $rErrorCodes (array global de ErrorCodes.php)
+ *   $rSettings   (array global de ajustes, se carga más tarde)
  */
 
 /**
- * Генерация страницы ошибки.
+ * Generación de la página de error.
  *
- * В debug-режиме ($rSettings['debug_show_errors'] === true) отображает
- * стилизованную страницу с кодом ошибки и описанием.
- * В production — вызывает generate404().
+ * En modo debug ($rSettings['debug_show_errors'] === true) muestra
+ * una página estilizada con el código de error y la descripción.
+ * En producción — invoca generate404().
  *
- * @param string    $rError Код ошибки (ключ из $rErrorCodes)
- * @param bool      $rKill  Завершить выполнение после вывода (default: true)
- * @param int|null  $rCode  HTTP-код ответа (null = 404)
+ * @param string    $rError Código de error (clave de $rErrorCodes)
+ * @param bool      $rKill  Terminar la ejecución tras la salida (default: true)
+ * @param int|null  $rCode  Código HTTP de respuesta (null = 404)
  */
 function generateError($rError, $rKill = true, $rCode = null) {
     global $rErrorCodes;
@@ -51,9 +51,9 @@ function generateError($rError, $rKill = true, $rCode = null) {
 }
 
 /**
- * Генерация стандартной страницы 404 (имитация nginx).
+ * Generación de la página 404 estándar (imitación de nginx).
  *
- * @param bool $rKill Завершить выполнение после вывода (default: true)
+ * @param bool $rKill Terminar la ejecución tras la salida (default: true)
  */
 function generate404($rKill = true) {
     echo '<html>' . "\r\n" . '<head><title>404 Not Found</title></head>' . "\r\n" . '<body>' . "\r\n" . '<center><h1>404 Not Found</h1></center>' . "\r\n" . '<hr><center>nginx</center>' . "\r\n" . '</body>' . "\r\n" . '</html>' . "\r\n" . '<!-- a padding to disable MSIE and Chrome friendly error page -->' . "\r\n" . '<!-- a padding to disable MSIE and Chrome friendly error page -->' . "\r\n" . '<!-- a padding to disable MSIE and Chrome friendly error page -->' . "\r\n" . '<!-- a padding to disable MSIE and Chrome friendly error page -->' . "\r\n" . '<!-- a padding to disable MSIE and Chrome friendly error page -->' . "\r\n" . '<!-- a padding to disable MSIE and Chrome friendly error page -->';

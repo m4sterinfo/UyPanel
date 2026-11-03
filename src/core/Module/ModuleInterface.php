@@ -1,37 +1,37 @@
 <?php
 
 /**
- * Контракт модуля
+ * Contrato de módulo
  *
- * Каждый модуль в modules/ ДОЛЖЕН реализовать этот интерфейс.
- * Модуль — это изолированная директория с известным контрактом.
- * Его можно удалить, и система продолжит работать.
- *
- * ──────────────────────────────────────────────────────────────────
- * Источник истины — PHP-класс:
- * ──────────────────────────────────────────────────────────────────
- *
- *   module.json — только метаданные (name, description, version, requires_core).
- *   Вся runtime-конфигурация — ЗДЕСЬ, в PHP-методах:
- *     - boot()               — регистрация сервисов
- *     - registerRoutes()     — HTTP-маршруты
- *     - registerCommands()   — CLI-команды и кроны
- *     - getEventSubscribers() — подписки на события
+ * Cada módulo en modules/ DEBE implementar esta interfaz.
+ * Un módulo es un directorio aislado con un contrato conocido.
+ * Se puede eliminar y el sistema seguirá funcionando.
  *
  * ──────────────────────────────────────────────────────────────────
- * Жизненный цикл:
+ * La fuente de verdad es la clase PHP:
  * ──────────────────────────────────────────────────────────────────
  *
- *   1. ModuleLoader сканирует modules/star/module.json
- *   2. config/modules.php проверяется на overrides (enabled => false)
- *   3. boot(ServiceContainer) — регистрация сервисов
- *   4. registerRoutes(Router) — регистрация маршрутов
- *   5. registerCommands(CommandRegistry) — CLI-команды и кроны
- *   6. getEventSubscribers() — подписки на события
+ *   module.json — solo metadatos (name, description, version, requires_core).
+ *   Toda la configuración runtime va AQUÍ, en los métodos PHP:
+ *     - boot()               — registro de servicios
+ *     - registerRoutes()     — rutas HTTP
+ *     - registerCommands()   — comandos CLI y crons
+ *     - getEventSubscribers() — suscripciones a eventos
  *
- *   Установка/удаление:
- *   7. install() — создание таблиц, начальные данные
- *   8. uninstall() — удаление таблиц, очистка данных
+ * ──────────────────────────────────────────────────────────────────
+ * Ciclo de vida:
+ * ──────────────────────────────────────────────────────────────────
+ *
+ *   1. ModuleLoader escanea modules/star/module.json
+ *   2. config/modules.php se comprueba en busca de overrides (enabled => false)
+ *   3. boot(ServiceContainer) — registro de servicios
+ *   4. registerRoutes(Router) — registro de rutas
+ *   5. registerCommands(CommandRegistry) — comandos CLI y crons
+ *   6. getEventSubscribers() — suscripciones a eventos
+ *
+ *   Instalación/desinstalación:
+ *   7. install() — creación de tablas, datos iniciales
+ *   8. uninstall() — eliminación de tablas, limpieza de datos
  *
  * @see Router::group()
  * @see ServiceContainer::set()
@@ -41,67 +41,67 @@
 interface ModuleInterface {
 
     /**
-     * Уникальное имя модуля (совпадает с именем директории)
+          * Nombre único del módulo (coincide con el nombre del directorio)
      */
     public function getName(): string;
 
     /**
-     * Версия модуля (semver)
+          * Versión del módulo (semver)
      */
     public function getVersion(): string;
 
     /**
-     * Инициализация модуля: регистрация сервисов в DI-контейнере
+          * Inicialización del módulo: registro de servicios en el contenedor DI
      *
-     * Вызывается один раз при загрузке модуля.
+          * Se invoca una vez al cargar el módulo.
      *
-     * @param ServiceContainer $container DI-контейнер
+          * @param ServiceContainer $container Contenedor DI
      */
     public function boot(ServiceContainer $container): void;
 
     /**
-     * Регистрация HTTP-маршрутов модуля
+          * Registro de las rutas HTTP del módulo
      *
-     * Вызывается после boot(). Модуль регистрирует:
-     * - GET/POST маршруты для страниц
-     * - API-маршруты для AJAX-действий
+          * Se invoca tras boot(). El módulo registra:
+          * - rutas GET/POST para páginas
+          * - rutas API para acciones AJAX
      *
-     * @param Router $router HTTP-роутер
+          * @param Router $router Enrutador HTTP
      */
     public function registerRoutes(Router $router): void;
 
     /**
-     * Регистрация CLI-команд и крон-задач модуля
+          * Registro de comandos CLI y tareas cron del módulo
      *
-     * Модуль явно создаёт и регистрирует экземпляры CommandInterface.
-     * Никакого filesystem scanning — вся регистрация в PHP.
+          * El módulo crea y registra explícitamente las instancias CommandInterface.
+          * Nada de filesystem scanning — todo el registro en PHP.
      *
-     * Пример:
+          * Ejemplo:
      *   $registry->register(new MyCronCommand());
      *   $registry->register(new MyToolCommand());
      *
-     * @param CommandRegistry $registry Реестр CLI-команд
+          * @param CommandRegistry $registry Registro de comandos CLI
      */
     public function registerCommands(CommandRegistry $registry): void;
 
     /**
-     * Получить массив подписок на события ядра
+          * Obtener el array de suscripciones a eventos del core
      *
-     * @return array Подписки: EventClass => handler
+          * @return array Suscripciones: EventClass => handler
      */
     public function getEventSubscribers(): array;
 
     /**
-     * Установка модуля (создание таблиц, начальные данные)
+          * Instalación del módulo (creación de tablas, datos iniciales)
      *
-     * Вызывается один раз при включении модуля.
+          * Se invoca una vez al activar el módulo.
      */
     public function install(): void;
 
     /**
-     * Удаление модуля (очистка таблиц, записей в settings, cron)
+          * Desinstalación del módulo (limpieza de tablas, registros en settings, cron)
      *
-     * Вызывается при отключении/удалении модуля.
+          * Se invoca al desactivar/eliminar el módulo.
      */
     public function uninstall(): void;
 }

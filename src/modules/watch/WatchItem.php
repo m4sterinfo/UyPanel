@@ -1,12 +1,12 @@
 <?php
 
 /**
- * WatchItem — модуль обработки отдельного элемента Watch Folder (фильм/сериал).
+ * WatchItem — módulo de procesamiento de un elemento Watch Folder individual (película/serie).
  */
 
 class WatchItem {
     /**
-     * Подготовить имя колонки (только буквы, цифры, подчёркивание).
+          * Preparar el nombre de columna (solo letras, números, guion bajo).
      *
      * @param string $rValue
      * @return string
@@ -16,7 +16,7 @@ class WatchItem {
     }
 
     /**
-     * Подготовить массив данных для SQL INSERT/UPDATE.
+          * Preparar el array de datos para SQL INSERT/UPDATE.
      *
      * @param array $rArray
      * @return array
@@ -38,7 +38,7 @@ class WatchItem {
     }
 
     /**
-     * Верифицировать данные по схеме таблицы.
+          * Verificar los datos contra el esquema de la tabla.
      *
      * @param string $rTable
      * @param array $rData
@@ -79,7 +79,7 @@ class WatchItem {
     }
 
     /**
-     * Добавить элемент в букет (файл или через БД при импорте).
+          * Añadir un elemento al bouquet (archivo o vía BD en la importación).
      *
      * @param string $rType
      * @param int $rBouquetID
@@ -115,7 +115,7 @@ class WatchItem {
     }
 
     /**
-     * Распарсить имя релиза (guessit / ptn).
+          * Parsear el nombre del release (guessit / ptn).
      *
      * @param string $rRelease
      * @param string $rType
@@ -131,7 +131,7 @@ class WatchItem {
     }
 
     /**
-     * Получить фильм из кэша по TMDB ID.
+          * Obtener la película de la caché por TMDB ID.
      *
      * @param int $rTMDBID
      * @return array|null
@@ -143,7 +143,7 @@ class WatchItem {
     }
 
     /**
-     * Получить эпизод из кэша по TMDB ID, сезону и номеру.
+          * Obtener el episodio de la caché por TMDB ID, temporada y número.
      *
      * @param int $rTMDBID
      * @param int $rSeason
@@ -160,7 +160,7 @@ class WatchItem {
     }
 
     /**
-     * Нормализовать заголовок для сравнения.
+          * Normalizar el título para comparación.
      *
      * @param string $rTitle
      * @return string
@@ -170,7 +170,7 @@ class WatchItem {
     }
 
     /**
-     * Проверить источник через ffprobe.
+          * Comprobar la fuente vía ffprobe.
      *
      * @param string $rFilename
      * @return array|null
@@ -181,7 +181,7 @@ class WatchItem {
     }
 
     /**
-     * Получить сериал по TMDB ID.
+          * Obtener la serie por TMDB ID.
      *
      * @param int $rID
      * @return array|null
@@ -199,7 +199,7 @@ class WatchItem {
     }
 
     /**
-     * Получить URL трейлера сериала с TMDB.
+          * Obtener la URL del tráiler de la serie desde TMDB.
      *
      * @param int $rTMDBID
      * @param string|null $rLanguage
@@ -224,7 +224,7 @@ class WatchItem {
     }
 
     /**
-     * Получить сериал по ID.
+          * Obtener la serie por ID.
      *
      * @param int $rID
      * @return array|null
@@ -238,7 +238,7 @@ class WatchItem {
     }
 
     /**
-     * Получить следующий порядковый номер для streams.
+          * Obtener el siguiente número ordinal para streams.
      *
      * @return int
      */
@@ -252,7 +252,7 @@ class WatchItem {
     }
 
     /**
-     * Подтвердить ID (отфильтровать > 0).
+          * Confirmar los IDs (filtrar los > 0).
      *
      * @param array $rIDs
      * @return array
@@ -268,7 +268,7 @@ class WatchItem {
     }
 
     /**
-     * Получить букет по ID.
+          * Obtener un bouquet por ID.
      *
      * @param int $rID
      * @return array|null
@@ -282,8 +282,8 @@ class WatchItem {
     }
 
     /**
-     * Основная точка входа обработки Watch Item.
-     * Заменяет loadcli().
+          * Punto de entrada principal del procesamiento de un Watch Item.
+          * Sustituye loadcli().
      */
     public static function run() {
         global $db;

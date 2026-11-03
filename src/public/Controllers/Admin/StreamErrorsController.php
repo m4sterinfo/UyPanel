@@ -1,6 +1,6 @@
 <?php
 /**
- * StreamErrorsController — ошибки стримов.
+ * StreamErrorsController — errores de streams.
  */
 class StreamErrorsController extends BaseAdminController
 {

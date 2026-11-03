@@ -3,9 +3,9 @@
 /**
  * IpController — Blocked IP's (admin/ips.php).
  *
- * Листинг заблокированных IP-адресов с поддержкой flush и delete.
+ * Listado de direcciones IP bloqueadas con soporte flush y delete.
  *
- * Legacy: admin/ips.php (227 строк)
+ * Legacy: admin/ips.php (227 líneas)
  * Route:  GET /admin/ips → index()
  */
 class IpController extends BaseAdminController
@@ -15,7 +15,7 @@ class IpController extends BaseAdminController
         $this->requirePermission();
         global $db;
 
-        // Обработка flush перед рендером
+                // Procesamiento del flush antes del render
         if ($this->input('flush') !== null) {
             if (function_exists('flushIPs')) {
                 flushIPs();

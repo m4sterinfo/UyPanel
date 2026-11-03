@@ -51,7 +51,7 @@ class PackageService {
 		return array('status' => STATUS_FAILURE, 'data' => $rData);
 	}
 
-	// ──────────── Из PackageRepository ────────────
+			// ──────────── De PackageRepository ────────────
 
 	public static function deleteById($rID) {
 		global $db;

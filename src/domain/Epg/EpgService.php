@@ -39,7 +39,7 @@ class EpgService {
 		return EpgService::getStreamEpg($rStream['id'], time(), time() + 1209600);
 	}
 
-	// ──────────── Из EpgRepository ────────────
+			// ──────────── De EpgRepository ────────────
 
 	public static function findByName($rEPGName) {
 		global $db;

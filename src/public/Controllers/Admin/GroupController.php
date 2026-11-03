@@ -3,9 +3,9 @@
 /**
  * GroupController — Groups (admin/groups.php).
  *
- * Листинг групп пользователей с edit/delete (проверка hasPermissions).
+ * Listado de grupos de usuarios con edit/delete (comprueba hasPermissions).
  *
- * Legacy: admin/groups.php (240 строк)
+ * Legacy: admin/groups.php (240 líneas)
  * Route:  GET /admin/groups → index()
  */
 class GroupController extends BaseAdminController

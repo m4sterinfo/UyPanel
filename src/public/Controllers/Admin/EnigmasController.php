@@ -1,6 +1,6 @@
 <?php
 /**
- * Контроллер списка Enigma-устройств (admin/enigmas.php)
+ * Controlador de lista de dispositivos Enigma (admin/enigmas.php)
  */
 class EnigmasController extends BaseAdminController {
     public function index() {

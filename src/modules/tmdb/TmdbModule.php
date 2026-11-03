@@ -3,26 +3,26 @@
 /**
  * TMDB Module
  *
- * Модуль интеграции с TheMovieDB.
- * Регистрирует сервисы, API-действия и крон-задачи.
+ * Módulo de integración con TheMovieDB.
+ * Registra servicios, acciones API y tareas cron.
  *
  * ──────────────────────────────────────────────────────────────────
- * Что включает:
+ * Qué incluye:
  * ──────────────────────────────────────────────────────────────────
  *
- *   Сервисы:
- *     - TmdbService       — поиск, получение деталей фильмов/сериалов
- *     - TmdbCron          — крон обработки очереди watch_refresh
- *     - TmdbPopularCron   — крон сбора популярных фильмов/сериалов
+ *   Servicios:
+ *     - TmdbService       — búsqueda, obtención de detalles de películas/series
+ *     - TmdbCron          — cron de procesamiento de la cola watch_refresh
+ *     - TmdbPopularCron   — cron de recolección de películas/series populares
  *
- *   API-действия:
- *     - tmdb_search       — поиск в TMDB (по тексту или ID)
- *     - tmdb              — получение деталей фильма/сериала
+ *   Acciones API:
+ *     - tmdb_search       — búsqueda en TMDB (por texto o ID)
+ *     - tmdb              — obtención de detalles de película/serie
  *
- *   Библиотека:
+ *   Librería:
  *     - includes/libs/tmdb.php      — TMDB API v3 PHP wrapper
- *     - includes/libs/TMDb/         — модели (Movie, TVShow, Season, ...)
- *     - includes/libs/tmdb_release.php — парсер release-имён
+ *     - includes/libs/TMDb/         — modelos (Movie, TVShow, Season, ...)
+ *     - includes/libs/tmdb_release.php — parser de nombres release
  *
  * @see TmdbService
  * @see TmdbCron
@@ -46,7 +46,7 @@ class TmdbModule implements ModuleInterface {
     }
 
     /**
-     * Регистрация сервисов модуля в DI-контейнере
+          * Registro de los servicios del módulo en el contenedor DI
      *
      * @param ServiceContainer $container
      */
@@ -55,21 +55,21 @@ class TmdbModule implements ModuleInterface {
     }
 
     /**
-     * Регистрация маршрутов модуля
+          * Registro de las rutas del módulo
      *
-     * TMDB не имеет собственных страниц — только API-действия.
-     * Действия tmdb_search и tmdb пока остаются в admin/api.php
-     * (делегируют в TmdbService) и будут перенесены при рефакторинге api.php.
+          * TMDB no tiene páginas propias — solo acciones API.
+          * Las acciones tmdb_search y tmdb siguen por ahora en admin/api.php
+          * (delegan en TmdbService) y se trasladarán al refactorizar api.php.
      *
      * @param Router $router
      */
     public function registerRoutes(Router $router): void {
-        // API-действия tmdb_search и tmdb остаются в api.php
-        // до рефакторинга god-объекта (Шаг 5.2 ARCHITECTURE.md)
+                // Las acciones API tmdb_search y tmdb siguen en api.php
+                // hasta el refactor del god-object (Paso 5.2 de ARCHITECTURE.md)
     }
 
     /**
-     * CLI-команды модуля
+          * Comandos CLI del módulo
      *
      * @param CommandRegistry $registry
      */
@@ -79,7 +79,7 @@ class TmdbModule implements ModuleInterface {
     }
 
     /**
-     * Подписки на события ядра
+          * Suscripciones a eventos del core
      *
      * @return array
      */

@@ -382,7 +382,7 @@ if ($rChannelInfo) {
 
             if ($rChannelInfo["proxy"]) {
                 // ────────────────────────────────────────────────────────────────
-                // Proxy-режим — оставляем почти как было (usleep 100 мс терпимо)
+                                // Modo proxy — lo dejamos casi como estaba (usleep 100 ms tolerable)
                 // ────────────────────────────────────────────────────────────────
                 header("Content-type: video/mp2t");
 
@@ -411,7 +411,7 @@ if ($rChannelInfo) {
                         flush();
                     } else {
                         $rFails++;
-                        usleep(80000);          // 80 мс вместо 100 мс
+                                                usleep(80000);          // 80 ms en lugar de 100 ms
                     }
                 }
                 // cleanup
@@ -421,7 +421,7 @@ if ($rChannelInfo) {
             }
 
             // ────────────────────────────────────────────────────────────────
-            // Основной TS-поток (не proxy)
+                        // Stream TS principal (no proxy)
             // ────────────────────────────────────────────────────────────────
             header("Content-Type: video/mp2t");
 

@@ -1,17 +1,17 @@
 <?php
 
 /**
- * Загрузчик конфигурации
+ * Cargador de configuración
  *
- * Читает config.ini и заполняет глобальный массив $_INFO.
- * Зависимости: MAIN_HOME, CONFIG_PATH (из Paths.php).
+ * Lee config.ini y rellena el array global $_INFO.
+ * Dependencias: MAIN_HOME, CONFIG_PATH (de Paths.php).
  *
- * $_INFO содержит:
- *   'username'  — логин MySQL
- *   'password'  — пароль MySQL
- *   'database'  — имя базы данных
- *   'hostname'  — хост MySQL
- *   'port'      — порт MySQL
+ * $_INFO contiene:
+ *   'username'  — usuario de MySQL
+ *   'password'  — contraseña de MySQL
+ *   'database'  — nombre de la base de datos
+ *   'hostname'  — host de MySQL
+ *   'port'      — puerto de MySQL
  */
 
 global $_INFO;

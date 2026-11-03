@@ -40,7 +40,7 @@ class SignalsCommand implements CommandInterface {
 				break;
 			}
 
-			// ── Kill-сигналы из БД ──────────────────────────────
+							// ── Kill-signals desde la BD ──────────────────────────
 			if ($db->query('SELECT `signal_id`, `pid`, `rtmp` FROM `signals` WHERE `server_id` = ? AND `pid` IS NOT NULL ORDER BY `signal_id` ASC LIMIT 100', SERVER_ID)) {
 				if ($db->num_rows() > 0) {
 					$rIDs = array();
@@ -60,7 +60,7 @@ class SignalsCommand implements CommandInterface {
 					}
 				}
 
-				// ── Cache-сигналы из БД ─────────────────────────
+									// ── Cache-signals desde la BD ─────────────────────
 				if ($db->query('SELECT `signal_id`, `custom_data` FROM `signals` WHERE `server_id` = ? AND `cache` = 1 ORDER BY `signal_id` ASC LIMIT 1000;', SERVER_ID)) {
 					if ($db->num_rows() > 0) {
 						$rDeletedLines = $rUpdatedStreams = $rUpdatedLines = $rIDs = array();
@@ -116,7 +116,7 @@ class SignalsCommand implements CommandInterface {
 						}
 					}
 
-					// ── Redis kill-сигналы ──────────────────────
+											// ── Kill-signals de Redis ──────────────────────
 					if (SettingsManager::getAll()['redis_handler']) {
 						$rSignals = array();
 						foreach (RedisManager::instance()->sMembers('SIGNALS#' . SERVER_ID) as $rKey) {

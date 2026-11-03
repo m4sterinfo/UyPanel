@@ -2,8 +2,8 @@
 import requests
 import re
 
-REPO = "m4sterinfo/UyPanel"   # ❗ Укажи свой репозиторий (org/repo)
-TOKEN = ""  # Можно оставить пустым, но с токеном больше лимиты
+REPO = "m4sterinfo/UyPanel"   # ❗ Pon tu repositorio (org/repo)
+TOKEN = ""  # Puede dejarse vacío, pero con token hay más límite
 
 HEADERS = {"Accept": "application/vnd.github+json"}
 if TOKEN:

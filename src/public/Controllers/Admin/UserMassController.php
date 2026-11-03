@@ -1,6 +1,6 @@
 <?php
 /**
- * Контроллер массового редактирования пользователей (admin/user_mass.php)
+ * Controlador de edición masiva de usuarios (admin/user_mass.php)
  */
 class UserMassController extends BaseAdminController {
     public function index() {

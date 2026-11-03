@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Управление сервисом UyPanel (start/stop/restart/reload).
+ * Gestión del servicio UyPanel (start/stop/restart/reload).
  *
- * Команда: service {start|stop|restart|reload}
- * Требует: root
+ * Comando: service {start|stop|restart|reload}
+ * Requiere: root
  *
- * Заменяет shell-логику из src/service, оставляя shell-обёртку
- * для systemd, которая делегирует сюда.
+ * Sustituye la lógica shell de src/service, dejando la envoltura shell
+ * para systemd, que delega aquí.
  */
 class ServiceCommand implements CommandInterface {
 

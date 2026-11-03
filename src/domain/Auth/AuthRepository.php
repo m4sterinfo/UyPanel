@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Консолидированный репозиторий аутентификации.
- * Объединяет: CodeRepository, HMACRepository.
+ * Repositorio consolidado de autenticación.
+ * Une: CodeRepository, HMACRepository.
  */
 class AuthRepository {
 	// ──────────────────────────────────────────────
-	// Из CodeRepository
+			// De CodeRepository
 	// ──────────────────────────────────────────────
 
 	public static function getAllCodes($rType = null) {
@@ -93,8 +93,8 @@ class AuthRepository {
 
 	public static function getCurrentCode($rInfo = false) {
 		global $db;
-		// Front Controller передаёт XC_CODE через fastcgi_param.
-		// Без FC — определяем из PHP_SELF (legacy поведение).
+				// El Front Controller pasa XC_CODE vía fastcgi_param.
+				// Sin FC — se determina desde PHP_SELF (comportamiento legacy).
 		$rCode = !empty($_SERVER['XC_CODE'])
 			? $_SERVER['XC_CODE']
 			: basename(dirname($_SERVER['PHP_SELF']));
@@ -111,7 +111,7 @@ class AuthRepository {
 	}
 
 	// ──────────────────────────────────────────────
-	// Из HMACRepository
+			// De HMACRepository
 	// ──────────────────────────────────────────────
 
 	public static function getAllHMAC() {

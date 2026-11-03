@@ -1,31 +1,31 @@
 <?php
 
 /**
- * Контракт для CLI-команд и cron-задач.
+ * Contrato para comandos CLI y tareas cron.
  *
- * Каждая команда — один класс, реализующий этот интерфейс.
- * Регистрируется в CommandRegistry по имени (например 'startup', 'cron:servers').
+ * Cada comando es una clase que implementa esta interfaz.
+ * Se registra en CommandRegistry por nombre (p. ej. 'startup', 'cron:servers').
  */
 interface CommandInterface {
 
 	/**
-	 * Уникальное имя команды.
+	 		 * Nombre único del comando.
 	 *
-	 * Формат: 'name' для CLI-команд, 'cron:name' для cron-задач.
-	 * Используется при вызове: php console.php <name>
+	 		 * Formato: 'name' para comandos CLI, 'cron:name' para tareas cron.
+	 		 * Se usa al invocar: php console.php <name>
 	 */
 	public function getName(): string;
 
 	/**
-	 * Краткое описание (одна строка). Выводится в --help.
+	 		 * Descripción breve (una línea). Se muestra en --help.
 	 */
 	public function getDescription(): string;
 
 	/**
-	 * Выполнение команды.
+	 		 * Ejecución del comando.
 	 *
-	 * @param array $rArgs  Аргументы командной строки ($argv без первых двух элементов)
-	 * @return int  Exit code: 0 = успех, >0 = ошибка
+	 		 * @param array $rArgs  Argumentos de la línea de comandos ($argv sin los dos primeros elementos)
+	 		 * @return int  Exit code: 0 = éxito, >0 = error
 	 */
 	public function execute(array $rArgs): int;
 }

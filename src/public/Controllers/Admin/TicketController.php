@@ -1,6 +1,6 @@
 <?php
 /**
- * Контроллер редактирования тикета (admin/ticket.php)
+ * Controlador de edición de ticket (admin/ticket.php)
  */
 
 class TicketController extends BaseAdminController {

@@ -1,19 +1,19 @@
 <?php
 
 /**
- * post.scripts.php — JS-функции submitForm() / callbackForm()
+ * post.scripts.php — funciones JS submitForm() / callbackForm()
  *
- * Подключается footer'ом (include).
- * Выводит <script> блок с формой отправки и обработкой ошибок
- * для каждой reseller-страницы (edit_profile, line, mag, enigma, ticket, user).
+ * Se incluye desde el footer (include).
+ * Emite un bloque <script> con el envío del formulario y el manejo de errores
+ * para cada página reseller (edit_profile, line, mag, enigma, ticket, user).
  *
- * Зависимости (доступны через bootstrap):
- *   - getPageName()              → текущая страница
- *   - get_defined_constants()    → STATUS_* коды ошибок
- *   - SettingsManager::getAll()  → настройки (pass_length)
- *   - $rPermissions              → минимальные длины логина/пароля
+ * Dependencias (disponibles vía bootstrap):
+ *   - getPageName()              → página actual
+ *   - get_defined_constants()    → códigos de error STATUS_*
+ *   - SettingsManager::getAll()  → ajustes (pass_length)
+ *   - $rPermissions              → longitudes mínimas de login/contraseña
  *
- * @see src/reseller/post.php  (POST handler — вызывается напрямую через nginx)
+ * @see src/reseller/post.php  (POST handler — se invoca directamente vía nginx)
  */
 
 $_PAGE = getPageName();

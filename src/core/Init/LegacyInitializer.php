@@ -98,7 +98,7 @@ class LegacyInitializer {
 		);
 		DatabaseFactory::connect();
 
-		// Синхронизация singleton-менеджеров для классов, мигрированных с CU
+				// Sincronización de los singleton-managers para las clases migradas desde CU
 		SettingsManager::set($GLOBALS['rSettings']);
 		RequestManager::set($GLOBALS['rRequest']);
 
@@ -111,22 +111,22 @@ class LegacyInitializer {
 	}
 
 	/**
-	 * Экспортирует данные singleton-менеджеров в глобальные переменные.
+	 		 * Exporta los datos de los singleton-managers a variables globales.
 	 *
-	 * Позволяет использовать `global $rSettings;` внутри функций
-	 * вместо повторного вызова SettingsManager::getAll().
+	 		 * Permite usar `global $rSettings;` dentro de funciones
+	 		 * en lugar de volver a invocar SettingsManager::getAll().
 	 *
-	 * Вызывается один раз в конце initCore() / initStreaming().
-	 * Глобалы — read-only snapshot. Для мутаций использовать Manager.
+	 		 * Se invoca una vez al final de initCore() / initStreaming().
+	 		 * Las globales son un snapshot read-only. Para mutaciones usar el Manager.
 	 *
-	 * Экспортируемые переменные:
-	 *   $rSettings   — настройки панели (SettingsManager)
-	 *   $rRequest    — параметры HTTP-запроса (RequestManager)
-	 *   $rConfig     — config.ini данные (ConfigReader)
-	 *   $rServers    — все серверы (ServerRepository)
-	 *   $rFFPROBE    — путь к ffprobe (FfmpegPaths)
-	 *   $rFFMPEG_CPU     — путь к ffmpeg CPU (FfmpegPaths)
-	 *   $rFFMPEG_GPU — путь к ffmpeg GPU (FfmpegPaths)
+	 		 * Variables exportadas:
+	 		 *   $rSettings   — ajustes del panel (SettingsManager)
+	 		 *   $rRequest    — parámetros de la petición HTTP (RequestManager)
+	 		 *   $rConfig     — datos de config.ini (ConfigReader)
+	 		 *   $rServers    — todos los servidores (ServerRepository)
+	 		 *   $rFFPROBE    — ruta a ffprobe (FfmpegPaths)
+	 		 *   $rFFMPEG_CPU     — ruta a ffmpeg CPU (FfmpegPaths)
+	 		 *   $rFFMPEG_GPU — ruta a ffmpeg GPU (FfmpegPaths)
 	 */
 	public static function exportGlobals(): void {
 		$GLOBALS['rSettings']   = SettingsManager::getAll();

@@ -3,21 +3,21 @@
 /**
  * Theft Detection Module
  *
- * Модуль обнаружения кражи VOD-контента.
- * Мониторит паттерны просмотра VOD и выявляет потенциальное
- * распространение/кражу контента через анализ количества просмотров.
+ * Módulo de detección de robo de contenido VOD.
+ * Monitoriza los patrones de visualización de VOD y detecta la posible
+ * distribución/robo de contenido mediante el análisis del número de visualizaciones.
  *
  * ──────────────────────────────────────────────────────────────────
- * Что включает:
+ * Qué incluye:
  * ──────────────────────────────────────────────────────────────────
  *
- *   Страницы:
- *     - theft_detection — фильтрованная таблица просмотров VOD
- *                         по пользователям (фильтр по диапазону)
+ *   Páginas:
+ *     - theft_detection — tabla filtrada de visualizaciones VOD
+ *                         por usuarios (filtro por rango)
  *
- *   Источник данных:
- *     - cache_engine.php generateTheftDetection() — крон-задача ядра,
- *       генерирует кеш-файл (igbinary) в CACHE_TMP_PATH/theft_detection
+ *   Fuente de datos:
+ *     - cache_engine.php generateTheftDetection() — tarea cron del core,
+ *       genera un archivo de caché (igbinary) en CACHE_TMP_PATH/theft_detection
  *
  * @see admin/theft_detection.php
  */
@@ -39,31 +39,31 @@ class TheftDetectionModule implements ModuleInterface {
     }
 
     /**
-     * Регистрация сервисов модуля в DI-контейнере
+          * Registro de los servicios del módulo en el contenedor DI
      *
-     * Theft Detection использует общую инфраструктуру admin-панели —
-     * отдельные сервисы не регистрируются.
+          * Theft Detection usa la infraestructura común del panel admin —
+          * no se registran servicios propios.
      *
      * @param ServiceContainer $container
      */
     public function boot(ServiceContainer $container): void {
-        // Собственных сервисов нет — используется общая admin-инфраструктура
+                // No hay servicios propios — se usa la infraestructura admin común
     }
 
     /**
-     * Регистрация маршрутов модуля
+          * Registro de las rutas del módulo
      *
-     * Маршрутизация осуществляется через навигацию admin-панели
-     * (theft_detection.php загружается напрямую).
+          * El enrutado se realiza a través de la navegación del panel admin
+          * (theft_detection.php se carga directamente).
      *
      * @param Router $router
      */
     public function registerRoutes(Router $router): void {
-        // Маршрутизация — через admin page navigation (theft_detection.php)
+                // Enrutado — vía navegación de páginas admin (theft_detection.php)
     }
 
     /**
-     * CLI-команды модуля
+          * Comandos CLI del módulo
      *
      * @param CommandRegistry $registry
      */
@@ -71,7 +71,7 @@ class TheftDetectionModule implements ModuleInterface {
     }
 
     /**
-     * Подписки на события ядра
+          * Suscripciones a eventos del core
      *
      * @return array
      */

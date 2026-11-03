@@ -345,7 +345,7 @@ class ExtInf implements ExtTagInterface {
 	private $duration;
 
 	/**
-	 * #EXTINF:-1 tvg-name=Первый_HD tvg-logo="Первый канал" deinterlace=4 group-title="Эфирные каналы",Первый канал HD.
+	 		 * #EXTINF:-1 tvg-name=Canal1_HD tvg-logo="Canal 1" deinterlace=4 group-title="Canales abiertos",Canal 1 HD.
 	 */
 	public function __construct(?string $lineStr = null) {
 		if (null !== $lineStr) {

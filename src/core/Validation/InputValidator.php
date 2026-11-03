@@ -1,15 +1,15 @@
 <?php
 
 /**
- * Валидация входных данных для admin API.
+ * Validación de datos de entrada para la admin API.
  */
 class InputValidator {
 	/**
-	 * Проверяет минимальные требования к данным для указанного действия.
+	 		 * Comprueba los requisitos mínimos de los datos para la acción indicada.
 	 *
-	 * @param string $rAction Имя действия (бывшее имя метода API)
-	 * @param array  $rData   Массив входных данных
-	 * @return bool true если данные валидны
+	 		 * @param string $rAction Nombre de la acción (antiguo nombre del método de la API)
+	 		 * @param array  $rData   Array de datos de entrada
+	 		 * @return bool true si los datos son válidos
 	 */
 	public static function validate(string $rAction, array $rData): bool {
 		switch ($rAction) {
@@ -156,11 +156,11 @@ class InputValidator {
 	}
 
 	/**
-	 * Проверяет и возвращает STATUS_INVALID_INPUT если данные невалидны.
+	 		 * Comprueba y devuelve STATUS_INVALID_INPUT si los datos no son válidos.
 	 *
 	 * @param string $rAction
 	 * @param array  $rData
-	 * @return array|null null если валидно, иначе массив с ошибкой
+	 		 * @return array|null null si es válido, si no un array con el error
 	 */
 	public static function validateOrFail(string $rAction, array $rData): ?array {
 		if (!self::validate($rAction, $rData)) {
@@ -186,7 +186,7 @@ class InputValidator {
 	}
 
 	/**
-	 * Очистка глобальных массивов от нулевых байтов и опасных путей.
+	 		 * Limpieza de los arrays globales de bytes nulos y rutas peligrosas.
 	 */
 	public static function cleanGlobals(&$rData, $rIteration = 0) {
 		if ($rIteration >= 10) {
@@ -205,7 +205,7 @@ class InputValidator {
 	}
 
 	/**
-	 * Рекурсивный парсинг входных данных.
+	 		 * Parsing recursivo de los datos de entrada.
 	 */
 	public static function parseIncomingRecursively(&$rData, $rInput = array(), $rIteration = 0) {
 		if ($rIteration >= 20 || !is_array($rData)) {
@@ -222,7 +222,7 @@ class InputValidator {
 	}
 
 	/**
-	 * Очистка ключа входных данных.
+	 		 * Limpieza de la clave de los datos de entrada.
 	 */
 	public static function parseCleanKey($rKey) {
 		if ($rKey === '') {
@@ -235,7 +235,7 @@ class InputValidator {
 	}
 
 	/**
-	 * Очистка значения входных данных.
+	 		 * Limpieza del valor de los datos de entrada.
 	 */
 	public static function parseCleanValue($rValue) {
 		if ($rValue == '') {

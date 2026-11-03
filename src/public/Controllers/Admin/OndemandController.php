@@ -1,6 +1,6 @@
 <?php
 /**
- * OndemandController — On-Demand сканер.
+ * OndemandController — escáner On-Demand.
  */
 class OndemandController extends BaseAdminController
 {

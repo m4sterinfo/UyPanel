@@ -3,10 +3,10 @@
 /**
  * BouquetSortController — Bouquet Sort / Reorder Content (admin/bouquet_sort.php).
  *
- * Двусторонняя сортировка контента внутри букета (streams, movies, series, radios).
- * Требует параметр id букета.
+ * Ordenación bidireccional del contenido dentro del bouquet (streams, movies, series, radios).
+ * Requiere el parámetro id del bouquet.
  *
- * Legacy: admin/bouquet_sort.php (589 строк)
+ * Legacy: admin/bouquet_sort.php (589 líneas)
  * Route:  GET /admin/bouquet_sort → index()
  */
 class BouquetSortController extends BaseAdminController
@@ -65,7 +65,7 @@ class BouquetSortController extends BaseAdminController
             }
         }
 
-        // Сохранение порядка из JSON
+                // Guardado del orden desde JSON
         foreach ($rChannels as $id) {
             if (isset($rListings['stream'][$id])) {
                 $rOrdered['stream'][] = $rListings['stream'][$id];

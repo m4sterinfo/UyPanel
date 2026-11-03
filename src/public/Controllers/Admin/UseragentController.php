@@ -1,6 +1,6 @@
 <?php
 /**
- * Контроллер редактирования User-Agent (admin/useragent.php)
+ * Controlador de edición de User-Agent (admin/useragent.php)
  */
 
 class UseragentController extends BaseAdminController {

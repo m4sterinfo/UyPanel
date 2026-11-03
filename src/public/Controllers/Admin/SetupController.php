@@ -1,15 +1,15 @@
 <?php
 
 /**
- * SetupController — Начальная настройка системы + MySQL admin.
+ * SetupController — Configuración inicial del sistema + MySQL admin.
  *
- * setup.php и database.php работают до полного bootstrap (возможно нет БД).
- * Оба файла содержат собственные HTML-документы.
+ * setup.php y database.php funcionan antes del bootstrap completo (puede no haber BD).
+ * Ambos archivos contienen sus propios documentos HTML.
  */
 class SetupController extends BaseAdminController
 {
 	/**
-	 * Страница первичной настройки.
+	 		 * Página de configuración inicial.
 	 */
 	public function index()
 	{
@@ -18,7 +18,7 @@ class SetupController extends BaseAdminController
 	}
 
 	/**
-	 * PHP Mini MySQL Admin — управление БД.
+	 		 * PHP Mini MySQL Admin — gestión de la BD.
 	 */
 	public function database()
 	{

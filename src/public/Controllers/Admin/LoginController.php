@@ -1,11 +1,11 @@
 <?php
 
 /**
- * LoginController — Страница авторизации admin-панели.
+ * LoginController — Página de autorización del panel admin.
  *
- * Login имеет собственный HTML-документ (не использует layout header/footer).
- * Файл admin/login.php содержит полный bootstrap через functions.php.
- * Контроллер делегирует напрямую в legacy-файл.
+ * Login tiene su propio documento HTML (no usa el layout header/footer).
+ * El archivo admin/login.php contiene el bootstrap completo vía functions.php.
+ * El controlador delega directamente en el archivo legacy.
  */
 class LoginController extends BaseAdminController
 {

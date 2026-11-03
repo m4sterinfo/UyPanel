@@ -1,18 +1,18 @@
 <?php
 
 /**
- * RedisManager — управление жизненным циклом Redis-подключения.
+ * RedisManager — gestión del ciclo de vida de la conexión Redis.
  *
- * Singleton хранит активный экземпляр Redis.
+ * El singleton guarda la instancia activa de Redis.
  */
 class RedisManager {
-	/** @var Redis|null Singleton-экземпляр */
+			/** @var Redis|null Instancia singleton */
 	private static $instance = null;
 
 	// ──────── Singleton API ────────
 
 	/**
-	 * Возвращает активный Redis, при необходимости подключаясь.
+	 		 * Devuelve el Redis activo, conectándose si es necesario.
 	 * @return Redis|null
 	 */
 	public static function instance() {
@@ -23,7 +23,7 @@ class RedisManager {
 	}
 
 	/**
-	 * Подключается к Redis, если ещё нет соединения.
+	 		 * Se conecta a Redis si aún no hay conexión.
 	 * @return bool
 	 */
 	public static function ensureConnected() {
@@ -32,7 +32,7 @@ class RedisManager {
 	}
 
 	/**
-	 * Закрывает singleton-подключение.
+	 		 * Cierra la conexión singleton.
 	 * @return bool
 	 */
 	public static function closeInstance() {
@@ -41,14 +41,14 @@ class RedisManager {
 	}
 
 	/**
-	 * Проверяет, подключён ли singleton.
+	 		 * Comprueba si el singleton está conectado.
 	 * @return bool
 	 */
 	public static function isConnected() {
 		return is_object(self::$instance);
 	}
 
-	// ──────── Low-level API (без singleton) ────────
+			// ──────── API de bajo nivel (sin singleton) ────────
 
 	public static function setSignal($rKey, $rData) {
 		file_put_contents(SIGNALS_TMP_PATH . 'cache_' . md5($rKey), json_encode(array($rKey, $rData)));

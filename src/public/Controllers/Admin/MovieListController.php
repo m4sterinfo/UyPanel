@@ -1,6 +1,6 @@
 <?php
 /**
- * MovieListController — список фильмов.
+ * MovieListController — lista de películas.
  */
 class MovieListController extends BaseAdminController
 {
