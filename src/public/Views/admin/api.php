@@ -3346,7 +3346,7 @@ if (isset($_SESSION['hash'])) {
 								}
 
 								if ($rDecrypted) {
-									$rDecryptedArray[] = utf8_decode($rDecrypted);
+									$rDecryptedArray[] = mb_convert_encoding($rDecrypted, 'ISO-8859-1', 'UTF-8');
 								}
 							}
 						}
