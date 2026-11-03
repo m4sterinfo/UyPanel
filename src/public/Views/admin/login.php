@@ -290,7 +290,6 @@ if (!isset($_SESSION['hash'])) {
             <div class="video-section">
                 <video class="background-video" autoplay muted loop>
                     <source src="assets/videos/login-bg.mp4" type="video/mp4">
-                    <source src="assets/videos/login-bg.webm" type="video/webm">
                 </video>
                 <div class="video-overlay"></div>
             </div>
