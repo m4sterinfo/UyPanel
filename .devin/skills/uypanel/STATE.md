@@ -98,6 +98,19 @@
   extensiones PHP cargando, panel HTTP 200/302 login, crons ejecutando,
   nginx_rtmp arriba, puertos 80/443/6379.
 
+### 2026-11-02 — Branding propio en el panel y donaciones
+- **Logos del panel reemplazados** (admin + player, logo.png y logo-topbar.png):
+  procesados desde `docs/_media/UyPanel_logo.jpg` (recorte 650x640 + fondo
+  oscuro a transparencia vía GD). Desplegado en el servidor.
+- **Donaciones** (Settings > Info, `src/public/Views/admin/settings.php`):
+  BTC `bc1qsgsmx8nv03elxypklj4zw5rtaxd9707a0ne0zf`, ETH
+  `0x1cc44467FC38aF023463CA71AA9F26A7Bc771872`, USDT **TRC-20**
+  `TEVJABnsenDEDVba5teFJdVksppmrc3dVg`; fila Litecoin eliminada. El QR se
+  genera dinámicamente desde la dirección (no requiere más cambios).
+- **Video del login**: `src/public/assets/admin/videos/login-bg.mp4` (repo) =
+  `/home/uypanel/public/assets/admin/videos/login-bg.mp4` (servidor). El
+  usuario pegará ahí su propio video (mismo nombre). Es archivo LFS en el repo.
+
 ### Pendiente de hacer en el servidor (no requiere código)
 - Nota: el PHP/nginx/redis en producción son los binarios Ubuntu del tarball
   2.0.1 con librerías adaptadas (`libcurl3t64-gnutls`, `libjpeg.so.8` ABI 8 en
