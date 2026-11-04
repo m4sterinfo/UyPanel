@@ -1,10 +1,9 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-04 (sesión QA —
-> panel en 2.0.2, notificación de updates arreglada, QA de líneas/resellers/
-> playback OK, 3 bugs corregidos: assets reseller, login reseller 500,
-> verifyPostTable zero dates).
+> cada cambio significativo. Última actualización: 2026-11-04 (fix watch/plex
+> en blanco + Watch Folder/Plex scanning NUNCA ejecutaba — globals huérfanos y
+> paths fantasma del upstream; escaneo end-to-end verificado: 123/123 archivos).
 
 ## ⏭️ CONTINUAR AQUÍ (próxima sesión)
 
@@ -458,6 +457,79 @@
   El `nginx -s reload` de cron:servers corre como root cada minuto.
 - Pendiente opcional: publicar release GeoLite en UyPanel_Update para que
   `binaries` pueda restaurar mmdb borrados (requiere refresco manual igual).
+
+### 2026-11-04 — FIX: Watch Folder/Plex nunca escaneaban (globals huérfanos + paths fantasma)
+- **Síntoma** (usuario): creó un Watch Folder (series, `/mnt/vod/Series/`) y lo
+  forzó — `last_run` seguía en 0, nada se importaba.
+- **Causa raíz (upstream 2.0.1, migración de módulos incompleta — verificado
+  contra el payload original `xc_vm.tar.gz`: idéntico)**:
+  1. `WatchCron::run()`/`PlexCron::run()` leen como globales `$rForce`,
+     `$rScanOffset`, `$rThreadCount`, `$rMaxItems` (`$F7fa29461a8a5ee2`
+     ofuscado) — definidos en NINGÚN sitio del código. La query programada
+     compara `UNIX_TIMESTAMP()-last_run > NULL` → nunca matchea (y
+     `last_run` default 0, no NULL); el force pierde el arg CLI.
+  2. `WatchItemCommand`/`PlexItemCommand` ponen `$rThreadData` (y
+     `$rTimeout`/`$rStreamDatabase`) en scope LOCAL; `WatchItem::run()`/
+     `PlexItem::run()` los leen como globales → cada item moriría con null.
+  3. Los spawns apuntan a `includes/cli/{watch_item,plex_item,record,certbot}.php`
+     — archivos que NO existen (ni en el payload upstream). Los entry points
+     reales son comandos de `console.php`: `watch_item`, `plex_item`,
+     `certbot`, `record`. Sitios: WatchCron:227, PlexCron:332/334,
+     MovieService:648, SeriesService:290, RootSignalsCronJob:502,
+     VodCronJob:58.
+- **Fix** (commit `acbe002f`, 10 archivos, desplegado): los CronJob publican
+  los globals (`$GLOBALS['rForce'/'rScanOffset'/'rThreadCount'/'rMaxItems']`
+  desde settings `scan_seconds`/`thread_count`/`max_items`), los ItemCommand
+  globalizan sus datos, y TODOS los spawns van vía `console.php <comando>`.
+  Renombrado `$F7fa29461a8a5ee2` → `$rMaxItems`.
+- **Verificado end-to-end** (folder 1, series, `/mnt/vod/Series/`, 123 archivos):
+  3 escaneos → 4 series (El Equipo A 94 eps, Ana 10, Almost Human 13,
+  After Life 6), 123 episodios, metadatos TMDb en español + covers descargados
+  localmente, `last_run` actualizado, watch_logs 108×status1.
+- **Parser**: `settings.parse_type` cambiado `ptn` → `guessit` (PTN no
+  reconoce rangos multi-ep `S03E02-03` → título basura → no-match; guessit
+  sí: `episode:[2,3]` → importa E02 con display "S03E02-03"). Cambiado por BD
+  (UI: Settings → VOD Parser).
+- **`fallback_title` activado en el folder 1** (UI: editar folder → "Fallback
+  to Folder Name"): archivos `01x01.mp4` (nombre solo en la CARPETA — After
+  Life, Almost Human) matchean por nombre de carpeta; S/E persisten del parse
+  del filename. Sin esto: 19/123 no-match.
+- **Quirk menor observado**: en el primer escaneo con 50 threads paralelos,
+  16/123 items crearon su episodio pero no escribieron el log status-1 en
+  watch_logs (fallo transitorio bajo burst; datos completos; en re-escaneo el
+  log se escribe bien). Cosmético — vigilar si recurrence con bibliotecas grandes.
+- Nota: el 404 de `POST /api` con password incorrecta es el anti-probe de
+  InternalApiController (imita la página 404 de nginx) — la API interna
+  FUNCIONA con el password real (`live_streaming_pass`); `/api` llega a
+  `/api.php` vía el fallback `@extensionless-php` de nginx.
+- El usuario corrigió a mano el match de "Ana" (PTN la había matcheado a una
+  serie vieja; la real es tmdb 102625, 2020).
+
+### 2026-11-04 — Fix: páginas watch/plex del panel en blanco ("congeladas")
+- **Síntoma** (usuario): `http://198.27.81.133/7JDEeDMG/watch` se queda
+  congelada/en blanco. El menú enlaza `watch` (Watch Folder, bajo Contenido).
+- **Causa raíz (bug upstream, commit `23070985` del 15-mar-2026)**: para resolver
+  conflictos de autoloader renombraron `Admin/WatchController` →
+  `AdminWatchController` y `Admin/PlexController` → `AdminPlexController`, pero
+  SOLO actualizaron la ruta de `logout`. Las rutas `watch`/`plex` siguieron
+  apuntando a los controladores del MÓDULO (`modules/watch/WatchController`,
+  `modules/plex/PlexController`), cuyo `index()` incluye únicamente la vista
+  desnuda — sin `renderUnifiedLayoutHeader`, sin footer, sin CSS/JS → página
+  sin estilos ni scripts (el usuario la percibe como "congelada").
+- Los wrappers correctos (`AdminWatchController`, `AdminPlexController`,
+  `BaseAdminController::render()`) existían pero estaban huérfanos (0
+  referencias). `watch_add`/`watch_output`/`settings_watch` SÍ usaban wrappers
+  correctos — solo `watch` y `plex` estaban rotas.
+- **Fix** (commit `131e3c54`): `routes/admin.php` → `watch` →
+  `AdminWatchController::index`, `plex` → `AdminPlexController::index`.
+  Desplegado a `/home/uypanel/public/routes/admin.php` (chown uypanel).
+- **Verificado**: sin sesión ambas rutas 302 → login (gate OK, sin fatal);
+  login 200. Verificación con sesión pendiente del usuario (render completo:
+  header + tabla + scripts del módulo vía wrapper legacy `Views/admin/watch.php`,
+  que en modo `$__viewMode` gestiona footer+scripts él mismo).
+- Lección: al renombrar controladores, grep de TODAS las referencias
+  `[XxxController::class` en routes/*.php; los módulos y los wrappers pueden
+  compartir nombre de clase base.
 
 ### 2026-11-03 — Video del login reemplazado por el del usuario
 - El usuario subió su video personal (temático IPTV: pantallas de fútbol con
