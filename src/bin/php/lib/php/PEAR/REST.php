@@ -28,7 +28,7 @@ require_once 'PEAR/Proxy.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2009 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
- * @version    Release: 1.10.16
+ * @version    Release: 1.10.18
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -383,7 +383,7 @@ class PEAR_REST
         }
 
         $request .= $ifmodifiedsince .
-            "User-Agent: PEAR/1.10.16/PHP/" . PHP_VERSION . "\r\n";
+            "User-Agent: PEAR/1.10.18/PHP/" . PHP_VERSION . "\r\n";
 
         $username = $this->config->get('username', null, $channel);
         $password = $this->config->get('password', null, $channel);
@@ -448,8 +448,19 @@ class PEAR_REST
         $length = isset($headers['content-length']) ? $headers['content-length'] : -1;
 
         $data = '';
-        while ($chunk = @fread($fp, 8192)) {
-            $data .= $chunk;
+        if (isset($headers['transfer-encoding']) && strtolower($headers['transfer-encoding']) === 'chunked') {
+            while (!feof($fp)) {
+                $chunk_size = hexdec(fgets($fp));
+                if ($chunk_size === 0) {
+                    break;
+                }
+                $data .= fread($fp, $chunk_size);
+                fgets($fp); // Skip the trailing CRLF
+            }
+        } else {
+            while ($chunk = @fread($fp, 8192)) {
+                $data .= $chunk;
+            }
         }
         fclose($fp);
 

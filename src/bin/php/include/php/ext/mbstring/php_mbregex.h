@@ -10,42 +10,37 @@
    | obtain it through the world-wide-web, please send a note to          |
    | license@php.net so we can mail you a copy immediately.               |
    +----------------------------------------------------------------------+
-   | Author: Michael Wallner <mike@php.net>                               |
+   | Author: Moriyoshi Koizumi <moriyoshi@php.net>                        |
    +----------------------------------------------------------------------+
-*/
-
-#ifndef PHP_STDINT_H
-#define PHP_STDINT_H
-
-/* C99 requires these for C++ to get the definitions
- * of INT64_MAX and other macros used by Zend/zend_long.h
- * C11 drops this requirement, so these effectively
- * just backport that piece of behavior.
- *
- * These defines are placed here instead of
- * with the include below, because sys/types
- * and inttypes may include stdint themselves.
- * And these definitions MUST come first.
  */
-#ifdef __cplusplus
-# ifndef __STDC_LIMIT_MACROS
-#  define __STDC_LIMIT_MACROS
-# endif
-# ifndef __STDC_CONSTANT_MACROS
-#  define __STDC_CONSTANT_MACROS
-# endif
-# ifndef __STDC_FORMAT_MACROS
-#  define __STDC_FORMAT_MACROS
-# endif
-#endif
 
-#include <inttypes.h>
-#include <stdint.h>
+#ifndef _PHP_MBREGEX_H
+#define _PHP_MBREGEX_H
 
-#if defined(_MSC_VER)
-# ifndef u_char
-typedef unsigned __int8   u_char;
-# endif
-#endif /* !_MSC_VER */
+#ifdef HAVE_MBREGEX
 
-#endif /* PHP_STDINT_H */
+#include "php.h"
+#include "zend.h"
+
+#define PHP_MBREGEX_MAXCACHE 50
+
+PHP_MINIT_FUNCTION(mb_regex);
+PHP_MSHUTDOWN_FUNCTION(mb_regex);
+PHP_RINIT_FUNCTION(mb_regex);
+PHP_RSHUTDOWN_FUNCTION(mb_regex);
+PHP_MINFO_FUNCTION(mb_regex);
+
+extern char php_mb_oniguruma_version[256];
+
+typedef struct _zend_mb_regex_globals zend_mb_regex_globals;
+
+zend_mb_regex_globals *php_mb_regex_globals_alloc(void);
+void php_mb_regex_globals_free(zend_mb_regex_globals *pglobals);
+int php_mb_regex_set_mbctype(const char *enc);
+int php_mb_regex_set_default_mbctype(const char *encname);
+const char *php_mb_regex_get_mbctype(void);
+const char *php_mb_regex_get_default_mbctype(void);
+
+#endif /* HAVE_MBREGEX */
+
+#endif /* _PHP_MBREGEX_H */

@@ -186,6 +186,7 @@ SAPI_API int sapi_add_header_ex(const char *header_line, size_t header_line_len,
 SAPI_API int sapi_send_headers(void);
 SAPI_API void sapi_free_header(sapi_header_struct *sapi_header);
 SAPI_API void sapi_handle_post(void *arg);
+SAPI_API void sapi_read_post_data(void);
 SAPI_API size_t sapi_read_post_block(char *buffer, size_t buflen);
 SAPI_API int sapi_register_post_entries(const sapi_post_entry *post_entry);
 SAPI_API int sapi_register_post_entry(const sapi_post_entry *post_entry);
@@ -238,7 +239,7 @@ struct _sapi_module_struct {
 
 	void (*register_server_variables)(zval *track_vars_array);
 	void (*log_message)(const char *message, int syslog_type_int);
-	double (*get_request_time)(void);
+	zend_result (*get_request_time)(double *request_time);
 	void (*terminate_process)(void);
 
 	char *php_ini_path_override;
@@ -262,7 +263,7 @@ struct _sapi_module_struct {
 	void (*ini_defaults)(HashTable *configuration_hash);
 	int phpinfo_as_text;
 
-	char *ini_entries;
+	const char *ini_entries;
 	const zend_function_entry *additional_functions;
 	unsigned int (*input_filter_init)(void);
 };

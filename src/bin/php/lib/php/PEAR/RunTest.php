@@ -37,7 +37,7 @@ putenv("PHP_PEAR_RUNTESTS=1");
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2009 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
- * @version    Release: 1.10.16
+ * @version    Release: 1.10.18
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.3.3
  */
@@ -64,7 +64,6 @@ class PEAR_RunTest
         'display_errors=1',
         'log_errors=0',
         'html_errors=0',
-        'report_memleaks=0',
         'report_zend_debug=0',
         'docref_root=',
         'docref_ext=.html',
@@ -93,6 +92,9 @@ class PEAR_RunTest
             $excluded_error_reporting |= E_STRICT;
         }
         $this->ini_overwrites[] = 'error_reporting=' . (E_ALL & ~$excluded_error_reporting);
+        if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 80500) {
+            $this->ini_overwrites[] = 'report_memleaks=0';
+        }
         if (is_null($logger)) {
             require_once 'PEAR/Common.php';
             $logger = new PEAR_Common;

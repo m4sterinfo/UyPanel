@@ -39,7 +39,7 @@ define('PEAR_INSTALLER_ERROR_NO_PREF_STATE', 2);
  * @author     Martin Jansen <mj@php.net>
  * @copyright  1997-2009 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
- * @version    Release: 1.10.16
+ * @version    Release: 1.10.18
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.3.0
  */
@@ -1636,7 +1636,7 @@ class PEAR_Downloader extends PEAR_Common
         }
 
         $request .= $ifmodifiedsince .
-            "User-Agent: PEAR/1.10.16/PHP/" . PHP_VERSION . "\r\n";
+            "User-Agent: PEAR/1.10.18/PHP/" . PHP_VERSION . "\r\n";
 
         if ($object !== null) { // only pass in authentication for non-static calls
             $username = $config->get('username', null, $channel);
@@ -1726,19 +1726,43 @@ class PEAR_Downloader extends PEAR_Common
             call_user_func($callback, 'start', array(basename($dest_file), $length));
         }
 
-        while ($data = fread($fp, 1024)) {
-            $bytes += strlen($data);
-            if ($callback) {
-                call_user_func($callback, 'bytesread', $bytes);
-            }
-            if (!@fwrite($wp, $data)) {
-                fclose($fp);
-                if ($callback) {
-                    call_user_func($callback, 'writefailed',
-                        array($dest_file, error_get_last()["message"]));
+        if (isset($headers['transfer-encoding']) && strtolower($headers['transfer-encoding']) === 'chunked') {
+            while (!feof($fp)) {
+                $chunk_size = hexdec(fgets($fp));
+                if ($chunk_size === 0) {
+                    break;
                 }
-                return PEAR::raiseError(
-                    "$dest_file: write failed (" . error_get_last()["message"] . ")");
+                $data = fread($fp, $chunk_size);
+                $bytes += strlen($data);
+                if ($callback) {
+                    call_user_func($callback, 'bytesread', $bytes);
+                }
+                if (!@fwrite($wp, $data)) {
+                    fclose($fp);
+                    if ($callback) {
+                        call_user_func($callback, 'writefailed',
+                            array($dest_file, error_get_last()["message"]));
+                    }
+                    return PEAR::raiseError(
+                        "$dest_file: write failed (" . error_get_last()["message"] . ")");
+                }
+                fgets($fp); // Skip the trailing CRLF
+            }
+        } else {
+            while ($data = fread($fp, 1024)) {
+                $bytes += strlen($data);
+                if ($callback) {
+                    call_user_func($callback, 'bytesread', $bytes);
+                }
+                if (!@fwrite($wp, $data)) {
+                    fclose($fp);
+                    if ($callback) {
+                        call_user_func($callback, 'writefailed',
+                            array($dest_file, error_get_last()["message"]));
+                    }
+                    return PEAR::raiseError(
+                        "$dest_file: write failed (" . error_get_last()["message"] . ")");
+                }
             }
         }
 

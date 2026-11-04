@@ -14,7 +14,7 @@
    +----------------------------------------------------------------------+
 */
 
-#define CONFIGURE_COMMAND " './configure'  '--prefix=/home/uypanel/bin/php' '--with-fpm-user=uypanel' '--with-fpm-group=uypanel' '--enable-gd' '--with-jpeg' '--with-freetype' '--enable-static' '--disable-shared' '--enable-opcache' '--enable-fpm' '--without-sqlite3' '--without-pdo-sqlite' '--enable-mysqlnd' '--with-mysqli' '--with-curl' '--disable-cgi' '--with-zlib' '--enable-sockets' '--with-openssl' '--enable-shmop' '--enable-sysvsem' '--enable-sysvshm' '--enable-sysvmsg' '--enable-calendar' '--disable-rpath' '--enable-inline-optimization' '--enable-pcntl' '--enable-mbregex' '--enable-exif' '--enable-bcmath' '--with-mhash' '--with-gettext' '--with-xmlrpc' '--with-xsl' '--with-libxml' '--with-pdo-mysql' '--disable-mbregex' '--with-pear'"
+#define CONFIGURE_COMMAND " './configure'  '--prefix=/home/uypanel/bin/php' '--enable-fpm' '--with-fpm-user=xc_vm' '--with-fpm-group=xc_vm' '--with-openssl' '--with-zlib' '--with-curl' '--enable-mbstring' '--with-pdo-mysql' '--with-mysqli' '--enable-gd' '--with-jpeg' '--with-freetype' '--enable-static' '--disable-shared' '--enable-opcache' '--without-sqlite3' '--without-pdo-sqlite' '--enable-mysqlnd' '--disable-cgi' '--enable-sockets' '--enable-shmop' '--enable-sysvsem' '--enable-sysvshm' '--enable-sysvmsg' '--enable-calendar' '--disable-rpath' '--enable-inline-optimization' '--enable-pcntl' '--enable-mbregex' '--enable-exif' '--enable-bcmath' '--with-mhash' '--with-gettext' '--with-xmlrpc' '--with-xsl' '--with-libxml' '--with-sodium=/usr' '--with-pear'"
 #define PHP_ODBC_CFLAGS	""
 #define PHP_ODBC_LFLAGS		""
 #define PHP_ODBC_LIBS		""
@@ -24,7 +24,7 @@
 #define PHP_PROG_SENDMAIL	"/usr/sbin/sendmail"
 #define PEAR_INSTALLDIR         "/home/uypanel/bin/php/lib/php"
 #define PHP_INCLUDE_PATH	".:/home/uypanel/bin/php/lib/php"
-#define PHP_EXTENSION_DIR       "/home/uypanel/bin/php/lib/php/extensions/no-debug-non-zts-20210902"
+#define PHP_EXTENSION_DIR       "/home/uypanel/bin/php/lib/php/extensions/no-debug-non-zts-20230831"
 #define PHP_PREFIX              "/home/uypanel/bin/php"
 #define PHP_BINDIR              "/home/uypanel/bin/php/bin"
 #define PHP_SBINDIR             "/home/uypanel/bin/php/sbin"

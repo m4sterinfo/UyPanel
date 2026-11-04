@@ -73,8 +73,11 @@ typedef unsigned short mode_t;
 #define DEFAULT_SLASH '\\'
 #define DEFAULT_DIR_SEPARATOR	';'
 #define IS_SLASH(c)	((c) == '/' || (c) == '\\')
+// IS_SLASH_P() may read the previous char on Windows, which may be OOB; use IS_SLASH_P_EX() instead
 #define IS_SLASH_P(c)	(*(c) == '/' || \
         (*(c) == '\\' && !IsDBCSLeadByte(*(c-1))))
+#define IS_SLASH_P_EX(c, first_byte)	(*(c) == '/' || \
+        (*(c) == '\\' && ((first_byte) || !IsDBCSLeadByte(*(c-1)))))
 
 /* COPY_WHEN_ABSOLUTE is 2 under Win32 because by chance both regular absolute paths
    in the file system and UNC paths need copying of two characters */
@@ -82,11 +85,21 @@ typedef unsigned short mode_t;
 #define IS_UNC_PATH(path, len) \
 	(len >= 2 && IS_SLASH(path[0]) && IS_SLASH(path[1]))
 #define IS_ABSOLUTE_PATH(path, len) \
-	(len >= 2 && (/* is local */isalpha(path[0]) && path[1] == ':' || /* is UNC */IS_SLASH(path[0]) && IS_SLASH(path[1])))
+	(len >= 2 && (/* is local */isalpha((unsigned char)(path)[0]) && path[1] == ':' || /* is UNC */IS_SLASH(path[0]) && IS_SLASH(path[1])))
 
 #else
 #ifdef HAVE_DIRENT_H
 #include <dirent.h>
+
+#ifndef DT_UNKNOWN
+# define DT_UNKNOWN 0
+#endif
+#ifndef DT_DIR
+# define DT_DIR 4
+#endif
+#ifndef DT_REG
+# define DT_REG 8
+#endif
 #endif
 
 #define DEFAULT_SLASH '/'
@@ -98,7 +111,9 @@ typedef unsigned short mode_t;
 #endif
 
 #define IS_SLASH(c)	((c) == '/')
+// IS_SLASH_P() may read the previous char on Windows, which may be OOB; use IS_SLASH_P_EX() instead
 #define IS_SLASH_P(c)	(*(c) == '/')
+#define IS_SLASH_P_EX(c, first_byte) IS_SLASH_P(c)
 
 #endif
 
@@ -160,7 +175,7 @@ CWD_API int virtual_cwd_activate(void);
 CWD_API int virtual_cwd_deactivate(void);
 CWD_API char *virtual_getcwd_ex(size_t *length);
 CWD_API char *virtual_getcwd(char *buf, size_t size);
-CWD_API int virtual_chdir(const char *path);
+CWD_API zend_result virtual_chdir(const char *path);
 CWD_API int virtual_chdir_file(const char *path, int (*p_chdir)(const char *path));
 CWD_API int virtual_filepath(const char *path, char **filepath);
 CWD_API int virtual_filepath_ex(const char *path, char **filepath, verify_path_func verify_path);
@@ -260,7 +275,7 @@ extern void virtual_cwd_main_cwd_init(uint8_t);
 #define VCWD_OPEN_MODE(path, flags, mode) virtual_open(path, flags, mode)
 #define VCWD_CREAT(path, mode) virtual_creat(path, mode)
 #define VCWD_CHDIR(path) virtual_chdir(path)
-#define VCWD_CHDIR_FILE(path) virtual_chdir_file(path, virtual_chdir)
+#define VCWD_CHDIR_FILE(path) virtual_chdir_file(path, (int (*)(const char *)) virtual_chdir)
 #define VCWD_GETWD(buf)
 #define VCWD_REALPATH(path, real_path) virtual_realpath(path, real_path)
 #define VCWD_RENAME(oldname, newname) virtual_rename(oldname, newname)

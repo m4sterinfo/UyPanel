@@ -163,6 +163,9 @@
 /* Whether to build pspell as dynamic module */
 /* #undef COMPILE_DL_PSPELL */
 
+/* Whether to build random as dynamic module */
+/* #undef COMPILE_DL_RANDOM */
+
 /* Whether to build readline as dynamic module */
 /* #undef COMPILE_DL_READLINE */
 
@@ -248,7 +251,7 @@
 /* #undef CRYPT_R_GNU_SOURCE */
 
 /* Define if crypt_r uses struct crypt_data */
-#define CRYPT_R_STRUCT_CRYPT_DATA 1
+/* #undef CRYPT_R_STRUCT_CRYPT_DATA */
 
 /* Define to 1 if using 'alloca.c'. */
 /* #undef C_ALLOCA */
@@ -334,13 +337,13 @@
 /* */
 /* #undef GDBM_INCLUDE_FILE */
 
-/* Define to 1 if 'TIOCGWINSZ' requires <sys/ioctl.h>. */
+/* Define to 1 if `TIOCGWINSZ' requires <sys/ioctl.h>. */
 #define GWINSZ_IN_SYS_IOCTL 1
 
 /* Whether 3 arg set_rebind_proc() */
 /* #undef HAVE_3ARG_SETREBINDPROC */
 
-/* Define when aarch64 CRC32 API is available. */
+/* Define to 1 when aarch64 CRC32 API is available. */
 /* #undef HAVE_AARCH64_CRC32 */
 
 /* */
@@ -364,7 +367,7 @@
 /* Define to 1 if <alloca.h> works. */
 #define HAVE_ALLOCA_H 1
 
-/* Define to 1 if you have the 'alphasort' function. */
+/* Define to 1 if you have the `alphasort' function. */
 #define HAVE_ALPHASORT 1
 
 /* AppArmor confinement available */
@@ -379,16 +382,16 @@
 /* Define to 1 if you have the <arpa/nameser.h> header file. */
 #define HAVE_ARPA_NAMESER_H 1
 
-/* Define to 1 if you have the 'asctime_r' function. */
+/* Define to 1 if you have the `asctime_r' function. */
 #define HAVE_ASCTIME_R 1
 
 /* Define if asm goto support */
 #define HAVE_ASM_GOTO 1
 
-/* Define to 1 if you have the 'asprintf' function. */
+/* Define to 1 if you have the `asprintf' function. */
 #define HAVE_ASPRINTF 1
 
-/* Define to 1 if you have the 'atoll' function. */
+/* Define to 1 if you have the `atoll' function. */
 #define HAVE_ATOLL 1
 
 /* whether the compiler supports __attribute__ ((__aligned__)) */
@@ -424,13 +427,13 @@
 /* Libzip >= 1.6.0 with zip_register_cancel_callback_with_state function */
 /* #undef HAVE_CANCEL_CALLBACK */
 
-/* */
+/* Capstone is available */
 /* #undef HAVE_CAPSTONE */
 
-/* Define to 1 if you have the 'chroot' function. */
+/* Define to 1 if you have the `chroot' function. */
 #define HAVE_CHROOT 1
 
-/* Define to 1 if you have the 'clearenv' function. */
+/* Define to 1 if you have the `clearenv' function. */
 #define HAVE_CLEARENV 1
 
 /* */
@@ -460,28 +463,31 @@
 /* Define to 1 if you have the <CommonCrypto/CommonRandom.h> header file. */
 /* #undef HAVE_COMMONCRYPTO_COMMONRANDOM_H */
 
+/* Define if copy_file_range support */
+#define HAVE_COPY_FILE_RANGE 1
+
 /* whether __cpuid_count is available */
 #define HAVE_CPUID_COUNT 1
 
 /* Define to 1 if you have the <cpuid.h> header file. */
 #define HAVE_CPUID_H 1
 
-/* Define to 1 if you have the 'CreateProcess' function. */
+/* Define to 1 if you have the `CreateProcess' function. */
 /* #undef HAVE_CREATEPROCESS */
 
 /* */
-#define HAVE_CRYPT 1
+/* #undef HAVE_CRYPT */
 
 /* Define to 1 if you have the <crypt.h> header file. */
 #define HAVE_CRYPT_H 1
 
 /* */
-#define HAVE_CRYPT_R 1
+/* #undef HAVE_CRYPT_R */
 
-/* Define to 1 if you have the 'ctermid' function. */
+/* Define to 1 if you have the `ctermid' function. */
 #define HAVE_CTERMID 1
 
-/* Define to 1 if you have the 'ctime_r' function. */
+/* Define to 1 if you have the `ctime_r' function. */
 #define HAVE_CTIME_R 1
 
 /* */
@@ -502,23 +508,20 @@
 /* */
 #define HAVE_DCNGETTEXT 1
 
-/* Define to 1 if you have the declaration of 'arc4random_buf', and to 0 if
+/* Define to 1 if you have the declaration of `arc4random_buf', and to 0 if
    you don't. */
-#define HAVE_DECL_ARC4RANDOM_BUF 0
+#define HAVE_DECL_ARC4RANDOM_BUF 1
 
-/* Define to 1 if you have the declaration of 'strerror_r', and to 0 if you
+/* Define to 1 if you have the declaration of `strerror_r', and to 0 if you
    don't. */
 #define HAVE_DECL_STRERROR_R 1
 
-/* Define to 1 if you have the declaration of 'tzname', and to 0 if you don't.
+/* Define to 1 if you have the declaration of `tzname', and to 0 if you don't.
    */
 /* #undef HAVE_DECL_TZNAME */
 
 /* do we have /dev/poll? */
 /* #undef HAVE_DEVPOLL */
-
-/* Define if the target system has /dev/urandom device */
-#define HAVE_DEV_URANDOM 1
 
 /* Define to 1 if you have the <dirent.h> header file. */
 #define HAVE_DIRENT_H 1
@@ -556,6 +559,9 @@
 /* Whether to enable DTrace support */
 /* #undef HAVE_DTRACE */
 
+/* Define to 1 if you have the `eaccess' function. */
+#define HAVE_EACCESS 1
+
 /* */
 /* #undef HAVE_EMPRESS */
 
@@ -580,19 +586,19 @@
 /* Whether you want EXIF (metadata from images) support */
 #define HAVE_EXIF 1
 
-/* Define to 1 if you have the 'explicit_bzero' function. */
+/* Define to 1 if you have the `explicit_bzero' function. */
 #define HAVE_EXPLICIT_BZERO 1
 
-/* Define to 1 if you have the 'explicit_memset' function. */
+/* Define to 1 if you have the `explicit_memset' function. */
 /* #undef HAVE_EXPLICIT_MEMSET */
 
-/* Define to 1 if you have the 'fabsf' function. */
+/* Define to 1 if you have the `fabsf' function. */
 #define HAVE_FABSF 1
 
 /* Define to 1 if you have the <fcntl.h> header file. */
 #define HAVE_FCNTL_H 1
 
-/* Define to 1 if you have the 'fdatasync' function. */
+/* Define to 1 if you have the `fdatasync' function. */
 #define HAVE_FDATASYNC 1
 
 /* Have ffi support */
@@ -619,23 +625,29 @@
 /* Whether libffi supports thiscall calling convention */
 /* #undef HAVE_FFI_THISCALL */
 
-/* Define to 1 if you have the 'flock' function. */
+/* Define to 1 if you have the `flock' function. */
 #define HAVE_FLOCK 1
 
-/* Define to 1 if you have the 'floorf' function. */
+/* Define to 1 if you have the `floorf' function. */
 #define HAVE_FLOORF 1
 
 /* Define if flush should be called explicitly after a buffered io. */
 /* #undef HAVE_FLUSHIO */
 
-/* Define to 1 if your system has a working POSIX 'fnmatch' function. */
+/* Define to 1 if your system has a working POSIX `fnmatch' function. */
 #define HAVE_FNMATCH 1
 
 /* */
 #define HAVE_FOPENCOOKIE 1
 
-/* Define to 1 if you have the 'fork' function. */
+/* Define to 1 if you have the `fork' function. */
 #define HAVE_FORK 1
+
+/* Define to 1 if you have the `forkx' function. */
+/* #undef HAVE_FORKX */
+
+/* Define to 1 if you have the `fpathconf' function. */
+#define HAVE_FPATHCONF 1
 
 /* do we have acl support? */
 /* #undef HAVE_FPM_ACL */
@@ -646,7 +658,7 @@
 /* whether FPU control word can be manipulated by inline assembler */
 #define HAVE_FPU_INLINE_ASM_X86 1
 
-/* Define to 1 if you have the 'ftok' function. */
+/* Define to 1 if you have the `ftok' function. */
 #define HAVE_FTOK 1
 
 /* Whether you want FTP support */
@@ -670,10 +682,10 @@
 /* Define to 1 if you have the six-argument form of gethostbyname_r(). */
 #define HAVE_FUNC_GETHOSTBYNAME_R_6 1
 
-/* Define to 1 if you have the 'funopen' function. */
+/* Define to 1 if you have the `funopen' function. */
 /* #undef HAVE_FUNOPEN */
 
-/* Define to 1 if you have the 'gai_strerror' function. */
+/* Define to 1 if you have the `gai_strerror' function. */
 #define HAVE_GAI_STRERROR 1
 
 /* Define if the target system has support for global register variables */
@@ -682,10 +694,10 @@
 /* Whether you have gcov */
 /* #undef HAVE_GCOV */
 
-/* */
+/* Does gdImageCreateFromAvif work? */
 /* #undef HAVE_GD_AVIF */
 
-/* */
+/* Does gdImageCreateFromBmp work? */
 #define HAVE_GD_BMP 1
 
 /* */
@@ -697,37 +709,37 @@
 /* */
 /* #undef HAVE_GD_GET_INTERPOLATION */
 
-/* */
+/* Does gdImageCreateFromJpeg work? */
 #define HAVE_GD_JPG 1
 
 /* */
 /* #undef HAVE_GD_LIBVERSION */
 
-/* */
+/* Does gdImageCreateFromPng work? */
 #define HAVE_GD_PNG 1
 
-/* */
+/* Does gdImageCreateFromTga work? */
 #define HAVE_GD_TGA 1
 
-/* */
+/* Does gdImageCreateFromWebp work? */
 /* #undef HAVE_GD_WEBP */
 
-/* */
+/* Does gdImageCreateFromXpm work? */
 /* #undef HAVE_GD_XPM */
 
 /* Define if you have the getaddrinfo function */
 #define HAVE_GETADDRINFO 1
 
-/* Define to 1 if you have the 'getcwd' function. */
+/* Define to 1 if you have the `getcwd' function. */
 #define HAVE_GETCWD 1
 
-/* Define to 1 if you have the 'getgrgid_r' function. */
+/* Define to 1 if you have the `getgrgid_r' function. */
 #define HAVE_GETGRGID_R 1
 
-/* Define to 1 if you have the 'getgrnam_r' function. */
+/* Define to 1 if you have the `getgrnam_r' function. */
 #define HAVE_GETGRNAM_R 1
 
-/* Define to 1 if you have the 'getgroups' function. */
+/* Define to 1 if you have the `getgroups' function. */
 #define HAVE_GETGROUPS 1
 
 /* */
@@ -742,67 +754,73 @@
 /* whether getifaddrs is present and usable */
 #define HAVE_GETIFADDRS 1
 
-/* Define to 1 if you have the 'getloadavg' function. */
+/* Define to 1 if you have the `getloadavg' function. */
 #define HAVE_GETLOADAVG 1
 
-/* Define to 1 if you have the 'getlogin' function. */
+/* Define to 1 if you have the `getlogin' function. */
 #define HAVE_GETLOGIN 1
 
-/* Define to 1 if you have the 'getopt' function. */
+/* Define to 1 if you have the `getopt' function. */
 #define HAVE_GETOPT 1
 
-/* Define to 1 if you have the 'getpgid' function. */
+/* Define to 1 if you have the `getpgid' function. */
 #define HAVE_GETPGID 1
 
-/* Define to 1 if you have the 'getpid' function. */
+/* Define to 1 if you have the `getpid' function. */
 #define HAVE_GETPID 1
 
-/* Define to 1 if you have the 'getpriority' function. */
+/* Define to 1 if you have the `getpriority' function. */
 #define HAVE_GETPRIORITY 1
 
-/* Define to 1 if you have the 'getprotobyname' function. */
+/* Define to 1 if you have the `getprotobyname' function. */
 #define HAVE_GETPROTOBYNAME 1
 
-/* Define to 1 if you have the 'getprotobynumber' function. */
+/* Define to 1 if you have the `getprotobynumber' function. */
 #define HAVE_GETPROTOBYNUMBER 1
 
-/* Define to 1 if you have the 'getpwnam_r' function. */
+/* Define to 1 if you have the `getpwnam_r' function. */
 #define HAVE_GETPWNAM_R 1
 
-/* Define to 1 if you have the 'getpwuid_r' function. */
+/* Define to 1 if you have the `getpwuid_r' function. */
 #define HAVE_GETPWUID_R 1
 
-/* Define to 1 if you have the 'getrlimit' function. */
+/* Define to 1 if you have the `getrandom' function. */
+#define HAVE_GETRANDOM 1
+
+/* Define to 1 if you have the `getrlimit' function. */
 #define HAVE_GETRLIMIT 1
 
-/* Define to 1 if you have the 'getrusage' function. */
+/* Define to 1 if you have the `getrusage' function. */
 #define HAVE_GETRUSAGE 1
 
-/* Define to 1 if you have the 'getservbyname' function. */
+/* Define to 1 if you have the `getservbyname' function. */
 #define HAVE_GETSERVBYNAME 1
 
-/* Define to 1 if you have the 'getservbyport' function. */
+/* Define to 1 if you have the `getservbyport' function. */
 #define HAVE_GETSERVBYPORT 1
 
-/* Define to 1 if you have the 'getsid' function. */
+/* Define to 1 if you have the `getsid' function. */
 #define HAVE_GETSID 1
 
-/* Define to 1 if you have the 'gettimeofday' function. */
+/* Define to 1 if you have the `gettid' function. */
+#define HAVE_GETTID 1
+
+/* Define to 1 if you have the `gettimeofday' function. */
 #define HAVE_GETTIMEOFDAY 1
 
-/* Define to 1 if you have the 'getwd' function. */
+/* Define to 1 if you have the `getwd' function. */
 #define HAVE_GETWD 1
 
 /* glibc's iconv implementation */
 #define HAVE_GLIBC_ICONV 1
 
-/* Define to 1 if you have the 'glob' function. */
+/* Define to 1 if you have the `glob' function. */
 #define HAVE_GLOB 1
 
 /* */
 /* #undef HAVE_GMP */
 
-/* Define to 1 if you have the 'gmtime_r' function. */
+/* Define to 1 if you have the `gmtime_r' function. */
 #define HAVE_GMTIME_R 1
 
 /* Define to 1 if you have the <grp.h> header file. */
@@ -811,7 +829,7 @@
 /* */
 /* #undef HAVE_HISTORY_LIST */
 
-/* Define to 1 if you have the 'hstrerror' function. */
+/* Define to 1 if you have the `hstrerror' function. */
 #define HAVE_HSTRERROR 1
 
 /* */
@@ -832,10 +850,10 @@
 /* Define to 1 if you have the <ieeefp.h> header file. */
 /* #undef HAVE_IEEEFP_H */
 
-/* Define to 1 if you have the 'if_indextoname' function. */
+/* Define to 1 if you have the `if_indextoname' function. */
 #define HAVE_IF_INDEXTONAME 1
 
-/* Define to 1 if you have the 'if_nametoindex' function. */
+/* Define to 1 if you have the `if_nametoindex' function. */
 #define HAVE_IF_NAMETOINDEX 1
 
 /* */
@@ -868,29 +886,17 @@
 /* */
 #define HAVE_INET_ATON 1
 
-/* Define to 1 if you have the 'inet_ntoa' function. */
+/* Define to 1 if you have the `inet_ntoa' function. */
 #define HAVE_INET_NTOA 1
 
-/* Define to 1 if you have the 'inet_ntop' function. */
+/* Define to 1 if you have the `inet_ntop' function. */
 #define HAVE_INET_NTOP 1
 
-/* Define to 1 if you have the 'inet_pton' function. */
+/* Define to 1 if you have the `inet_pton' function. */
 #define HAVE_INET_PTON 1
 
-/* Define to 1 if you have the 'initgroups' function. */
+/* Define to 1 if you have the `initgroups' function. */
 #define HAVE_INITGROUPS 1
-
-/* Define to 1 if the system has the type 'int16_t'. */
-#define HAVE_INT16_T 1
-
-/* Define to 1 if the system has the type 'int32_t'. */
-#define HAVE_INT32_T 1
-
-/* Define to 1 if the system has the type 'int64_t'. */
-#define HAVE_INT64_T 1
-
-/* Define to 1 if the system has the type 'int8_t'. */
-#define HAVE_INT8_T 1
 
 /* Whether intmax_t is available */
 #define HAVE_INTMAX_T 1
@@ -922,7 +928,7 @@
 /* whether to enable JavaScript Object Serialization support */
 #define HAVE_JSON 1 
 
-/* Define to 1 if you have the 'kill' function. */
+/* Define to 1 if you have the `kill' function. */
 #define HAVE_KILL 1
 
 /* do we have kqueue? */
@@ -931,43 +937,43 @@
 /* Define to 1 if you have the <langinfo.h> header file. */
 #define HAVE_LANGINFO_H 1
 
-/* Define to 1 if you have the 'lchown' function. */
+/* Define to 1 if you have the `lchown' function. */
 #define HAVE_LCHOWN 1
 
 /* */
 /* #undef HAVE_LDAP */
 
-/* Define to 1 if you have the 'ldap_control_find' function. */
+/* Define to 1 if you have the `ldap_control_find' function. */
 /* #undef HAVE_LDAP_CONTROL_FIND */
 
-/* Define to 1 if you have the 'ldap_extended_operation' function. */
+/* Define to 1 if you have the `ldap_extended_operation' function. */
 /* #undef HAVE_LDAP_EXTENDED_OPERATION */
 
-/* Define to 1 if you have the 'ldap_extended_operation_s' function. */
+/* Define to 1 if you have the `ldap_extended_operation_s' function. */
 /* #undef HAVE_LDAP_EXTENDED_OPERATION_S */
 
-/* Define to 1 if you have the 'ldap_parse_extended_result' function. */
+/* Define to 1 if you have the `ldap_parse_extended_result' function. */
 /* #undef HAVE_LDAP_PARSE_EXTENDED_RESULT */
 
-/* Define to 1 if you have the 'ldap_parse_reference' function. */
+/* Define to 1 if you have the `ldap_parse_reference' function. */
 /* #undef HAVE_LDAP_PARSE_REFERENCE */
 
-/* Define to 1 if you have the 'ldap_parse_result' function. */
+/* Define to 1 if you have the `ldap_parse_result' function. */
 /* #undef HAVE_LDAP_PARSE_RESULT */
 
-/* Define to 1 if you have the 'ldap_passwd' function. */
+/* Define to 1 if you have the `ldap_passwd' function. */
 /* #undef HAVE_LDAP_PASSWD */
 
-/* Define to 1 if you have the 'ldap_refresh_s' function. */
+/* Define to 1 if you have the `ldap_refresh_s' function. */
 /* #undef HAVE_LDAP_REFRESH_S */
 
 /* LDAP SASL support */
 /* #undef HAVE_LDAP_SASL */
 
-/* Define to 1 if you have the 'ldap_start_tls_s' function. */
+/* Define to 1 if you have the `ldap_start_tls_s' function. */
 /* #undef HAVE_LDAP_START_TLS_S */
 
-/* Define to 1 if you have the 'ldap_whoami_s' function. */
+/* Define to 1 if you have the `ldap_whoami_s' function. */
 /* #undef HAVE_LDAP_WHOAMI_S */
 
 /* */
@@ -983,7 +989,7 @@
 /* #undef HAVE_LIBBSD */
 
 /* */
-#define HAVE_LIBCRYPT 1
+/* #undef HAVE_LIBCRYPT */
 
 /* */
 #define HAVE_LIBDL 1
@@ -1009,7 +1015,7 @@
 /* */
 #define HAVE_LIBJPEG 1
 
-/* Define to 1 if you have the 'm' library (-lm). */
+/* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
 
 /* Whether you have libmm */
@@ -1027,7 +1033,7 @@
 /* */
 #define HAVE_LIBPNG 1
 
-/* Define to 1 if you have the 'pq' library (-lpq). */
+/* Define to 1 if you have the `pq' library (-lpq). */
 /* #undef HAVE_LIBPQ */
 
 /* */
@@ -1049,7 +1055,7 @@
 /* #undef HAVE_LIBSOCKET */
 
 /* */
-/* #undef HAVE_LIBSODIUMLIB */
+#define HAVE_LIBSODIUMLIB 1
 
 /* */
 /* #undef HAVE_LIBUTIL */
@@ -1063,14 +1069,23 @@
 /* Libzip >= 1.3.1 with zip_libzip_version function */
 /* #undef HAVE_LIBZIP_VERSION */
 
-/* Define to 1 if you have the 'localtime_r' function. */
+/* Define to 1 if you have the <linux/filter.h> header file. */
+#define HAVE_LINUX_FILTER_H 1
+
+/* Define to 1 if you have the <linux/sock_diag.h> header file. */
+#define HAVE_LINUX_SOCK_DIAG_H 1
+
+/* Define to 1 if you have the `localtime_r' function. */
 #define HAVE_LOCALTIME_R 1
 
-/* Define to 1 if the system has the type 'long double'. */
+/* Define to 1 if the system has the type `long double'. */
 /* #undef HAVE_LONG_DOUBLE */
 
 /* do we have SO_LISTENQxxx? */
 /* #undef HAVE_LQ_SO_LISTENQ */
+
+/* do we have TCP_CONNECTION_INFO? */
+/* #undef HAVE_LQ_TCP_CONNECTION_INFO */
 
 /* do we have TCP_INFO? */
 #define HAVE_LQ_TCP_INFO 1
@@ -1078,23 +1093,32 @@
 /* do we have mach_vm_read? */
 /* #undef HAVE_MACH_VM_READ */
 
-/* Define to 1 if you have the 'makedev' function. */
+/* Define to 1 if you have the `makedev' function. */
 /* #undef HAVE_MAKEDEV */
 
 /* Define to 1 if you have the <malloc.h> header file. */
 #define HAVE_MALLOC_H 1
 
 /* whether to have multibyte regex support */
-/* #undef HAVE_MBREGEX */
+#define HAVE_MBREGEX 1
 
 /* whether to have multibyte string support */
-/* #undef HAVE_MBSTRING */
+#define HAVE_MBSTRING 1
 
-/* Define to 1 if you have the 'memmem' function. */
+/* Define to 1 if you have the `memcntl' function. */
+/* #undef HAVE_MEMCNTL */
+
+/* Define to 1 if you have the `memfd_create' function. */
+#define HAVE_MEMFD_CREATE 1
+
+/* Define to 1 if you have the `memmem' function. */
 #define HAVE_MEMMEM 1
 
-/* Define to 1 if you have the 'memmove' function. */
+/* Define to 1 if you have the `memmove' function. */
 #define HAVE_MEMMOVE 1
+
+/* Define to 1 if you have the `memrchr' function. */
+#define HAVE_MEMRCHR 1
 
 /* Libzip >= 1.7.0 with zip_*_method_supported functions */
 /* #undef HAVE_METHOD_SUPPORTED */
@@ -1102,29 +1126,26 @@
 /* Define to 1 if you have the <minix/config.h> header file. */
 /* #undef HAVE_MINIX_CONFIG_H */
 
-/* Define to 1 if you have the 'mkfifo' function. */
+/* Define to 1 if you have the `mkfifo' function. */
 #define HAVE_MKFIFO 1
 
-/* Define to 1 if you have the 'mknod' function. */
+/* Define to 1 if you have the `mknod' function. */
 #define HAVE_MKNOD 1
 
-/* Define to 1 if you have the 'mkstemp' function. */
+/* Define to 1 if you have the `mkstemp' function. */
 #define HAVE_MKSTEMP 1
 
-/* Define to 1 if you have the 'mmap' function. */
+/* Define to 1 if you have the `mmap' function. */
 #define HAVE_MMAP 1
 
-/* Define to 1 if you have the 'mprotect' function. */
+/* Define to 1 if you have the `mprotect' function. */
 #define HAVE_MPROTECT 1
 
-/* Define to 1 if you have the 'mremap' function. */
+/* Define to 1 if you have the `mremap' function. */
 #define HAVE_MREMAP 1
 
 /* Whether you have MySQL */
 /* #undef HAVE_MYSQL */
-
-/* */
-/* #undef HAVE_MYSQLILIB */
 
 /* */
 #define HAVE_NANOSLEEP 1
@@ -1144,10 +1165,10 @@
 /* */
 #define HAVE_NGETTEXT 1
 
-/* Define to 1 if you have the 'nice' function. */
+/* Define to 1 if you have the `nice' function. */
 #define HAVE_NICE 1
 
-/* Define to 1 if you have the 'nl_langinfo' function. */
+/* Define to 1 if you have the `nl_langinfo' function. */
 #define HAVE_NL_LANGINFO 1
 
 /* Define to 1 if you have the <nmmintrin.h> header file. */
@@ -1194,10 +1215,13 @@
 #define HAVE_OPENSSL_EXT 1
 
 /* */
-/* #undef HAVE_OPROFILE */
-
-/* */
 /* #undef HAVE_ORALDAP */
+
+/* Define to 1 if you have the <os/signpost.h> header file. */
+/* #undef HAVE_OS_SIGNPOST_H */
+
+/* Define to 1 if you have the `pathconf' function. */
+#define HAVE_PATHCONF 1
 
 /* */
 #define HAVE_PCRE_JIT_SUPPORT 1
@@ -1223,6 +1247,9 @@
 /* Whether libpq is compiled with --enable-multibyte */
 /* #undef HAVE_PGSQL_WITH_MULTIBYTE_SUPPORT */
 
+/* PostgreSQL 9.6 or later */
+/* #undef HAVE_PG_CONTEXT_VISIBILITY */
+
 /* PostgreSQL 9.3 or later */
 /* #undef HAVE_PG_LO64 */
 
@@ -1235,7 +1262,7 @@
 /* */
 #define HAVE_PHP_SESSION 1
 
-/* Define to 1 if you have the 'poll' function. */
+/* Define to 1 if you have the `poll' function. */
 #define HAVE_POLL 1
 
 /* Define to 1 if you have the <poll.h> header file. */
@@ -1247,11 +1274,17 @@
 /* whether to include POSIX-like functions */
 #define HAVE_POSIX 1
 
+/* */
+#define HAVE_POSIX_SPAWN_FILE_ACTIONS_ADDCHDIR_NP 1
+
 /* do we have prctl? */
 #define HAVE_PRCTL 1
 
 /* */
 #define HAVE_PREAD 1
+
+/* do we have procctl? */
+/* #undef HAVE_PROCCTL */
 
 /* Libzip >= 1.3.0 with zip_register_progress_callback_with_state function */
 /* #undef HAVE_PROGRESS_CALLBACK */
@@ -1262,6 +1295,24 @@
 /* Define to 1 if the PS_STRINGS thing exists. */
 /* #undef HAVE_PS_STRINGS */
 
+/* Define to 1 if you have the `pthread_attr_getstack' function. */
+#define HAVE_PTHREAD_ATTR_GETSTACK 1
+
+/* Define to 1 if you have the `pthread_attr_get_np' function. */
+/* #undef HAVE_PTHREAD_ATTR_GET_NP */
+
+/* Define to 1 if you have the `pthread_getattr_np' function. */
+#define HAVE_PTHREAD_GETATTR_NP 1
+
+/* Define to 1 if you have the `pthread_get_stackaddr_np' function. */
+/* #undef HAVE_PTHREAD_GET_STACKADDR_NP */
+
+/* Define to 1 if you have the `pthread_jit_write_protect_np' function. */
+/* #undef HAVE_PTHREAD_JIT_WRITE_PROTECT_NP */
+
+/* Define to 1 if you have the `pthread_stackseg_np' function. */
+/* #undef HAVE_PTHREAD_STACKSEG_NP */
+
 /* do we have ptrace? */
 #define HAVE_PTRACE 1
 
@@ -1271,7 +1322,7 @@
 /* Define to 1 if you have the <pty.h> header file. */
 #define HAVE_PTY_H 1
 
-/* Define to 1 if you have the 'putenv' function. */
+/* Define to 1 if you have the `putenv' function. */
 #define HAVE_PUTENV 1
 
 /* Define to 1 if you have the <pwd.h> header file. */
@@ -1280,7 +1331,7 @@
 /* */
 #define HAVE_PWRITE 1
 
-/* Define to 1 if you have the 'RAND_egd' function. */
+/* Define to 1 if you have the `RAND_egd' function. */
 /* #undef HAVE_RAND_EGD */
 
 /* Define to 1 if you have the <resolv.h> header file. */
@@ -1298,7 +1349,7 @@
 /* */
 /* #undef HAVE_RFC822_OUTPUT_ADDRESS_LIST */
 
-/* Define to 1 if you have the 'rfork' function. */
+/* Define to 1 if you have the `rfork' function. */
 /* #undef HAVE_RFORK */
 
 /* */
@@ -1316,40 +1367,49 @@
 /* Whether you have sockaddr_storage.ss_family */
 #define HAVE_SA_SS_FAMILY 1
 
-/* Define to 1 if you have the 'scandir' function. */
+/* Define to 1 if you have the `scandir' function. */
 #define HAVE_SCANDIR 1
 
 /* do we have select? */
 #define HAVE_SELECT 1
 
+/* SElinux available */
+/* #undef HAVE_SELINUX */
+
+/* Define to 1 if you have the <selinux/selinux.h> header file. */
+/* #undef HAVE_SELINUX_SELINUX_H */
+
 /* */
 #define HAVE_SEMUN 0
 
-/* Define to 1 if you have the 'setegid' function. */
+/* Define to 1 if you have the `setegid' function. */
 #define HAVE_SETEGID 1
 
-/* Define to 1 if you have the 'setenv' function. */
+/* Define to 1 if you have the `setenv' function. */
 #define HAVE_SETENV 1
 
-/* Define to 1 if you have the 'seteuid' function. */
+/* Define to 1 if you have the `seteuid' function. */
 #define HAVE_SETEUID 1
 
-/* Define to 1 if you have the 'setitimer' function. */
+/* Define to 1 if you have the `setitimer' function. */
 #define HAVE_SETITIMER 1
 
-/* Define to 1 if you have the 'setpriority' function. */
+/* do we have setpflags? */
+/* #undef HAVE_SETPFLAGS */
+
+/* Define to 1 if you have the `setpriority' function. */
 #define HAVE_SETPRIORITY 1
 
-/* Define to 1 if you have the 'setproctitle' function. */
+/* Define to 1 if you have the `setproctitle' function. */
 /* #undef HAVE_SETPROCTITLE */
 
-/* Define to 1 if you have the 'setproctitle_fast' function. */
+/* Define to 1 if you have the `setproctitle_fast' function. */
 /* #undef HAVE_SETPROCTITLE_FAST */
 
-/* Define to 1 if you have the 'setrlimit' function. */
+/* Define to 1 if you have the `setrlimit' function. */
 #define HAVE_SETRLIMIT 1
 
-/* Define to 1 if you have the 'setsid' function. */
+/* Define to 1 if you have the `setsid' function. */
 #define HAVE_SETSID 1
 
 /* */
@@ -1373,31 +1433,31 @@
 /* */
 #define HAVE_SHM_OPEN 1
 
-/* Define to 1 if you have the 'shutdown' function. */
+/* Define to 1 if you have the `shutdown' function. */
 #define HAVE_SHUTDOWN 1
 
 /* */
 /* #undef HAVE_SHUTDOWN_SNMP_LOGGING */
 
-/* Define to 1 if you have the 'sigaction' function. */
+/* Define to 1 if you have the `sigaction' function. */
 #define HAVE_SIGACTION 1
 
-/* Define to 1 if you have the 'sigprocmask' function. */
+/* Define to 1 if you have the `sigprocmask' function. */
 #define HAVE_SIGPROCMASK 1
 
-/* Define to 1 if you have the 'sigsetjmp' function. */
+/* Define to 1 if you have the `sigsetjmp' function. */
 /* #undef HAVE_SIGSETJMP */
 
-/* Define to 1 if you have the 'sigtimedwait' function. */
+/* Define to 1 if you have the `sigtimedwait' function. */
 #define HAVE_SIGTIMEDWAIT 1
 
-/* Define to 1 if you have the 'sigwaitinfo' function. */
+/* Define to 1 if you have the `sigwaitinfo' function. */
 #define HAVE_SIGWAITINFO 1
 
 /* */
 #define HAVE_SIMPLEXML 1
 
-/* Define is hash3 algo is available */
+/* Define if hash3 algo is available */
 /* #undef HAVE_SLOW_HASH3 */
 
 /* */
@@ -1421,6 +1481,9 @@
 /* Define if sockaddr_un in sys/un.h contains a sun_len component */
 /* #undef HAVE_SOCKADDR_UN_SUN_LEN */
 
+/* Define to 1 if you have the `sockatmark' function. */
+#define HAVE_SOCKATMARK 1
+
 /* */
 #define HAVE_SOCKET 1
 
@@ -1430,7 +1493,7 @@
 /* */
 #define HAVE_SOCKETS 1
 
-/* Define to 1 if the system has the type 'socklen_t'. */
+/* Define to 1 if the system has the type `socklen_t'. */
 #define HAVE_SOCKLEN_T 1
 
 /* */
@@ -1481,10 +1544,10 @@
 /* Whether ssize_t is available */
 #define HAVE_SSIZE_T 1
 
-/* Define to 1 if you have the 'statfs' function. */
+/* Define to 1 if you have the `statfs' function. */
 #define HAVE_STATFS 1
 
-/* Define to 1 if you have the 'statvfs' function. */
+/* Define to 1 if you have the `statvfs' function. */
 #define HAVE_STATVFS 1
 
 /* Define to 1 if you have the <stdint.h> header file. */
@@ -1496,13 +1559,13 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #define HAVE_STDLIB_H 1
 
-/* Define to 1 if you have the 'std_syslog' function. */
+/* Define to 1 if you have the `std_syslog' function. */
 /* #undef HAVE_STD_SYSLOG */
 
-/* Define to 1 if you have the 'strcasecmp' function. */
+/* Define to 1 if you have the `strcasecmp' function. */
 #define HAVE_STRCASECMP 1
 
-/* Define if you have 'strerror_r'. */
+/* Define if you have `strerror_r'. */
 #define HAVE_STRERROR_R 1
 
 /* Define to 1 if you have the <strings.h> header file. */
@@ -1511,53 +1574,53 @@
 /* Define to 1 if you have the <string.h> header file. */
 #define HAVE_STRING_H 1
 
-/* Define to 1 if you have the 'strlcat' function. */
-/* #undef HAVE_STRLCAT */
+/* Define to 1 if you have the `strlcat' function. */
+#define HAVE_STRLCAT 1
 
-/* Define to 1 if you have the 'strlcpy' function. */
-/* #undef HAVE_STRLCPY */
+/* Define to 1 if you have the `strlcpy' function. */
+#define HAVE_STRLCPY 1
 
-/* Define to 1 if you have the 'strndup' function. */
+/* Define to 1 if you have the `strndup' function. */
 #define HAVE_STRNDUP 1
 
-/* Define to 1 if you have the 'strnlen' function. */
+/* Define to 1 if you have the `strnlen' function. */
 #define HAVE_STRNLEN 1
 
-/* Define to 1 if you have the 'strptime' function. */
+/* Define to 1 if you have the `strptime' function. */
 #define HAVE_STRPTIME 1
 
 /* whether strptime() declaration fails */
 #define HAVE_STRPTIME_DECL_FAILS 1
 
-/* Define to 1 if you have the 'strtok_r' function. */
+/* Define to 1 if you have the `strtok_r' function. */
 #define HAVE_STRTOK_R 1
 
-/* Define to 1 if you have the 'strtoll' function. */
+/* Define to 1 if you have the `strtoll' function. */
 #define HAVE_STRTOLL 1
 
 /* whether you have struct flock */
 #define HAVE_STRUCT_FLOCK 1
 
-/* Define to 1 if 'st_blksize' is a member of 'struct stat'. */
+/* Define to 1 if `st_blksize' is a member of `struct stat'. */
 #define HAVE_STRUCT_STAT_ST_BLKSIZE 1
 
-/* Define to 1 if 'st_blocks' is a member of 'struct stat'. */
+/* Define to 1 if `st_blocks' is a member of `struct stat'. */
 #define HAVE_STRUCT_STAT_ST_BLOCKS 1
 
-/* Define to 1 if 'st_rdev' is a member of 'struct stat'. */
+/* Define to 1 if `st_rdev' is a member of `struct stat'. */
 #define HAVE_STRUCT_STAT_ST_RDEV 1
 
-/* Define to 1 if 'tm_gmtoff' is a member of 'struct tm'. */
+/* Define to 1 if `tm_gmtoff' is a member of `struct tm'. */
 #define HAVE_STRUCT_TM_TM_GMTOFF 1
 
-/* Define to 1 if 'tm_zone' is a member of 'struct tm'. */
+/* Define to 1 if `tm_zone' is a member of `struct tm'. */
 #define HAVE_STRUCT_TM_TM_ZONE 1
 
-/* Define to 1 if your 'struct stat' has 'st_blocks'. Deprecated, use
-   'HAVE_STRUCT_STAT_ST_BLOCKS' instead. */
+/* Define to 1 if your `struct stat' has `st_blocks'. Deprecated, use
+   `HAVE_STRUCT_STAT_ST_BLOCKS' instead. */
 #define HAVE_ST_BLOCKS 1
 
-/* Define to 1 if you have the 'symlink' function. */
+/* Define to 1 if you have the `symlink' function. */
 #define HAVE_SYMLINK 1
 
 /* do we have sysconf? */
@@ -1616,6 +1679,9 @@
 
 /* Define to 1 if you have the <sys/poll.h> header file. */
 #define HAVE_SYS_POLL_H 1
+
+/* Define to 1 if you have the <sys/procctl.h> header file. */
+/* #undef HAVE_SYS_PROCCTL_H */
 
 /* Define to 1 if you have the <sys/pstat.h> header file. */
 /* #undef HAVE_SYS_PSTAT_H */
@@ -1677,6 +1743,9 @@
 /* defined if tidybuffio.h exists */
 /* #undef HAVE_TIDYBUFFIO_H */
 
+/* Define to 1 if tidyOptGetCategory is available. */
+/* #undef HAVE_TIDYOPTGETCATEGORY */
+
 /* */
 /* #undef HAVE_TIDYOPTGETDOC */
 
@@ -1701,34 +1770,22 @@
 /* Define to 1 if you have the <tmmintrin.h> header file. */
 #define HAVE_TMMINTRIN_H 1
 
-/* Define to 1 if your 'struct tm' has 'tm_zone'. Deprecated, use
-   'HAVE_STRUCT_TM_TM_ZONE' instead. */
+/* Define to 1 if your `struct tm' has `tm_zone'. Deprecated, use
+   `HAVE_STRUCT_TM_TM_ZONE' instead. */
 #define HAVE_TM_ZONE 1
 
 /* Whether you have a working ttyname_r */
 #define HAVE_TTYNAME_R 1
 
-/* Define to 1 if you don't have 'tm_zone' but do have the external array
-   'tzname'. */
+/* Define to 1 if you don't have `tm_zone' but do have the external array
+   `tzname'. */
 /* #undef HAVE_TZNAME */
 
-/* Define to 1 if you have the 'tzset' function. */
+/* Define to 1 if you have the `tzset' function. */
 #define HAVE_TZSET 1
 
 /* */
 /* #undef HAVE_UDBCEXT_H */
-
-/* Define to 1 if the system has the type 'uint16_t'. */
-#define HAVE_UINT16_T 1
-
-/* Define to 1 if the system has the type 'uint32_t'. */
-#define HAVE_UINT32_T 1
-
-/* Define to 1 if the system has the type 'uint64_t'. */
-#define HAVE_UINT64_T 1
-
-/* Define to 1 if the system has the type 'uint8_t'. */
-#define HAVE_UINT8_T 1
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
@@ -1739,22 +1796,26 @@
 /* Define to 1 if you have the <unix.h> header file. */
 /* #undef HAVE_UNIX_H */
 
-/* Define to 1 if you have the 'unsetenv' function. */
+/* Define to 1 if you have the `unsetenv' function. */
 #define HAVE_UNSETENV 1
 
-/* Define to 1 if you have the 'unshare' function. */
+/* Define to 1 if you have the `unshare' function. */
 #define HAVE_UNSHARE 1
 
 /* */
 /* #undef HAVE_UODBC */
 
-/* Define to 1 if you have the 'usleep' function. */
+/* Whether faulting on write-protected memory support can be compiled for
+   userfaultfd */
+#define HAVE_USERFAULTFD_WRITEFAULT 1
+
+/* Define to 1 if you have the `usleep' function. */
 #define HAVE_USLEEP 1
 
-/* Define to 1 if you have the 'utime' function. */
+/* Define to 1 if you have the `utime' function. */
 #define HAVE_UTIME 1
 
-/* Define to 1 if you have the 'utimes' function. */
+/* Define to 1 if you have the `utimes' function. */
 #define HAVE_UTIMES 1
 
 /* Define to 1 if you have the <utime.h> header file. */
@@ -1766,16 +1827,16 @@
 /* */
 /* #undef HAVE_VALGRIND */
 
-/* Define to 1 if you have the 'vasprintf' function. */
+/* Define to 1 if you have the `vasprintf' function. */
 #define HAVE_VASPRINTF 1
 
-/* Define to 1 if you have the 'wait3' function. */
+/* Define to 1 if you have the `wait3' function. */
 #define HAVE_WAIT3 1
 
-/* Define to 1 if you have the 'wait4' function. */
+/* Define to 1 if you have the `wait4' function. */
 #define HAVE_WAIT4 1
 
-/* Define to 1 if you have the 'waitpid' function. */
+/* Define to 1 if you have the `waitpid' function. */
 #define HAVE_WAITPID 1
 
 /* Define to 1 if you have the <wchar.h> header file. */
@@ -1850,9 +1911,6 @@
 /* Whether strtok_r is declared */
 /* #undef MISSING_STRTOK_R_DECL */
 
-/* Whether mysqlnd is enabled */
-#define MYSQLI_USE_MYSQLND 1
-
 /* Enable compressed protocol support */
 #define MYSQLND_COMPRESSION_ENABLED 1
 
@@ -1911,19 +1969,25 @@
 /* #undef PHP_BUILD_PROVIDER */
 
 /* builder uname output */
-#define PHP_BUILD_SYSTEM "Linux divarion 5.15.0-84-generic #93-Ubuntu SMP Tue Sep 5 17:16:10 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux"
+#define PHP_BUILD_SYSTEM "Linux 084772da88e1 6.12.113+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.113-1 (2026-10-15) x86_64 GNU/Linux"
 
 /* Define if your system has fork/vfork/CreateProcess */
 #define PHP_CAN_SUPPORT_PROC_OPEN 1
 
 /* fpm group name */
-#define PHP_FPM_GROUP "uypanel"
+#define PHP_FPM_GROUP "xc_vm"
 
 /* fpm systemd service type */
 #define PHP_FPM_SYSTEMD "simple"
 
 /* fpm user name */
-#define PHP_FPM_USER "uypanel"
+#define PHP_FPM_USER "xc_vm"
+
+/* Whether the compiler supports AVX512 */
+#define PHP_HAVE_AVX512_SUPPORTS 1
+
+/* Whether the compiler supports AVX512 VBMI */
+#define PHP_HAVE_AVX512_VBMI_SUPPORTS 1
 
 /* Whether the compiler supports __builtin_clz */
 #define PHP_HAVE_BUILTIN_CLZ 1
@@ -1949,6 +2013,9 @@
 /* Whether the compiler supports __builtin_expect */
 #define PHP_HAVE_BUILTIN_EXPECT 1
 
+/* Whether the compiler supports __builtin_frame_address */
+#define PHP_HAVE_BUILTIN_FRAME_ADDRESS 1
+
 /* Whether the compiler supports __builtin_saddll_overflow */
 #define PHP_HAVE_BUILTIN_SADDLL_OVERFLOW 1
 
@@ -1966,6 +2033,9 @@
 
 /* Whether the compiler supports __builtin_ssubl_overflow */
 #define PHP_HAVE_BUILTIN_SSUBL_OVERFLOW 1
+
+/* Whether the compiler supports __builtin_usub_overflow */
+#define PHP_HAVE_BUILTIN_USUB_OVERFLOW 1
 
 /* Whether you have HP-UX 10.x */
 /* #undef PHP_HPUX_TIME_R */
@@ -1989,7 +2059,7 @@
 /* #undef PHP_OCI8_DEF_SHARED_LIBADD */
 
 /* define to 1 if oniguruma has an invalid entry for KOI8 encoding */
-/* #undef PHP_ONIG_BAD_KOI8_ENTRY */
+#define PHP_ONIG_BAD_KOI8_ENTRY 1
 
 /* uname output */
 #define PHP_OS "Linux"
@@ -2007,7 +2077,7 @@
 #define PHP_SIGCHILD 0
 
 /* uname -a output */
-#define PHP_UNAME "Linux divarion 5.15.0-84-generic #93-Ubuntu SMP Tue Sep 5 17:16:10 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux"
+#define PHP_UNAME "Linux 084772da88e1 6.12.113+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.113-1 (2026-10-15) x86_64 GNU/Linux"
 
 /* Whether PHP has to use its own crypt_r */
 #define PHP_USE_PHP_CRYPT_R 1
@@ -2027,28 +2097,31 @@
 /* */
 /* #undef QDBM_INCLUDE_FILE */
 
-/* The size of 'int', as computed by sizeof. */
+/* */
+/* #undef SHADOW_STACK_SYSCALL */
+
+/* The size of `int', as computed by sizeof. */
 #define SIZEOF_INT 4
 
 /* Size of intmax_t */
 #define SIZEOF_INTMAX_T 8
 
-/* The size of 'long', as computed by sizeof. */
+/* The size of `long', as computed by sizeof. */
 #define SIZEOF_LONG 8
 
-/* The size of 'long long', as computed by sizeof. */
+/* The size of `long long', as computed by sizeof. */
 #define SIZEOF_LONG_LONG 8
 
-/* The size of 'off_t', as computed by sizeof. */
+/* The size of `off_t', as computed by sizeof. */
 #define SIZEOF_OFF_T 8
 
 /* Size of ptrdiff_t */
 #define SIZEOF_PTRDIFF_T 8
 
-/* The size of 'short', as computed by sizeof. */
+/* The size of `short', as computed by sizeof. */
 #define SIZEOF_SHORT 2
 
-/* The size of 'size_t', as computed by sizeof. */
+/* The size of `size_t', as computed by sizeof. */
 #define SIZEOF_SIZE_T 8
 
 /* Size of ssize_t */
@@ -2071,7 +2144,7 @@
 	STACK_DIRECTION = 0 => direction of growth unknown */
 /* #undef STACK_DIRECTION */
 
-/* Define to 1 if all of the C89 standard headers exist (not just the ones
+/* Define to 1 if all of the C90 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for
    backward compatibility; new code need not use it. */
 #define STDC_HEADERS 1
@@ -2082,7 +2155,7 @@
 /* */
 /* #undef TCADB_INCLUDE_FILE */
 
-/* Define to 1 if your <sys/time.h> declares 'struct tm'. */
+/* Define to 1 if your <sys/time.h> declares `struct tm'. */
 /* #undef TM_IN_SYS_TIME */
 
 /* */
@@ -2094,7 +2167,7 @@
 /* Use system default cipher list instead of hardcoded value */
 /* #undef USE_OPENSSL_SYSTEM_CIPHERS */
 
-/* Enable extensions on AIX, Interix, z/OS.  */
+/* Enable extensions on AIX 3, Interix.  */
 #ifndef _ALL_SOURCE
 # define _ALL_SOURCE 1
 #endif
@@ -2155,15 +2228,11 @@
 #ifndef __STDC_WANT_IEC_60559_DFP_EXT__
 # define __STDC_WANT_IEC_60559_DFP_EXT__ 1
 #endif
-/* Enable extensions specified by C23 Annex F.  */
-#ifndef __STDC_WANT_IEC_60559_EXT__
-# define __STDC_WANT_IEC_60559_EXT__ 1
-#endif
 /* Enable extensions specified by ISO/IEC TS 18661-4:2015.  */
 #ifndef __STDC_WANT_IEC_60559_FUNCS_EXT__
 # define __STDC_WANT_IEC_60559_FUNCS_EXT__ 1
 #endif
-/* Enable extensions specified by C23 Annex H and ISO/IEC TS 18661-3:2015.  */
+/* Enable extensions specified by ISO/IEC TS 18661-3:2015.  */
 #ifndef __STDC_WANT_IEC_60559_TYPES_EXT__
 # define __STDC_WANT_IEC_60559_TYPES_EXT__ 1
 #endif
@@ -2189,6 +2258,9 @@
 /* Define if processor uses big-endian word */
 /* #undef WORDS_BIGENDIAN */
 
+/* Define if checking the stack limit is supported */
+#define ZEND_CHECK_STACK_LIMIT 1
+
 /* */
 #define ZEND_DEBUG 0
 
@@ -2202,10 +2274,13 @@
 /* #undef ZEND_MAX_EXECUTION_TIMERS */
 
 /* */
-#define ZEND_MM_ALIGNMENT 8
+#define ZEND_MM_ALIGNMENT (size_t)8
 
 /* */
-#define ZEND_MM_ALIGNMENT_LOG2 3
+#define ZEND_MM_ALIGNMENT_LOG2 (size_t)3
+
+/* */
+#define ZEND_MM_NEED_EIGHT_BYTE_REALIGNMENT 0
 
 /* Use zend signal handling */
 #define ZEND_SIGNALS 1
@@ -2219,22 +2294,22 @@
 /* Define when using musl libc */
 /* #undef __MUSL__ */
 
-/* Define as 'int' if <sys/types.h> doesn't define. */
+/* Define to `int' if <sys/types.h> doesn't define. */
 /* #undef gid_t */
 
 /* */
 /* #undef in_addr_t */
 
-/* Define to '__inline__' or '__inline' if that's what the C compiler
+/* Define to `__inline__' or `__inline' if that's what the C compiler
    calls it, or to nothing if 'inline' is not supported under any name.  */
 #ifndef __cplusplus
 /* #undef inline */
 #endif
 
-/* Define as 'unsigned int' if <stddef.h> doesn't define. */
+/* Define to `unsigned int' if <sys/types.h> does not define. */
 /* #undef size_t */
 
-/* Define as 'int' if <sys/types.h> doesn't define. */
+/* Define to `int' if <sys/types.h> doesn't define. */
 /* #undef uid_t */
 
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * Error Stack Implementation
- *
+ * 
  * This is an incredibly simple implementation of a very complex error handling
  * facility.  It contains the ability
  * to track multiple errors from multiple packages simultaneously.  In addition,
@@ -9,10 +9,10 @@
  * information such as the exact file, line number, class and function that
  * generated the error, and if necessary, it can raise a traditional PEAR_Error.
  * It has built-in support for PEAR::Log, to log errors as they occur
- *
+ * 
  * Since version 0.2alpha, it is also possible to selectively ignore errors,
  * through the use of an error callback, see {@link pushCallback()}
- *
+ * 
  * Since version 0.3alpha, it is possible to specify the exception class
  * returned from {@link push()}
  *
@@ -131,7 +131,7 @@ define('PEAR_ERRORSTACK_ERR_OBJTOSTRING', 2);
  * $local_stack = new PEAR_ErrorStack('MyPackage');
  * </code>
  * @author     Greg Beaver <cellog@php.net>
- * @version    1.10.16
+ * @version    1.10.18
  * @package    PEAR_ErrorStack
  * @category   Debugging
  * @copyright  2004-2008 Greg Beaver
