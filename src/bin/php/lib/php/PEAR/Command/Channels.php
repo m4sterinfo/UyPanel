@@ -31,7 +31,7 @@ define('PEAR_COMMAND_CHANNELS_CHANNEL_EXISTS', -500);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2009 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
- * @version    Release: 1.10.16
+ * @version    Release: 1.10.18
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -542,15 +542,15 @@ configuration.',
             // if force is specified, use a timestamp of "1" to force retrieval
             $lastmodified = isset($options['force']) ? false : $c->lastModified();
             PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
-            $contents = $dl->downloadHttp('http://' . $c->getName() . '/channel.xml',
+            $contents = $dl->downloadHttp('https://' . $c->getName() . '/channel.xml',
                 $this->ui, $tmpdir, null, $lastmodified);
             PEAR::staticPopErrorHandling();
             if (PEAR::isError($contents)) {
-                // Attempt to fall back to https
-                $this->ui->outputData("Channel \"$params[0]\" is not responding over http://, failed with message: " . $contents->getMessage());
-                $this->ui->outputData("Trying channel \"$params[0]\" over https:// instead");
+                // Attempt to fall back to http
+                $this->ui->outputData("Channel \"$params[0]\" is not responding over https://, failed with message: " . $contents->getMessage());
+                $this->ui->outputData("Trying channel \"$params[0]\" over http:// instead");
                 PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
-                $contents = $dl->downloadHttp('https://' . $c->getName() . '/channel.xml',
+                $contents = $dl->downloadHttp('http://' . $c->getName() . '/channel.xml',
                     $this->ui, $tmpdir, null, $lastmodified);
                 PEAR::staticPopErrorHandling();
                 if (PEAR::isError($contents)) {
@@ -558,8 +558,9 @@ configuration.',
                         $c->getName() . '" (' . $contents->getMessage() . ')');
                 }
             }
-
-            list($contents, $lastmodified) = $contents;
+            if (is_array($contents)) {
+                list($contents, $lastmodified) = $contents;
+	    }
             if (!$contents) {
                 $this->ui->outputData("Channel \"$params[0]\" is up to date");
                 return;

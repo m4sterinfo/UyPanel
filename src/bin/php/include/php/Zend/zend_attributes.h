@@ -40,6 +40,10 @@
 BEGIN_EXTERN_C()
 
 extern ZEND_API zend_class_entry *zend_ce_attribute;
+extern ZEND_API zend_class_entry *zend_ce_allow_dynamic_properties;
+extern ZEND_API zend_class_entry *zend_ce_sensitive_parameter;
+extern ZEND_API zend_class_entry *zend_ce_sensitive_parameter_value;
+extern ZEND_API zend_class_entry *zend_ce_override;
 
 typedef struct {
 	zend_string *name;
@@ -74,12 +78,15 @@ ZEND_API zend_result zend_get_attribute_value(zval *ret, zend_attribute *attr, u
 ZEND_API zend_string *zend_get_attribute_target_names(uint32_t targets);
 ZEND_API bool zend_is_attribute_repeated(HashTable *attributes, zend_attribute *attr);
 
+ZEND_API zend_internal_attribute *zend_mark_internal_attribute(zend_class_entry *ce);
 ZEND_API zend_internal_attribute *zend_internal_attribute_register(zend_class_entry *ce, uint32_t flags);
 ZEND_API zend_internal_attribute *zend_internal_attribute_get(zend_string *lcname);
 
 ZEND_API zend_attribute *zend_add_attribute(
 		HashTable **attributes, zend_string *name, uint32_t argc,
 		uint32_t flags, uint32_t offset, uint32_t lineno);
+
+uint32_t zend_attribute_attribute_get_flags(zend_attribute *attr, zend_class_entry *scope);
 
 END_EXTERN_C()
 
@@ -115,5 +122,7 @@ static zend_always_inline zend_attribute *zend_add_class_constant_attribute(zend
 
 void zend_register_attribute_ce(void);
 void zend_attributes_shutdown(void);
+
+void zend_sensitive_parameter_value_init(zend_object *obj, zval *value);
 
 #endif
