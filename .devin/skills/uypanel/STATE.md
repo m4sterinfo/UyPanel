@@ -226,6 +226,37 @@
 - Lección: al tocar títulos de proceso, TODOS los greps de detección
   (ServersCronJob, api.php, process_monitor) deben matchear el título real.
 
+### 2026-11-04 — Incidente: `chmod -R 777 /home` externo + restauración de permisos
+- A las 01:19:47 alguien ejecutó `sudo chmod -R 777 /home` desde una TTY
+  interactiva (pts/1, PWD=/home/debian) — NO fue el agente (journalctl lo
+  registra: `sudo[2819115]: root : TTY=pts/1 ; COMMAND=/usr/bin/chmod -R 777 /home`).
+  **CONFIRMADO por el usuario (2026-11-04): fue él, modificando permisos de
+  carpetas vía SSH.** Efectos:
+  todo /home a 777 → git veía ~6,000 archivos "modificados" (exec bit),
+  `~/.ssh` con perms abiertos (sshd rechaza claves así), credentials.txt,
+  server.key de nginx y sockets php-fpm expuestos a cualquier usuario local.
+- **Restaurado**:
+  - `~/.ssh` → 700, contenido 600, dueño debian (CRÍTICO para SSH).
+  - `credentials.txt` → 600.
+  - Repo git + submódulos: modos restaurados desde el índice
+    (`git ls-files -s`: 100644→644, 100755→755, dirs 755) → `git status` limpio.
+  - `/home/uypanel`: modos canónicos aplicados desde los tarballs REALES del
+    payload (`dist/UyPanel.zip → uypanel.tar.gz`, 6,321 entradas) y de
+    binarios (`third_party/UyPanel_Binaries/out/debian_13.tar.gz`, 597) —
+    p. ej. `status/update/service/tools` 770, binarios nginx 550, dirs
+    bin 750. Runtime no cubierto por tarballs: dirs 755, files 644
+    (309,487 en content/streams tmpfs incluido), sockets 660 (= listen.mode
+    de los pools; se recrearán solos igual al reiniciar php-fpm).
+- **Verificado tras restaurar**: uypanel active, 4 pools, admin 302, player
+  API 200 con credenciales reales, `status 1` OK, `daemons.sh` 770 OK.
+  Únicos ELF sin exec: respaldos inofensivos (redis-server_6.2.2 viejo,
+  ioncube_loader_lin_8.1.so no cargado — las .so no necesitan exec).
+- **Lección**: NUNCA `chmod -R 777 /home` — rompe SSH y expone secretos; para
+  poder editar archivos concretos usar `chown debian:debian <archivo>` (como
+  ya se hizo con login-bg.mp4). Los modos canónicos del desplegado viven en
+  los tarballs del payload, no en el índice git (los entry scripts son 644 en
+  git pero 770 desplegados).
+
 ### 2026-11-03 — Video del login reemplazado por el del usuario
 - El usuario subió su video personal (temático IPTV: pantallas de fútbol con
   neón) a `/home/debian/login-bg.mp4` — no pudo escribir en el proyecto porque
