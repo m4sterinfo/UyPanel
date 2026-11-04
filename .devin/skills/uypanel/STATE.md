@@ -1,20 +1,30 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-04 (fin de sesión —
-> reinstalación limpia validada, release 2.0.2 publicado con binarios propios
-> en el payload, fixes: demonios/redis password/idioma bg/bouquet NULL).
+> cada cambio significativo. Última actualización: 2026-11-04 (sesión QA —
+> panel en 2.0.2, notificación de updates arreglada, QA de líneas/resellers/
+> playback OK, 3 bugs corregidos: assets reseller, login reseller 500,
+> verifyPostTable zero dates).
 
 ## ⏭️ CONTINUAR AQUÍ (próxima sesión)
 
-1. **Panel fresco (lado del usuario)**: revisar Settings (defaults del seed),
-   re-importar EPG, crear users/streams si procede. Datos antiguos
-   recuperables de los backups en /home/debian (604MB panel, 1.2GB XUI,
-   147MB pre-rename).
-2. **Limpieza pendiente**: borrar `/home/uypanel.pre_reinstall` (rollback de
+1. **Limpieza de artefactos QA** (confirmar con el usuario): usuarios
+   `qa_admin`/`qa_reseller`, líneas `qa_line1..4`/`qa_adminline`, access
+   codes `qaResT3st` (tipo 1) y `qaApiT3st` (tipo 3 — expone la REST API,
+   borrar antes de producción). Tras borrar códigos: `console.php tools
+   access` + verificar.
+2. **QA pendiente** (mismo método: setup + REST API + panel + playback):
+   VOD/películas y series, MAG/enigma2, trials (el grupo 2 tiene
+   total_allowed_gen_trials=0 — habilitar para probar), sub-resellers,
+   bouquets múltiples, EPG (re-importar: BD fresca sin URLs de EPG).
+3. **Panel (lado del usuario)**: revisar Settings (defaults del seed),
+   re-importar EPG, crear users/streams reales si procede.
+4. **Limpieza pendiente**: borrar `/home/uypanel.pre_reinstall` (rollback de
    la instalación anterior) cuando el usuario confirme; payloads viejos de
    /home/debian (~895 MB) si quiere.
-3. **Roadmap**: READMEs de los forks de soporte.
+5. **Roadmap**: READMEs de los forks de soporte; release GeoLite opcional en
+   UyPanel_Update para que `binaries` pueda restaurar mmdb.
+
 
 ## Identidad
 
