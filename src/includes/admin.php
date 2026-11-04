@@ -194,6 +194,9 @@ function verifyPostTable($rTable, $rData = array(), $rOnlyExisting = false) {
 
 	foreach ($db->get_rows() as $rRow) {
 		if ($rRow['column_default'] != 'NULL') {
+			if (is_string($rRow['column_default']) && strlen($rRow['column_default']) >= 2 && substr($rRow['column_default'], 0, 1) === "'" && substr($rRow['column_default'], -1) === "'") {
+				$rRow['column_default'] = str_replace("''", "'", substr($rRow['column_default'], 1, -1));
+			}
 		} else {
 			$rRow['column_default'] = null;
 		}
