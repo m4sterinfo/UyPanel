@@ -48,6 +48,14 @@ class WatchCronJob implements CommandInterface {
 
         set_time_limit(0);
         if (strlen(SettingsManager::getAll()['tmdb_api_key']) != 0) {
+            // WatchCron::run() lee la configuración como globales (patrón del
+            // cron legacy) — publicarlas; sin esto el escaneo no encuentra
+            // folders ($rScanOffset/$rForce nulos) y los items van en serie.
+            $rSettings = SettingsManager::getAll();
+            $GLOBALS['rForce'] = $rForce;
+            $GLOBALS['rScanOffset'] = intval($rSettings['scan_seconds']);
+            $GLOBALS['rThreadCount'] = intval($rSettings['thread_count']);
+            $GLOBALS['rMaxItems'] = intval($rSettings['max_items']);
             WatchCron::run();
         } else {
             echo 'No TMDb API key.' . "\n";

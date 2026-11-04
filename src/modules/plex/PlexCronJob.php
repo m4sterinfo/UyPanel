@@ -51,6 +51,10 @@ class PlexCronJob implements CommandInterface {
 
         set_time_limit(0);
         if (!empty(SettingsManager::getAll()['tmdb_api_key'])) {
+            // PlexCron::run() lee la configuración como globales — publicarlas
+            // (mismo patrón roto del cron legacy: sin esto no escanea nada).
+            $GLOBALS['rForce'] = $rForce;
+            $GLOBALS['rScanOffset'] = intval(SettingsManager::getAll()['scan_seconds']);
             PlexCron::run();
         } else {
             echo 'No TMDb API key.' . "\n";
