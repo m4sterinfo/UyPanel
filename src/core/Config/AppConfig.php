@@ -13,7 +13,7 @@ define('AUTO_RESTART_MARIADB', true);  // Test function
 define('DEVELOPMENT', false);          // It will be deleted in the future.
 
 // ── Versión y Git ──────────────────────────────────────────────
-define('UyPanel_VERSION', '2.0.1');
+define('UyPanel_VERSION', '2.0.2');
 define('GIT_OWNER',       'm4sterinfo');
 define('GIT_REPO_MAIN',   'UyPanel');
 define('GIT_REPO_UPDATE', 'UyPanel_Update');
