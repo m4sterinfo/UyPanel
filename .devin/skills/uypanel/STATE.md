@@ -1,19 +1,14 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-03 (fin de sesión —
-> comentarios traducidos, Pages activo, binarios PHP 8.3.36 con prefix uypanel).
+> cada cambio significativo. Última actualización: 2026-11-04 (fix crítico:
+> 199 demonios CacheHandler agotaban las conexiones de MariaDB; bug heredado
+> del upstream en el ciclo de vida de demonios).
 
 ## ⏭️ CONTINUAR AQUÍ (próxima sesión)
 
-1. **Video del login (acción del USUARIO)**: el usuario va a pegar su propio
-   video en `/home/uypanel/public/assets/admin/videos/login-bg.mp4` (servidor,
-   el dir ya tiene permisos debian:debian) y en el repo
-   `src/public/assets/admin/videos/login-bg.mp4`. Cuando lo pegue en el repo:
-   commitear + pushear (es archivo LFS). El video ACTUAL en ambos sitios es el
-   del original y muestra el logo 3D de XC_VM en su frame central (~3.5s).
-2. **Roadmap** (ver sección Trabajo pendiente): rebuild de binarios con prefix
-   uypanel, EPG re-import, revisión de Settings, READMEs de los forks de soporte.
+1. **Roadmap** (ver sección Trabajo pendiente): revisión de Settings, READMEs
+   de los forks de soporte, EPG re-import.
 
 ## Identidad
 
@@ -35,6 +30,9 @@
   systemd `uypanel.service`, usuario/grupo sistema `uypanel` (uid 105)
 - BDs MariaDB: `uypanel` + `uypanel_migrate` (renombradas por RENAME TABLE)
 - BD migrada desde XUI el 2026-11-02 (27,672 líneas, 240,557 streams, 2,087 users)
+- MariaDB `max_connections = 400` (2026-11-04; el instalador ponía 200 y el
+  incidente de los CacheHandler lo agotó; dinámico + persistente en
+  /etc/mysql/mariadb.cnf)
 - Acceso admin: `http://198.27.81.133/x9access9x` (código migrado del panel antiguo)
 - Credenciales MariaDB: `/home/debian/credentials.txt` (NO commitear nunca)
 - Backups: `/home/debian/pre_rename_backup/dbs_pre_rename.sql.gz` (147 MB, pre-rename)
@@ -196,11 +194,62 @@
   NO vía setcap.
 - Submódulo repuntado a `b224e4b` en el repo principal.
 
+### 2026-11-04 — FIX CRÍTICO: demonios duplicados agotaban MariaDB (199 CacheHandler)
+- **Síntoma**: `Too many connections` en todo el panel; 200/200 conexiones
+  MariaDB en `Sleep`, `Aborted_connects` 16k+. Signals/Watchdog/Queue/Network
+  a 0 procesos (morían al no conseguir conexión); admin y player API degradados.
+- **Causa raíz (bug heredado del upstream 2.0.1)**: `cli_set_process_title()`
+  REEMPLAZA el cmdline en `ps` → los greps del cmdline nunca encuentran los
+  demonios ya titulados:
+  1. `ServersCronJob` (cada minuto): `grep cache_handler` cuenta 0 aunque haya
+     199 vivos → lanza OTRO cada minuto.
+  2. `DaemonTrait::killStaleProcesses('console.php cache_handler')` no matchea
+     el título `UyPanel[CacheHandler]` → las instancias viejas nunca mueren.
+  3. Bonus: la lista de PIDs de awk va separada por `\n` → `kill -9 123\n456`
+     solo ejecuta el primero (sh trata el resto como comandos).
+- CacheHandler es el único demonio de bucle infinito real (Watchdog y Queue
+  tienen `break` incondicional tras 1 iteración y se relanzan solos — diseño
+  upstream, no leak). Signals lo mata cada minuto RootSignalsCronJob
+  (`pgrep -f 'UyPanel\[Signals\]'`) y hace el trabajo él mismo.
+- **Fix** (commit `32c6707e`, desplegado a /home/uypanel): títulos en
+  minúscula `UyPanel[cache_handler|watchdog|queue|scanner]` (los greps
+  existentes en ServersCronJob/api.php siguen funcionando sin tocarlos),
+  `killStaleProcesses('cache_handler')` (matchea título Y cmdline) y kill en
+  una sola línea. Signals SIN tocar (interplay con el cron de root).
+- **Mitigación**: `pkill -9 -f 'UyPanel\[CacheHandler\]'` (los 199) +
+  `SET GLOBAL max_connections=400` + persistido en /etc/mysql/mariadb.cnf.
+- **Verificado**: 1 solo `UyPanel[cache_handler]` estable (>7 min), watchdog
+  ciclando por diseño, Threads_connected 5/400, `status 1` OK (DB +
+  migraciones), admin 200/302, player API 200 con credenciales reales
+  (`"auth":1` — los 404 con credenciales falsas son anti-probe por diseño;
+  verificado con usuario real: `"message":"Welcome to UyPanel"`).
+- Lección: al tocar títulos de proceso, TODOS los greps de detección
+  (ServersCronJob, api.php, process_monitor) deben matchear el título real.
+
+### 2026-11-03 — Video del login reemplazado por el del usuario
+- El usuario subió su video personal (temático IPTV: pantallas de fútbol con
+  neón) a `/home/debian/login-bg.mp4` — no pudo escribir en el proyecto porque
+  el archivo `login-bg.mp4` desplegado era propiedad de `uypanel:uypanel`
+  (el directorio sí era de debian; sobrescribir un archivo ajeno falla).
+- Video del usuario: H.264/yuv420p 864x480 24fps, 3.75s, AAC, 1.4 MB —
+  compatible con navegadores. Remux sin pérdida con `-movflags +faststart`
+  (moov al inicio; el original lo tenía tras el mdat, problemático en Safari).
+- Desplegado en `/home/uypanel/public/assets/admin/videos/login-bg.mp4`
+  (ahora propiedad `debian:debian` 644 para que futuros reemplazos no
+  necesiten sudo) y en el repo `src/public/assets/admin/videos/`.
+- Verificado por HTTP: `GET /x9access9x/assets/videos/login-bg.mp4` → 200,
+  1,432,592 bytes, Accept-Ranges OK, md5 idéntico al remux.
+- Commit `f1a3bf51` (LFS 1.4 MB) pusheado a origin/main.
+- Nota: las peticiones HEAD a ese URL devuelven Content-Length: 0 (quirk de
+  nginx alias+try_files); los GET y Range requests funcionan bien — no afecta
+  a los navegadores, que usan GET.
+
 ## Trabajo pendiente / Roadmap
 
 - [x] **Comentarios en ruso en ~200 archivos PHP** — traducidos al español
       (2026-11-03, commit 037f50f6; datos funcionales MAG/langs conservados)
-- [ ] **Video del login**: usuario pega el suyo (servidor + repo) → commit+push
+- [x] **Video del login**: video personal del usuario desplegado en servidor +
+      repo, commit `f1a3bf51` pusheado (2026-11-03)
 - [x] **GitHub Pages** — activado (main, /docs); sitio verificado en línea
 - [x] **Reconstruir binarios con prefix /home/uypanel** — HECHO (2026-11-03,
       PHP 8.3.36 + nginx 1.29.6, symlink /home/xc_vm eliminado)
