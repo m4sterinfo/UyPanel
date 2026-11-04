@@ -374,6 +374,36 @@
   `update.tar.gz` + `hashes.md5` (md5 de update.tar.gz incluido) → el botón
   "Update Server" de Settings puede aplicar la 2.0.2 al panel 2.0.1.
 
+### 2026-11-04 — Update 2.0.1→2.0.2 vía UI + incidente de arranque (resuelto)
+- El usuario aplicó el update desde la UI (botón "Update Server" → señal
+  `{"action":"update"}` → RootSignalsCronJob → `console.php update update` →
+  `sudo python3 update` → tar + post-update). **Panel ahora en 2.0.2**
+  (`servers.uypanel_version=2.0.2`, AppConfig desplegado 2.0.2, status 1,
+  sin migraciones, update_data=NULL — correcto: 2.0.2 es la última).
+- **El update SOBRESCRIBIÓ bootstrap.php** con la versión del tag 2.0.2
+  (anterior al fix `646d63fa`) → re-desplegado a mano tras el update.
+  LECCIÓN: cada update desde un tag anterior al fix revierte bootstrap.php;
+  a partir del próximo release (2.0.3+) el fix va incluido y esto deja de pasar.
+- **Incidente**: el usuario generó DOS señales de update → dos
+  `console.php update` en paralelo → dos `python3 update` compitiendo. El
+  `service start` arrancó ANTES de que el update aplicara los chmod →
+  `daemons.sh: Permission denied` (pools php-fpm nunca arrancaron) y un
+  `nginx.pid` huérfano root-owned en bin/nginx/logs/ bloqueó el arranque de
+  nginx como uypanel (Permission denied silencioso: stderr→/dev/null en el
+  script service). nginx_rtmp y redis sí arrancaron; panel DOWN (HTTP 000)
+  ~4 minutos.
+- **Recuperación**: rm del nginx.pid huérfano + chmod 0771 daemons.sh +
+  `systemctl restart uypanel` → nginx 80/443 ✓, 4 pools ✓, sockets ✓,
+  admin 302→login 200 (8,848 B) ✓, video login intacto ✓, demonios
+  singleton ✓ (1 cache_handler, 1 watchdog).
+- **Notas del flujo de update**: la señal `update_binaries` que emite
+  `status` tras cada update lanza `console.php binaries` (root) — SOLO
+  sincroniza GeoLite mmdb desde releases de UyPanel_Update; sin releases
+  devuelve null y es no-op silencioso (los mmdb vienen en el payload).
+  El `nginx -s reload` de cron:servers corre como root cada minuto.
+- Pendiente opcional: publicar release GeoLite en UyPanel_Update para que
+  `binaries` pueda restaurar mmdb borrados (requiere refresco manual igual).
+
 ### 2026-11-03 — Video del login reemplazado por el del usuario
 - El usuario subió su video personal (temático IPTV: pantallas de fútbol con
   neón) a `/home/debian/login-bg.mp4` — no pudo escribir en el proyecto porque
