@@ -349,6 +349,31 @@
   los tarballs del payload, no en el índice git (los entry scripts son 644 en
   git pero 770 desplegados).
 
+### 2026-11-04 — Fix: la notificación de updates nunca aparecía (cron:update roto en CLI)
+- **Síntoma** (usuario): panel en 2.0.1 sin aviso del release 2.0.2 publicado.
+- **Causa raíz (heredada del upstream 2.0.1)**: `cron:update` (único escritor de
+  `settings.update_data`, de donde sale el icono del header y la tarjeta de
+  Settings) lee la global `$gitRelease`, que SOLO se inicializaba en el bootstrap
+  web (`src/www/init.php:45`). En CLI era siempre null → el cron salía en
+  silencio con "GitRelease service not initialized" (exit 1; visible en
+  tmp/logs/error_log.log, entradas base64). Además el cron corre `0 0 * * *`
+  (medianoche) y los crontabs se instalaron ~02:20 → jamás había corrido.
+- **Fix**: `XC_Bootstrap::boot(CONTEXT_CLI)` ahora crea `$gitRelease` global
+  tras initCoreUtilities (commit `646d63fa`, desplegado a /home/uypanel/bootstrap.php).
+- **Verificado**: `console.php cron:update` → "Update is available!",
+  caché `tmp/gitapi_UyPanel_stable` creada, `settings.update_data` =
+  `{"version":"2.0.2","changelog":[],"url":".../releases/tag/2.0.2"}` → icono
+  de update visible en el header (version_compare 2.0.2 >= 2.0.1 ✓).
+- **changelog.json**: `m4sterinfo/UyPanel_Update` NO tenía changelog.json
+  (404; el original XC_VM_Update tampoco — changelog vacío era lo normal).
+  Creado en el clone local `/home/debian/UyPanel_Update` (commit `dc04e3e`,
+  SIN pushear aún): entradas 2.0.1 y 2.0.2 en español, orden ASCENDENTE
+  (obligatorio: el filtro del cron recorre el array invertido y corta al
+  llegar a la versión actual). Formato: `[{"version","changes":[...]}]`.
+- **Flujo de update completo verificado**: release 2.0.2 estable con assets
+  `update.tar.gz` + `hashes.md5` (md5 de update.tar.gz incluido) → el botón
+  "Update Server" de Settings puede aplicar la 2.0.2 al panel 2.0.1.
+
 ### 2026-11-03 — Video del login reemplazado por el del usuario
 - El usuario subió su video personal (temático IPTV: pantallas de fútbol con
   neón) a `/home/debian/login-bg.mp4` — no pudo escribir en el proyecto porque
