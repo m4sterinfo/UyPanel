@@ -1,18 +1,19 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-04 (reinstalación
-> limpia validada desde el repo; código de acceso nuevo `7JDEeDMG`; fix del
-> instalador: password de Redis real y sincronizado con la BD).
+> cada cambio significativo. Última actualización: 2026-11-04 (fin de sesión —
+> reinstalación limpia validada, release 2.0.2 publicado con binarios propios
+> en el payload, fixes: demonios/redis password/idioma bg/bouquet NULL).
 
 ## ⏭️ CONTINUAR AQUÍ (próxima sesión)
 
-1. **Release 2.0.2**: verificar que el workflow terminó de subir los assets
-   (UyPanel.zip, loadbalancer.tar.gz, updates, hashes.md5) tras el re-run con
-   el tag en `bac2def5`.
-2. **Panel fresco**: revisar Settings (defaults del seed), re-importar EPG,
-   crear users/streams si procede (datos antiguos en los backups de
-   /home/debian: 604MB panel, 1.2GB XUI, 147MB pre-rename).
+1. **Panel fresco (lado del usuario)**: revisar Settings (defaults del seed),
+   re-importar EPG, crear users/streams si procede. Datos antiguos
+   recuperables de los backups en /home/debian (604MB panel, 1.2GB XUI,
+   147MB pre-rename).
+2. **Limpieza pendiente**: borrar `/home/uypanel.pre_reinstall` (rollback de
+   la instalación anterior) cuando el usuario confirme; payloads viejos de
+   /home/debian (~895 MB) si quiere.
 3. **Roadmap**: READMEs de los forks de soporte.
 
 ## Identidad
@@ -375,9 +376,18 @@
 - [x] **GitHub Pages** — activado (main, /docs); sitio verificado en línea
 - [x] **Reconstruir binarios con prefix /home/uypanel** — HECHO (2026-11-03,
       PHP 8.3.36 + nginx 1.29.6, symlink /home/xc_vm eliminado)
+- [x] **Binarios propios DENTRO del payload** — HECHO (2026-11-04, commit
+      6225c356; instalación fresca funcional de fábrica en Debian 12/13)
+- [x] **Release 2.0.2** — publicado con assets del workflow (CI con fetch LFS;
+      18 objetos LFS que faltaban subidos)
+- [x] **Fix idioma admin (verifyPostTable quoting MariaDB)** — commit eac4a201
+- [x] **Fix bouquet NULL (panel en blanco)** — commit bac2def5
 - [ ] Personalizar READMEs/branding de los forks de soporte cuando se toque
-- [ ] Re-importar EPG desde las 22 URLs migradas (los datos EPG no se migran)
-- [ ] Revisar página de Settings del panel (quedó en defaults tras migración)
+- [ ] Re-importar EPG (BD fresca: sin URLs de EPG; las 22 del panel antiguo
+      están en los backups de /home/debian si se quieren recuperar)
+- [ ] Revisar página de Settings del panel (defaults del seed)
+- [ ] Borrar `/home/uypanel.pre_reinstall` cuando el usuario confirme el nuevo
+      estado; también los payloads viejos de /home/debian (~895 MB) si quiere
 - [ ] Nota: si se reconstruyen binarios Debian, las librerías adaptadas
       (`libcurl3t64-gnutls`, `libjpeg.so.8`) dejan de ser necesarias
 
