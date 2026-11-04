@@ -90,7 +90,7 @@ class WatchCron {
         global $db;
         global $rThreadCount;
         global $rScanOffset;
-        global $F7fa29461a8a5ee2;
+        global $rMaxItems;
         global $rForce;
         $rWatchCategories = array(1 => self::getWatchCategories(1), 2 => self::getWatchCategories(2));
         if (0 >= count(glob(WATCH_TMP_PATH . '*.bouquet'))) {
@@ -212,7 +212,7 @@ class WatchCron {
                             }
                         }
                         $rThreadData[] = array('folder_id' => $rRow['id'], 'type' => $rRow['type'], 'directory' => $rRow['directory'], 'file' => $rFile, 'subtitles' => $d8c5b5dc1e354db6, 'category_id' => $rRow['category_id'], 'bouquets' => $rRow['bouquets'], 'disable_tmdb' => $rRow['disable_tmdb'], 'ignore_no_match' => $rRow['ignore_no_match'], 'fb_bouquets' => $rRow['fb_bouquets'], 'fb_category_id' => $rRow['fb_category_id'], 'language' => $rRow['language'], 'watch_categories' => $rWatchCategories, 'read_native' => $rRow['read_native'], 'movie_symlink' => $rRow['movie_symlink'], 'remove_subtitles' => $rRow['remove_subtitles'], 'auto_encode' => $rRow['auto_encode'], 'auto_upgrade' => $rRow['auto_upgrade'], 'fallback_title' => $rRow['fallback_title'], 'ffprobe_input' => $rRow['ffprobe_input'], 'transcode_profile_id' => $rRow['transcode_profile_id'], 'max_genres' => intval(SettingsManager::getAll()['max_genres']), 'duplicate_tmdb' => $rRow['duplicate_tmdb'], 'target_container' => $rRow['target_container'], 'alternative_titles' => SettingsManager::getAll()['alternative_titles'], 'fallback_parser' => SettingsManager::getAll()['fallback_parser']);
-                        if (!(0 < $F7fa29461a8a5ee2 && count($rThreadData) == $F7fa29461a8a5ee2)) {
+                        if (!(0 < $rMaxItems && count($rThreadData) == $rMaxItems)) {
                         } else {
                             break;
                         }
@@ -224,7 +224,7 @@ class WatchCron {
             }
             $cacheDataKey = array();
             foreach ($rThreadData as $rData) {
-                $rCommand = '/usr/bin/timeout 60 ' . PHP_BIN . ' ' . INCLUDES_PATH . 'cli/watch_item.php "' . base64_encode(json_encode($rData, JSON_UNESCAPED_UNICODE)) . '"';
+                $rCommand = '/usr/bin/timeout 60 ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php watch_item "' . base64_encode(json_encode($rData, JSON_UNESCAPED_UNICODE)) . '"';
                 $cacheDataKey[] = $rCommand;
             }
             $db->close_mysql();
