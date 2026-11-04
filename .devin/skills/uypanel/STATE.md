@@ -374,6 +374,51 @@
   `update.tar.gz` + `hashes.md5` (md5 de update.tar.gz incluido) → el botón
   "Update Server" de Settings puede aplicar la 2.0.2 al panel 2.0.1.
 
+### 2026-11-04 — QA: líneas/resellers/playback + 3 bugs corregidos
+- **Setup de QA** (artifacts en BD, borrar cuando el usuario decida): admin de
+  prueba `qa_admin` (grupo 1, api_key 32-hex), reseller `qa_reseller` (grupo 2,
+  10 créditos, creado vía REST API `create_user`), líneas `qa_line1..4`
+  (reseller) + `qa_adminline` (REST `create_line`). Access codes de prueba:
+  `qaResT3st` (tipo 1) y `qaApiT3st` (tipo 3, REST API) — PENDIENTE borrar.
+  El usuario ya tenía: código reseller `resellers` (tipo 1), package "test"
+  (users_packages id 1: is_line, 1 crédito/30 días, groups [2], bouquets [1]),
+  bouquet "test" (canal 1), canales Bein Xtra (id 1) + RT France (id 2),
+  línea `josematest` (admin).
+- **Resultados**: login reseller ✓, dashboard ✓, creación de líneas por
+  reseller ✓ (créditos 10→9→8..., users_logs correctos), playback TS y HLS
+  ✓ para TODAS las líneas (qa_line1/2, josematest, qa_adminline — 200
+  video/mp2t ~4 Mbps / playlist HLS válida), lines_live tracking ✓ y reap
+  automático al desconectar ✓. `api?action=connections` del reseller da
+  result:false — CORRECTO (grupo 2 tiene reseller_client_connection_logs=0).
+- **Bug #4 — assets del panel reseller fuera del payload** (commit `86dacde6`):
+  `src/public/assets/reseller` era symlink ABSOLUTO a /home/xc_vm (upstream) →
+  roto en nuestro prefix; el cp del Makefile lo saltaba → el panel reseller
+  salía sin CSS/JS. Fix: symlink relativo `admin` + Makefile cp -P (preserva
+  symlinks; el loop de update acepta -L). Desplegado a mano en el server.
+- **Bug #5 — login reseller HTTP 500** (commit `baa567ad`): las páginas login
+  son noBootstrapPages (el FC no carga bootstrap) y el ResellerLoginController
+  migrado no se auto-bootstrappeaba → $db/$language null → fatal tras <title>.
+  Fix: require includes/admin.php al inicio de index(). Desplegado.
+- **Bug #6 — verifyPostTable inlineaba defaults de función** (commit `c5448d21`):
+  information_schema devuelve `current_timestamp()` como string; se insertaba
+  como literal → zero date (0000-00-00) en lines.updated y streams.updated de
+  filas NUEVAS → rompe la detección de cambios del cache_engine (getChanged-
+  Lines/Streams compara mtime vs updated). Fix: defaults con forma de función
+  se OMITEN (la BD aplica el suyo). Desplegado + filas dañadas reparadas
+  (lines.updated=FROM_UNIXTIME(created_at), streams.updated=FROM_UNIXTIME(added)).
+  OJO: opcache revalidate_freq=20s — un test inmediato tras desplegar puede
+  usar el código viejo (pasó con qa_line3).
+- **Notas del flujo**: la player API imita la página 404 de nginx a propósito
+  (generateError/generate404, anti-probe) — un 404 "de nginx" en /live o
+  player_api suele ser INVALID_CREDENTIALS u otro deny del panel. Las líneas
+  nuevas tardan ≤5 min en entrar a la caché de streaming (cache_engine */5) —
+  reproducir inmediatamente tras crear da 404 INVALID_CREDENTIALS: normal.
+  REST create_line NO aplica la duración del package (exp_date null salvo que
+  se envíe exp_date) — el UI la calcula y la envía; comportamiento upstream.
+- **Debug temporal usado y revertido**: debug_show_errors 1→0 (revertido),
+  access_log qa_fmt en nginx (quitado). `tools access` regenera confs de
+  códigos + reload nginx (útil para códigos nuevos).
+
 ### 2026-11-04 — Update 2.0.1→2.0.2 vía UI + incidente de arranque (resuelto)
 - El usuario aplicó el update desde la UI (botón "Update Server" → señal
   `{"action":"update"}` → RootSignalsCronJob → `console.php update update` →
