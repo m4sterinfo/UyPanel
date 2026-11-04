@@ -224,6 +224,9 @@ function verifyPostTable($rTable, $rData = array(), $rOnlyExisting = false) {
 		} else {
 			if ($rOnlyExisting) {
 			} else {
+				if (is_string($rRow['column_default']) && preg_match('/^[a-z][a-z0-9_]*\(.*\)$/i', $rRow['column_default'])) {
+					continue;
+				}
 				$rReturn[$rRow['column_name']] = $rRow['column_default'];
 			}
 		}
