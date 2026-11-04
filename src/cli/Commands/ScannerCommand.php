@@ -20,8 +20,8 @@ class ScannerCommand implements CommandInterface {
 
 		global $db;
 
-		$this->setProcessTitle('UyPanel[Scanner]');
-		$this->killStaleProcesses('console.php scanner');
+		$this->setProcessTitle('UyPanel[scanner]');
+		$this->killStaleProcesses('scanner');
 		$this->initDaemonMD5();
 
 		if (!SettingsManager::getAll()['on_demand_checker']) {

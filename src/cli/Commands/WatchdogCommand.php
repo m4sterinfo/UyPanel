@@ -21,8 +21,8 @@ class WatchdogCommand implements CommandInterface {
 		global $db;
 
 		echo "Start watchdog\n";
-		$this->setProcessTitle('UyPanel[Watchdog]');
-		$this->killStaleProcesses('console.php watchdog');
+		$this->setProcessTitle('UyPanel[watchdog]');
+		$this->killStaleProcesses('watchdog');
 		$this->initDaemonMD5();
 		$this->initRedisIfEnabled();
 
