@@ -92,7 +92,7 @@ lb_copy_files:
 			rel=$${file#src/}; \
 			printf "      → Copying: %s\n" "$$file"; \
 			mkdir -p "$(TEMP_DIR)/$$(dirname $$rel)"; \
-			cp "$$file" "$(TEMP_DIR)/$$rel"; \
+			cp -P "$$file" "$(TEMP_DIR)/$$rel"; \
 		done; \
 	done
 
@@ -154,10 +154,10 @@ lb_update_copy_files:
 				fi; \
 			done; \
 		fi; \
-		if [ "$$allowed" -eq 1 ] && [ -f "$$file" ]; then \
+		if [ "$$allowed" -eq 1 ] && { [ -f "$$file" ] || [ -L "$$file" ]; }; then \
 			echo "[COPY] $$file -> $(TEMP_DIR)/$$rel_path"; \
 			mkdir -p "$(TEMP_DIR)/$$(dirname $$rel_path)"; \
-			cp "$$file" "$(TEMP_DIR)/$$rel_path"; \
+			cp -P "$$file" "$(TEMP_DIR)/$$rel_path"; \
 		else \
 			echo "[SKIP] $$file (not in LB scope)"; \
 		fi \
@@ -193,7 +193,7 @@ main_copy_files:
 		rel=$${file#src/}; \
 		printf "   → Copying: %s\n" "$$file"; \
 		mkdir -p "$(TEMP_DIR)/$$(dirname $$rel)"; \
-		cp "$$file" "$(TEMP_DIR)/$$rel"; \
+		cp -P "$$file" "$(TEMP_DIR)/$$rel"; \
 	done
 
 	@echo "Remove all .gitkeep files..."
@@ -213,10 +213,10 @@ main_update_copy_files:
 	@echo "[INFO] Copying modified or added files from 'src/'..."
 	@for file in $$(git diff --name-only --diff-filter=AMR $(LAST_TAG)..HEAD | grep '^src/'); do \
 		rel_path=$$(echo "$$file" | sed 's|^src/||'); \
-		if [ -f "$$file" ]; then \
+		if [ -f "$$file" ] || [ -L "$$file" ]; then \
 			echo "[COPY] $$file -> $(TEMP_DIR)/$$rel_path"; \
 			mkdir -p "$(TEMP_DIR)/$$(dirname "$$rel_path")"; \
-			cp "$$file" "$(TEMP_DIR)/$$rel_path"; \
+			cp -P "$$file" "$(TEMP_DIR)/$$rel_path"; \
 		fi \
 	done
 
