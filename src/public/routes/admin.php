@@ -138,10 +138,10 @@ $router->get('epg_view', [EpgViewController::class, 'index']);
 
 // ─── Group L: Watch / Plex (Phase 6.3) ────────────────────────
 
-$router->get('watch', [WatchController::class, 'index']);
+$router->get('watch', [AdminWatchController::class, 'index']);
 $router->any('watch_add', [WatchAddController::class, 'index']);
 $router->get('watch_output', [WatchOutputController::class, 'index']);
-$router->get('plex', [PlexController::class, 'index']);
+$router->get('plex', [AdminPlexController::class, 'index']);
 $router->any('plex_add', [PlexAddController::class, 'index']);
 
 // ─── Group M: System (Phase 6.3) ──────────────────────────────
