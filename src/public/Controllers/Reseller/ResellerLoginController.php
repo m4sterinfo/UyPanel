@@ -10,6 +10,11 @@ class ResellerLoginController
 {
     public function index()
     {
+        // Bootstrap completo (login es noBootstrapPage: el FC no lo carga).
+        // Sin esto $db/$language/$rSettings son null → fatal en la vista.
+        global $db, $rSettings, $language, $rHues;
+        require_once MAIN_HOME . 'includes/admin.php';
+
         // Already logged in → dashboard
         if (isset($_SESSION['reseller'])) {
             header('Location: dashboard');
