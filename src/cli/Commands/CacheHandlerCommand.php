@@ -20,8 +20,8 @@ class CacheHandlerCommand implements CommandInterface {
 
 		global $db;
 
-		$this->setProcessTitle('UyPanel[CacheHandler]');
-		$this->killStaleProcesses('console.php cache_handler');
+		$this->setProcessTitle('UyPanel[cache_handler]');
+		$this->killStaleProcesses('cache_handler');
 		$this->initDaemonMD5();
 
 		SettingsManager::set(SettingsRepository::getAll(true));
