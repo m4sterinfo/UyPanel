@@ -194,11 +194,11 @@ class BouquetService {
 		$rOutput = array();
 		$db->query('SELECT *, IF(`bouquet_order` > 0, `bouquet_order`, 999) AS `order` FROM `bouquets` ORDER BY `order` ASC;');
 		foreach ($db->get_rows(true, 'id') as $rID => $rChannels) {
-			$rOutput[$rID]['streams'] = array_merge(json_decode($rChannels['bouquet_channels'], true), json_decode($rChannels['bouquet_movies'], true), json_decode($rChannels['bouquet_radios'], true));
-			$rOutput[$rID]['series'] = json_decode($rChannels['bouquet_series'], true);
-			$rOutput[$rID]['channels'] = json_decode($rChannels['bouquet_channels'], true);
-			$rOutput[$rID]['movies'] = json_decode($rChannels['bouquet_movies'], true);
-			$rOutput[$rID]['radios'] = json_decode($rChannels['bouquet_radios'], true);
+			$rOutput[$rID]['streams'] = array_merge((array) json_decode($rChannels['bouquet_channels'], true), (array) json_decode($rChannels['bouquet_movies'], true), (array) json_decode($rChannels['bouquet_radios'], true));
+			$rOutput[$rID]['series'] = (array) json_decode($rChannels['bouquet_series'], true);
+			$rOutput[$rID]['channels'] = (array) json_decode($rChannels['bouquet_channels'], true);
+			$rOutput[$rID]['movies'] = (array) json_decode($rChannels['bouquet_movies'], true);
+			$rOutput[$rID]['radios'] = (array) json_decode($rChannels['bouquet_radios'], true);
 		}
 
 		FileCache::setCache('bouquets', $rOutput);
