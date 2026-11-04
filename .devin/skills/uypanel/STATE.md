@@ -1,14 +1,24 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-04 (fix crítico:
-> 199 demonios CacheHandler agotaban las conexiones de MariaDB; bug heredado
-> del upstream en el ciclo de vida de demonios).
+> cada cambio significativo. Última actualización: 2026-11-04 (reinstalación
+> limpia validada desde el repo; código de acceso nuevo `7JDEeDMG`; fix del
+> instalador: password de Redis real y sincronizado con la BD).
 
 ## ⏭️ CONTINUAR AQUÍ (próxima sesión)
 
-1. **Roadmap** (ver sección Trabajo pendiente): revisión de Settings, READMEs
-   de los forks de soporte, EPG re-import.
+1. **DECISIÓN PENDIENTE (despliegues)**: reemplazar los LFS de
+   `src/bin/{php,nginx,nginx_rtmp}` por NUESTROS builds (prefix uypanel,
+   PHP 8.3.36) para que el payload instale correcto de fábrica — hoy el
+   payload trae los binarios upstream (prefix /home/xc_vm) y una instalación
+   fresca queda rota hasta desplegar `out/debian_13.tar.gz` a mano. Implica
+   re-publicar release assets. Trade-off: los builds debian13 no sirven para
+   targets Ubuntu del instalador.
+2. **Panel fresco**: crear admin (primer acceso a /7JDEeDMG → setup),
+   revisar Settings (defaults del seed), re-importar EPG, recrear
+   users/streams si procede (los datos antiguos siguen en los backups de
+   /home/debian: 604MB panel, 1.2GB XUI, 147MB pre-rename).
+3. **Roadmap**: READMEs de los forks de soporte.
 
 ## Identidad
 
@@ -225,6 +235,49 @@
   verificado con usuario real: `"message":"Welcome to UyPanel"`).
 - Lección: al tocar títulos de proceso, TODOS los greps de detección
   (ServersCronJob, api.php, process_monitor) deben matchear el título real.
+
+### 2026-11-04 — Reinstalación limpia validada desde el repo (tras BD vaciada)
+- El usuario restauró a mano un backup antiguo sobre la BD `uypanel` y quedó
+  VACÍA (0 tablas) — sin datos importantes dentro (confirmado por él; nos
+  separamos del proyecto original). Decisión: **reinstalación limpia desde
+  NUESTRO repo** para validar el camino de despliegue completo.
+- Build fresco: `make main` → `dist/UyPanel.zip` 451 MB desde HEAD (incluye
+  video login, comentarios ES, todos los fixes). Instalador del repo
+  (`install`) + payload a `/home/debian/reinstall/` (borrado tras instalar).
+- Limpieza previa: stop uypanel, umount tmpfs (content/streams, tmp),
+  `/home/uypanel` → `/home/uypanel.pre_reinstall` (rollback; borrar cuando se
+  confirme). Crontabs se reinstalan solos vía `console.php startup` ✓.
+- **GAP de despliegue #1 (FIX en instalador, commit aparte)**: el instalador
+  escribía redis.conf con `requirepass #PASSWORD#` LITERAL (nunca reemplazado)
+  y el seed trae `redis_password=''` → Redis roto de fábrica. Ahora el
+  instalador genera password de 64 chars, lo escribe en redis.conf Y hace
+  UPDATE settings.redis_password. Verificado: auth+ping true vía extensión
+  redis del panel.
+- **GAP de despliegue #2 (conocido, workaround aplicado)**: el payload trae los
+  binarios ORIGINALES de upstream (PHP 8.1.33) con prefix `/home/xc_vm`
+  compilado → en nuestro fork (instala en /home/uypanel, SIN symlink) el PHP
+  no encuentra php.ini ni configs → sin extensiones (fatal igbinary en
+  autoload) y pools caídos. El upstream no lo sufre porque instala en
+  /home/xc_vm. Solución aplicada: desplegar `out/debian_13.tar.gz` (PHP
+  8.3.36 + nginx 1.29.6, prefix uypanel) sobre bin/ + `chown -R uypanel:uypanel
+  /home/uypanel/bin` (el tar restaura owner interno del build — hacer chown
+  SIEMPRE tras extraer binarios). **PENDIENTE DE DECISIÓN**: reemplazar los
+  LFS de src/bin/{php,nginx,nginx_rtmp} por nuestros builds para que el
+  payload instale correcto de fábrica (afecta release assets; trade-off Ubuntu).
+- **GAP #3 (menor)**: `tar -tvf` del payload confirma que php.ini SÍ va en
+  `bin/php/lib/php.ini` (no en etc/) — el binario lo busca ahí.
+- Resultado: panel fresco operativo — código de acceso NUEVO generado e
+  insertado por el instalador: **`7JDEeDMG`** → `http://198.27.81.133/7JDEeDMG`
+  (el anterior `x9access9x` quedó en el backup movido; la BD es nueva). Tabla
+  `users` vacía → el primer acceso muestra el flujo setup (SetupController)
+  para crear el admin. Credenciales MariaDB nuevas en
+  `/home/debian/credentials.txt` (600). BDs recreadas de cero por el
+  instalador (uypanel + uypanel_migrate vacía — el origen XUI sigue en
+  `/home/debian/backup_2026-11-02_15_16_01.sql` por si hiciera falta).
+- Verificación completa: 4 pools, status 1 OK (DB + migraciones), admin 302→
+  login 200 (41 KB), redis auth OK, video login desplegado (1,432,592 B),
+  crontabs root 2 + uypanel 23, demonios singleton (1 cache_handler, 1 queue,
+  1 watchdog — el fix del ciclo de vida se valida en instalación fresca ✓).
 
 ### 2026-11-04 — Incidente: `chmod -R 777 /home` externo + restauración de permisos
 - A las 01:19:47 alguien ejecutó `sudo chmod -R 777 /home` desde una TTY

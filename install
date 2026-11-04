@@ -214,6 +214,7 @@ if __name__ == "__main__":
     rServerID = 1
     rUsername = generate()
     rPassword = generate()
+    rRedisPass = generate(64)
     rDatabase = "uypanel"
     rPort = 3306
 
@@ -362,6 +363,10 @@ if __name__ == "__main__":
         'sudo mariadb -u root%s uypanel < "/home/uypanel/bin/install/database.sql"' % rExtra
     )
     os.system(
+        "sudo mariadb -u root%s -e \"UPDATE uypanel.settings SET redis_password = '%s';\""
+        % (rExtra, rRedisPass)
+    )
+    os.system(
         "sudo mariadb -u root%s -e \"CREATE USER '%s'@'localhost' IDENTIFIED BY '%s';\""
         % (rExtra, rUsername, rPassword)
     )
@@ -496,10 +501,9 @@ if __name__ == "__main__":
         )
         os.system('sudo echo "\nDefaultLimitNOFILE=655350" >> "/etc/systemd/user.conf"')
     
-    if not os.path.exists("/home/uypanel/bin/redis/redis.conf"):
-        rFile = io.open("/home/uypanel/bin/redis/redis.conf", "w", encoding="utf-8")
-        rFile.write(rRedisConfig)
-        rFile.close()
+    rFile = io.open("/home/uypanel/bin/redis/redis.conf", "w", encoding="utf-8")
+    rFile.write(rRedisConfig.replace("#PASSWORD#", rRedisPass))
+    rFile.close()
 
     ##################################################
     # ACCESS CODE                                    #
