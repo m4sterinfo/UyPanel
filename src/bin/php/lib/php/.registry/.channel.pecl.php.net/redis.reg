@@ -1,73 +1,144 @@
-a:23:{s:7:"attribs";a:6:{s:15:"packagerversion";s:7:"1.10.12";s:7:"version";s:3:"2.0";s:5:"xmlns";s:35:"http://pear.php.net/dtd/package-2.0";s:11:"xmlns:tasks";s:33:"http://pear.php.net/dtd/tasks-1.0";s:9:"xmlns:xsi";s:41:"http://www.w3.org/2001/XMLSchema-instance";s:18:"xsi:schemaLocation";s:147:"http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd";}s:4:"name";s:5:"redis";s:7:"channel";s:12:"pecl.php.net";s:7:"summary";s:51:"PHP extension for interfacing with key-value stores";s:11:"description";s:119:"This extension provides an API for communicating with RESP-based key-value
-   stores, such as Redis, Valkey, and KeyDB.";s:4:"lead";a:2:{i:0;a:4:{s:4:"name";s:15:"Michael Grunder";s:4:"user";s:8:"mgrunder";s:5:"email";s:25:"michael.grunder@gmail.com";s:6:"active";s:3:"yes";}i:1;a:4:{s:4:"name";s:18:"Pavlo Yatsukhnenko";s:4:"user";s:12:"yatsukhnenko";s:5:"email";s:24:"p.yatsukhnenko@gmail.com";s:6:"active";s:3:"yes";}}s:4:"date";s:10:"2025-03-24";s:4:"time";s:8:"19:00:47";s:7:"version";a:2:{s:7:"release";s:5:"6.2.0";s:3:"api";s:5:"6.2.0";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:3:"PHP";}s:5:"notes";s:3847:"--- Sponsors ---
+a:23:{s:7:"attribs";a:6:{s:15:"packagerversion";s:7:"1.10.16";s:7:"version";s:3:"2.0";s:5:"xmlns";s:35:"http://pear.php.net/dtd/package-2.0";s:11:"xmlns:tasks";s:33:"http://pear.php.net/dtd/tasks-1.0";s:9:"xmlns:xsi";s:41:"http://www.w3.org/2001/XMLSchema-instance";s:18:"xsi:schemaLocation";s:147:"http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd";}s:4:"name";s:5:"redis";s:7:"channel";s:12:"pecl.php.net";s:7:"summary";s:51:"PHP extension for interfacing with key-value stores";s:11:"description";s:119:"This extension provides an API for communicating with RESP-based key-value
+   stores, such as Redis, Valkey, and KeyDB.";s:4:"lead";a:2:{i:0;a:4:{s:4:"name";s:15:"Michael Grunder";s:4:"user";s:8:"mgrunder";s:5:"email";s:25:"michael.grunder@gmail.com";s:6:"active";s:3:"yes";}i:1;a:4:{s:4:"name";s:18:"Pavlo Yatsukhnenko";s:4:"user";s:12:"yatsukhnenko";s:5:"email";s:24:"p.yatsukhnenko@gmail.com";s:6:"active";s:3:"yes";}}s:4:"date";s:10:"2025-11-06";s:4:"time";s:8:"19:50:19";s:7:"version";a:2:{s:7:"release";s:5:"6.3.0";s:3:"api";s:5:"6.2.0";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:3:"PHP";}s:5:"notes";s:764:"--- Sponsors ---
 
-A-VISION Advisering - https://a-vision.nu/
-Audiomack - https://audiomack.com
+A-VISION Advertising - https://github.com/A-VISION-BV
 Avtandil Kikabidze - https://github.com/akalongman
 Geoffrey Hoffman - https://github.com/phpguru
-Object Cache Pro for WordPress - https://objectcache.pro
-Open LMS - https://openlms.net
+Object Cache Pro for WordPress - https://objectcache.pro/
+Open LMS - https://openlms.net/
+Relay - https://relay.so
 Salvatore Sanfilippo - https://github.com/antirez
 Ty Karok - https://github.com/karock
-Vanessa Santana - https://github.com/vanessa-dev
 
-* A special thanks to Jakub Onderka for nearly two dozen performance improvements in this release!
+--- 6.3.0 ---
 
---- 6.2.0 ---
+This release introduces support for dozens of new commands, including hash
+field expiration, Valkey?s DELIFEQ, and Redis vector set commands. It also
+includes many bug fixes and performance improvements.
 
 Fixed:
-* Fix arguments order for SET command [f73f5fc] (Pavlo Yatsukhnenko)
-* Fix error length calculation and UB sanity check [e73130fe] (michael-grunder)
-* Invalidate slot cache on failed cluster connections [c7b87843] (James Kennedy)
-* Don't cast a uint64_t to a long [faa4bc20] (michael-grunder)
-* Fix potential NULL dereference [43e6cab8] (peter15914)
-* Print cursor as unsigned 64 bit integer [138d07b6] (Bentley O'Kane-Chase)
-* Fix XAUTOCLAIM argc when sending COUNT [0fe45d24] (michael-grunder)
+
+* Cloning our objects should not segfault [770034cc] (michael-grunder)
+* Fix return type for `RedisCluster` `vgetattr` and `vsetattr`
+  [834d2b37] (michael-grunder)";s:8:"contents";a:1:{s:3:"dir";a:2:{s:7:"attribs";a:1:{s:4:"name";s:1:"/";}s:4:"file";a:63:{i:0;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"7d8cd4a383dc44cb3899ded5ce12f869";s:4:"name";s:14:"liblzf/LICENSE";s:4:"role";s:3:"doc";}}i:1;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"551f9008e79f35cad9c5cd0354e53da1";s:4:"name";s:13:"liblzf/README";s:4:"role";s:3:"doc";}}i:2;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"68942338136ce96eed98e2512cb8a36e";s:4:"name";s:12:"liblzf/lzf.h";s:4:"role";s:3:"src";}}i:3;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"91a34efea468bc5c6796275f30b12c4b";s:4:"name";s:13:"liblzf/lzfP.h";s:4:"role";s:3:"src";}}i:4;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"f56a91842e1a56820efe3f35fcfa486e";s:4:"name";s:14:"liblzf/lzf_c.c";s:4:"role";s:3:"src";}}i:5;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"ef8f82dbd4bad7b83629c02724afcfd0";s:4:"name";s:14:"liblzf/lzf_d.c";s:4:"role";s:3:"src";}}i:6;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"429188b3d5c91f528dcca6e4e1653840";s:4:"name";s:24:"tests/RedisArrayTest.php";s:4:"role";s:4:"test";}}i:7;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"410b595ba9f100d607251240ae8c96b6";s:4:"name";s:26:"tests/RedisClusterTest.php";s:4:"role";s:4:"test";}}i:8;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"ac19b2b3b74459ddf35ad77571c8e141";s:4:"name";s:27:"tests/RedisSentinelTest.php";s:4:"role";s:4:"test";}}i:9;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"482148cc30b0041808afbacf05700577";s:4:"name";s:19:"tests/RedisTest.php";s:4:"role";s:4:"test";}}i:10;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"94d564eb6d04723a987854e187a9c8d4";s:4:"name";s:19:"tests/TestRedis.php";s:4:"role";s:4:"test";}}i:11;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"357dc08e5102e53ad150fe6eaa615135";s:4:"name";s:19:"tests/TestSuite.php";s:4:"role";s:4:"test";}}i:12;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"f8ba6ee263cf5cdbfe9242513302f24c";s:4:"name";s:24:"tests/getSessionData.php";s:4:"role";s:4:"test";}}i:13;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"e2c0e0b4e6b027cee1a444abffa0601e";s:4:"name";s:29:"tests/regenerateSessionId.php";s:4:"role";s:4:"test";}}i:14;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"2272f4aa4f2febe66a34661464bffc57";s:4:"name";s:22:"tests/startSession.php";s:4:"role";s:4:"test";}}i:15;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"1c27d9ec328cb14b4fa79c00a02530b6";s:4:"name";s:24:"tests/SessionHelpers.php";s:4:"role";s:4:"test";}}i:16;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"654496adb29b43100f4a98c8c4127d4e";s:4:"name";s:21:"tests/make-cluster.sh";s:4:"role";s:4:"test";}}i:17;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"e9ddcb5f7abcef8507c394d8386f4742";s:4:"name";s:15:"tests/mkring.sh";s:4:"role";s:4:"test";}}i:18;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"cb564efdf78cce8ea6e4b5a4f7c05d97";s:4:"name";s:7:"LICENSE";s:4:"role";s:3:"doc";}}i:19;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"d56374bf738d2b10cb1f97cd7c9cfb30";s:4:"name";s:7:"CREDITS";s:4:"role";s:3:"doc";}}i:20;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"143d276e3b4819e605699ac770ed6344";s:4:"name";s:9:"README.md";s:4:"role";s:3:"doc";}}i:21;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"dcf388e2e97cd21a297cbd7d6a255eed";s:4:"name";s:10:"INSTALL.md";s:4:"role";s:3:"src";}}i:22;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"12ce8871013788f5b3abc69691fb5a7d";s:4:"name";s:9:"arrays.md";s:4:"role";s:3:"doc";}}i:23;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"072c67a36ff418d3c963c99f767b2203";s:4:"name";s:10:"cluster.md";s:4:"role";s:3:"doc";}}i:24;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"ce0ab3a589e5a034beebced11be601d7";s:4:"name";s:11:"sentinel.md";s:4:"role";s:3:"doc";}}i:25;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"13936f0c8e8d3860fa45f941333ae8aa";s:4:"name";s:9:"backoff.c";s:4:"role";s:3:"src";}}i:26;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"af0b29580d83ba055ff816664d7f3d83";s:4:"name";s:9:"backoff.h";s:4:"role";s:3:"src";}}i:27;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"17007e008f3b59e574877476681d1649";s:4:"name";s:17:"cluster_library.c";s:4:"role";s:3:"src";}}i:28;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"114df8bf99a932d46f51935b21e384b8";s:4:"name";s:17:"cluster_library.h";s:4:"role";s:3:"src";}}i:29;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"54e97b2509b5d8d9d739d0d7edab5cb6";s:4:"name";s:8:"common.h";s:4:"role";s:3:"src";}}i:30;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"9b37d3cd4dc9cd9369322b69766b7165";s:4:"name";s:9:"config.m4";s:4:"role";s:3:"src";}}i:31;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"c962cae928bcb4986ebb17bf9d5a3811";s:4:"name";s:10:"config.w32";s:4:"role";s:3:"src";}}i:32;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"b21982c70ca8292b4ac540a76cd3bac4";s:4:"name";s:7:"crc16.h";s:4:"role";s:3:"src";}}i:33;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"f8a677b3109418572944eb72e9c859d6";s:4:"name";s:9:"library.c";s:4:"role";s:3:"src";}}i:34;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"0a723f18d2b62f6d62995b15a8ce210f";s:4:"name";s:9:"library.h";s:4:"role";s:3:"src";}}i:35;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"34881e6ab07a96e46da6b566bb3652ef";s:4:"name";s:11:"php_redis.h";s:4:"role";s:3:"src";}}i:36;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"51a1b1b37cd6cb4d77fe972f0484bd38";s:4:"name";s:7:"redis.c";s:4:"role";s:3:"src";}}i:37;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"ec053cc6b0d1d2ea04103b2ec18a6097";s:4:"name";s:14:"redis.stub.php";s:4:"role";s:3:"src";}}i:38;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"7f48f4206afb27670e331130281f8e2a";s:4:"name";s:15:"redis_arginfo.h";s:4:"role";s:3:"src";}}i:39;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"47e1661a50487baa94380e53e9e445b4";s:4:"name";s:22:"redis_legacy_arginfo.h";s:4:"role";s:3:"src";}}i:40;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"e9d3839e3f5f654f3b6e78d5a601d538";s:4:"name";s:13:"redis_array.c";s:4:"role";s:3:"src";}}i:41;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"6bccb2758b3625ccdc183a8a9ee4e4c4";s:4:"name";s:13:"redis_array.h";s:4:"role";s:3:"src";}}i:42;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"d6b4544e2563087cd81a8e9ad747535e";s:4:"name";s:20:"redis_array.stub.php";s:4:"role";s:3:"src";}}i:43;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"14520411b0ef3f66db4c00a309714f39";s:4:"name";s:21:"redis_array_arginfo.h";s:4:"role";s:3:"src";}}i:44;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"4b29ca76bb3efe98e333ef899f99ccc4";s:4:"name";s:28:"redis_array_legacy_arginfo.h";s:4:"role";s:3:"src";}}i:45;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"101eb8451496fb76a64751a2daa3c3be";s:4:"name";s:18:"redis_array_impl.c";s:4:"role";s:3:"src";}}i:46;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"17beb987bc073372d9ee903db1b37410";s:4:"name";s:18:"redis_array_impl.h";s:4:"role";s:3:"src";}}i:47;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"bda5ef7955b695119ba2ff04bcf202c8";s:4:"name";s:15:"redis_cluster.c";s:4:"role";s:3:"src";}}i:48;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"55ad8397be22730ed350c3092b77b115";s:4:"name";s:15:"redis_cluster.h";s:4:"role";s:3:"src";}}i:49;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"9ee518916f6368b77cd618ba9a0af4b2";s:4:"name";s:22:"redis_cluster.stub.php";s:4:"role";s:3:"src";}}i:50;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"adb830782f5cc2ad02eba61b25de393d";s:4:"name";s:23:"redis_cluster_arginfo.h";s:4:"role";s:3:"src";}}i:51;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"ae7920a2f6761dcc70f17a0d3fc54f62";s:4:"name";s:30:"redis_cluster_legacy_arginfo.h";s:4:"role";s:3:"src";}}i:52;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"f21b54c864fcde21419381d33057aa0c";s:4:"name";s:16:"redis_commands.c";s:4:"role";s:3:"src";}}i:53;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"2570903e77bd611bbdbace9c0010f4eb";s:4:"name";s:16:"redis_commands.h";s:4:"role";s:3:"src";}}i:54;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"47019588776beefc1e14ef901f4347c9";s:4:"name";s:15:"redis_session.c";s:4:"role";s:3:"src";}}i:55;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"e1415ac598c012701941994aae8c3ee2";s:4:"name";s:15:"redis_session.h";s:4:"role";s:3:"src";}}i:56;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"2a81e3aeee1280e23db57656d6c44437";s:4:"name";s:16:"redis_sentinel.c";s:4:"role";s:3:"src";}}i:57;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"707b98f9fca6190355d7db8f95594c5e";s:4:"name";s:16:"redis_sentinel.h";s:4:"role";s:3:"src";}}i:58;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"9417e397a8192bed23862c36c0e6c1bb";s:4:"name";s:23:"redis_sentinel.stub.php";s:4:"role";s:3:"src";}}i:59;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"c90b1951b98e6f34af6b667fef8dec06";s:4:"name";s:24:"redis_sentinel_arginfo.h";s:4:"role";s:3:"src";}}i:60;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"874e7bf2e9da28e22388a592cc8c084e";s:4:"name";s:31:"redis_sentinel_legacy_arginfo.h";s:4:"role";s:3:"src";}}i:61;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"c347fcd6ee2eb94d33b6d7b82fd44dc4";s:4:"name";s:18:"sentinel_library.c";s:4:"role";s:3:"src";}}i:62;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"b5bdcd7185404b59121bf844905d6ba0";s:4:"name";s:18:"sentinel_library.h";s:4:"role";s:3:"src";}}}}}s:12:"dependencies";a:1:{s:8:"required";a:2:{s:3:"php";a:1:{s:3:"min";s:5:"7.4.0";}s:13:"pearinstaller";a:1:{s:3:"min";s:7:"1.4.0b1";}}}s:17:"providesextension";s:5:"redis";s:13:"extsrcrelease";a:1:{s:15:"configureoption";a:6:{i:0;a:1:{s:7:"attribs";a:3:{s:7:"default";s:2:"no";s:4:"name";s:21:"enable-redis-igbinary";s:6:"prompt";s:35:"enable igbinary serializer support?";}}i:1;a:1:{s:7:"attribs";a:3:{s:7:"default";s:2:"no";s:4:"name";s:16:"enable-redis-lzf";s:6:"prompt";s:31:"enable lzf compression support?";}}i:2;a:1:{s:7:"attribs";a:3:{s:7:"default";s:2:"no";s:4:"name";s:17:"enable-redis-zstd";s:6:"prompt";s:32:"enable zstd compression support?";}}i:3;a:1:{s:7:"attribs";a:3:{s:7:"default";s:2:"no";s:4:"name";s:20:"enable-redis-msgpack";s:6:"prompt";s:34:"enable msgpack serializer support?";}}i:4;a:1:{s:7:"attribs";a:3:{s:7:"default";s:2:"no";s:4:"name";s:16:"enable-redis-lz4";s:6:"prompt";s:23:"enable lz4 compression?";}}i:5;a:1:{s:7:"attribs";a:3:{s:7:"default";s:3:"yes";s:4:"name";s:11:"with-liblz4";s:6:"prompt";s:18:"use system liblz4?";}}}}s:9:"changelog";a:1:{s:7:"release";a:40:{i:0;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"6.3.0";s:3:"api";s:5:"6.2.0";}s:4:"date";s:10:"2025-11-06";s:5:"notes";s:764:"--- Sponsors ---
+
+A-VISION Advertising - https://github.com/A-VISION-BV
+Avtandil Kikabidze - https://github.com/akalongman
+Geoffrey Hoffman - https://github.com/phpguru
+Object Cache Pro for WordPress - https://objectcache.pro/
+Open LMS - https://openlms.net/
+Relay - https://relay.so
+Salvatore Sanfilippo - https://github.com/antirez
+Ty Karok - https://github.com/karock
+
+--- 6.3.0 ---
+
+This release introduces support for dozens of new commands, including hash
+field expiration, Valkey?s DELIFEQ, and Redis vector set commands. It also
+includes many bug fixes and performance improvements.
+
+Fixed:
+
+* Cloning our objects should not segfault [770034cc] (michael-grunder)
+* Fix return type for `RedisCluster` `vgetattr` and `vsetattr`
+  [834d2b37] (michael-grunder)";}i:1;a:4:{s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:8:"6.3.0RC1";s:3:"api";s:5:"6.2.0";}s:4:"date";s:10:"2025-10-15";s:5:"notes";s:4662:"--- Sponsors ---
+
+A-VISION Advertising - https://github.com/A-VISION-BV
+Avtandil Kikabidze - https://github.com/akalongman
+Geoffrey Hoffman - https://github.com/phpguru
+Object Cache Pro for WordPress - https://objectcache.pro/
+Open LMS - https://openlms.net/
+Relay - https://relay.so
+Salvatore Sanfilippo - https://github.com/antirez
+Ty Karok - https://github.com/karock
+
+--- 6.3.0RC1 ---
+
+Fixed:
+
+Fix an overflow bug in ZADD on Windows [35df8ad7] (Michael Grunder)
+Fix errors and a warning [b8de91c9] (Michael Grunder)
+Fix `RedisCluster` segfault [f61e8cd7] (Michael Grunder)
+Fix passing NULL for hash expiry argument [ca80ee0e] (Michael Grunder)
+Fix an off-by-one length calculation error [340f23b0] (Michael Grunder)
+Fix hset fields handling [6b2f088d] (Pavlo Yatsukhnenko)
+Fix HSetEx expiry argument handling [7805da75] (Pavlo Yatsukhnenko)
+Fix the echo liveness check when in sentinel mode [2acab399] (Michael Grunder)
+Fix double -> int truncation warning [152fdda9] (Michael Grunder)
+Fix `SIGABRT` in PHP 8.4 with RedisArray [3c64b33f] (Novynn)
+Fixing segfault in cluster_update_slot [b0ba827b] (Jacob Brown Austin)
+Fix typo [d0b0c5cf] (Michael Grunder)
+Fix compiling with PHP 8.5.0 alpha3 and newer [1e6f5477] (wyattoday)
+Fix error length calculation + UB sanity check [e73130fe] (Michael Grunder)
+Fix arguments order for `SET` command [f73f5fcc] (Pavlo Yatsukhnenko)
 
 Added:
-* Added `serverName()` and `serverVersion()` [fa3eb006, cbaf095f, 056c2dbe]
-  (Pavlo Yatsukhnenko, Michael Grunder)
-* Added getWithMeta method [9036ffca, 36ab5850] (Pavlo Yatsukhnenko)
-* Implement GETDEL command for RedisCluster [d342e4ac] (michael-grunder)
-* Introduce Redis::OPT_PACK_IGNORE_NUMBERS option [f9ce9429, 29e5cf0d] (michael-grunder)
-* Implement Valkey >= 8.1 IFEQ SET option [a2eef77f] (michael-grunder)
-* Implement KeyDB's EXPIREMEMBER[AT] commands [4cd3f593] (michael-grunder)
+
+Add `maxRetries` to `redis_sock_configure` [e9e9e495] (Michael Grunder)
+Implement vectorset commands [92dd256f, d80b7258, 7f9b1f41, 92716ed0,
+dc91631b, 1deca628, 96378b70, 0fda9f29, 0ed0fc05, d1d69005, 286fa630,
+38115dec, c4b2ea6c, 6ce3bd53] (Michael Grunder)
+Implement `GEOSEARCH[STORE]` `BYPOLYGON` [8d369f4d, f24814a4] (Michael Grunder)
+Implement Valkey's `DELIFEQ` command [b1b0c191] (Michael Grunder)
+Add an INI setting returning 5.x legacy behavior -- readonly session on lock
+failure [8dada174] (arokettu)
+Implement several hash expiration commands [7350768c] (Michael Grunder)
+Introduce `Redis::serverName` and `Redis::serverVersion` methods [056c2dbe,
+cbaf095f, fa3eb006] (Pavlo Yatsukhnenko, Michael Grunder)
+New option 'database' for Redis class constructor [4f6a3ed1] (JakubOnderka)
+Implement `HGETEX`, `HSETEX`, `HGETDEL`, and refactor `HMGET` [ce5b0fac]
+(Michael Grunder)
+Implement `GETDEL` for `RedisCluster` [d342e4ac] (Michael Grunder)
+
+## Changed
+
+Check for `dragonfly_version` in `HELLO` response [593ba012] (Michael Grunder)
+Simplify redis_unpack method calling [0a85bd82] (JakubOnderka)
+Refactor `getWithMeta` logic [0445e683] (Michael Grunder)
+cleanup session temp file [3828c929] (remicollet)
+Make execHello protected [300c5fb2] (Michael Grunder)
 
 Documentation:
-* Fix phpdoc type of $pattern [5cad2076] (OHZEKI Naoki)
-* Better documentation for the $tlsOptions parameter of RedisCluster [8144db37] (Jacob Brown)
+
+Update Relay sponsorship [7a69d73] (Till Kruss)
+Fix markdown headlines [1d662f56] (Till Kruss)
+document PECL configure options [2066cfad] (Till Kruss)
+Improve wording in README about project support [0ac01476] (Till Kruss)
+Improve install instructions [c0076036] (Remi Collet)
+Clean up README.md: fix typos, spelling, and grammar errors [09cd4c54] (Copilot)
+Refine parameter descriptions and examples in README [f9f609e1] (joshtrichards)
+Link to the correct header [d18db84c] (wyattoday)
+Update README.md about supported PHP versions. [b7a97e5e] (AkameOuO)
+Broaden return type for Redis::hGetAll [bfbab892] (mgiuffrida)
 
 Tests/CI:
-* Add details to the option doc block [abb0f6cc] (michael-grunder)
-* Update CodeQL to v3 [41e11417, a10bca35] (Pavlo Yatsukhnenko)
-* Add PHP 8.4 to CI [6097e7ba] (Pavlo Yatsukhnenko)
-* Pin ubuntu version for KeyDB [eb66fc9e, 985b0313] (michael-grunder)
-* Windows CI: update setup-php-sdk to v0.10 and enable caching [f89d4d8f] (Christoph M. Becker)
 
-Internal:
-* Reduce buffer size for signed integer [044b3038, 35c59880] (Bentley O'Kane-Chase)
-* Create a strncmp wrapper [085d61ec] (michael-grunder)
-* Refactor and avoid allocation in rawcommand method [f68544f7] (Jakub Onderka)
-* Use defines for callback growth + sanity check [42a42769] (michael-grunder)
-* Switch from linked list to growing array for reply callbacks [a551fdc9] (Jakub Onderka)
-* Reuse redis_sock_append_auth method [be388562] (Jakub Onderka)
-* Switch pipeline_cmd from smart_str to smart_string [571ffbc8] (Jakub Onderka)
-* Remove unused redis_debug_response method from library.c [7895636a] (Jakub Onderka)
-* Optimise HMGET method [2434ba29] (Jakub Onderka)
-* Avoid unnecessary allocation in redis_hset_cmd [aba09933] (Jakub Onderka)
-* Avoid unnecessary allocation in redis_hdel_cmd [4082dd07] (Jakub Onderka)
-* Avoid unnecessary allocation in redis_key_varval_cmd [99650e15] (Jakub Onderka)
-* Use zval_get_tmp_string method that is faster when provided zval is string [f6906470] (Jakub Onderka)
-* Optimise constructing Redis command string [2a2f908f] (Jakub Onderka)
-* If no command is issued in multi mode, return immutable empty array [5156e032] (Jakub Onderka)
-* Test for empty pipeline and multi [426de2bb] (Jakub Onderka)
-* Optimise method array_zip_values_and_scores [400503b8] (Jakub Onderka)
-* Faster parameter parsing in redis_key_cmd and redis_key_long_val_cmd [83a19656] (Jakub Onderka)
-* Use immutable empty array in Redis::hKeys [3a2f3f45] (Jakub Onderka)
-* Use immutable empty array in Redis::exec [60b5a886] (Jakub Onderka)
-* Do not allocate empty string or string with one character [64da891e] (Jakub Onderka)
-* Initialize arrays with known size [99beb922] (Jakub Onderka)
-* Use smart str for constructing pipeline cmd [b665925e] (Jakub Onderka)";s:8:"contents";a:1:{s:3:"dir";a:2:{s:7:"attribs";a:1:{s:4:"name";s:1:"/";}s:4:"file";a:63:{i:0;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"7d8cd4a383dc44cb3899ded5ce12f869";s:4:"name";s:14:"liblzf/LICENSE";s:4:"role";s:3:"doc";}}i:1;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"551f9008e79f35cad9c5cd0354e53da1";s:4:"name";s:13:"liblzf/README";s:4:"role";s:3:"doc";}}i:2;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"68942338136ce96eed98e2512cb8a36e";s:4:"name";s:12:"liblzf/lzf.h";s:4:"role";s:3:"src";}}i:3;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"91a34efea468bc5c6796275f30b12c4b";s:4:"name";s:13:"liblzf/lzfP.h";s:4:"role";s:3:"src";}}i:4;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"f56a91842e1a56820efe3f35fcfa486e";s:4:"name";s:14:"liblzf/lzf_c.c";s:4:"role";s:3:"src";}}i:5;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"ef8f82dbd4bad7b83629c02724afcfd0";s:4:"name";s:14:"liblzf/lzf_d.c";s:4:"role";s:3:"src";}}i:6;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"429188b3d5c91f528dcca6e4e1653840";s:4:"name";s:24:"tests/RedisArrayTest.php";s:4:"role";s:4:"test";}}i:7;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"868fbc592f577551ea1dd8e10157ac80";s:4:"name";s:26:"tests/RedisClusterTest.php";s:4:"role";s:4:"test";}}i:8;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"94a8cf559d1a40ddc96fb55effb372ee";s:4:"name";s:27:"tests/RedisSentinelTest.php";s:4:"role";s:4:"test";}}i:9;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"24386d59ec0d05bd4bfe990c485ff377";s:4:"name";s:19:"tests/RedisTest.php";s:4:"role";s:4:"test";}}i:10;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"94d564eb6d04723a987854e187a9c8d4";s:4:"name";s:19:"tests/TestRedis.php";s:4:"role";s:4:"test";}}i:11;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"5edc87828956490295b145d29ae8ffc9";s:4:"name";s:19:"tests/TestSuite.php";s:4:"role";s:4:"test";}}i:12;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"f8ba6ee263cf5cdbfe9242513302f24c";s:4:"name";s:24:"tests/getSessionData.php";s:4:"role";s:4:"test";}}i:13;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"e2c0e0b4e6b027cee1a444abffa0601e";s:4:"name";s:29:"tests/regenerateSessionId.php";s:4:"role";s:4:"test";}}i:14;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"2272f4aa4f2febe66a34661464bffc57";s:4:"name";s:22:"tests/startSession.php";s:4:"role";s:4:"test";}}i:15;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"202035ead99dca010e110f9cca79d9c7";s:4:"name";s:24:"tests/SessionHelpers.php";s:4:"role";s:4:"test";}}i:16;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"654496adb29b43100f4a98c8c4127d4e";s:4:"name";s:21:"tests/make-cluster.sh";s:4:"role";s:4:"test";}}i:17;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"e9ddcb5f7abcef8507c394d8386f4742";s:4:"name";s:15:"tests/mkring.sh";s:4:"role";s:4:"test";}}i:18;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"cb564efdf78cce8ea6e4b5a4f7c05d97";s:4:"name";s:7:"LICENSE";s:4:"role";s:3:"doc";}}i:19;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"d56374bf738d2b10cb1f97cd7c9cfb30";s:4:"name";s:7:"CREDITS";s:4:"role";s:3:"doc";}}i:20;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"b363573ea0afeea20c55fc81a2fda803";s:4:"name";s:9:"README.md";s:4:"role";s:3:"doc";}}i:21;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"31492dbbf5b3a49cb95c7a304efd2313";s:4:"name";s:10:"INSTALL.md";s:4:"role";s:3:"src";}}i:22;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"12ce8871013788f5b3abc69691fb5a7d";s:4:"name";s:9:"arrays.md";s:4:"role";s:3:"doc";}}i:23;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"072c67a36ff418d3c963c99f767b2203";s:4:"name";s:10:"cluster.md";s:4:"role";s:3:"doc";}}i:24;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"ce0ab3a589e5a034beebced11be601d7";s:4:"name";s:11:"sentinel.md";s:4:"role";s:3:"doc";}}i:25;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"13936f0c8e8d3860fa45f941333ae8aa";s:4:"name";s:9:"backoff.c";s:4:"role";s:3:"src";}}i:26;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"af0b29580d83ba055ff816664d7f3d83";s:4:"name";s:9:"backoff.h";s:4:"role";s:3:"src";}}i:27;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"654787f8d0e51798e19bb55e59eb42b6";s:4:"name";s:17:"cluster_library.c";s:4:"role";s:3:"src";}}i:28;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"c6e5011da50c08e6aa95fa10de1bd9d6";s:4:"name";s:17:"cluster_library.h";s:4:"role";s:3:"src";}}i:29;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"ebf2923eecfdf7e4b025d63310f4e387";s:4:"name";s:8:"common.h";s:4:"role";s:3:"src";}}i:30;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"9b37d3cd4dc9cd9369322b69766b7165";s:4:"name";s:9:"config.m4";s:4:"role";s:3:"src";}}i:31;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"c962cae928bcb4986ebb17bf9d5a3811";s:4:"name";s:10:"config.w32";s:4:"role";s:3:"src";}}i:32;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"b21982c70ca8292b4ac540a76cd3bac4";s:4:"name";s:7:"crc16.h";s:4:"role";s:3:"src";}}i:33;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"31f122a8d9794844c96ae48783bfe741";s:4:"name";s:9:"library.c";s:4:"role";s:3:"src";}}i:34;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"7d6885acc7d9247309dbfbb67b919dbd";s:4:"name";s:9:"library.h";s:4:"role";s:3:"src";}}i:35;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"4f7eec17b48b2cf39f1770657fb8f0f8";s:4:"name";s:11:"php_redis.h";s:4:"role";s:3:"src";}}i:36;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"40d48396b7e33a63c16332b37115470c";s:4:"name";s:7:"redis.c";s:4:"role";s:3:"src";}}i:37;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"4f0ff1839c329172e4035d3702ee3357";s:4:"name";s:14:"redis.stub.php";s:4:"role";s:3:"src";}}i:38;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"8086e5f124074bcad4dc0a456d0cbcbc";s:4:"name";s:15:"redis_arginfo.h";s:4:"role";s:3:"src";}}i:39;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"a4ac9a3186c156669e502740f8933800";s:4:"name";s:22:"redis_legacy_arginfo.h";s:4:"role";s:3:"src";}}i:40;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"45dc2c335c3fbd274d0567d77e509082";s:4:"name";s:13:"redis_array.c";s:4:"role";s:3:"src";}}i:41;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"6bccb2758b3625ccdc183a8a9ee4e4c4";s:4:"name";s:13:"redis_array.h";s:4:"role";s:3:"src";}}i:42;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"d6b4544e2563087cd81a8e9ad747535e";s:4:"name";s:20:"redis_array.stub.php";s:4:"role";s:3:"src";}}i:43;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"14520411b0ef3f66db4c00a309714f39";s:4:"name";s:21:"redis_array_arginfo.h";s:4:"role";s:3:"src";}}i:44;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"4b29ca76bb3efe98e333ef899f99ccc4";s:4:"name";s:28:"redis_array_legacy_arginfo.h";s:4:"role";s:3:"src";}}i:45;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"a6379f4be513741492ca9e216b300ac0";s:4:"name";s:18:"redis_array_impl.c";s:4:"role";s:3:"src";}}i:46;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"17beb987bc073372d9ee903db1b37410";s:4:"name";s:18:"redis_array_impl.h";s:4:"role";s:3:"src";}}i:47;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"8624c4476d3e62d7d15b8b5bd1cde9e3";s:4:"name";s:15:"redis_cluster.c";s:4:"role";s:3:"src";}}i:48;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"6d218da21a7f9bc2f1ce1f5736b6c2ec";s:4:"name";s:15:"redis_cluster.h";s:4:"role";s:3:"src";}}i:49;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"14e76f88ce122e9e3c241a0cc682255e";s:4:"name";s:22:"redis_cluster.stub.php";s:4:"role";s:3:"src";}}i:50;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"dd433726298cb1dbc88bb847008fd3f9";s:4:"name";s:23:"redis_cluster_arginfo.h";s:4:"role";s:3:"src";}}i:51;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"b6463ae166ba25de8d8f36196b119a85";s:4:"name";s:30:"redis_cluster_legacy_arginfo.h";s:4:"role";s:3:"src";}}i:52;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"c1340844a7ae519d2822f4300ad46994";s:4:"name";s:16:"redis_commands.c";s:4:"role";s:3:"src";}}i:53;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"128e43dda80dfa8b73da869cf2b77b6b";s:4:"name";s:16:"redis_commands.h";s:4:"role";s:3:"src";}}i:54;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"5736f0b9d453e1f7f6b0e90cb444047c";s:4:"name";s:15:"redis_session.c";s:4:"role";s:3:"src";}}i:55;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"e1415ac598c012701941994aae8c3ee2";s:4:"name";s:15:"redis_session.h";s:4:"role";s:3:"src";}}i:56;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"2a81e3aeee1280e23db57656d6c44437";s:4:"name";s:16:"redis_sentinel.c";s:4:"role";s:3:"src";}}i:57;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"707b98f9fca6190355d7db8f95594c5e";s:4:"name";s:16:"redis_sentinel.h";s:4:"role";s:3:"src";}}i:58;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"9417e397a8192bed23862c36c0e6c1bb";s:4:"name";s:23:"redis_sentinel.stub.php";s:4:"role";s:3:"src";}}i:59;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"c90b1951b98e6f34af6b667fef8dec06";s:4:"name";s:24:"redis_sentinel_arginfo.h";s:4:"role";s:3:"src";}}i:60;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"874e7bf2e9da28e22388a592cc8c084e";s:4:"name";s:31:"redis_sentinel_legacy_arginfo.h";s:4:"role";s:3:"src";}}i:61;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"c347fcd6ee2eb94d33b6d7b82fd44dc4";s:4:"name";s:18:"sentinel_library.c";s:4:"role";s:3:"src";}}i:62;a:1:{s:7:"attribs";a:3:{s:6:"md5sum";s:32:"b5bdcd7185404b59121bf844905d6ba0";s:4:"name";s:18:"sentinel_library.h";s:4:"role";s:3:"src";}}}}}s:12:"dependencies";a:1:{s:8:"required";a:2:{s:3:"php";a:1:{s:3:"min";s:5:"7.4.0";}s:13:"pearinstaller";a:1:{s:3:"min";s:7:"1.4.0b1";}}}s:17:"providesextension";s:5:"redis";s:13:"extsrcrelease";a:1:{s:15:"configureoption";a:6:{i:0;a:1:{s:7:"attribs";a:3:{s:7:"default";s:2:"no";s:4:"name";s:21:"enable-redis-igbinary";s:6:"prompt";s:35:"enable igbinary serializer support?";}}i:1;a:1:{s:7:"attribs";a:3:{s:7:"default";s:2:"no";s:4:"name";s:16:"enable-redis-lzf";s:6:"prompt";s:31:"enable lzf compression support?";}}i:2;a:1:{s:7:"attribs";a:3:{s:7:"default";s:2:"no";s:4:"name";s:17:"enable-redis-zstd";s:6:"prompt";s:32:"enable zstd compression support?";}}i:3;a:1:{s:7:"attribs";a:3:{s:7:"default";s:2:"no";s:4:"name";s:20:"enable-redis-msgpack";s:6:"prompt";s:34:"enable msgpack serializer support?";}}i:4;a:1:{s:7:"attribs";a:3:{s:7:"default";s:2:"no";s:4:"name";s:16:"enable-redis-lz4";s:6:"prompt";s:23:"enable lz4 compression?";}}i:5;a:1:{s:7:"attribs";a:3:{s:7:"default";s:3:"yes";s:4:"name";s:11:"with-liblz4";s:6:"prompt";s:18:"use system liblz4?";}}}}s:9:"changelog";a:1:{s:7:"release";a:38:{i:0;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"6.2.0";s:3:"api";s:5:"6.2.0";}s:4:"date";s:10:"2025-03-24";s:5:"notes";s:3934:"--- Sponsors ---
+Add a regression test for `EVAL[SHA]` [22a2914b] (Michael Grunder)
+Rework `HEXPIRE` test inclusion + bump Valkey [b83981aa] (Michael Grunder)
+Add PHP 8.5 to CI [334937cb] (Pavlo Yatsukhnenko)
+Attempt to fix flaky GitHub CI tests [80140003] (Michael Grunder)
+Reorganize tests [807f806f] (Pavlo Yatsukhnenko)
+
+Internal/Performance:
+
+Fix typo (s/sees/seeds/) [25e6d5fc] (xabbuh)
+Fix an unused variable warning [b48aa0d4] (Michael Grunder)
+Fix several issues surfaced by `gcc -fanalyze` [8be2306e] (Michael Grunder)
+Fix dead assignment [d564e8cf] (Michael Grunder)
+Refactor `redis_replicaof_cmd` [659dc763] (Michael Grunder)
+Refactor several command handling macros into typesafe static functions
+[9802fc0e, 8f0931bb, 7c953d45, 950d2bc7, 601ebbff, c3a71631, b0040514,
+fae89fa9, f880e1f7, b90e27f2, 1db39089] (Michael Grunder)
+Refactor `EVAL[SHA]` command and add a regression test [6e5faf42]
+(Michael Grunder)
+New macros REDIS_RESPONSE_ERROR and REDIS_RETURN_ZVAL [614b86e4]
+(JakubOnderka)
+Remove wrapper macro which hides branching logic [58e1a04f] (Michael Grunder)
+Use continue not break if we get a NULL node [8685c49c] (Michael Grunder)
+Remove pointless casts [03837f02] (Michael Grunder)
+Change `int` flags to `zend_bool` since we only use them as booleans
+[77691947] (Michael Grunder)
+Remove unused macros + simplify some logic [75acbb09] (Michael Grunder)";}i:2;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"6.2.0";s:3:"api";s:5:"6.2.0";}s:4:"date";s:10:"2025-03-24";s:5:"notes";s:3934:"--- Sponsors ---
 
 A-VISION Advisering - https://a-vision.nu/
 Audiomack - https://audiomack.com
@@ -136,7 +207,7 @@ Internal/Performance:
 * Use immutable empty array in Redis::exec [60b5a886] (Jakub Onderka)
 * Do not allocate empty string or string with one character [64da891e] (Jakub Onderka)
 * Initialize arrays with known size [99beb922] (Jakub Onderka)
-* Use smart str for constructing pipeline cmd [b665925e] (Jakub Onderka)";}i:1;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"6.1.0";s:3:"api";s:5:"6.0.0";}s:4:"date";s:10:"2024-10-04";s:5:"notes";s:5599:"--- Sponsors ---
+* Use smart str for constructing pipeline cmd [b665925e] (Jakub Onderka)";}i:3;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"6.1.0";s:3:"api";s:5:"6.0.0";}s:4:"date";s:10:"2024-10-04";s:5:"notes";s:5599:"--- Sponsors ---
 
 Audiomack - https://audiomack.com
 Open LMS - https://openlms.net
@@ -276,7 +347,7 @@ Tests/CI:
   (Michael Grunder)
 * Add missing option to installation example [2bddd84f] (Pavlo Yatsukhnenko)
 * Fix typo in link [8f6bc98f] (Timo Sand)
-* Update tests to allow users to use a custom class. [5f6ce414] (Michael Grunder)";}i:2;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"6.0.2";s:3:"api";s:5:"6.0.0";}s:4:"date";s:10:"2023-10-22";s:5:"notes";s:873:"--- Sponsors ---
+* Update tests to allow users to use a custom class. [5f6ce414] (Michael Grunder)";}i:4;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"6.0.2";s:3:"api";s:5:"6.0.0";}s:4:"date";s:10:"2023-10-22";s:5:"notes";s:873:"--- Sponsors ---
 
 Audiomack - https://audiomack.com
 Open LMS - https://openlms.net
@@ -299,7 +370,7 @@ or by inspecting the git commit logs.
 
 * Fix deprecation error when passing null to match_type parameter.[b835aaa3] (Pavlo Yatsukhnenko)
 * Fix flaky test and OBJECT in a pipeline. [a7f51f70] (Michael Grunder)
-* Find our callback by pattern with PSUBSCRIBE [2f276dcd] (Michael Grunder)";}i:3;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"6.0.1";s:3:"api";s:5:"6.0.0";}s:4:"date";s:10:"2023-09-23";s:5:"notes";s:975:"--- Sponsors ---
+* Find our callback by pattern with PSUBSCRIBE [2f276dcd] (Michael Grunder)";}i:5;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"6.0.1";s:3:"api";s:5:"6.0.0";}s:4:"date";s:10:"2023-09-23";s:5:"notes";s:975:"--- Sponsors ---
 
 Audiomack - https://audiomack.com
 Open LMS - https://openlms.net/
@@ -325,7 +396,7 @@ or by inspecting the git commit logs.
 
 * Fix  memory leak and segfault in Redis::exec [362e1141] (Pavlo Yatsukhnenko), (Markus Podar)
 * Fix unknown expiration modifier [264c0c7e, 95bd184b] (Pavlo Yatsukhnenko)
-* Update documentation [3674d663, 849bedb6, 1ad95b63] (Till Kruss), (Joost OrangeJuiced)";}i:4;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"6.0.0";s:3:"api";s:5:"6.0.0";}s:4:"date";s:10:"2023-09-09";s:5:"notes";s:9680:"--- Sponsors ---
+* Update documentation [3674d663, 849bedb6, 1ad95b63] (Till Kruss), (Joost OrangeJuiced)";}i:6;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"6.0.0";s:3:"api";s:5:"6.0.0";}s:4:"date";s:10:"2023-09-09";s:5:"notes";s:9680:"--- Sponsors ---
 
 Audiomack - https://audiomack.com
 Open LMS - https://openlms.net
@@ -474,7 +545,7 @@ phpredis 6.0.0RC1
 * Add cluster support for strict sessions and lazy write [b6cf6361] (Michael Grunder)
 * Add function command [90a0e9cc] (Pavlo Yatsukhnenko)
 * Add FCALL/FCALL_RO commands [7c46ad2c] (Pavlo Yatsukhnenko)
-* Remove unused macros [831d6118] (Pavlo Yatsukhnenko)";}i:5;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.3.7";s:3:"api";s:5:"5.3.7";}s:4:"date";s:10:"2022-02-15";s:5:"notes";s:722:"--- Sponsors ---
+* Remove unused macros [831d6118] (Pavlo Yatsukhnenko)";}i:7;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.3.7";s:3:"api";s:5:"5.3.7";}s:4:"date";s:10:"2022-02-15";s:5:"notes";s:722:"--- Sponsors ---
 
 Audiomack - https://audiomack.com
 Open LMS - https://openlms.net
@@ -501,7 +572,7 @@ phpredis 5.3.7RC1
 
 - Fix RedisArray::[hsz]scan and tests [08a9d5db, 0264de18] (Pavlo Yatsukhnenko, Michael Grunder)
 - Fix RedisArray::scan [8689ab1c] (Pavlo Yatsukhnenko)
-- Fix LZF decompression logic [0719c1ec] (Michael Grunder)";}i:6;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.3.6";s:3:"api";s:5:"5.3.6";}s:4:"date";s:10:"2022-01-17";s:5:"notes";s:427:"--- Sponsors ---
+- Fix LZF decompression logic [0719c1ec] (Michael Grunder)";}i:8;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.3.6";s:3:"api";s:5:"5.3.6";}s:4:"date";s:10:"2022-01-17";s:5:"notes";s:427:"--- Sponsors ---
 
 Audiomack - https://audiomack.com
 Open LMS - https://openlms.net
@@ -516,7 +587,7 @@ Luis Zarate - https://github.com/jlzaratec
 
 phpredis 5.3.6
 
-- Fix a segfault in RedisArray::del [d2f2a7d9] (Pavlo Yatsukhnenko)";}i:7;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.3.5";s:3:"api";s:5:"5.3.5";}s:4:"date";s:10:"2021-12-18";s:5:"notes";s:2554:"phpredis 5.3.5
+- Fix a segfault in RedisArray::del [d2f2a7d9] (Pavlo Yatsukhnenko)";}i:9;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.3.5";s:3:"api";s:5:"5.3.5";}s:4:"date";s:10:"2021-12-18";s:5:"notes";s:2554:"phpredis 5.3.5
 
 This release adds support for exponential backoff w/jitter, experimental
 support for detecting a dirty connection, as well as many other fixes
@@ -597,7 +668,7 @@ phpredis 5.3.5RC1
   [#1939, da2790aec] (Michael Grunder)
 
 * SMISMEMBER Command
-  [#1894, ae2382472, ed283e1ab] (Pavlo Yatsukhnenko)";}i:8;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.3.4";s:3:"api";s:5:"5.3.4";}s:4:"date";s:10:"2021-03-24";s:5:"notes";s:799:"phpredis 5.3.4
+  [#1894, ae2382472, ed283e1ab] (Pavlo Yatsukhnenko)";}i:10;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.3.4";s:3:"api";s:5:"5.3.4";}s:4:"date";s:10:"2021-03-24";s:5:"notes";s:799:"phpredis 5.3.4
 
 This release fixes a multi/pipeline segfault on apple silicon as well as
 two small compression related bugs.
@@ -616,7 +687,7 @@ You can find a detailed list of changes in CHANGELOG.md and package.xml
   ~ Object Cache Pro for WordPress - https://objectcache.pro
   ~ Avtandil Kikabidze - https://github.com/akalongman
   ~ Zaher Ghaibeh - https://github.com/zaherg
-  ~ BatchLabs - https://batch.com";}i:9;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.3.3";s:3:"api";s:5:"5.3.3";}s:4:"date";s:10:"2021-02-01";s:5:"notes";s:687:"phpredis 5.3.3
+  ~ BatchLabs - https://batch.com";}i:11;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.3.3";s:3:"api";s:5:"5.3.3";}s:4:"date";s:10:"2021-02-01";s:5:"notes";s:687:"phpredis 5.3.3
 
 This release mostly includes just small PHP 8 Windows compatibility fixes
 such that pecl.php.net can automatically build Windows DLLs.
@@ -634,7 +705,7 @@ You can find a detailed list of changes in CHANGELOG.md and package.xml
   ~ Redis Cache Pro for WordPress - https://wprediscache.com
   ~ Avtandil Kikabidze - https://github.com/akalongman
   ~ Zaher Ghaibeh - https://github.com/zaherg
-  ~ BatchLabs - https://batch.com";}i:10;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.3.2";s:3:"api";s:5:"5.3.2";}s:4:"date";s:10:"2020-10-22";s:5:"notes";s:1898:"This release containse some bugfixes and small improvements.
+  ~ BatchLabs - https://batch.com";}i:12;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.3.2";s:3:"api";s:5:"5.3.2";}s:4:"date";s:10:"2020-10-22";s:5:"notes";s:1898:"This release containse some bugfixes and small improvements.
 You can find a detailed list of changes in CHANGELOG.md and package.xml
 
 * Sponsors
@@ -673,7 +744,7 @@ phpredis 5.3.2RC1
 * Add Redis::OPT_NULL_MULTIBULK_AS_NULL setting to treat NULL multi bulk replies as NULL instead of []. [950e8de8] (Michael Grunder, Alex Offshore)
 * Allow to specify stream context for rediscluster session handler [a8daaff8, 4fbe7df7] (Pavlo Yatsukhnenko)
 * Add new parameter to RedisCluster to specify stream ssl/tls context. [f771ea16] (Pavlo Yatsukhnenko)
-* Add new parameter to RedisSentinel to specify auth information [81c502ae] (Pavlo Yatsukhnenko)";}i:11;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.3.1";s:3:"api";s:5:"5.3.1";}s:4:"date";s:10:"2020-07-07";s:5:"notes";s:1045:"phpredis 5.3.1
+* Add new parameter to RedisSentinel to specify auth information [81c502ae] (Pavlo Yatsukhnenko)";}i:13;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.3.1";s:3:"api";s:5:"5.3.1";}s:4:"date";s:10:"2020-07-07";s:5:"notes";s:1045:"phpredis 5.3.1
 
 This is a small bugfix release that fixes a couple of issues in 5.3.0.
 
@@ -698,7 +769,7 @@ You can find a detailed list of changes in CHANGELOG.md and package.xml
 * Fix config.m4 messages and test for and include php_hash.h [83a1b7c5,
   3c56289c, 08f202e7] (Remi Collet)
 * Add openSUSE installation instructions [13a168f4] (Pavlo Yatsukhnenko)
-* Remove EOL Fedora installation instructions [b4779e6a] (Remi Collet)";}i:12;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.3.0";s:3:"api";s:5:"5.3.0";}s:4:"date";s:10:"2020-06-30";s:5:"notes";s:3027:"phpredis 5.3.0
+* Remove EOL Fedora installation instructions [b4779e6a] (Remi Collet)";}i:14;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.3.0";s:3:"api";s:5:"5.3.0";}s:4:"date";s:10:"2020-06-30";s:5:"notes";s:3027:"phpredis 5.3.0
 
 This release contains initial support for Redis 6 ACLs, LZ4 compression,
 and many more fixes and improvements.
@@ -774,7 +845,7 @@ phpredis 5.3.0RC1
 * Refactor PHPREDIS_GET_OBJECT macro [d5dadaf6, 190c0d34]
   (Pavlo Yatsukhnenko)
 * Fix documentation showing lPush and rPush are variadic [6808cd6a]
-  (Michael Grunder)";}i:13;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.2.2";s:3:"api";s:5:"5.2.2";}s:4:"date";s:10:"2020-05-05";s:5:"notes";s:441:"phpredis 5.2.2
+  (Michael Grunder)";}i:15;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.2.2";s:3:"api";s:5:"5.2.2";}s:4:"date";s:10:"2020-05-05";s:5:"notes";s:441:"phpredis 5.2.2
 
 This is a bugfix release that contains a fix for authentication
 when using persistent connections, and an option to make the
@@ -785,7 +856,7 @@ ECHO challenge response logic optional.
 
 * Sponsors
   ~ Audiomack.com - https://audiomack.com
-  ~ Till Kruss - https://github.com/tillkruss";}i:14;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.2.1";s:3:"api";s:5:"5.2.1";}s:4:"date";s:10:"2020-03-19";s:5:"notes";s:371:"phpredis 5.2.1
+  ~ Till Kruss - https://github.com/tillkruss";}i:16;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.2.1";s:3:"api";s:5:"5.2.1";}s:4:"date";s:10:"2020-03-19";s:5:"notes";s:371:"phpredis 5.2.1
 
 This is a bugfix release that fixes `redis->zAdd` arginfo as well as a
 segfault when closing persistent connections.
@@ -795,7 +866,7 @@ segfault when closing persistent connections.
 
 * Sponsors
   ~ Audiomack.com - https://audiomack.com
-  ~ Till Kruss - https://github.com/tillkruss";}i:15;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.2.0";s:3:"api";s:5:"5.2.0";}s:4:"date";s:10:"2020-03-02";s:5:"notes";s:3662:"phpredis 5.2.0
+  ~ Till Kruss - https://github.com/tillkruss";}i:17;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.2.0";s:3:"api";s:5:"5.2.0";}s:4:"date";s:10:"2020-03-02";s:5:"notes";s:3662:"phpredis 5.2.0
 
 - There were no changes between 5.2.0RC2 and 5.2.0.
 
@@ -886,12 +957,12 @@ IMPORTANT: Sentinel support is considered experimental and the API
   (Pavlo Yatsukhnenko)
 
 * Added challenge/response mechanism for persistent connections [a5f95925,
-  25cdaee6, 7b6072e0, 99ebd0cc, 3243f426] (Pavlo Yatsukhnenko, Michael Grunder)";}i:16;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.1.1";s:3:"api";s:5:"5.1.0";}s:4:"date";s:10:"2019-11-11";s:5:"notes";s:229:"phpredis 5.1.1
+  25cdaee6, 7b6072e0, 99ebd0cc, 3243f426] (Pavlo Yatsukhnenko, Michael Grunder)";}i:18;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.1.1";s:3:"api";s:5:"5.1.0";}s:4:"date";s:10:"2019-11-11";s:5:"notes";s:229:"phpredis 5.1.1
 
 This release contains only bugfix for unix-socket connection.
 
 * Fix fail to connect to redis through unix socket [2bae8010, 9f4ededa] (Pavlo Yatsukhnenko, Michael Grunder)
-* Documentation improvements (@fitztrev)";}i:17;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.1.0";s:3:"api";s:5:"5.1.0";}s:4:"date";s:10:"2019-10-31";s:5:"notes";s:1640:"This release contains important bugfixes and improvements.
+* Documentation improvements (@fitztrev)";}i:19;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.1.0";s:3:"api";s:5:"5.1.0";}s:4:"date";s:10:"2019-10-31";s:5:"notes";s:1640:"This release contains important bugfixes and improvements.
 
 phpredis 5.1.0
 
@@ -916,7 +987,7 @@ phpredis 5.1.0RC1
 * Also attach slaves when caching cluster slots [0d6d3fdd, b114fc26] (Michael Grunder)
 * Use zend_register_persistent_resource_ex for connection pooling [fdada7ae, 7c6c43a6] (Pavlo Yatsukhnenko)
 * Refactor redis_session [91a8e734, 978c3074] (Pavlo Yatsukhnenko)
-* Documentation improvements (@Steveb-p, @tangix, @ljack-adista, @jdreesen, Michael Grunder)";}i:18;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.0.0";s:3:"api";s:5:"5.0.0";}s:4:"date";s:10:"2019-07-02";s:5:"notes";s:2216:"This release contains important improvements and breaking changes.
+* Documentation improvements (@Steveb-p, @tangix, @ljack-adista, @jdreesen, Michael Grunder)";}i:20;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"5.0.0";s:3:"api";s:5:"5.0.0";}s:4:"date";s:10:"2019-07-02";s:5:"notes";s:2216:"This release contains important improvements and breaking changes.
 The most interesting are: drop PHP5 support, RedisCluster slots caching,
 JSON and msgpack serializers, soft deprecation of non-Redis commands.
 
@@ -951,7 +1022,7 @@ phpredis 5.0.0RC1
 * msgpack serializer [d5b8f833, 545250f3, 52bae8ab] (@bgort, Pavlo Yatsukhnenko, Michael Grunder)
 * Add RedisCluster slots caching [9f0d7bc0, ea081e05] (Michael Grunder)
 * Drop PHP5 support [f9928642, 46a50c12, 4601887d, 6ebb36ce, fdbe9d29] (Michael Grunder)
-* Documentation improvements (@alexander-schranz, @cookieguru, Pavlo Yatsukhnenko, Michael Grunder)";}i:19;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"4.3.0";s:3:"api";s:5:"4.3.0";}s:4:"date";s:10:"2019-03-13";s:5:"notes";s:2049:"phpredis 4.3.0
+* Documentation improvements (@alexander-schranz, @cookieguru, Pavlo Yatsukhnenko, Michael Grunder)";}i:21;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"4.3.0";s:3:"api";s:5:"4.3.0";}s:4:"date";s:10:"2019-03-13";s:5:"notes";s:2049:"phpredis 4.3.0
 
 This is probably the last release with PHP 5 support!!!
 
@@ -978,7 +1049,7 @@ This is probably the last release with PHP 5 support!!!
 * Refactor redis_sock_read_bulk_reply [bc4dbc4b] (Pavlo Yatsukhnenko)
 * Remove unused parameter lazy_connect from redis_sock_create [c0793e8b] (Pavlo Yatsukhnenko)
 * Remove useless ZEND_ACC_[C|D]TOR. [bc9b5597] (@twosee)
-* Documentation improvements (@fanjiapeng, @alexander-schranz, @hmc, Pavlo Yatsukhnenko, Michael Grunder)";}i:20;a:4:{s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:7:"version";a:2:{s:7:"release";s:8:"4.2.0RC3";s:3:"api";s:8:"4.2.0RC3";}s:4:"date";s:10:"2018-11-08";s:5:"notes";s:1766:"phpredis 4.2.0RC3
+* Documentation improvements (@fanjiapeng, @alexander-schranz, @hmc, Pavlo Yatsukhnenko, Michael Grunder)";}i:22;a:4:{s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:7:"version";a:2:{s:7:"release";s:8:"4.2.0RC3";s:3:"api";s:8:"4.2.0RC3";}s:4:"date";s:10:"2018-11-08";s:5:"notes";s:1766:"phpredis 4.2.0RC3
 
 The main feature of this release is new Streams API implemented by Michael Grunder.
 
@@ -1010,14 +1081,14 @@ The main feature of this release is new Streams API implemented by Michael Grund
 * Set default values for ini entries [e206ce9c] (Pavlo Yatsukhnenko)
 * Display ini entries in output of phpinfo [908ac4b3] (Pavlo Yatsukhnenko)
 * Persistent connections can be closed via close method + change reconnection logic [1d997873] (Pavlo Yatsukhnenko)
-* Documentation improvements (@mg, @elcheco, @lucascourot, @nolimitdev, Michael Grunder)";}i:21;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"4.1.1";s:3:"api";s:5:"4.1.1";}s:4:"date";s:10:"2018-08-01";s:5:"notes";s:324:"phpredis 4.1.1
+* Documentation improvements (@mg, @elcheco, @lucascourot, @nolimitdev, Michael Grunder)";}i:23;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"4.1.1";s:3:"api";s:5:"4.1.1";}s:4:"date";s:10:"2018-08-01";s:5:"notes";s:324:"phpredis 4.1.1
 
 This release contains only bugfixes and documentation improvements
 
 * Fix arginfo for Redis::set method [0c5e7f4d] (Pavlo Yatsukhnenko)
 * Fix compression in RedisCluster [a53e1a34] (Pavlo Yatsukhnenko)
 * Fix TravisCI builds [9bf32d30] (@jrchamp)
-* Highlight php codes in documentation [c3b023b0] (@ackintosh)";}i:22;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"4.1.0";s:3:"api";s:5:"4.1.0";}s:4:"date";s:10:"2018-01-10";s:5:"notes";s:868:"phpredis 4.1.0
+* Highlight php codes in documentation [c3b023b0] (@ackintosh)";}i:24;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"4.1.0";s:3:"api";s:5:"4.1.0";}s:4:"date";s:10:"2018-01-10";s:5:"notes";s:868:"phpredis 4.1.0
 
 The primary new feature of this release is session locking functionality. Thanks to @SkydiveMarius!
 
@@ -1029,16 +1100,16 @@ The primary new feature of this release is session locking functionality. Thanks
 * Only the first arg of connect and pconnect is required [063b5c1a] (@mathroc)
 * Add session locking functionality [300c7251] (@SkydiveMarius, Michael Grunder, Pavlo Yatsukhnenko)
 * Fix compression in RedisCluster [1aed74b4] (Pavlo Yatsukhnenko)
-* Refactor geo* commands + documentation improvements (Michael Grunder)";}i:23;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"4.0.2";s:3:"api";s:5:"4.0.2";}s:4:"date";s:10:"2018-04-25";s:5:"notes";s:153:"phpredis 4.0.2
+* Refactor geo* commands + documentation improvements (Michael Grunder)";}i:25;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"4.0.2";s:3:"api";s:5:"4.0.2";}s:4:"date";s:10:"2018-04-25";s:5:"notes";s:153:"phpredis 4.0.2
 
 This release contains only fix of exists method to take multiple keys
-and return integer value (was broken in 4.0.1) Thanks @RanjanRohit!";}i:24;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"4.0.1";s:3:"api";s:5:"4.0.1";}s:4:"date";s:10:"2018-04-18";s:5:"notes";s:323:"phpredis 4.0.1
+and return integer value (was broken in 4.0.1) Thanks @RanjanRohit!";}i:26;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"4.0.1";s:3:"api";s:5:"4.0.1";}s:4:"date";s:10:"2018-04-18";s:5:"notes";s:323:"phpredis 4.0.1
 
 * Fix arginfo for connect/pconnect issue #1337 [c3b228] (@mathroc)
 * Don't leak a ZVAL [278232] (Michael Grunder)
 * Fix config.m4 for lzf issue #1325 [20e173] (Pavlo Yatsukhnenko)
 * Updates EXISTS documentation and notes change in 4.0.0 [bed186] (Michael Grunder)
-* Fix typo in notes [0bed36] (@szepeviktor)";}i:25;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"4.0.0";s:3:"api";s:5:"4.0.0";}s:4:"date";s:10:"2018-03-17";s:5:"notes";s:1456:"phpredis 4.0.0
+* Fix typo in notes [0bed36] (@szepeviktor)";}i:27;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"4.0.0";s:3:"api";s:5:"4.0.0";}s:4:"date";s:10:"2018-03-17";s:5:"notes";s:1456:"phpredis 4.0.0
 
 *** WARNING! THIS RELEASE CONTAINS BREAKING API CHANGES! ***
 
@@ -1058,10 +1129,10 @@ and return integer value (was broken in 4.0.1) Thanks @RanjanRohit!";}i:24;a:4:{
 * Don't use convert_to_string in redis_hmget_cmd [99335d6] (Pavlo Yatsukhnenko)
 * Allow mixing MULTI and PIPELINE modes (experimental) [5874b0] (Pavlo Yatsukhnenko)
 * PHP >=7.3.0 uses zend_string to store `php_url` elements [b566fb44] (@fmk)
-* Documentation improvements (Michael Grunder, @TomA-R)";}i:26;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"3.1.6";s:3:"api";s:5:"3.1.6";}s:4:"date";s:10:"2018-01-03";s:5:"notes";s:143:"phpredis 3.1.6
+* Documentation improvements (Michael Grunder, @TomA-R)";}i:28;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"3.1.6";s:3:"api";s:5:"3.1.6";}s:4:"date";s:10:"2018-01-03";s:5:"notes";s:143:"phpredis 3.1.6
 
 This release contains only fix of RedisArray distributor hashing function
-which was broken in 3.1.4. Huge thanks to @rexchen123";}i:27;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"3.1.5";s:3:"api";s:5:"3.1.5";}s:4:"date";s:10:"2017-12-20";s:5:"notes";s:486:"phpredis 3.1.5
+which was broken in 3.1.4. Huge thanks to @rexchen123";}i:29;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"3.1.5";s:3:"api";s:5:"3.1.5";}s:4:"date";s:10:"2017-12-20";s:5:"notes";s:486:"phpredis 3.1.5
 
 This is interim release which contains only bug fixes.
 
@@ -1070,7 +1141,7 @@ This is interim release which contains only bug fixes.
 * Allow to use empty string as persistent_id [344de5] (Pavlo Yatsukhnenko)
 * Fix cluster_init_seeds. [db1347] (@adlagares)
 * Fix z_seeds may be a reference [42581a] (@janic716)
-* PHP >=7.3 uses zend_string for php_url elements [b566fb] (@fmk)";}i:28;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"3.1.4";s:3:"api";s:5:"3.1.4";}s:4:"date";s:10:"2017-09-27";s:5:"notes";s:2016:"phpredis 3.1.4
+* PHP >=7.3 uses zend_string for php_url elements [b566fb] (@fmk)";}i:30;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"3.1.4";s:3:"api";s:5:"3.1.4";}s:4:"date";s:10:"2017-09-27";s:5:"notes";s:2016:"phpredis 3.1.4
 
 The primary new feature phpredis 3.1.4 is the ability to send MULTI .. EXEC blocks in pipeline mode.  There are
 also many bugfixes and minor improvements to the api, listed below:
@@ -1098,7 +1169,7 @@ also many bugfixes and minor improvements to the api, listed below:
 * Don't try to set TCP_NODELAY on a unix socket and don't warn on multiple
   calls to pipeline [d11798, 77aeba] (Michael Grunder)
 * Use zend_string rather than char* for various context fields (err, prefix, etc) [2bf7b2] (Pavlo Yatsukhnenko)
-* Various other library fixes [142b51, 4452f6, e672f4, 658ee3, c9df77, 4a0a46] (Pavlo Yatsukhnenko)";}i:29;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"3.1.3";s:3:"api";s:5:"3.1.3";}s:4:"date";s:10:"2017-07-15";s:5:"notes";s:1993:"phpredis 3.1.3
+* Various other library fixes [142b51, 4452f6, e672f4, 658ee3, c9df77, 4a0a46] (Pavlo Yatsukhnenko)";}i:31;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"3.1.3";s:3:"api";s:5:"3.1.3";}s:4:"date";s:10:"2017-07-15";s:5:"notes";s:1993:"phpredis 3.1.3
 
 This release contains two big improvements:
   1. Adding a new printf like command construction function with additionally format specifiers specific to phpredis.
@@ -1126,14 +1197,14 @@ Also many small improvements and bug fixes were made.
 * Increase read buffers size [520e06] (Pavlo Yatsukhnenko)
 * Better documentation [f0c25a, c5991f, 9ec9ae] (Michael Grunder)
 * Better TravisCI integration [e37c08] (Pavlo Yatsukhnenko)
-* Refactoring (Pavlo Yatsukhnenko, Michael Grunder)";}i:30;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"3.1.2";s:3:"api";s:5:"3.1.2";}s:4:"date";s:10:"2017-03-16";s:5:"notes";s:408:"phpredis 3.1.2
+* Refactoring (Pavlo Yatsukhnenko, Michael Grunder)";}i:32;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"3.1.2";s:3:"api";s:5:"3.1.2";}s:4:"date";s:10:"2017-03-16";s:5:"notes";s:408:"phpredis 3.1.2
 
 * RedisArray segfault fix [564ce3] (Pavlo Yatsukhnenko)
 * Small memory leak fix [645888b] (Mike Grunder)
 * Segfault fix when recreating RedisCluster objects [abf7d4] (Michael Grunder)
 * Fix for RedisCluster bulk response parsing [4121c4] (Alberto Fernandez)
 * Re allow single array for sInterStore [6ef0c2, d01966] (Michael Grunder)
-* Better TravisCI integration [4fd2f6] (Pavlo Yatsukhnenko)";}i:31;a:4:{s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:7:"version";a:2:{s:7:"release";s:8:"3.1.1RC2";s:3:"api";s:8:"3.1.1RC2";}s:4:"date";s:10:"2017-01-16";s:5:"notes";s:1029:"phpredis 3.1.1RC2
+* Better TravisCI integration [4fd2f6] (Pavlo Yatsukhnenko)";}i:33;a:4:{s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:7:"version";a:2:{s:7:"release";s:8:"3.1.1RC2";s:3:"api";s:8:"3.1.1RC2";}s:4:"date";s:10:"2017-01-16";s:5:"notes";s:1029:"phpredis 3.1.1RC2
 
 * Additional test updates for 32 bit systems (@remicollet)
 * ARM rounding issue in tests (@remicollet)
@@ -1156,7 +1227,7 @@ the php 5 and 7 codebase into a single branch.
 
 * Added php session unit test (@yatsukhnenko)
 * Added explicit module dependency for igbinary (@remicollet)
-* Added phpinfo serialization information (@remicollet)";}i:32;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"3.1.0";s:3:"api";s:5:"3.1.0";}s:4:"date";s:10:"2016-12-14";s:5:"notes";s:1037:"phpredis 3.1.0
+* Added phpinfo serialization information (@remicollet)";}i:34;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"3.1.0";s:3:"api";s:5:"3.1.0";}s:4:"date";s:10:"2016-12-14";s:5:"notes";s:1037:"phpredis 3.1.0
 
 In this version of phpredis codebase was unified to work with all versions of php \o/
 Also many bug fixes and some improvements has been made.
@@ -1175,7 +1246,7 @@ Also many bug fixes and some improvements has been made.
 * psetex method returns '+OK' on success, not true (sitri@ndxbn) [afcd8445]
 * Fix integer overflow for long (>32bit) increments in hIncrBy (iyesin) [58e1d799]
 * Move zend_object handler to the end (Michael Grunder) [34107966]
-* Using setOption on redis array causes immediate connection (Pavlo Yatsukhnenko) [f1a85b38]";}i:33;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"2.2.8";s:3:"api";s:5:"2.2.8";}s:4:"date";s:10:"2016-06-02";s:5:"notes";s:1487:"phpredis 2.2.8
+* Using setOption on redis array causes immediate connection (Pavlo Yatsukhnenko) [f1a85b38]";}i:35;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"2.2.8";s:3:"api";s:5:"2.2.8";}s:4:"date";s:10:"2016-06-02";s:5:"notes";s:1487:"phpredis 2.2.8
 
 The main improvement in this version of phpredis is support for Redis
 Cluster.  This version of phpredis is intended for versions of php older
@@ -1213,7 +1284,7 @@ thanks to Remi Collet for helping with any and all packaging related issues
 * Fix segfault occurring from unclosed socket connection for Redis Cluster
   (CatKang) [04196aee]
 * Case insensitive zRangeByScore options
-* Fixed dreaded size_t vs long long compiler warning";}i:34;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"2.2.7";s:3:"api";s:5:"2.2.7";}s:4:"date";s:10:"2015-03-03";s:5:"notes";s:1122:"phpredis 2.2.7
+* Fixed dreaded size_t vs long long compiler warning";}i:36;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"2.2.7";s:3:"api";s:5:"2.2.7";}s:4:"date";s:10:"2015-03-03";s:5:"notes";s:1122:"phpredis 2.2.7
 
  -- Improvements ---
 
@@ -1238,7 +1309,7 @@ thanks to Remi Collet for helping with any and all packaging related issues
  * @remicollet -- Fix possible segfault when igbinary is enabled.
  * Add a couple of cases where we throw on an error (LOADING/NOAUTH/MASTERDOWN)
  * Fix several issues with serialization NARY
- * @itcom -- Fix missing TSRMLS_CC and a TSRMLS_DC/TSRMLS_CC typo";}i:35;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"2.2.5";s:3:"api";s:5:"2.2.5";}s:4:"date";s:10:"2014-03-15";s:5:"notes";s:772:"phpredis 2.2.5
+ * @itcom -- Fix missing TSRMLS_CC and a TSRMLS_DC/TSRMLS_CC typo";}i:37;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"2.2.5";s:3:"api";s:5:"2.2.5";}s:4:"date";s:10:"2014-03-15";s:5:"notes";s:772:"phpredis 2.2.5
 
 This is a minor release with several bug fixes as well as additions to support
 new commands that have been introduced to Redis since our last release.
@@ -1256,7 +1327,7 @@ submitting pull requests!  :)
 [FIX] Handle the COPY and REPLACE arguments for the MIGRATE command
 
 [DOC] Fix syntax error in documentation for the SET command (@mithunsatheesh)
-[DOC] Homebrew documentation instructions (@mathias)";}i:36;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"2.2.4";s:3:"api";s:5:"2.2.4";}s:4:"date";s:10:"2013-09-01";s:5:"notes";s:1275:"**
+[DOC] Homebrew documentation instructions (@mathias)";}i:38;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"2.2.4";s:3:"api";s:5:"2.2.4";}s:4:"date";s:10:"2013-09-01";s:5:"notes";s:1275:"**
 ** Features / Improvements
 **
 
@@ -1286,72 +1357,25 @@ submitting pull requests!  :)
 * C99 Compliance (or rather lack thereof) fix @mobli
 * Added ZEND_ACC_CTOR and ZEND_ACC_DTOR @euskadi31
 * Stop throwing and clearing an exception on connect failure @matmoi
-* Fix a false positive unit test failure having to do with TTL returns";}i:37;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"2.2.3";s:3:"api";s:5:"2.2.3";}s:4:"date";s:10:"2013-04-29";s:5:"notes";s:21:"First release to PECL";}}}s:8:"filelist";a:21:{s:14:"liblzf/LICENSE";a:4:{s:6:"md5sum";s:32:"7d8cd4a383dc44cb3899ded5ce12f869";s:4:"name";s:14:"liblzf/LICENSE";s:4:"role";s:3:"doc";s:12:"installed_as";s:52:"/home/uypanel/bin/php/lib/php/doc/redis/liblzf/LICENSE";}s:13:"liblzf/README";a:4:{s:6:"md5sum";s:32:"551f9008e79f35cad9c5cd0354e53da1";s:4:"name";s:13:"liblzf/README";s:4:"role";s:3:"doc";s:12:"installed_as";s:51:"/home/uypanel/bin/php/lib/php/doc/redis/liblzf/README";}s:24:"tests/RedisArrayTest.php";a:4:{s:6:"md5sum";s:32:"429188b3d5c91f528dcca6e4e1653840";s:4:"name";s:24:"tests/RedisArrayTest.php";s:4:"role";s:4:"test";s:12:"installed_as";s:63:"/home/uypanel/bin/php/lib/php/test/redis/tests/RedisArrayTest.php";}s:26:"tests/RedisClusterTest.php";a:4:{s:6:"md5sum";s:32:"868fbc592f577551ea1dd8e10157ac80";s:4:"name";s:26:"tests/RedisClusterTest.php";s:4:"role";s:4:"test";s:12:"installed_as";s:65:"/home/uypanel/bin/php/lib/php/test/redis/tests/RedisClusterTest.php";}s:27:"tests/RedisSentinelTest.php";a:4:{s:6:"md5sum";s:32:"94a8cf559d1a40ddc96fb55effb372ee";s:4:"name";s:27:"tests/RedisSentinelTest.php";s:4:"role";s:4:"test";s:12:"installed_as";s:66:"/home/uypanel/bin/php/lib/php/test/redis/tests/RedisSentinelTest.php";}s:19:"tests/RedisTest.php";a:4:{s:6:"md5sum";s:32:"24386d59ec0d05bd4bfe990c485ff377";s:4:"name";s:19:"tests/RedisTest.php";s:4:"role";s:4:"test";s:12:"installed_as";s:58:"/home/uypanel/bin/php/lib/php/test/redis/tests/RedisTest.php";}s:19:"tests/TestRedis.php";a:4:{s:6:"md5sum";s:32:"94d564eb6d04723a987854e187a9c8d4";s:4:"name";s:19:"tests/TestRedis.php";s:4:"role";s:4:"test";s:12:"installed_as";s:58:"/home/uypanel/bin/php/lib/php/test/redis/tests/TestRedis.php";}s:19:"tests/TestSuite.php";a:4:{s:6:"md5sum";s:32:"5edc87828956490295b145d29ae8ffc9";s:4:"name";s:19:"tests/TestSuite.php";s:4:"role";s:4:"test";s:12:"installed_as";s:58:"/home/uypanel/bin/php/lib/php/test/redis/tests/TestSuite.php";}s:24:"tests/getSessionData.php";a:4:{s:6:"md5sum";s:32:"f8ba6ee263cf5cdbfe9242513302f24c";s:4:"name";s:24:"tests/getSessionData.php";s:4:"role";s:4:"test";s:12:"installed_as";s:63:"/home/uypanel/bin/php/lib/php/test/redis/tests/getSessionData.php";}s:29:"tests/regenerateSessionId.php";a:4:{s:6:"md5sum";s:32:"e2c0e0b4e6b027cee1a444abffa0601e";s:4:"name";s:29:"tests/regenerateSessionId.php";s:4:"role";s:4:"test";s:12:"installed_as";s:68:"/home/uypanel/bin/php/lib/php/test/redis/tests/regenerateSessionId.php";}s:22:"tests/startSession.php";a:4:{s:6:"md5sum";s:32:"2272f4aa4f2febe66a34661464bffc57";s:4:"name";s:22:"tests/startSession.php";s:4:"role";s:4:"test";s:12:"installed_as";s:61:"/home/uypanel/bin/php/lib/php/test/redis/tests/startSession.php";}s:24:"tests/SessionHelpers.php";a:4:{s:6:"md5sum";s:32:"202035ead99dca010e110f9cca79d9c7";s:4:"name";s:24:"tests/SessionHelpers.php";s:4:"role";s:4:"test";s:12:"installed_as";s:63:"/home/uypanel/bin/php/lib/php/test/redis/tests/SessionHelpers.php";}s:21:"tests/make-cluster.sh";a:4:{s:6:"md5sum";s:32:"654496adb29b43100f4a98c8c4127d4e";s:4:"name";s:21:"tests/make-cluster.sh";s:4:"role";s:4:"test";s:12:"installed_as";s:60:"/home/uypanel/bin/php/lib/php/test/redis/tests/make-cluster.sh";}s:15:"tests/mkring.sh";a:4:{s:6:"md5sum";s:32:"e9ddcb5f7abcef8507c394d8386f4742";s:4:"name";s:15:"tests/mkring.sh";s:4:"role";s:4:"test";s:12:"installed_as";s:54:"/home/uypanel/bin/php/lib/php/test/redis/tests/mkring.sh";}s:7:"LICENSE";a:4:{s:6:"md5sum";s:32:"cb564efdf78cce8ea6e4b5a4f7c05d97";s:4:"name";s:7:"LICENSE";s:4:"role";s:3:"doc";s:12:"installed_as";s:45:"/home/uypanel/bin/php/lib/php/doc/redis/LICENSE";}s:7:"CREDITS";a:4:{s:6:"md5sum";s:32:"d56374bf738d2b10cb1f97cd7c9cfb30";s:4:"name";s:7:"CREDITS";s:4:"role";s:3:"doc";s:12:"installed_as";s:45:"/home/uypanel/bin/php/lib/php/doc/redis/CREDITS";}s:9:"README.md";a:4:{s:6:"md5sum";s:32:"b363573ea0afeea20c55fc81a2fda803";s:4:"name";s:9:"README.md";s:4:"role";s:3:"doc";s:12:"installed_as";s:47:"/home/uypanel/bin/php/lib/php/doc/redis/README.md";}s:9:"arrays.md";a:4:{s:6:"md5sum";s:32:"12ce8871013788f5b3abc69691fb5a7d";s:4:"name";s:9:"arrays.md";s:4:"role";s:3:"doc";s:12:"installed_as";s:47:"/home/uypanel/bin/php/lib/php/doc/redis/arrays.md";}s:10:"cluster.md";a:4:{s:6:"md5sum";s:32:"072c67a36ff418d3c963c99f767b2203";s:4:"name";s:10:"cluster.md";s:4:"role";s:3:"doc";s:12:"installed_as";s:48:"/home/uypanel/bin/php/lib/php/doc/redis/cluster.md";}s:11:"sentinel.md";a:4:{s:6:"md5sum";s:32:"ce0ab3a589e5a034beebced11be601d7";s:4:"name";s:11:"sentinel.md";s:4:"role";s:3:"doc";s:12:"installed_as";s:49:"/home/uypanel/bin/php/lib/php/doc/redis/sentinel.md";}s:8:"redis.so";a:6:{s:4:"role";s:3:"ext";s:4:"name";s:8:"redis.so";s:12:"installed_as";s:73:"/home/uypanel/bin/php/lib/php/extensions/no-debug-non-zts-20210902/redis.so";s:7:"php_api";i:0;s:12:"zend_mod_api";i:0;s:12:"zend_ext_api";i:0;}}s:12:"_lastversion";N;s:7:"dirtree";a:4:{s:44:"/home/uypanel/bin/php/lib/php/doc/redis/liblzf";b:1;s:37:"/home/uypanel/bin/php/lib/php/doc/redis";b:1;s:44:"/home/uypanel/bin/php/lib/php/test/redis/tests";b:1;s:38:"/home/uypanel/bin/php/lib/php/test/redis";b:1;}s:3:"old";a:7:{s:7:"version";s:5:"6.2.0";s:12:"release_date";s:10:"2025-03-24";s:13:"release_state";s:6:"stable";s:15:"release_license";s:3:"PHP";s:13:"release_notes";s:3847:"--- Sponsors ---
+* Fix a false positive unit test failure having to do with TTL returns";}i:39;a:4:{s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"version";a:2:{s:7:"release";s:5:"2.2.3";s:3:"api";s:5:"2.2.3";}s:4:"date";s:10:"2013-04-29";s:5:"notes";s:21:"First release to PECL";}}}s:8:"filelist";a:21:{s:14:"liblzf/LICENSE";a:4:{s:6:"md5sum";s:32:"7d8cd4a383dc44cb3899ded5ce12f869";s:4:"name";s:14:"liblzf/LICENSE";s:4:"role";s:3:"doc";s:12:"installed_as";s:54:"/home/uypanel/bin/php/lib/php/doc/redis/liblzf/LICENSE";}s:13:"liblzf/README";a:4:{s:6:"md5sum";s:32:"551f9008e79f35cad9c5cd0354e53da1";s:4:"name";s:13:"liblzf/README";s:4:"role";s:3:"doc";s:12:"installed_as";s:53:"/home/uypanel/bin/php/lib/php/doc/redis/liblzf/README";}s:24:"tests/RedisArrayTest.php";a:4:{s:6:"md5sum";s:32:"429188b3d5c91f528dcca6e4e1653840";s:4:"name";s:24:"tests/RedisArrayTest.php";s:4:"role";s:4:"test";s:12:"installed_as";s:65:"/home/uypanel/bin/php/lib/php/test/redis/tests/RedisArrayTest.php";}s:26:"tests/RedisClusterTest.php";a:4:{s:6:"md5sum";s:32:"410b595ba9f100d607251240ae8c96b6";s:4:"name";s:26:"tests/RedisClusterTest.php";s:4:"role";s:4:"test";s:12:"installed_as";s:67:"/home/uypanel/bin/php/lib/php/test/redis/tests/RedisClusterTest.php";}s:27:"tests/RedisSentinelTest.php";a:4:{s:6:"md5sum";s:32:"ac19b2b3b74459ddf35ad77571c8e141";s:4:"name";s:27:"tests/RedisSentinelTest.php";s:4:"role";s:4:"test";s:12:"installed_as";s:68:"/home/uypanel/bin/php/lib/php/test/redis/tests/RedisSentinelTest.php";}s:19:"tests/RedisTest.php";a:4:{s:6:"md5sum";s:32:"482148cc30b0041808afbacf05700577";s:4:"name";s:19:"tests/RedisTest.php";s:4:"role";s:4:"test";s:12:"installed_as";s:60:"/home/uypanel/bin/php/lib/php/test/redis/tests/RedisTest.php";}s:19:"tests/TestRedis.php";a:4:{s:6:"md5sum";s:32:"94d564eb6d04723a987854e187a9c8d4";s:4:"name";s:19:"tests/TestRedis.php";s:4:"role";s:4:"test";s:12:"installed_as";s:60:"/home/uypanel/bin/php/lib/php/test/redis/tests/TestRedis.php";}s:19:"tests/TestSuite.php";a:4:{s:6:"md5sum";s:32:"357dc08e5102e53ad150fe6eaa615135";s:4:"name";s:19:"tests/TestSuite.php";s:4:"role";s:4:"test";s:12:"installed_as";s:60:"/home/uypanel/bin/php/lib/php/test/redis/tests/TestSuite.php";}s:24:"tests/getSessionData.php";a:4:{s:6:"md5sum";s:32:"f8ba6ee263cf5cdbfe9242513302f24c";s:4:"name";s:24:"tests/getSessionData.php";s:4:"role";s:4:"test";s:12:"installed_as";s:65:"/home/uypanel/bin/php/lib/php/test/redis/tests/getSessionData.php";}s:29:"tests/regenerateSessionId.php";a:4:{s:6:"md5sum";s:32:"e2c0e0b4e6b027cee1a444abffa0601e";s:4:"name";s:29:"tests/regenerateSessionId.php";s:4:"role";s:4:"test";s:12:"installed_as";s:70:"/home/uypanel/bin/php/lib/php/test/redis/tests/regenerateSessionId.php";}s:22:"tests/startSession.php";a:4:{s:6:"md5sum";s:32:"2272f4aa4f2febe66a34661464bffc57";s:4:"name";s:22:"tests/startSession.php";s:4:"role";s:4:"test";s:12:"installed_as";s:63:"/home/uypanel/bin/php/lib/php/test/redis/tests/startSession.php";}s:24:"tests/SessionHelpers.php";a:4:{s:6:"md5sum";s:32:"1c27d9ec328cb14b4fa79c00a02530b6";s:4:"name";s:24:"tests/SessionHelpers.php";s:4:"role";s:4:"test";s:12:"installed_as";s:65:"/home/uypanel/bin/php/lib/php/test/redis/tests/SessionHelpers.php";}s:21:"tests/make-cluster.sh";a:4:{s:6:"md5sum";s:32:"654496adb29b43100f4a98c8c4127d4e";s:4:"name";s:21:"tests/make-cluster.sh";s:4:"role";s:4:"test";s:12:"installed_as";s:62:"/home/uypanel/bin/php/lib/php/test/redis/tests/make-cluster.sh";}s:15:"tests/mkring.sh";a:4:{s:6:"md5sum";s:32:"e9ddcb5f7abcef8507c394d8386f4742";s:4:"name";s:15:"tests/mkring.sh";s:4:"role";s:4:"test";s:12:"installed_as";s:56:"/home/uypanel/bin/php/lib/php/test/redis/tests/mkring.sh";}s:7:"LICENSE";a:4:{s:6:"md5sum";s:32:"cb564efdf78cce8ea6e4b5a4f7c05d97";s:4:"name";s:7:"LICENSE";s:4:"role";s:3:"doc";s:12:"installed_as";s:47:"/home/uypanel/bin/php/lib/php/doc/redis/LICENSE";}s:7:"CREDITS";a:4:{s:6:"md5sum";s:32:"d56374bf738d2b10cb1f97cd7c9cfb30";s:4:"name";s:7:"CREDITS";s:4:"role";s:3:"doc";s:12:"installed_as";s:47:"/home/uypanel/bin/php/lib/php/doc/redis/CREDITS";}s:9:"README.md";a:4:{s:6:"md5sum";s:32:"143d276e3b4819e605699ac770ed6344";s:4:"name";s:9:"README.md";s:4:"role";s:3:"doc";s:12:"installed_as";s:49:"/home/uypanel/bin/php/lib/php/doc/redis/README.md";}s:9:"arrays.md";a:4:{s:6:"md5sum";s:32:"12ce8871013788f5b3abc69691fb5a7d";s:4:"name";s:9:"arrays.md";s:4:"role";s:3:"doc";s:12:"installed_as";s:49:"/home/uypanel/bin/php/lib/php/doc/redis/arrays.md";}s:10:"cluster.md";a:4:{s:6:"md5sum";s:32:"072c67a36ff418d3c963c99f767b2203";s:4:"name";s:10:"cluster.md";s:4:"role";s:3:"doc";s:12:"installed_as";s:50:"/home/uypanel/bin/php/lib/php/doc/redis/cluster.md";}s:11:"sentinel.md";a:4:{s:6:"md5sum";s:32:"ce0ab3a589e5a034beebced11be601d7";s:4:"name";s:11:"sentinel.md";s:4:"role";s:3:"doc";s:12:"installed_as";s:51:"/home/uypanel/bin/php/lib/php/doc/redis/sentinel.md";}s:8:"redis.so";a:6:{s:4:"role";s:3:"ext";s:4:"name";s:8:"redis.so";s:12:"installed_as";s:75:"/home/uypanel/bin/php/lib/php/extensions/no-debug-non-zts-20230831/redis.so";s:7:"php_api";i:0;s:12:"zend_mod_api";i:0;s:12:"zend_ext_api";i:0;}}s:12:"_lastversion";N;s:7:"dirtree";a:4:{s:46:"/home/uypanel/bin/php/lib/php/doc/redis/liblzf";b:1;s:39:"/home/uypanel/bin/php/lib/php/doc/redis";b:1;s:46:"/home/uypanel/bin/php/lib/php/test/redis/tests";b:1;s:40:"/home/uypanel/bin/php/lib/php/test/redis";b:1;}s:3:"old";a:7:{s:7:"version";s:5:"6.3.0";s:12:"release_date";s:10:"2025-11-06";s:13:"release_state";s:6:"stable";s:15:"release_license";s:3:"PHP";s:13:"release_notes";s:764:"--- Sponsors ---
 
-A-VISION Advisering - https://a-vision.nu/
-Audiomack - https://audiomack.com
+A-VISION Advertising - https://github.com/A-VISION-BV
 Avtandil Kikabidze - https://github.com/akalongman
 Geoffrey Hoffman - https://github.com/phpguru
-Object Cache Pro for WordPress - https://objectcache.pro
-Open LMS - https://openlms.net
+Object Cache Pro for WordPress - https://objectcache.pro/
+Open LMS - https://openlms.net/
+Relay - https://relay.so
 Salvatore Sanfilippo - https://github.com/antirez
 Ty Karok - https://github.com/karock
-Vanessa Santana - https://github.com/vanessa-dev
 
-* A special thanks to Jakub Onderka for nearly two dozen performance improvements in this release!
+--- 6.3.0 ---
 
---- 6.2.0 ---
+This release introduces support for dozens of new commands, including hash
+field expiration, Valkey?s DELIFEQ, and Redis vector set commands. It also
+includes many bug fixes and performance improvements.
 
 Fixed:
-* Fix arguments order for SET command [f73f5fc] (Pavlo Yatsukhnenko)
-* Fix error length calculation and UB sanity check [e73130fe] (michael-grunder)
-* Invalidate slot cache on failed cluster connections [c7b87843] (James Kennedy)
-* Don't cast a uint64_t to a long [faa4bc20] (michael-grunder)
-* Fix potential NULL dereference [43e6cab8] (peter15914)
-* Print cursor as unsigned 64 bit integer [138d07b6] (Bentley O'Kane-Chase)
-* Fix XAUTOCLAIM argc when sending COUNT [0fe45d24] (michael-grunder)
 
-Added:
-* Added `serverName()` and `serverVersion()` [fa3eb006, cbaf095f, 056c2dbe]
-  (Pavlo Yatsukhnenko, Michael Grunder)
-* Added getWithMeta method [9036ffca, 36ab5850] (Pavlo Yatsukhnenko)
-* Implement GETDEL command for RedisCluster [d342e4ac] (michael-grunder)
-* Introduce Redis::OPT_PACK_IGNORE_NUMBERS option [f9ce9429, 29e5cf0d] (michael-grunder)
-* Implement Valkey >= 8.1 IFEQ SET option [a2eef77f] (michael-grunder)
-* Implement KeyDB's EXPIREMEMBER[AT] commands [4cd3f593] (michael-grunder)
-
-Documentation:
-* Fix phpdoc type of $pattern [5cad2076] (OHZEKI Naoki)
-* Better documentation for the $tlsOptions parameter of RedisCluster [8144db37] (Jacob Brown)
-
-Tests/CI:
-* Add details to the option doc block [abb0f6cc] (michael-grunder)
-* Update CodeQL to v3 [41e11417, a10bca35] (Pavlo Yatsukhnenko)
-* Add PHP 8.4 to CI [6097e7ba] (Pavlo Yatsukhnenko)
-* Pin ubuntu version for KeyDB [eb66fc9e, 985b0313] (michael-grunder)
-* Windows CI: update setup-php-sdk to v0.10 and enable caching [f89d4d8f] (Christoph M. Becker)
-
-Internal:
-* Reduce buffer size for signed integer [044b3038, 35c59880] (Bentley O'Kane-Chase)
-* Create a strncmp wrapper [085d61ec] (michael-grunder)
-* Refactor and avoid allocation in rawcommand method [f68544f7] (Jakub Onderka)
-* Use defines for callback growth + sanity check [42a42769] (michael-grunder)
-* Switch from linked list to growing array for reply callbacks [a551fdc9] (Jakub Onderka)
-* Reuse redis_sock_append_auth method [be388562] (Jakub Onderka)
-* Switch pipeline_cmd from smart_str to smart_string [571ffbc8] (Jakub Onderka)
-* Remove unused redis_debug_response method from library.c [7895636a] (Jakub Onderka)
-* Optimise HMGET method [2434ba29] (Jakub Onderka)
-* Avoid unnecessary allocation in redis_hset_cmd [aba09933] (Jakub Onderka)
-* Avoid unnecessary allocation in redis_hdel_cmd [4082dd07] (Jakub Onderka)
-* Avoid unnecessary allocation in redis_key_varval_cmd [99650e15] (Jakub Onderka)
-* Use zval_get_tmp_string method that is faster when provided zval is string [f6906470] (Jakub Onderka)
-* Optimise constructing Redis command string [2a2f908f] (Jakub Onderka)
-* If no command is issued in multi mode, return immutable empty array [5156e032] (Jakub Onderka)
-* Test for empty pipeline and multi [426de2bb] (Jakub Onderka)
-* Optimise method array_zip_values_and_scores [400503b8] (Jakub Onderka)
-* Faster parameter parsing in redis_key_cmd and redis_key_long_val_cmd [83a19656] (Jakub Onderka)
-* Use immutable empty array in Redis::hKeys [3a2f3f45] (Jakub Onderka)
-* Use immutable empty array in Redis::exec [60b5a886] (Jakub Onderka)
-* Do not allocate empty string or string with one character [64da891e] (Jakub Onderka)
-* Initialize arrays with known size [99beb922] (Jakub Onderka)
-* Use smart str for constructing pipeline cmd [b665925e] (Jakub Onderka)";s:12:"release_deps";a:2:{i:0;a:4:{s:4:"type";s:3:"php";s:3:"rel";s:2:"ge";s:7:"version";s:5:"7.4.0";s:8:"optional";s:2:"no";}i:1;a:6:{s:4:"type";s:3:"pkg";s:7:"channel";s:12:"pear.php.net";s:4:"name";s:4:"PEAR";s:3:"rel";s:2:"ge";s:7:"version";s:7:"1.4.0b1";s:8:"optional";s:2:"no";}}s:11:"maintainers";a:2:{i:0;a:5:{s:4:"name";s:15:"Michael Grunder";s:5:"email";s:25:"michael.grunder@gmail.com";s:6:"active";s:3:"yes";s:6:"handle";s:8:"mgrunder";s:4:"role";s:4:"lead";}i:1;a:5:{s:4:"name";s:18:"Pavlo Yatsukhnenko";s:5:"email";s:24:"p.yatsukhnenko@gmail.com";s:6:"active";s:3:"yes";s:6:"handle";s:12:"yatsukhnenko";s:4:"role";s:4:"lead";}}}s:10:"xsdversion";s:3:"2.0";s:13:"_lastmodified";i:1751991183;}
+* Cloning our objects should not segfault [770034cc] (michael-grunder)
+* Fix return type for `RedisCluster` `vgetattr` and `vsetattr`
+  [834d2b37] (michael-grunder)";s:12:"release_deps";a:2:{i:0;a:4:{s:4:"type";s:3:"php";s:3:"rel";s:2:"ge";s:7:"version";s:5:"7.4.0";s:8:"optional";s:2:"no";}i:1;a:6:{s:4:"type";s:3:"pkg";s:7:"channel";s:12:"pear.php.net";s:4:"name";s:4:"PEAR";s:3:"rel";s:2:"ge";s:7:"version";s:7:"1.4.0b1";s:8:"optional";s:2:"no";}}s:11:"maintainers";a:2:{i:0;a:5:{s:4:"name";s:15:"Michael Grunder";s:5:"email";s:25:"michael.grunder@gmail.com";s:6:"active";s:3:"yes";s:6:"handle";s:8:"mgrunder";s:4:"role";s:4:"lead";}i:1;a:5:{s:4:"name";s:18:"Pavlo Yatsukhnenko";s:5:"email";s:24:"p.yatsukhnenko@gmail.com";s:6:"active";s:3:"yes";s:6:"handle";s:12:"yatsukhnenko";s:4:"role";s:4:"lead";}}}s:10:"xsdversion";s:3:"2.0";s:13:"_lastmodified";i:1793674836;}
