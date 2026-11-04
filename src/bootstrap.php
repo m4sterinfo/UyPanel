@@ -172,6 +172,8 @@ class XC_Bootstrap {
                 if (!empty(self::$options['process'])) {
                     cli_set_process_title(self::$options['process']);
                 }
+                global $gitRelease;
+                $gitRelease = new GitHubReleases(GIT_OWNER, GIT_REPO_MAIN, SettingsManager::getAll()['update_channel']);
                 break;
 
             case self::CONTEXT_STREAM:
