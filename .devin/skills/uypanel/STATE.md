@@ -7,16 +7,11 @@
 
 ## ⏭️ CONTINUAR AQUÍ (próxima sesión)
 
-1. **DECISIÓN PENDIENTE (despliegues)**: reemplazar los LFS de
-   `src/bin/{php,nginx,nginx_rtmp}` por NUESTROS builds (prefix uypanel,
-   PHP 8.3.36) para que el payload instale correcto de fábrica — hoy el
-   payload trae los binarios upstream (prefix /home/xc_vm) y una instalación
-   fresca queda rota hasta desplegar `out/debian_13.tar.gz` a mano. Implica
-   re-publicar release assets. Trade-off: los builds debian13 no sirven para
-   targets Ubuntu del instalador.
-2. **Panel fresco**: crear admin (primer acceso a /7JDEeDMG → setup),
-   revisar Settings (defaults del seed), re-importar EPG, recrear
-   users/streams si procede (los datos antiguos siguen en los backups de
+1. **Release 2.0.2**: verificar que el workflow terminó de subir los assets
+   (UyPanel.zip, loadbalancer.tar.gz, updates, hashes.md5) tras el re-run con
+   el tag en `bac2def5`.
+2. **Panel fresco**: revisar Settings (defaults del seed), re-importar EPG,
+   crear users/streams si procede (datos antiguos en los backups de
    /home/debian: 604MB panel, 1.2GB XUI, 147MB pre-rename).
 3. **Roadmap**: READMEs de los forks de soporte.
 
@@ -278,6 +273,49 @@
   login 200 (41 KB), redis auth OK, video login desplegado (1,432,592 B),
   crontabs root 2 + uypanel 23, demonios singleton (1 cache_handler, 1 queue,
   1 watchdog — el fix del ciclo de vida se valida en instalación fresca ✓).
+
+### 2026-11-04 — Bugs del panel fresco: idioma bg + bouquet NULL + release 2.0.2
+- **Bug #1 — menú en búlgaro al guardar perfil** (reportado por el usuario:
+  "cambié el tema y el menú quedó en ruso"): `verifyPostTable()` persistía
+  verbatim los `column_default` de information_schema — MariaDB ≥ 10.2
+  devuelve los defaults de string ENTRECOMILLADOS (`'en'`) → el admin creado
+  por setup quedó con `lang = 'en'` (con comillas) → el select de idioma del
+  perfil no matcheaba → select2 caía al primero alfabético (`bg`) → al guardar
+  el perfil (para el tema) se escribió `lang='bg'` → menú en cirílico. Fix:
+  normalizar defaults entrecomillados en `verifyPostTable` (commit `eac4a201`,
+  desplegado). Fila del admin sanada a `lang='es'`.
+- **Bug #2 — panel en blanco tras crear un bouquet vacío** ("todo empezó a
+  fallar al crear el bouquet test"): el bouquet se crea con
+  bouquet_channels/movies/radios/series = NULL (nullable sin default) y
+  `BouquetService::getAll():197` hacía `array_merge(json_decode(NULL)...)` →
+  TypeError → el boot del contexto admin fallaba en CADA petición (catch →
+  camino legacy) y el legacy moría después → páginas admin en blanco (200 con
+  0 bytes). Fix: cast `(array)` en los 5 json_decode (commit `bac2def5`,
+  desplegado) + fila del bouquet sanada a `'[]'`. Login verificado: 200 con
+  8,848 bytes y HTML correcto.
+- **Falso positivo — mapa mundial**: la consola del navegador spameaba
+  `scale(NaN)` de jvectormap; el `world-mill-en.js` SIEMPRE estuvo en repo y
+  payload (un `find` truncado me confundió). Es ruido cosmético del widget
+  cuando el contenedor mide 0 (típico del preview del IDE). Sin cambio.
+- **Release 2.0.2 publicado**: https://github.com/m4sterinfo/UyPanel/releases/tag/2.0.2
+  - Payload con NUESTROS binarios (PHP 8.3.36 + nginx 1.29.6, prefix uypanel)
+    — commit `6225c356` (317 archivos: binarios reemplazados, extensiones 8.1
+    fuera, headers mbstring 8.3 dentro, ioncube 8.3, php.ini con hardening
+    session.upload_progress Off — antes solo vivía en el desplegado).
+  - CI: `build-release.yml` ahora hace fetch LFS (commit `a88e3069`) — sin eso
+    los assets salían con punteros rotos.
+  - **18 objetos LFS nunca se subieron al repo** (solo 4 el Nov 2) — el primer
+    run del workflow falló con 404 del LFS; subidos con `git lfs push origin
+    2.0.2` (el `--all` falla: el historial referencia versiones viejas sin
+    objetos locales — usar push por ref).
+  - Tag movido a `bac2def5` (force) para que los assets incluyan el fix del
+    bouquet; workflow re-lanzado.
+  - `release-notifier.yml` ELIMINADO (commit `1ff29b33`): notificaba al canal
+    de Telegram del original y el fork no tiene esos secrets (fallaba siempre).
+  - Versión: `UyPanel_VERSION` 2.0.1 → 2.0.2 (commit `308d5f20`).
+- Estado del servidor tras todo: panel operativo (login OK, admin `jadmin4407`
+  lang es), demonios singleton, BD sana. Pendiente del usuario: revisar Settings
+  (defaults del seed), EPG, crear users/streams si quiere.
 
 ### 2026-11-04 — Incidente: `chmod -R 777 /home` externo + restauración de permisos
 - A las 01:19:47 alguien ejecutó `sudo chmod -R 777 /home` desde una TTY
