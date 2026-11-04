@@ -20,8 +20,8 @@ class QueueCommand implements CommandInterface {
 
 		global $db;
 
-		$this->setProcessTitle('UyPanel[Queue]');
-		$this->killStaleProcesses('console.php queue');
+		$this->setProcessTitle('UyPanel[queue]');
+		$this->killStaleProcesses('queue');
 		$this->initDaemonMD5();
 
 		while (true && $db->ping()) {
