@@ -42,6 +42,10 @@ class PlexItemCommand implements CommandInterface {
 			return 0;
 		}
 
+		// PlexItem::run() lee estos datos como globales — publicarlos
+		$GLOBALS['rThreadData'] = $rThreadData;
+		$GLOBALS['rStreamDatabase'] = $rStreamDatabase;
+
 		file_put_contents(WATCH_TMP_PATH . getmypid() . '.ppid', time());
 
 		if ($rThreadData['type'] == 'movie') {

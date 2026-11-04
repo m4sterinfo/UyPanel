@@ -47,6 +47,10 @@ class WatchItemCommand implements CommandInterface {
 			return 0;
 		}
 
+		// WatchItem::run() lee estos datos como globales — publicarlos
+		$GLOBALS['rThreadData'] = $rThreadData;
+		$GLOBALS['rTimeout'] = $rTimeout;
+
 		file_put_contents(WATCH_TMP_PATH . getmypid() . '.wpid', time());
 		WatchItem::run();
 
