@@ -458,6 +458,26 @@
 - Pendiente opcional: publicar release GeoLite en UyPanel_Update para que
   `binaries` pueda restaurar mmdb borrados (requiere refresco manual igual).
 
+### 2026-11-04 — Incidente CPU 100%: doble escaneo + encode queue (resuelto)
+- **Síntoma** (usuario): escaneo del folder de películas (`/mnt/vod/Peliculas/`,
+  684 archivos, folder 2 con auto_encode=1, movie_symlink=1, ffprobe_input=1,
+  ignore_no_match=1) → load average 45-68 (8 cores), swap lleno, 33 zombies.
+- **Causa**: DOS escaneos concurrentes (el botón force NO tiene lock exclusivo
+  — el check "already running" solo aplica al cron programado) × thread_count
+  50 → ~100 watch_item concurrentes (cada uno: boot PHP + guessit + ffprobe +
+  TMDb) + 2×50 sh wrappers.
+- **Resolución**: pkill de los 2 padres + watch_item + guess. Datos intactos
+  (636/684 películas ya creadas; 0 filas parciales — verificado streams sin
+  servers = 0). Load de vuelta a 10 en ~3 min; zombies reabsorbidos.
+- **Prevención aplicada (settings, vía BD + clearSettingsCache)**:
+  `thread_count` 50 → **8** (8 cores) y `max_encode_movies` 10 → **2** (decisión
+  del usuario: la cola de 138 películas a encode drenará lento pero sin
+  saturar; el análisis to_analyze es ffprobe secuencial del cron:vod, ligero).
+- **Lecciones**: (1) force de Watch/Plex es acumulativo — no pulsarlo mientras
+  corre un escaneo; (2) thread_count alto solo tiene sentido en máquinas
+  grandes; (3) el swap 1.5GB se llena en bursts — drena solo, no crítico con
+  23 GB RAM disponibles.
+
 ### 2026-11-04 — FIX: Watch Folder/Plex nunca escaneaban (globals huérfanos + paths fantasma)
 - **Síntoma** (usuario): creó un Watch Folder (series, `/mnt/vod/Series/`) y lo
   forzó — `last_run` seguía en 0, nada se importaba.
