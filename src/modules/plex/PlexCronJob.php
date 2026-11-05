@@ -33,20 +33,12 @@ class PlexCronJob implements CommandInterface {
             $rForce = intval($rArgs[0]);
         }
 
-        if (!$rForce) {
-            if (file_exists(CACHE_TMP_PATH . 'plex_pid')) {
-                $rPrevPID = intval(file_get_contents(CACHE_TMP_PATH . 'plex_pid'));
-            } else {
-                $rPrevPID = null;
-            }
-            if ($rPrevPID && ProcessManager::isRunning($rPrevPID, 'php')) {
-                echo 'Plex Sync is already running. Please wait until it finishes.' . "\n";
-                return 0;
-            }
+        // Lock atómico SIEMPRE (force incluido) — mismo motivo que Watch.
+        if (!$this->acquirePidLock(CACHE_TMP_PATH . 'plex_pid')) {
+            echo 'Plex Sync is already running. Please wait until it finishes.' . "\n";
+            return 0;
         }
 
-        $this->rIdentifier = CACHE_TMP_PATH . 'plex_pid';
-        file_put_contents($this->rIdentifier, getmypid());
         $this->setProcessTitle('UyPanel[Plex Sync]');
 
         set_time_limit(0);

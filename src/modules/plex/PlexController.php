@@ -167,6 +167,16 @@ class PlexController {
         if ($rSub === 'force') {
             $rFolder = getWatchFolder($rFolderID);
             if ($rFolder) {
+                // Si ya hay un Plex Sync en marcha no lanzar otro (el cron
+                // igual lo rechazaría) — el UI muestra el toast de error.
+                $rPidFile = CACHE_TMP_PATH . 'plex_pid';
+                if (file_exists($rPidFile)) {
+                    $rPrevPID = intval(file_get_contents($rPidFile));
+                    if ($rPrevPID && ProcessManager::isRunning($rPrevPID, 'php')) {
+                        echo json_encode(['result' => false]);
+                        exit();
+                    }
+                }
                 PlexService::forcePlex($rFolder['server_id'], $rFolder['id']);
                 echo json_encode(['result' => true]);
                 exit();

@@ -31,19 +31,12 @@ class WatchCronJob implements CommandInterface {
             $rForce = intval($rArgs[0]);
         }
 
-        if (!$rForce) {
-            if (file_exists(CACHE_TMP_PATH . 'watch_pid')) {
-                $rPrevPID = intval(file_get_contents(CACHE_TMP_PATH . 'watch_pid'));
-            } else {
-                $rPrevPID = null;
-            }
-            if ($rPrevPID && ProcessManager::isRunning($rPrevPID, 'php')) {
-                echo 'Watch folder is already running. Please wait until it finishes.' . "\n";
-                return 0;
-            }
+        // Lock atómico SIEMPRE (force incluido): dos escaneos concurrentes
+        // construyen el mismo dedup antes de que el otro inserte → duplicados.
+        if (!$this->acquirePidLock(CACHE_TMP_PATH . 'watch_pid')) {
+            echo 'Watch folder is already running. Please wait until it finishes.' . "\n";
+            return 0;
         }
-
-        file_put_contents(CACHE_TMP_PATH . 'watch_pid', getmypid());
         $this->setProcessTitle('UyPanel[Watch Folder]');
 
         set_time_limit(0);
