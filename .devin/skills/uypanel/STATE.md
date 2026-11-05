@@ -458,6 +458,37 @@
 - Pendiente opcional: publicar release GeoLite en UyPanel_Update para que
   `binaries` pueda restaurar mmdb borrados (requiere refresco manual igual).
 
+### 2026-11-04 — Limpieza de duplicados + lock de escaneo exclusivo (force incluido)
+- **Duplicados**: la carrera de los dos escaneos simultáneos dejó 141 películas
+  duplicadas (819 streams type=2 para 678 fuentes únicas). Episodios OK
+  (123=123 — la serie se escaneó una sola vez).
+- **Limpieza** (BD + shell): conservado el id más antiguo de cada
+  `stream_source`; borrados dup streams + streams_servers + queue;
+  `watch_logs.stream_id` repuntado al stream conservado; 142 symlinks
+  huérfanos de content/vod borrados (141 dups + el `31.mp4` del experimento
+  S05E01). Estado final: **678 películas + 123 episodios = 801 streams = 801
+  symlinks 1:1**; `to_analyze` 0 (las 138 ya analizadas).
+- **Aclaración clave**: con `movie_symlink=1` NUNCA se transcodifica —
+  `StreamProcess::startMovie` hace `ln -sfn original content/vod/{id}.mp4`
+  (los 943 "archivos" eran symlinks, 0 CPU). El `auto_encode` solo encola ese
+  paso. El CPU 100% fue SOLO el doble escaneo. Los mp4 h264+aac se sirven
+  directos — config óptima tal cual.
+- **Fix anti-duplicados** (commit `5e59a45d`, desplegado):
+  - `CronTrait::acquirePidLock()`: lock atómico O_EXCL (fopen 'x') con
+    limpieza de holder muerto y release en shutdown — sustituye el patrón
+    check-then-write que tenía ventana de carrera durante el boot (~1-2s).
+  - `WatchCronJob`/`PlexCronJob`: el check "already running" aplica TAMBIÉN
+    con force (antes se saltaba con arg).
+  - `WatchController::apiFolder`/`PlexController::apiLibrary` (force):
+    devuelven `result:false` si ya hay escaneo → la UI muestra toast de error
+    en vez de no-op silencioso.
+- **Verificado**: test determinista del lock (holder 6s → concurrente
+  rechazado; stale → limpiado y adquirido; pidfile borrado al terminar) +
+  escaneo real post-limpieza sin nuevos duplicados (678=678).
+- Comportamiento nuevo a documentar para el usuario: si pulsa force mientras
+  corre un escaneo, verá toast de error — reintentar cuando termine (el cron
+  de 5 min cubre los folders activos igualmente).
+
 ### 2026-11-04 — Incidente CPU 100%: doble escaneo + encode queue (resuelto)
 - **Síntoma** (usuario): escaneo del folder de películas (`/mnt/vod/Peliculas/`,
   684 archivos, folder 2 con auto_encode=1, movie_symlink=1, ffprobe_input=1,
