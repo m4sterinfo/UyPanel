@@ -12,17 +12,27 @@
    codes `qaResT3st` (tipo 1) y `qaApiT3st` (tipo 3 — expone la REST API,
    borrar antes de producción). Tras borrar códigos: `console.php tools
    access` + verificar.
-2. **QA pendiente** (mismo método: setup + REST API + panel + playback):
-   VOD/películas y series, MAG/enigma2, trials (el grupo 2 tiene
-   total_allowed_gen_trials=0 — habilitar para probar), sub-resellers,
-   bouquets múltiples, EPG (re-importar: BD fresca sin URLs de EPG).
-3. **Panel (lado del usuario)**: revisar Settings (defaults del seed),
-   re-importar EPG, crear users/streams reales si procede.
-4. **Limpieza pendiente**: borrar `/home/uypanel.pre_reinstall` (rollback de
+2. **QA de playback VOD** (la biblioteca YA existe: 678 películas + 123
+   episodios vía Watch Folder): reproducir una película y un episodio desde
+   el panel/admin y con una línea real (vauth + symlink directo).
+3. **QA pendiente** (mismo método: setup + REST API + panel + playback):
+   MAG/enigma2, trials (el grupo 2 tiene total_allowed_gen_trials=0 —
+   habilitar para probar), sub-resellers, bouquets múltiples, EPG
+   (re-importar: BD fresca sin URLs de EPG).
+4. **Panel (lado del usuario)**: revisar Settings (defaults del seed),
+   re-importar EPG.
+5. **Limpieza pendiente**: borrar `/home/uypanel.pre_reinstall` (rollback de
    la instalación anterior) cuando el usuario confirme; payloads viejos de
    /home/debian (~895 MB) si quiere.
-5. **Roadmap**: READMEs de los forks de soporte; release GeoLite opcional en
+6. **Roadmap**: READMEs de los forks de soporte; release GeoLite opcional en
    UyPanel_Update para que `binaries` pueda restaurar mmdb.
+7. **Watch Folder — notas operativas**: thread_count=8 y
+   max_encode_movies=2 (decisión usuario); el force mientras corre un
+   escaneo ahora da toast de error (lock exclusivo, commit 5e59a45d); los
+   23 no-match originales se resolvieron con parse_type=guessit +
+   fallback_title=1 en el folder de series. Quedan 4 archivos A-Team
+   multi-episodio importados como primer episodio del rango (S03E02-03 →
+   E02) — si se quiere el rango completo habría que partir los archivos.
 
 
 ## Identidad
