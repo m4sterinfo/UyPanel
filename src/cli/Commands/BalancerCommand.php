@@ -106,6 +106,16 @@ class BalancerCommand implements CommandInterface {
 		$rVersion = trim($rOS['output']);
 		echo "\nRemote OS version: {$rVersion}\n";
 
+		// Ajuste de paquetes por distro: los binarios UyPanel enlazan libcurl-gnutls;
+		// Debian 12/13 usa nombres t64 y no trae varios paquetes de Ubuntu.
+		if (preg_match('/^(12|13)\./', $rVersion)) {
+			echo "Debian detected — adapting package list\n";
+			$rPackages = array_values(array_diff($rPackages, array('mcrypt', 'php-ssh2', 'software-properties-common', 'libgeoip-dev', 'python', 'cpufrequtils')));
+			$rPackages[] = 'libcurl3t64-gnutls';
+		} else {
+			$rPackages[] = 'libcurl3-gnutls';
+		}
+
 		echo "\nStopping any previous version of UyPanel\n";
 		$this->runSSH($rConn, 'sudo systemctl stop uypanel');
 		$this->runSSH($rConn, 'sudo killall -9 -u uypanel');
