@@ -1,9 +1,8 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-04 (fix watch/plex
-> en blanco + Watch Folder/Plex scanning NUNCA ejecutaba — globals huérfanos y
-> paths fantasma del upstream; escaneo end-to-end verificado: 123/123 archivos).
+> cada cambio significativo. Última actualización: 2026-11-07 (actualización de
+> seguridad: MariaDB 11.8.9 + paquetes vulnerables del sistema + max_connections=400).
 
 ## ⏭️ CONTINUAR AQUÍ (próxima sesión)
 
@@ -68,9 +67,8 @@
   systemd `uypanel.service`, usuario/grupo sistema `uypanel` (uid 105)
 - BDs MariaDB: `uypanel` + `uypanel_migrate` (renombradas por RENAME TABLE)
 - BD migrada desde XUI el 2026-11-02 (27,672 líneas, 240,557 streams, 2,087 users)
-- MariaDB `max_connections = 400` (2026-11-04; el instalador ponía 200 y el
-  incidente de los CacheHandler lo agotó; dinámico + persistente en
-  /etc/mysql/mariadb.cnf)
+- MariaDB 11.8.9 (actualizado 2026-11-07; repo oficial MariaDB Foundation trixie),
+  `max_connections = 400` en /etc/mysql/mariadb.cnf
 - Acceso admin: `http://198.27.81.133/x9access9x` (código migrado del panel antiguo)
 - Credenciales MariaDB: `/home/debian/credentials.txt` (NO commitear nunca)
 - Backups: `/home/debian/pre_rename_backup/dbs_pre_rename.sql.gz` (147 MB, pre-rename)
@@ -706,6 +704,19 @@
 - Nota: las peticiones HEAD a ese URL devuelven Content-Length: 0 (quirk de
   nginx alias+try_files); los GET y Range requests funcionan bien — no afecta
   a los navegadores, que usan GET.
+
+### 2026-11-07 — Actualización de seguridad: MariaDB 11.8.9 y paquetes del sistema
+- Backup completo pre-actualización: `/home/debian/backup_pre_upgrade_2026-11-07.sql.gz` (3.9 MB).
+- Repositorio oficial MariaDB Foundation para Debian 13 (trixie) configurado en
+  `/etc/apt/sources.list.d/mariadb.sources` con keyring GPG oficial.
+- MariaDB actualizado de 11.8.6 a 11.8.9+maria~deb13 (corrige CVE-2026-85746,
+  CVE-2026-92262, CVE-2026-49261, CVE-2026-107814, etc.).
+- `galera-4` actualizado a 26.4.27.
+- Actualizados paquetes vulnerables pendientes del sistema: `zlib1g` y `zlib1g-dev`
+  (1:1.3.dfsg+really1.3.1-1+deb13u1).
+- Parámetro `max_connections = 400` restablecido y verificado en `/etc/mysql/mariadb.cnf`.
+- Verificación post-actualización: MariaDB 11.8.9 active, UyPanel status 1 OK,
+  demonios singleton OK, login web 200 OK, player_api 200 OK (`auth:1`).
 
 ## Trabajo pendiente / Roadmap
 
