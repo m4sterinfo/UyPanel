@@ -718,6 +718,14 @@
 - Verificación post-actualización: MariaDB 11.8.9 active, UyPanel status 1 OK,
   demonios singleton OK, login web 200 OK, player_api 200 OK (`auth:1`).
 
+### 2026-11-07 — Ajustes: versiones de MariaDB, KeyDB/Redis, Nginx RTMP y FFmpeg añadidas a Info
+- `src/public/Controllers/Admin/SettingsController.php` y `src/public/Views/admin/settings.php`:
+  se agregaron a la tarjeta "Versions" de la pestaña Info (Settings) las versiones de
+  MariaDB (`SELECT VERSION()`), KeyDB/Redis (vía extensión PHP Redis sobre 127.0.0.1:6379),
+  FFmpeg activo (según `settings.ffmpeg_cpu`) y Nginx RTMP (`nginx_rtmp -v`).
+- Sintaxis PHP validada con `tools/php_syntax_check.sh` (625 archivos, 0 errores).
+- Cambios desplegados en `/home/uypanel` con propiedad `uypanel:uypanel`.
+
 ## Trabajo pendiente / Roadmap
 
 - [x] **Comentarios en ruso en ~200 archivos PHP** — traducidos al español
