@@ -12,9 +12,41 @@ if (!isset($__settingsViewMode)):
 	$rSettings = getSettings();
 	$rStreamArguments = StreamConfigRepository::getStreamArguments();
 
-	$GeoLite2 = json_decode(file_get_contents(BIN_PATH . "maxmind/version.json"), true)["geolite2_version"];
-	$GeoISP = json_decode(file_get_contents(BIN_PATH . "maxmind/version.json"), true)["geoisp_version"];
-	$Nginx = trim(shell_exec(BIN_PATH . "nginx/sbin/nginx -v 2>&1 | cut -d'/' -f2"));
+	$GeoLite2 = json_decode(@file_get_contents(BIN_PATH . "maxmind/version.json"), true)["geolite2_version"] ?? "N/A";
+	$GeoISP = json_decode(@file_get_contents(BIN_PATH . "maxmind/version.json"), true)["geoisp_version"] ?? "N/A";
+	$Nginx = trim(shell_exec(BIN_PATH . "nginx/sbin/nginx -v 2>&1 | cut -d'/' -f2") ?: '') ?: 'N/A';
+	$NginxRTMP = trim(shell_exec(BIN_PATH . "nginx_rtmp/sbin/nginx_rtmp -v 2>&1 | cut -d'/' -f2") ?: '') ?: 'N/A';
+
+	$MariaDB = 'N/A';
+	try {
+		if (isset($db) && $db) {
+			$db->query('SELECT VERSION() AS ver;');
+			$rVer = $db->get_row();
+			if (!empty($rVer['ver'])) {
+				$MariaDB = $rVer['ver'];
+			}
+		}
+	} catch (Throwable $e) {}
+
+	$RedisVer = 'N/A';
+	try {
+		$redis = new Redis();
+		if ($redis->connect('127.0.0.1', 6379, 1.0)) {
+			$redisPass = $rSettings['redis_password'] ?? '';
+			if (!empty($redisPass)) {
+				$redis->auth($redisPass);
+			}
+			$info = $redis->info('server');
+			if (!empty($info['keydb_version'])) {
+				$RedisVer = 'KeyDB ' . $info['keydb_version'];
+			} elseif (!empty($info['redis_version'])) {
+				$RedisVer = 'Redis ' . $info['redis_version'];
+			}
+		}
+	} catch (Throwable $e) {}
+
+	$cpuVer = $rSettings['ffmpeg_cpu'] ?? '4.0';
+	$FFmpegVer = 'v' . $cpuVer;
 
 	$_TITLE = "Settings";
 	require_once __DIR__ . '/../layouts/admin.php';
@@ -2194,23 +2226,43 @@ endif; // !$__settingsViewMode
 												<table class="table table-striped table-bordered">
 													<tbody>
 														<tr>
-															<td class="text-center" style="font-size: 0.85rem;">Geolite2 Version</td>
-															<td class="text-center">
-																<button type="button" class="btn btn-pink btn-sm" style="font-size: 0.85rem;"><?= $GeoLite2 ?></button>
+															<td class="text-center font-weight-bold" style="font-size: 0.85rem; width: 25%;">MariaDB</td>
+															<td class="text-center" style="width: 25%;">
+																<button type="button" class="btn btn-primary btn-sm" style="font-size: 0.85rem;"><?= htmlspecialchars($MariaDB ?? 'N/A') ?></button>
 															</td>
-															<td class="text-center" style="font-size: 0.85rem;">GeoIP2-ISP Version</td>
-															<td class="text-center">
-																<button type="button" class="btn btn-warning btn-sm" style="font-size: 0.85rem;"><?= $GeoISP ?></button>
+															<td class="text-center font-weight-bold" style="font-size: 0.85rem; width: 25%;">KeyDB / Redis</td>
+															<td class="text-center" style="width: 25%;">
+																<button type="button" class="btn btn-dark btn-sm" style="font-size: 0.85rem;"><?= htmlspecialchars($RedisVer ?? 'N/A') ?></button>
 															</td>
 														</tr>
 														<tr>
-															<td class="text-center" style="font-size: 0.85rem;">PHP</td>
+															<td class="text-center font-weight-bold" style="font-size: 0.85rem;">PHP</td>
 															<td class="text-center">
 																<button type="button" class="btn btn-info btn-sm" style="font-size: 0.85rem;"><?= phpversion() ?></button>
 															</td>
-															<td class="text-center" style="font-size: 0.85rem;">Nginx</td>
+															<td class="text-center font-weight-bold" style="font-size: 0.85rem;">Nginx</td>
 															<td class="text-center">
-																<button type="button" class="btn btn-danger btn-sm" style="font-size: 0.85rem;"><?= $Nginx ?></button>
+																<button type="button" class="btn btn-danger btn-sm" style="font-size: 0.85rem;"><?= htmlspecialchars($Nginx ?? 'N/A') ?></button>
+															</td>
+														</tr>
+														<tr>
+															<td class="text-center font-weight-bold" style="font-size: 0.85rem;">FFmpeg</td>
+															<td class="text-center">
+																<button type="button" class="btn btn-secondary btn-sm" style="font-size: 0.85rem;"><?= htmlspecialchars($FFmpegVer ?? 'N/A') ?></button>
+															</td>
+															<td class="text-center font-weight-bold" style="font-size: 0.85rem;">Nginx RTMP</td>
+															<td class="text-center">
+																<button type="button" class="btn btn-success btn-sm" style="font-size: 0.85rem;"><?= htmlspecialchars($NginxRTMP ?? 'N/A') ?></button>
+															</td>
+														</tr>
+														<tr>
+															<td class="text-center font-weight-bold" style="font-size: 0.85rem;">Geolite2 Version</td>
+															<td class="text-center">
+																<button type="button" class="btn btn-pink btn-sm" style="font-size: 0.85rem;"><?= htmlspecialchars($GeoLite2 ?? 'N/A') ?></button>
+															</td>
+															<td class="text-center font-weight-bold" style="font-size: 0.85rem;">GeoIP2-ISP Version</td>
+															<td class="text-center">
+																<button type="button" class="btn btn-warning btn-sm" style="font-size: 0.85rem;"><?= htmlspecialchars($GeoISP ?? 'N/A') ?></button>
 															</td>
 														</tr>
 													</tbody>
