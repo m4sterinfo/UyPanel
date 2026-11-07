@@ -291,7 +291,7 @@ class MonitorCommand implements CommandInterface {
 		$e1bc98ce34937596 = $rFolder . $rStreamID . '_0.ts';
 		$ea6de21e70c530a9 = false;
 		$rChecks = 0;
-		$A63c815f93524582 = (($rSegmentTime * 3) <= 30 ? $rSegmentTime * 3 : 30);
+		$A63c815f93524582 = (($rSegmentTime * 3) <= 90 ? $rSegmentTime * 3 : 90);
 		if (!($A63c815f93524582 < 20)) {
 			goto label998;
 		}
