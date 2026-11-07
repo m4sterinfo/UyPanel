@@ -7,26 +7,36 @@
 
 ## ⏭️ CONTINUAR AQUÍ (próxima sesión)
 
-1. **Limpieza de artefactos QA** (confirmar con el usuario): usuarios
+1. **LOAD BALANCER — hilo activo (2026-11-07)**: ver entrada del changelog
+   del 2026-11-07. Build ubuntu20/22/24 en marcha; al terminar: verificar
+   ubuntu20 en contenedor, desplegar al LB 164.37.105.75 (SSH root, credenciales
+   usadas en la sesión — NO están guardadas), restart + startup + cron:servers,
+   verificar phone home (fila 7: uypanel_version + last_check_ago) y streams.
+   Falta también: rebuild del payload LB (`make lb`) con binarios ubuntu20 +
+   release nuevo para que futuras instalaciones de LB funcionen de fábrica.
+2. **LB01/PRX01 (208.110.84.125) y EU-LB (64.37.105.75)**: SSH 22 CERRADO
+   desde el panel → los installs mueren en "Failed to connect". El usuario debe
+   abrir SSH/firewall hacia 198.27.81.133 antes de reintentar.
+3. **Limpieza de artefactos QA** (confirmar con el usuario): usuarios
    `qa_admin`/`qa_reseller`, líneas `qa_line1..4`/`qa_adminline`, access
    codes `qaResT3st` (tipo 1) y `qaApiT3st` (tipo 3 — expone la REST API,
    borrar antes de producción). Tras borrar códigos: `console.php tools
    access` + verificar.
-2. **QA de playback VOD** (la biblioteca YA existe: 678 películas + 123
+4. **QA de playback VOD** (la biblioteca YA existe: 678 películas + 123
    episodios vía Watch Folder): reproducir una película y un episodio desde
    el panel/admin y con una línea real (vauth + symlink directo).
-3. **QA pendiente** (mismo método: setup + REST API + panel + playback):
+5. **QA pendiente** (mismo método: setup + REST API + panel + playback):
    MAG/enigma2, trials (el grupo 2 tiene total_allowed_gen_trials=0 —
    habilitar para probar), sub-resellers, bouquets múltiples, EPG
    (re-importar: BD fresca sin URLs de EPG).
-4. **Panel (lado del usuario)**: revisar Settings (defaults del seed),
+6. **Panel (lado del usuario)**: revisar Settings (defaults del seed),
    re-importar EPG.
-5. **Limpieza pendiente**: borrar `/home/uypanel.pre_reinstall` (rollback de
+7. **Limpieza pendiente**: borrar `/home/uypanel.pre_reinstall` (rollback de
    la instalación anterior) cuando el usuario confirme; payloads viejos de
    /home/debian (~895 MB) si quiere.
-6. **Roadmap**: READMEs de los forks de soporte; release GeoLite opcional en
+8. **Roadmap**: READMEs de los forks de soporte; release GeoLite opcional en
    UyPanel_Update para que `binaries` pueda restaurar mmdb.
-7. **Watch Folder — notas operativas**: thread_count=8 y
+9. **Watch Folder — notas operativas**: thread_count=8 y
    max_encode_movies=2 (decisión usuario); el force mientras corre un
    escaneo ahora da toast de error (lock exclusivo, commit 5e59a45d); los
    23 no-match originales se resolvieron con parse_type=guessit +
@@ -591,6 +601,51 @@
 - Lección: al renombrar controladores, grep de TODAS las referencias
   `[XxxController::class` en routes/*.php; los módulos y los wrappers pueden
   compartir nombre de clase base.
+
+### 2026-11-07 — Load Balancer: diagnóstico, builds ubuntu20/22/24 y fix del instalador
+- **Contexto**: el usuario está añadiendo LBs al panel. Estados previos: LB01/
+  PRX01 (208.110.84.125) y EU-LB (64.37.105.75) status 4 — los 3 murieron en
+  "Failed to connect" (SSH 22 cerrado hacia el panel; verificado con /dev/tcp:
+  sigue cerrado). 164.37.105.75 sí conecta (Ubuntu 20.04).
+- **Instalación id=7 (EU-LB, 164.37.105.75)**: completó en ~90 s (status 3→1,
+  log en `/home/uypanel/bin/install/7.install`; el instalador corre EN EL PANEL
+  como `UyPanel Install[<id>]` con salida a `bin/install/<id>.install`; el
+  `<id>.json` de credenciales se borra al terminar OK). nginx arriba (200 en
+  80/443) pero **PHP 100% muerto**: `/progress` → 502, 0 procesos php-fpm,
+  sockets vacíos, sin crontabs, sin redis, sin phone home
+  (`uypanel_version=NULL`, `last_check_ago=0`).
+- **Causa raíz (verificada por SSH con el PHP del panel + ssh2)**: el payload
+  LB (release 2.0.2, binarios NUESTROS) trae PHP/nginx compilados para
+  **Debian 13** → en Ubuntu 20.04 (glibc 2.31) el binario ni carga:
+  `GLIBC_2.32/2.33/2.34/2.38 not found` + `libjpeg.so.62 not found`
+  (Debian 13 = glibc 2.38/libjpeg62; focal = glibc 2.31/libjpeg-turbo8).
+  El GAP #2 del panel (binarios upstream prefix xc_vm) ya no existe en el
+  payload 2.0.2 — ahora el gap es el INVERSO: binarios Debian en LBs Ubuntu.
+- **Filas duplicadas borradas**: ids 4 y 6 eran el MISMO servidor físico
+  (164.37.105.75) que el id 7 (instalado 3 veces). DELETE + cache
+  `tmp/cache/servers` refrescado. Quedan: 1 main, 2 LB01(fallo SSH), 3
+  PRX01(fallo SSH), 5 EU-LB(fallo SSH), 7 EU-LB(operativo roto).
+- **Builds ubuntu20/22/24 lanzados** (`sudo ./build_all.sh ubuntu20|ubuntu22|
+  ubuntu24` en third_party/UyPanel_Binaries, rama b224e4b con prefix uypanel +
+  PHP 8.3.36; docker en el host; ccache por target). Salida esperada:
+  `out/ubuntu_20.tar.gz` etc. El build enlaza libcurl4-gnutls-dev → runtime
+  Ubuntu = `libcurl3-gnutls`.
+- **Fix BalancerCommand** (commit pendiente de pushear): tras detectar la
+  distro remota (`lsb_release -rs`), Debian 12/13 → quita mcrypt/php-ssh2/
+  software-properties-common/libgeoip-dev/python/cpufrequtils y añade
+  `libcurl3t64-gnutls`; resto (Ubuntu) → añade `libcurl3-gnutls`. Desplegado a
+  `/home/uypanel/cli/Commands/BalancerCommand.php` (php -l OK).
+- **Plan de despliegue al LB** (pendiente del build): scp `out/ubuntu_20.tar.gz`
+  → extraer sobre /home/uypanel (el tarball NO pisa php/etc/*.conf generadas ni
+  php.ini — verificado en el listing: solo bin/{php,nginx,nginx_rtmp}, php.ini
+  viene del payload con extensiones "bare" + extension_dir compilado) →
+  `chown -R uypanel:uypanel /home/uypanel/bin` → restart uypanel → startup +
+  cron:servers → verificar pools/502/phone home.
+- **Pendiente**: rebuild del payload LB (`make lb`) con binarios ubuntu20 +
+  release nuevo (los LBs del usuario son Ubuntu; un payload Debian los rompe —
+  decidir si el payload LB pasa a ser ubuntu20 o se hace multi-distro).
+- Monitor en vivo usado: `/tmp/lb_monitor.sh` (log tail + estados BD + proceso
+  instalador); diagnóstico SSH: `/tmp/lb_diag.php` (borrar tras usar).
 
 ### 2026-11-03 — Video del login reemplazado por el del usuario
 - El usuario subió su video personal (temático IPTV: pantallas de fútbol con
