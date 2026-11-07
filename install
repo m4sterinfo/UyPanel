@@ -105,9 +105,12 @@ def generate_mysql_config(total_ram_mb):
     elif total_ram_mb < 8192:
         buffer_pool_mb = min(buffer_pool_mb, 1024)
         max_connections = 150
-    else:
-        buffer_pool_mb = min(buffer_pool_mb, 2048)
+    elif total_ram_mb < 8192:
+        buffer_pool_mb = min(buffer_pool_mb, 1024)
         max_connections = 200
+    else:
+        buffer_pool_mb = min(buffer_pool_mb, 4096)
+        max_connections = 400
 
     buffer_pool_size = (
         f"{buffer_pool_mb // 1024}G"
@@ -272,27 +275,27 @@ if __name__ == "__main__":
         os.system(
             "sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install software-properties-common"
         )
-    if rDistro == "debian":
-        printc("Debian detected: using system MariaDB and MaxMind packages")
-    elif rVersion in rVersions:
-        printc("Adding repo: Ubuntu %s" % rVersion)
-        os.system(
-            "sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8"
-        )
-        os.system('curl -LsS https://r.mariadb.com/downloads/mariadb_repo_setup | sudo bash -s -- --mariadb-server-version="mariadb-11.4"')
-        os.system("sudo add-apt-repository -y ppa:maxmind/ppa")
-    else:
-        print("Installing system version of MariaDB")
+    printc("Adding official MariaDB 11.8 repository")
+    os.system('curl -LsS https://r.mariadb.com/downloads/mariadb_repo_setup | sudo bash -s -- --mariadb-server-version="mariadb-11.8" --skip-maxscale || true')
+    if rDistro != "debian" and not rVersion.startswith("24."):
+        os.system("sudo add-apt-repository -y ppa:maxmind/ppa || true")
     os.system("sudo apt-get update")
     for rPackage in rRemove:
         printc("Removing %s" % rPackage)
         os.system("sudo apt-get remove %s -y" % rPackage)
-    if rDistro == "debian":
-        # Debian 12/13: t64 library names, no PPAs, libcap2-bin for setcap
-        rPackages = [p for p in rPackages if p != "software-properties-common"]
+    if rDistro == "debian" or rVersion.startswith("24."):
+        # Modern distros (Debian 12/13, Ubuntu 24.04): t64 libraries, omit obsolete packages
+        rPackages = [p for p in rPackages if p not in ("software-properties-common", "mcrypt", "php-ssh2", "python", "cpufrequtils")]
         rPackages = ["libcurl4t64" if p == "libcurl4" else p for p in rPackages]
+        rPackages = ["libssh2-1t64" if p in ("libssh2-1", "libssh2-1t64") else p for p in rPackages]
         if "libcap2-bin" not in rPackages:
             rPackages.append("libcap2-bin")
+    else:
+        # Pre-t64 distros (Ubuntu 20.04, 22.04)
+        rPackages = ["libssh2-1" if p == "libssh2-1t64" else p for p in rPackages]
+        rPackages = ["libcurl4" if p == "libcurl4t64" else p for p in rPackages]
+        if rVersion.startswith("22."):
+            rPackages = [p for p in rPackages if p not in ("mcrypt", "python")]
     for rPackage in rPackages:
         printc("Installing %s" % rPackage)
         os.system(
