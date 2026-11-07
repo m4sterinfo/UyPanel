@@ -7,36 +7,37 @@
 
 ## ⏭️ CONTINUAR AQUÍ (próxima sesión)
 
-1. **LOAD BALANCER — hilo activo (2026-11-07)**: ver entrada del changelog
-   del 2026-11-07. Build ubuntu20/22/24 en marcha; al terminar: verificar
-   ubuntu20 en contenedor, desplegar al LB 164.37.105.75 (SSH root, credenciales
-   usadas en la sesión — NO están guardadas), restart + startup + cron:servers,
-   verificar phone home (fila 7: uypanel_version + last_check_ago) y streams.
-   Falta también: rebuild del payload LB (`make lb`) con binarios ubuntu20 +
-   release nuevo para que futuras instalaciones de LB funcionen de fábrica.
-2. **LB01/PRX01 (208.110.84.125) y EU-LB (64.37.105.75)**: SSH 22 CERRADO
-   desde el panel → los installs mueren en "Failed to connect". El usuario debe
-   abrir SSH/firewall hacia 198.27.81.133 antes de reintentar.
-3. **Limpieza de artefactos QA** (confirmar con el usuario): usuarios
-   `qa_admin`/`qa_reseller`, líneas `qa_line1..4`/`qa_adminline`, access
-   codes `qaResT3st` (tipo 1) y `qaApiT3st` (tipo 3 — expone la REST API,
-   borrar antes de producción). Tras borrar códigos: `console.php tools
-   access` + verificar.
-4. **QA de playback VOD** (la biblioteca YA existe: 678 películas + 123
+1. **LOAD BALANCER — estado (2026-11-07)**: el LB id=7 (164.37.105.75,
+   Ubuntu 20.04) está OPERATIVO con binarios ubuntu20 desplegados a mano y
+   playback verificado (main 302 → token LB → 200 video/mp2t). Stream 1
+   (amagi) emite ✓; stream 2 (RT France) a merced de la red LB↔CDN (ver
+   changelog 2026-11-07). Pendiente:
+   - Rebuild payload LB (`make lb`) con binarios ubuntu20 + release nuevo
+     (futuras instalaciones de LB en Ubuntu de fábrica).
+   - Diseño distro-aware: assets `binaries_<distro>.tar.gz` en el release +
+     instalador/BalancerCommand descargan el de la distro detectada.
+   - LB01/PRX01 (208.110.84.125) y EU-LB (64.37.105.75): SSH 22 cerrado
+     hacia el panel → abrir firewall antes de reintentar.
+2. **Limpieza de artefactos QA** (confirmar con el usuario): usuarios
+   `qa_admin`/`qa_reseller`, línea `lbtest1` (creada hoy para la prueba del
+   LB), access codes `qaResT3st` (tipo 1) y `qaApiT3st` (tipo 3 — expone la
+   REST API, borrar antes de producción). Tras borrar códigos: `console.php
+   tools access` + verificar.
+3. **QA de playback VOD** (la biblioteca YA existe: 678 películas + 123
    episodios vía Watch Folder): reproducir una película y un episodio desde
    el panel/admin y con una línea real (vauth + symlink directo).
-5. **QA pendiente** (mismo método: setup + REST API + panel + playback):
+4. **QA pendiente** (mismo método: setup + REST API + panel + playback):
    MAG/enigma2, trials (el grupo 2 tiene total_allowed_gen_trials=0 —
    habilitar para probar), sub-resellers, bouquets múltiples, EPG
    (re-importar: BD fresca sin URLs de EPG).
-6. **Panel (lado del usuario)**: revisar Settings (defaults del seed),
+5. **Panel (lado del usuario)**: revisar Settings (defaults del seed),
    re-importar EPG.
-7. **Limpieza pendiente**: borrar `/home/uypanel.pre_reinstall` (rollback de
+6. **Limpieza pendiente**: borrar `/home/uypanel.pre_reinstall` (rollback de
    la instalación anterior) cuando el usuario confirme; payloads viejos de
    /home/debian (~895 MB) si quiere.
-8. **Roadmap**: READMEs de los forks de soporte; release GeoLite opcional en
+7. **Roadmap**: READMEs de los forks de soporte; release GeoLite opcional en
    UyPanel_Update para que `binaries` pueda restaurar mmdb.
-9. **Watch Folder — notas operativas**: thread_count=8 y
+8. **Watch Folder — notas operativas**: thread_count=8 y
    max_encode_movies=2 (decisión usuario); el force mientras corre un
    escaneo ahora da toast de error (lock exclusivo, commit 5e59a45d); los
    23 no-match originales se resolvieron con parse_type=guessit +
@@ -624,28 +625,66 @@
 - **Filas duplicadas borradas**: ids 4 y 6 eran el MISMO servidor físico
   (164.37.105.75) que el id 7 (instalado 3 veces). DELETE + cache
   `tmp/cache/servers` refrescado. Quedan: 1 main, 2 LB01(fallo SSH), 3
-  PRX01(fallo SSH), 5 EU-LB(fallo SSH), 7 EU-LB(operativo roto).
-- **Builds ubuntu20/22/24 lanzados** (`sudo ./build_all.sh ubuntu20|ubuntu22|
-  ubuntu24` en third_party/UyPanel_Binaries, rama b224e4b con prefix uypanel +
-  PHP 8.3.36; docker en el host; ccache por target). Salida esperada:
-  `out/ubuntu_20.tar.gz` etc. El build enlaza libcurl4-gnutls-dev → runtime
-  Ubuntu = `libcurl3-gnutls`.
-- **Fix BalancerCommand** (commit pendiente de pushear): tras detectar la
-  distro remota (`lsb_release -rs`), Debian 12/13 → quita mcrypt/php-ssh2/
+  PRX01(fallo SSH), 5 EU-LB(fallo SSH), 7 EU-LB.
+- **Builds ubuntu20/22/24 COMPLETADOS Y VERIFICADOS** (`sudo ./build_all.sh
+  ubuntu20|ubuntu22|ubuntu24` en third_party/UyPanel_Binaries, rama b224e4b
+  con prefix uypanel + PHP 8.3.36; docker en el host; ccache por target).
+  Salida: `out/ubuntu_{20,22,24}.tar.gz` (~80-90 MB c/u) + hashes.md5
+  actualizado. Verificados en contenedores reales de cada distro (ldd sin
+  "not found" tras instalar el set runtime: libxml2 libcurl3-gnutls[t64 en
+  24] libpng16-16 libjpeg-turbo8 libfreetype6 libonig5 libsodium23
+  libxslt1.1 libmaxminddb0 libssh2-1 libzip4[t64 en 24] libargon2-1
+  libedit2; php -m con el php.ini del payload carga redis/igbinary/ssh2/
+  maxminddb/opcache ✓).
+- **Despliegue al LB id=7 HECHO y VERIFICADO end-to-end**: scp del tarball
+  (md5 ok) → extract sobre /home/uypanel (el tarball NO pisa php/etc/*.conf
+  ni php.ini) → chown bin → fstab dedupe → restart → PHP 8.3.36 arriba,
+  pools ondemand OK, phone home OK (`uypanel_version=2.0.2`,
+  `last_check_ago` avanzando), player_api del LB responde (404 anti-probe
+  sin creds), **playback real verificado**: main `302 → /auth/{token}` en el
+  LB → `HTTP 200 video/mp2t` sostenido (~4-6 Mbps).
+- **Cadena de arranque de streams en un LB (arquitectura 2.0.x, verificada)**:
+  el panel arranca streams posteando a la API interna del server
+  (`api_url = http://ip:port/api?password=live_streaming_pass` →
+  `public/index.php` FC, InternalApiController). El LB solo sirve URLs con
+  TOKEN (`/auth/{token}` etc. — lb_configs/nginx.conf no tiene rewrites
+  `/live/`; el main redirige 302 al token del LB). El auth de streaming
+  fuerza `enable_cache=false` (www/stream/init.php:86) → BD directa → el LB
+  NO necesita CacheEngineCronJob (por eso upstream lo excluye del payload).
+- **GAP del payload LB (upstream, heredado)**: el payload no trae `public/`
+  → la API interna y player_api del LB dan "File not found" → las órdenes
+  de arranque del panel se pierden en silencio. FIX: `public/` añadido a
+  `LB_DIRS` (commit `51128e28`); en el LB actual se desplegó a mano
+  (/tmp/public_lb.tgz, md5 verificado).
+- **Stream 2 (RT France) en el LB**: la fuente
+  `rt-fra.rttv.com/dvr/rtfrance` desde la red del LB es POCO FIABLE: probe
+  23-40s variable, primer segmento a veces >30s, conexiones al edge
+  (178.176.128.128) con Send-Q atascado (~2.5 MB sin ACK). Dos fixes
+  aplicados: (1) settings `probe_extra_wait` 10→30 (timeout de probe
+  15→35s; para fuentes normales no cambia nada) y (2) MonitorCommand:
+  paciencia de arranque cap 30→90 chequeos (commit `31824c6f`, desplegado
+  en main y LB). Con ello el stream 1 (amagi, fuente rápida) arranca y
+  emite ✓; el stream 2 queda reintentando — cuando el edge responde,
+  arranca (verificado manualmente: ffmpeg corre 30s+ sin errores); si el
+  CDN sigue estancado desde esa red, considerar otra URL fuente para ese
+  canal o dejarlo en el main.
+- **Fix BalancerCommand** (commit `3d4ed485`): tras detectar la distro
+  remota (`lsb_release -rs`), Debian 12/13 → quita mcrypt/php-ssh2/
   software-properties-common/libgeoip-dev/python/cpufrequtils y añade
-  `libcurl3t64-gnutls`; resto (Ubuntu) → añade `libcurl3-gnutls`. Desplegado a
-  `/home/uypanel/cli/Commands/BalancerCommand.php` (php -l OK).
-- **Plan de despliegue al LB** (pendiente del build): scp `out/ubuntu_20.tar.gz`
-  → extraer sobre /home/uypanel (el tarball NO pisa php/etc/*.conf generadas ni
-  php.ini — verificado en el listing: solo bin/{php,nginx,nginx_rtmp}, php.ini
-  viene del payload con extensiones "bare" + extension_dir compilado) →
-  `chown -R uypanel:uypanel /home/uypanel/bin` → restart uypanel → startup +
-  cron:servers → verificar pools/502/phone home.
+  `libcurl3t64-gnutls`; resto (Ubuntu) → añade `libcurl3-gnutls`.
+  Desplegado a `/home/uypanel/cli/Commands/BalancerCommand.php`.
+- **Fix fstab duplicado** (commit `23b40642`): `stripos(...) !== true`
+  siempre verdadero → las líneas tmpfs se añadían en CADA instalación
+  (encontrado triplicado en el LB; dedupe aplicado in situ).
 - **Pendiente**: rebuild del payload LB (`make lb`) con binarios ubuntu20 +
-  release nuevo (los LBs del usuario son Ubuntu; un payload Debian los rompe —
-  decidir si el payload LB pasa a ser ubuntu20 o se hace multi-distro).
-- Monitor en vivo usado: `/tmp/lb_monitor.sh` (log tail + estados BD + proceso
-  instalador); diagnóstico SSH: `/tmp/lb_diag.php` (borrar tras usar).
+  release nuevo para que futuras instalaciones de LB en Ubuntu funcionen de
+  fábrica (el payload actual lleva binarios Debian 13 como fallback + el
+  instalador aún no descarga binaries_<distro>; diseño distro-aware
+  propuesto: assets `binaries_<distro>.tar.gz` en el release + el
+  instalador/BalancerCommand descargan el de la distro detectada).
+- Monitor en vivo usado: `/tmp/lb_monitor.sh` (log tail + estados BD +
+  proceso instalador); scripts SSH de diagnóstico/despliegue en /tmp
+  (lb_*.php — BORRADOS al cerrar la sesión; contenían credenciales del LB).
 
 ### 2026-11-03 — Video del login reemplazado por el del usuario
 - El usuario subió su video personal (temático IPTV: pantallas de fútbol con
