@@ -1,8 +1,7 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-07 (actualización de
-> seguridad: MariaDB 11.8.9 + paquetes vulnerables del sistema + max_connections=400).
+> cada cambio significativo. Última actualización: 2026-11-07 (instalador y BalancerCommand multi-distro: MariaDB 11.8 oficial + binarios nativos automáticos para LBs Debian 12/13 y Ubuntu 20/22/24).
 
 ## ⏭️ CONTINUAR AQUÍ (próxima sesión)
 
@@ -717,6 +716,20 @@
 - Parámetro `max_connections = 400` restablecido y verificado en `/etc/mysql/mariadb.cnf`.
 - Verificación post-actualización: MariaDB 11.8.9 active, UyPanel status 1 OK,
   demonios singleton OK, login web 200 OK, player_api 200 OK (`auth:1`).
+
+### 2026-11-07 — Instalador y BalancerCommand multi-distro: MariaDB 11.8 oficial + binarios nativos automáticos para LBs
+- `install`:
+  - Repositorio oficial de MariaDB Foundation integrado con `--mariadb-server-version="mariadb-11.8"`.
+  - Configuración MySQL `max_connections` ajustada a 400 (antes 200 en servers >= 8GB).
+  - Soporte multi-distro mejorado: Debian 12/13 y Ubuntu 24.04 usan librerías t64 (`libcurl4t64`, `libssh2-1t64`) y omiten paquetes obsoletos/inexistentes (`software-properties-common`, `mcrypt`, `python`, `cpufrequtils`).
+  - Sincronizado en `/home/debian/install`.
+- `src/cli/Commands/BalancerCommand.php`:
+  - Detección precisa de distro en nodo remoto vía `lsb_release -is` y `lsb_release -rs`.
+  - Paquetes de streaming y runtime adaptados por distro (Debian 12/13, Ubuntu 20.04/22.04/24.04), agregando dependencias de FFmpeg/Nginx (`libnuma1`, `libgomp1`, `libexpat1`, `librtmp1`, `libcurl3t64-gnutls`).
+  - Despliegue automático de binarios nativos: busca en `/home/uypanel/bin/distros/<distro>.tar.gz` (debian_13, ubuntu_20, ubuntu_22, ubuntu_24) y los extrae en el LB remoto, fijando permisos `uypanel:uypanel`.
+  - Sincronizado en `/home/uypanel/cli/Commands/BalancerCommand.php`.
+- Preparado `/home/uypanel/bin/distros/` con los 4 tarballs de binarios nativos compilados (PHP 8.3.36 + Nginx 1.29.6).
+- Sintaxis PHP validada con `tools/php_syntax_check.sh` (625 archivos, 0 errores).
 
 ### 2026-11-07 — Ajustes: versiones de MariaDB, KeyDB/Redis, Nginx RTMP y FFmpeg añadidas a Info
 - `src/public/Controllers/Admin/SettingsController.php` y `src/public/Views/admin/settings.php`:

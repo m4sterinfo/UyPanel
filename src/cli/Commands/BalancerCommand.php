@@ -102,27 +102,48 @@ class BalancerCommand implements CommandInterface {
 
 		// 1. Detect remote OS version
 		echo "Detecting remote OS version...\n";
+		$rDistroRaw = $this->runSSH($rConn, 'lsb_release -is');
+		$rDistroID = strtolower(trim($rDistroRaw['output'] ?? ''));
 		$rOS = $this->runSSH($rConn, 'lsb_release -rs');
-		$rVersion = trim($rOS['output']);
-		echo "\nRemote OS version: {$rVersion}\n";
+		$rVersion = trim($rOS['output'] ?? '');
+		echo "\nRemote OS: {$rDistroID} {$rVersion}\n";
 
-		// Ajuste de paquetes por distro: los binarios UyPanel enlazan libcurl-gnutls;
-		// Debian 12/13 usa nombres t64 y no trae varios paquetes de Ubuntu.
-		if (preg_match('/^(12|13)\./', $rVersion)) {
+		// Ajuste de paquetes por distro
+		if ($rDistroID == 'debian' || preg_match('/^(12|13)\./', $rVersion)) {
 			echo "Debian detected — adapting package list\n";
 			$rPackages = array_values(array_diff($rPackages, array('mcrypt', 'php-ssh2', 'software-properties-common', 'libgeoip-dev', 'python', 'cpufrequtils')));
 			$rPackages[] = 'libcurl3t64-gnutls';
+			$rPackages[] = 'libnuma1';
+			$rPackages[] = 'libgomp1';
+			$rPackages[] = 'libexpat1';
+			$rPackages[] = 'librtmp1';
+		} elseif (preg_match('/^24\./', $rVersion)) {
+			echo "Ubuntu 24.x detected — adapting package list\n";
+			$rPackages = array_values(array_diff($rPackages, array('mcrypt', 'php-ssh2', 'python', 'cpufrequtils')));
+			$rPackages[] = 'libcurl3t64-gnutls';
+			$rPackages[] = 'libnuma1';
+			$rPackages[] = 'libgomp1';
+			$rPackages[] = 'libexpat1';
+			$rPackages[] = 'librtmp1';
 		} else {
+			echo "Ubuntu {$rVersion} detected — adapting package list\n";
 			$rPackages[] = 'libcurl3-gnutls';
+			$rPackages[] = 'libnuma1';
+			$rPackages[] = 'libgomp1';
+			$rPackages[] = 'libexpat1';
+			$rPackages[] = 'librtmp1';
+			if (preg_match('/^22\./', $rVersion)) {
+				$rPackages = array_values(array_diff($rPackages, array('python', 'mcrypt')));
+			}
 		}
 
 		echo "\nStopping any previous version of UyPanel\n";
 		$this->runSSH($rConn, 'sudo systemctl stop uypanel');
 		$this->runSSH($rConn, 'sudo killall -9 -u uypanel');
 		echo "\nUpdating system\n";
-		$this->runSSH($rConn, 'sudo rm /var/lib/dpkg/lock-frontend && sudo rm /var/cache/apt/archives/lock && sudo rm /var/lib/dpkg/lock');
-		if ($rType == 2) {
-			$this->runSSH($rConn, 'sudo add-apt-repository -y ppa:maxmind/ppa');
+		$this->runSSH($rConn, 'sudo rm -f /var/lib/dpkg/lock-frontend /var/cache/apt/archives/lock /var/lib/dpkg/lock');
+		if ($rType == 2 && $rDistroID != 'debian' && !preg_match('/^24\./', $rVersion)) {
+			$this->runSSH($rConn, 'sudo add-apt-repository -y ppa:maxmind/ppa || true');
 		}
 		$this->runSSH($rConn, 'sudo apt-get update');
 		foreach ($rPackages as $rPackage) {
@@ -171,6 +192,31 @@ class BalancerCommand implements CommandInterface {
 				$this->runSSH($rConn, 'sudo tar -zxvf "/tmp/UyPanel.tar.gz" -C "' . MAIN_HOME . '"');
 				if (file_exists(MAIN_HOME . 'status')) {
 					$this->runSSH($rConn, 'sudo rm -f "/tmp/UyPanel.tar.gz"');
+
+					// Deploy native PHP 8.3 / Nginx binaries matching the remote OS
+					$rDistroTag = null;
+					if ($rDistroID == 'debian' || preg_match('/^(12|13)\./', $rVersion)) {
+						$rDistroTag = 'debian_13';
+					} elseif (preg_match('/^24\./', $rVersion)) {
+						$rDistroTag = 'ubuntu_24';
+					} elseif (preg_match('/^22\./', $rVersion)) {
+						$rDistroTag = 'ubuntu_22';
+					} elseif (preg_match('/^20\./', $rVersion)) {
+						$rDistroTag = 'ubuntu_20';
+					}
+
+					if ($rDistroTag) {
+						$rLocalBinaryPath = BIN_PATH . 'distros/' . $rDistroTag . '.tar.gz';
+						if (file_exists($rLocalBinaryPath)) {
+							echo "Deploying native {$rDistroTag} binaries (PHP 8.3 / Nginx 1.29) to LB...\n";
+							if ($this->sendFileSSH($rConn, $rLocalBinaryPath, '/tmp/' . $rDistroTag . '.tar.gz', true)) {
+								$this->runSSH($rConn, 'sudo tar -zxvf "/tmp/' . $rDistroTag . '.tar.gz" -C "' . MAIN_HOME . '"');
+								$this->runSSH($rConn, 'sudo rm -f "/tmp/' . $rDistroTag . '.tar.gz"');
+								$this->runSSH($rConn, 'sudo chown -R uypanel:uypanel "' . MAIN_HOME . 'bin"');
+								echo "Native binaries deployed successfully.\n";
+							}
+						}
+					}
 				} else {
 					$db->query('UPDATE `servers` SET `status` = 4 WHERE `id` = ?;', $rServerID);
 					echo "Failed to extract files! Exiting\n";
