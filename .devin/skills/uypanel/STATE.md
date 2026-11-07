@@ -9,9 +9,11 @@
 
 1. **LOAD BALANCER — estado (2026-11-07)**: el LB id=7 (164.37.105.75,
    Ubuntu 20.04) está OPERATIVO con binarios ubuntu20 desplegados a mano y
-   playback verificado (main 302 → token LB → 200 video/mp2t). Stream 1
-   (amagi) emite ✓; stream 2 (RT France) a merced de la red LB↔CDN (ver
-   changelog 2026-11-07). Pendiente:
+   playback verificado (main 302 → token LB → 200 video/mp2t). **AMBOS
+   streams emiten ✓** (stream 1 amagi estable; stream 2 RT France levantó
+   al final de la sesión — el monitor con la paciencia nueva (90s) logró
+   arrancarlo cuando el CDN edge respondió; pid estable + compatible=1).
+   Pendiente:
    - Rebuild payload LB (`make lb`) con binarios ubuntu20 + release nuevo
      (futuras instalaciones de LB en Ubuntu de fábrica).
    - Diseño distro-aware: assets `binaries_<distro>.tar.gz` en el release +
@@ -664,10 +666,11 @@
   15→35s; para fuentes normales no cambia nada) y (2) MonitorCommand:
   paciencia de arranque cap 30→90 chequeos (commit `31824c6f`, desplegado
   en main y LB). Con ello el stream 1 (amagi, fuente rápida) arranca y
-  emite ✓; el stream 2 queda reintentando — cuando el edge responde,
-  arranca (verificado manualmente: ffmpeg corre 30s+ sin errores); si el
-  CDN sigue estancado desde esa red, considerar otra URL fuente para ese
-  canal o dejarlo en el main.
+  emite ✓; el stream 2 (RT France) tras varios reintentos del monitor
+  (con la paciencia nueva) **LEVANTÓ al cierre de la sesión**: pid estable,
+  compatible=1, playback 200 video/mp2t ~4.6 Mbps sostenido ✓. La fuente
+  sigue siendo lenta/variable desde esa red (probe ~24s) — los fixes dan
+  margen suficiente; vigilar si el CDN vuelve a estancarse.
 - **Fix BalancerCommand** (commit `3d4ed485`): tras detectar la distro
   remota (`lsb_release -rs`), Debian 12/13 → quita mcrypt/php-ssh2/
   software-properties-common/libgeoip-dev/python/cpufrequtils y añade
