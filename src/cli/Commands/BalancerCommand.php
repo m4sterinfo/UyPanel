@@ -184,7 +184,7 @@ class BalancerCommand implements CommandInterface {
 		}
 
 		if ($rType == 2) {
-			if (stripos($this->runSSH($rConn, 'sudo cat /etc/fstab')['output'], STREAMS_PATH) !== true) {
+			if (stripos($this->runSSH($rConn, 'sudo cat /etc/fstab')['output'], STREAMS_PATH) === false) {
 				echo "Adding ramdisk mounts\n";
 				$this->runSSH($rConn, 'sudo echo "tmpfs ' . STREAMS_PATH . ' tmpfs defaults,noatime,nosuid,nodev,noexec,mode=1777,size=90% 0 0" >> /etc/fstab');
 				$this->runSSH($rConn, 'sudo echo "tmpfs ' . TMP_PATH . ' tmpfs defaults,noatime,nosuid,nodev,noexec,mode=1777,size=2G 0 0" >> /etc/fstab');
