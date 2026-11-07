@@ -5,45 +5,47 @@
 
 ## ⏭️ CONTINUAR AQUÍ (próxima sesión)
 
-1. **LOAD BALANCER — estado (2026-11-07)**: el LB id=7 (164.37.105.75,
-   Ubuntu 20.04) está OPERATIVO con binarios ubuntu20 desplegados a mano y
-   playback verificado (main 302 → token LB → 200 video/mp2t). **AMBOS
-   streams emiten ✓** (stream 1 amagi estable; stream 2 RT France levantó
-   al final de la sesión — el monitor con la paciencia nueva (90s) logró
-   arrancarlo cuando el CDN edge respondió; pid estable + compatible=1).
-   Pendiente:
-   - Rebuild payload LB (`make lb`) con binarios ubuntu20 + release nuevo
-     (futuras instalaciones de LB en Ubuntu de fábrica).
-   - Diseño distro-aware: assets `binaries_<distro>.tar.gz` en el release +
-     instalador/BalancerCommand descargan el de la distro detectada.
-   - LB01/PRX01 (208.110.84.125) y EU-LB (64.37.105.75): SSH 22 cerrado
-     hacia el panel → abrir firewall antes de reintentar.
-2. **Limpieza de artefactos QA** (confirmar con el usuario): usuarios
-   `qa_admin`/`qa_reseller`, línea `lbtest1` (creada hoy para la prueba del
-   LB), access codes `qaResT3st` (tipo 1) y `qaApiT3st` (tipo 3 — expone la
-   REST API, borrar antes de producción). Tras borrar códigos: `console.php
-   tools access` + verificar.
-3. **QA de playback VOD** (la biblioteca YA existe: 678 películas + 123
+1. **REINSTALACIÓN / ACTUALIZACIÓN DEL LOAD BALANCER POR EL USUARIO**:
+   - El usuario actualizará el nodo LB (actualmente Ubuntu 20.04 con GLIBC 2.31) a una distribución moderna (Debian 12/13 o Ubuntu 22.04/24.04).
+   - **Requisitos previos**: Verificar que el puerto SSH 22 del nodo LB esté abierto y accesible hacia el panel principal (`198.27.81.133`).
+   - **Instalación del LB**: Desde la interfaz del panel (`Servers -> Add Server`) o ejecutando el comando CLI correspondiente.
+   - **Despliegue automático verificado**: `BalancerCommand.php` ya está preparado para:
+     1. Detectar automáticamente la distro del LB (`lsb_release -is` y `-rs`).
+     2. Adaptar la lista de paquetes apt (librerías t64 para Debian 12/13 y Ubuntu 24.04, dependencias `libnuma1`, `libgomp1`, `libexpat1`, `librtmp1`, `libcurl3t64-gnutls`).
+     3. Desplegar los binarios nativos compilados (PHP 8.3.36 + Nginx 1.29.6 con prefijo `/home/uypanel`) correspondientes desde `/home/uypanel/bin/distros/{debian_13|ubuntu_20|ubuntu_22|ubuntu_24}.tar.gz`.
+   - **Prueba de FFmpeg moderno**: Una vez el LB esté en una distro moderna (Debian 12/13 o Ubuntu 24.04 con GLIBC >= 2.35), se puede cambiar `ffmpeg_cpu` a `v8.0` en Settings (`Streaming -> Preferences -> FFMPEG Version`) y verificar que los streams inicien y reproduzcan correctamente sin error de GLIBC.
+
+2. **GIT & REPO STATUS**:
+   - Hay 3 commits locales en `main` listos para push:
+     - `4229374e`: docs(skill): record MariaDB 11.8.9 security upgrade and system packages update
+     - `ac9802a7`: feat(settings): display MariaDB, Redis, FFmpeg and RTMP versions in info tab
+     - `be3fe64a`: feat(installer): add multi-distro MariaDB 11.8 and native binary deployment for LBs
+   - *Nota de protocolo*: NO pushear a `origin/main` sin instrucción explícita del usuario.
+
+3. **SERVICIOS Y ESTADO ACTUAL EN SERVIDOR PRINCIPAL**:
+   - MariaDB 11.8.9 LTS corriendo y asegurada (`max_connections = 400`).
+   - Todos los paquetes vulnerables del sistema actualizados (`apt list --upgradable` = 0).
+   - Pestaña Info en Settings muestra versiones activas de MariaDB, Redis, PHP, Nginx, Nginx RTMP y FFmpeg.
+   - Binarios nativos multi-distro colocados en `/home/uypanel/bin/distros/`.
+   - Payload LB (`dist/loadbalancer.tar.gz`) reconstruido y al día.
+
+4. **Limpieza de artefactos QA** (confirmar con el usuario): usuarios
+   `qa_admin`/`qa_reseller`, línea `lbtest1` (creada para la prueba del LB),
+   access codes `qaResT3st` (tipo 1) y `qaApiT3st` (tipo 3 — expone la REST
+   API, borrar antes de producción). Tras borrar códigos: `console.php tools
+   access` + verificar.
+5. **QA de playback VOD** (la biblioteca YA existe: 678 películas + 123
    episodios vía Watch Folder): reproducir una película y un episodio desde
    el panel/admin y con una línea real (vauth + symlink directo).
-4. **QA pendiente** (mismo método: setup + REST API + panel + playback):
+6. **QA pendiente** (mismo método: setup + REST API + panel + playback):
    MAG/enigma2, trials (el grupo 2 tiene total_allowed_gen_trials=0 —
    habilitar para probar), sub-resellers, bouquets múltiples, EPG
    (re-importar: BD fresca sin URLs de EPG).
-5. **Panel (lado del usuario)**: revisar Settings (defaults del seed),
+7. **Panel (lado del usuario)**: revisar Settings (defaults del seed),
    re-importar EPG.
-6. **Limpieza pendiente**: borrar `/home/uypanel.pre_reinstall` (rollback de
+8. **Limpieza pendiente**: borrar `/home/uypanel.pre_reinstall` (rollback de
    la instalación anterior) cuando el usuario confirme; payloads viejos de
    /home/debian (~895 MB) si quiere.
-7. **Roadmap**: READMEs de los forks de soporte; release GeoLite opcional en
-   UyPanel_Update para que `binaries` pueda restaurar mmdb.
-8. **Watch Folder — notas operativas**: thread_count=8 y
-   max_encode_movies=2 (decisión usuario); el force mientras corre un
-   escaneo ahora da toast de error (lock exclusivo, commit 5e59a45d); los
-   23 no-match originales se resolvieron con parse_type=guessit +
-   fallback_title=1 en el folder de series. Quedan 4 archivos A-Team
-   multi-episodio importados como primer episodio del rango (S03E02-03 →
-   E02) — si se quiere el rango completo habría que partir los archivos.
 
 
 ## Identidad
