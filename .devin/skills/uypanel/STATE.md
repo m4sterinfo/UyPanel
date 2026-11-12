@@ -1,9 +1,35 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-12 (REVERT del experimento multi-tenant/super_admin: producción y BD de vuelta al estado de main/2026-11-11; fix del loading del panel reseller conservado en main).
+> cada cambio significativo. Última actualización: 2026-11-12 (Integración de Universal Radio & Stream Extractor dentro de Gestión / Herramientas).
 
-## 🆕 2026-11-12 — REVERT: vuelta a main + BD al estado del 2026-11-11
+## 🆕 2026-11-12 — Integración de Radio & Stream Extractor en Gestión / Herramientas
+
+Se integró exitosamente la aplicación [radio-stream-extractor](https://github.com/m4sterinfo/radio-stream-extractor) como una herramienta nativa accesible desde el menú del panel de administración (`Gestión` -> `Herramientas` -> `Extractor de Streams`).
+
+### Componentes y Configuración Desplegados:
+1. **Node.js LTS en Debian 13**:
+   - Instalado Node.js 20.19.2 LTS y npm.
+2. **Servicio y Demonio (`uypanel-extractor.service`)**:
+   - Código desplegado en `/home/uypanel/extractor` (propiedad `uypanel:uypanel`).
+   - Dependencias de producción instaladas con npm.
+   - Demonio systemd `/etc/systemd/system/uypanel-extractor.service` corriendo en puerto 3200 con reinicio automático.
+   - Soporte de subruta `/stream_extractor/` implementado en `server.js`, `lib/upstream.js` (`X-Forwarded-Prefix`) y `public/app.js` (`API_BASE`).
+3. **Nginx Reverse Proxy**:
+   - Bloque `location ^~ /stream_extractor/` configurado en `/home/uypanel/bin/nginx/conf/custom.conf` con soporte WebSocket, SSE y streaming directo.
+   - Nginx recargado limpiamente sin downtime.
+4. **Integración en Panel Admin UyPanel**:
+   - **Ruta**: Registrada `$router->get('stream_extractor', [StreamExtractorController::class, 'index'])` en `src/public/routes/admin.php`.
+   - **Controlador**: Creado `StreamExtractorController` en `src/public/Controllers/Admin/StreamExtractorController.php`.
+   - **Vista**: Creada `src/public/Views/admin/stream_extractor.php` con contenedor responsivo iframe, botones de refresco y apertura en ventana completa.
+   - **Menú**: Agregado enlace "Extractor de Streams" bajo el menú desplegable `Herramientas` en `src/public/Views/admin/header.php`.
+   - **Traducciones**: Agregado `stream_extractor` a los diccionarios (`es.ini`, `en.ini`, `pt.ini`, `ru.ini`, `fr.ini`, `de.ini`, `bg.ini`).
+5. **Verificación y QA**:
+   - Sintaxis PHP validada con `tools/php_syntax_check.sh`: 627 archivos verificados, 0 errores.
+   - Servicio Node.js verificado activo vía systemctl.
+   - Endpoints `/stream_extractor/api/status` y extracción directa de streams verificados con HTTP 200 a través de Nginx y del Front Controller admin.
+
+## 2026-11-12 — REVERT: vuelta a main + BD al estado del 2026-11-11
 
 **Decisión del usuario**: el modelo multi-tenant (Super Admin / admins
 scoped / Super Resellers) no convencía; se vuelve al modelo simple de main

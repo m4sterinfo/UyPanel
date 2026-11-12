@@ -87,6 +87,7 @@ $router->get('stream_errors', [StreamErrorsController::class, 'index']);
 $router->get('stream_rank', [StreamRankController::class, 'index']);
 $router->any('stream_review', [StreamReviewController::class, 'index']);
 $router->get('stream_tools', [StreamToolsController::class, 'index']);
+$router->get('stream_extractor', [StreamExtractorController::class, 'index']);
 $router->get('stream_view', [StreamViewController::class, 'index']);
 $router->get('channel_order', [ChannelOrderController::class, 'index']);
 $router->get('created_channel', [CreatedChannelController::class, 'index']);
