@@ -1,7 +1,7 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-07 (instalador y BalancerCommand multi-distro: MariaDB 11.8 oficial + binarios nativos automáticos para LBs Debian 12/13 y Ubuntu 20/22/24).
+> cada cambio significativo. Última actualización: 2026-11-12 (rama `super_admin`: multi-tenant scoping + rol Super Admin, desplegado y verificado en producción).
 
 ## ⏭️ CONTINUAR AQUÍ (próxima sesión)
 
@@ -47,6 +47,82 @@
    la instalación anterior) cuando el usuario confirme; payloads viejos de
    /home/debian (~895 MB) si quiere.
 
+
+
+## 🆕 2026-11-12 — Multi-tenant scoping + Super Admin (rama `super_admin`, commit 759d4121)
+
+**Pedido del usuario**: cada admin solo ve SUS super resellers/resellers y las
+líneas de sus resellers; sin acceso a ajustes del server ni stream providers;
+nueva categoría **Super Admin** que ve todo (admins, resellers, líneas, providers).
+
+### Implementación
+- **Schema**: `users_groups.is_super_admin` TINYINT (migración
+  `002_super_admin_scoping.sql`, aplicada manualmente + registrada en
+  `migrations`; seed `bin/install/database.sql` actualizado con la columna).
+- **`core/Auth/Authorization.php`** (núcleo):
+  - `SUPER_ADMIN_ONLY_KEYS`: settings, servers, add/edit_server, database,
+    quick_tools, process_monitor, rtmp, add_rtmp, stream_providers (key NUEVA),
+    mng_groups, add_group, edit_group.
+  - `isSuperAdmin()` (query a users_groups, cache por request).
+  - `getVisibleUserIds()`: NULL=super admin (sin filtro); admin/reseller =
+    self + árbol vía **CTE recursiva** (`users.owner_id`); `getVisibleSQL()`.
+  - `check('user'/'line')` ahora funciona en contexto ADMIN (antes solo
+    reseller) y `check('adv')` gatea las keys reservadas.
+  - **Fix de seguridad**: grupo admin con `allowed_pages` vacío antes heredaba
+    TODO (quirk upstream) → ahora deny-by-default para no-super-admins.
+- **Fix crítico del Front Controller**: `checkPermissions()` usaba
+  `basename($_SERVER['SCRIPT_FILENAME'])` = index.php → SIEMPRE caía en
+  `default: return true`; el gating por página NUNCA funcionó en el panel FC.
+  Ahora usa `getPageName()` (respeta PAGE_NAME).
+- **Scoping de datos** (`public/Views/admin/table.php` +
+  `includes/api/admin/table.php`): reg_users, lines, mags, enigmas,
+  line_activity, live_connections (SQL + path Redis post-fetch),
+  credits_log, client_logs, reg_user_logs. Helpers `tableVisibleFilter()`
+  y `tableVisibleLineIDs()`.
+- **`public/Views/admin/api.php`**: reguserlist/userlist/search scoped;
+  acciones multi (user/line/mag/enigma) con ownership; stats y
+  header_stats scoped (conexiones del árbol vía pipeline Redis;
+  per-server solo super admin). **Fix upstream**: case 'line' usaba la key
+  inexistente `edit_line` → `edit_user` (consistente con checkPermissions).
+- **Servicios**: UserService (edit con ownership; crea con owner_id forzado
+  al admin; grupos super admin no asignables), LineService (process +
+  massEdit), MagService/EnigmaService (process + massEdit), GroupService
+  (is_super_admin solo lo controla un super admin; no puede quitárselo a su
+  propio grupo).
+- **Controladores admin**: UserController/LineController/MagController/
+  EnigmaController/LineActivity/LiveConnections validan ownership al abrir
+  ?id= ajeno (redirect).
+- **AdminApiController**: getLine/getUser/getMAG/getEnigma con ownership
+  (cubre todo el CRUD); gate pre-switch para acciones de infraestructura
+  (mysql_query, providers, groups, servers, settings, rtmp, stats...).
+- **Vistas**: dropdowns owner/grupo scoped (getVisibleRegisteredUsers en
+  line/user_mass/mag_mass/line_mass/enigma_mass), checkbox "Super Admin" en
+  group.php (solo super admin), badge en groups.php, selector de servers y
+  tarjetas per-server del dashboard solo super admin, permiso
+  `permission_stream_providers` añadido a los 7 langs (ru.ini mantiene CRLF).
+- **Menú**: los items sensibles desaparecen solos (header usa
+  Authorization::check('adv')).
+
+### QA en producción (todo verificado con curl + sesiones reales)
+- Datos QA: grupo 3 "QA Admins" (admin normal), `qa_admin2` (id 4),
+  `qa_res2` (id 5, owner 4), `qa_res3` (id 7, owner 4), `qa_super` (id 6,
+  grupo 1), líneas 8 (de qa_res2) y 9 (de jadmin4407), 12 (hijack test).
+- qa_admin2: reg_users=3 (self+res2+res3), lines=2 (solo suyas);
+  settings/providers/servers/groups → 302; user?id=1 y line?id=9 → 302;
+  disable/ban de IDs ajenos NO aplican; crear usuario en grupo 1 → bloqueado;
+  crear reseller → owner forzado a 4; crear línea con member_id=1 → forzada a 4.
+- qa_super: reg_users=7 (todos), lines=10 (todas), todas las páginas 200.
+- Panel reseller (qa_res2 vía /resellers): intacto, ve solo su línea.
+- Access code 7JDEeDMG ampliado a groups [1,3] para el QA.
+
+### Pendientes / notas
+- ⚠️ `qa_super` (grupo 1, password qapass123) y demás datos QA: borrar tras
+  validar (o cambiar password). Ver sección limpieza QA.
+- El payload (`make main`) NO incluye aún esta rama (está en super_admin;
+  merge a main cuando el usuario lo apruebe).
+- Dashboard: métricas de infra (CPU/red/streams) siguen globales para admins
+  normales (solo conexiones/usuarios quedaron scoped); per-server oculto.
+- `graph_stats` no se scopeó (es infra).
 
 ## Identidad
 
