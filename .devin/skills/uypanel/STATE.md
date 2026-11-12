@@ -1,7 +1,63 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-07 (instalador y BalancerCommand multi-distro: MariaDB 11.8 oficial + binarios nativos automáticos para LBs Debian 12/13 y Ubuntu 20/22/24).
+> cada cambio significativo. Última actualización: 2026-11-12 (REVERT del experimento multi-tenant/super_admin: producción y BD de vuelta al estado de main/2026-11-11; fix del loading del panel reseller conservado en main).
+
+## 🆕 2026-11-12 — REVERT: vuelta a main + BD al estado del 2026-11-11
+
+**Decisión del usuario**: el modelo multi-tenant (Super Admin / admins
+scoped / Super Resellers) no convencía; se vuelve al modelo simple de main
+(admins + resellers) y la BD queda como estaba.
+
+### Qué se hizo
+- **Repo**: `main` es la rama activa. La rama `super_admin` (6 commits:
+  multi-tenant scoping, super admin, super resellers, access codes por
+  categoría, fixes) queda PRESERVADA en git por si se quiere retomar.
+- **Fix del loading CONSERVADO en main** (commit `273e5c26`): bug real del
+  upstream 2.0.1 — las vistas reseller no llaman al footer y el controlador
+  no lo renderizaba → páginas del panel reseller sin JS, colgadas
+  "loading". Fix: `BaseAdminController::render` renderiza el footer en
+  scope reseller y pasa los datos de la vista vía `$vars`;
+  `layouts/footer.php` exporta las `$vars` al scope del footer.
+- **Producción** (`/home/uypanel`): restaurados los 39 archivos modificados
+  por la rama `super_admin` desde main + borradas las migraciones
+  002/003 del directorio `migrations/` (si quedaran, el MigrationRunner las
+  re-aplicaría). Verificado: los 39 archivos idénticos a main.
+- **BD revert quirúrgico** (estado = backup `backup_2026-11-11_01:46:01.sql`):
+  - Borrados usuarios 4,5,6,7,10,11 (QA multi-tenant), 12 (jferreira) y
+    16 (yybTQKuDXd) — creados hoy; el usuario prefirió borrarlos.
+  - Borradas líneas 8, 9, 12 (QA de hoy).
+  - Borrados grupos 3 (QA Admins) y 4 (Super Resellers).
+  - `ALTER TABLE users_groups DROP COLUMN is_super_admin`.
+  - `access_codes`: borrado `nybPU7Cw` (id 5); `resellers` groups
+    restaurado a `[2]` (hoy había quedado `[2,4]`).
+  - `users_packages` groups restaurado a `[2]`.
+  - `migrations`: borradas filas 002/003 (solo queda 001).
+  - AUTO_INCREMENT reseteados (users=4, lines=8, groups=3, codes=5).
+  - `users_logs` de los usuarios borrados, limpiados.
+- **Nginx**: borrado `codes/nybPU7Cw.conf` + reload OK.
+- **Backup de seguridad ANTES del revert**:
+  `/home/debian/pre_revert_super_admin_2026-11-12.sql` (49 MB, estado con
+  el experimento completo, por si se quiere rescatar algo).
+
+### QA del estado revertido (curl, sesiones reales)
+- Admin (grupo 1 temporal): login OK; dashboard/users/lines/settings/
+  servers/groups 200 completos. (stream_providers 404 = normal en main,
+  era página de la rama revertida.)
+- Reseller (grupo 2 temporal): login OK vía código `resellers`; TODAS las
+  páginas renderizan completas (42-43 scripts, `</body>`) gracias al fix
+  del loading conservado; creación de línea E2E OK (crédito descontado).
+- BD final = 3 usuarios (jadmin4407, qa_admin, qa_reseller), 7 líneas
+  (1-7), 2 grupos (Administrators, Resellers), 4 access codes, 1 migración.
+- Usuarios temporales de QA borrados tras la prueba.
+
+### Nota para el futuro
+- El modelo "cualquier reseller crea resellers y líneas" en main = activar
+  `create_sub_resellers=1` + `subresellers='[2]'` en el grupo Resellers
+  (decisión del usuario: por ahora NO — Resellers solo crea líneas, como
+  estaba).
+- El grupo Resellers (2) ya podía verse afectado por el bug del loading:
+  con el fix conservado, el panel reseller funciona completo.
 
 ## ⏭️ CONTINUAR AQUÍ (próxima sesión)
 
