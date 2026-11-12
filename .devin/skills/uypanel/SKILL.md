@@ -20,18 +20,27 @@ propio: modificar, añadir funciones y mantener el control total del código.
 
 ## Protocolo obligatorio (LEER Y CUMPLIR)
 
-1. **ANTES de trabajar**: lee `STATE.md` (junto a este archivo) — contiene el
+1. **SEGURIDAD PRIMERO — PRIORIDAD ABSOLUTA (CRÍTICO)**:
+   - **NUNCA exponer herramientas o servicios administrativos en rutas públicas sin autenticación**:
+     Cualquier herramienta interna, proxy inverso o endpoint administrativo DEBE estar protegido por el sistema de autenticación de UyPanel (`auth_request /internal_admin_auth` en Nginx o dentro del Front Controller con `requirePermission()`).
+   - **NUNCA bindear servicios internos a `0.0.0.0` (todos a `127.0.0.1`)**:
+     Todo demonio o servicio auxiliar (Node.js, Python, microservicios) DEBE escuchar EXCLUSIVAMENTE en `127.0.0.1` (localhost). Jamás exponer puertos de soporte al internet público.
+   - **Anti-sondeo estricto (Anti-Probe)**:
+     Toda petición no autorizada a rutas administrativas o herramientas internas debe responder con `HTTP 404 Not Found` idéntico a Nginx. Nunca revelar la existencia de herramientas ni servicios a escaneadores o atacantes.
+   - **Control de acceso por roles**:
+     Las herramientas administrativas son exclusivas para usuarios con rol de administrador activo (`is_admin: true`). Los revendedores y usuarios públicos no deben tener acceso a herramientas de gestión ni scrapers.
+2. **ANTES de trabajar**: lee `STATE.md` (junto a este archivo) — contiene el
    estado actual, decisiones tomadas y trabajo pendiente.
-2. **DESPUÉS de cada cambio significativo**: actualiza `STATE.md`:
+3. **DESPUÉS de cada cambio significativo**: actualiza `STATE.md`:
    - Añade entrada al "Registro de cambios" (fecha, qué, por qué, archivos).
    - Actualiza secciones afectadas (estado, pendientes, decisiones).
    - Esto es lo que mantiene el skill vivo y actualizado con el proyecto.
-3. **Convenciones de código**: el repo hereda reglas estrictas en
+4. **Convenciones de código**: el repo hereda reglas estrictas en
    `.github/instructions/*.instructions.md` (arquitectura, PHP, bash, nginx,
    migraciones, build). Léelas antes de tocar código de `domain/`, `core/`,
    `public/` o `streaming/`. La especificación completa está en
    `ARCHITECTURE.md` (~83 KB) y `specs/MODULE_SYSTEM_SPEC.md`.
-4. **Commits**: mensajes en inglés, estilo conventional
+5. **Commits**: mensajes en inglés, estilo conventional
    (`feat:`, `fix:`, `docs:`, `refactor:`, `chore:`), enfocados al "por qué".
    El usuario hace el push a GitHub; nunca hacer push sin pedido explícito.
 

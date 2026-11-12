@@ -41,7 +41,7 @@ endif;
                         <iframe id="extractorFrame"
                                 src="/stream_extractor/"
                                 style="width: 100%; height: calc(100vh - 210px); min-height: 820px; border: none; display: block;"
-                                allow="autoplay; encrypted-media; fullscreen; clipboard-write">
+                                allow="autoplay; encrypted-media; fullscreen; clipboard-read; clipboard-write">
                         </iframe>
                     </div>
                 </div>

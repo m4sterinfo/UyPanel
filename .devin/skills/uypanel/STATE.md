@@ -1,9 +1,42 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-12 (Integración de Universal Radio & Stream Extractor dentro de Gestión / Herramientas).
+> cada cambio significativo. Última actualización: 2026-11-12 (Blindaje crítico de seguridad: Nginx auth_request gate + binding localhost 127.0.0.1 + fix de copiado en portapapeles HTTP/iframe + actualización de skills de seguridad).
 
-## 🆕 2026-11-12 — Integración de Radio & Stream Extractor en Gestión / Herramientas
+## 🆕 2026-11-12 — Blindaje Crítico de Seguridad y Fix de Copiado de URLs
+
+Tras la integración inicial, se detectaron y corrigieron de inmediato dos incidencias críticas reportadas por el usuario:
+
+### 1. Blindaje de Seguridad Integral (Acceso No Autenticado Bloqueado):
+- **Problema**: El proxy inverso `/stream_extractor/` permitía que cualquier visitante en internet accediera directamente sin pasar por el login del panel ni el código de acceso. Además, Node.js escuchaba en `0.0.0.0:3200` exponiendo el puerto en la interfaz pública.
+- **Solución implementada (Defensa en Profundidad)**:
+  1. **Binding Exclusivo a Localhost**: Se configuró `server.js` y el servicio systemd (`uypanel-extractor.service`) con `HOST=127.0.0.1`, asegurando que el puerto 3200 escuche única y exclusivamente en la interfaz de bucle invertido local (inacesible desde fuera).
+  2. **Gate de Autenticación en Nginx (`auth_request`)**: Se añadió `auth_request /internal_admin_auth;` al bloque `location ^~ /stream_extractor/` en `custom.conf`. Toda petición HTTP entrante es interceptada y verificada mediante un subrequest FastCGI antes de permitir el proxy.
+  3. **Script de Verificación de Sesión (`public/auth_check.php`)**: Valida la existencia de la cookie `PHPSESSID`, timeout de sesión, coincidencia de hash `verify` y que el usuario pertenezca al grupo de administradores (`is_admin: true`). Si no hay sesión o no es admin, devuelve HTTP 403 en microsegundos sin carga a la BD.
+  4. **Anti-sondeo (Anti-Probe)**: Nginx intercepta cualquier 401/403 de `/stream_extractor/` y devuelve un **HTTP 404 Not Found** nativo idéntico al de Nginx (`error_page 401 403 =404 @extractor_denied;`). Un atacante o escaneador no autenticado no recibe ni el portal ni indicaciones de que la herramienta existe.
+  5. **Verificación QA**:
+     - Petición sin cookies a `http://127.0.0.1/stream_extractor/`: **HTTP 404 Not Found**.
+     - Petición con sesión de Reseller (grupo 2): **HTTP 404 Not Found**.
+     - Petición con sesión de Administrador (grupo 1): **HTTP 200 OK**.
+
+### 2. Fix de Copiado de URLs al Portapapeles (Universal Clipboard Fallback):
+- **Problema**: `navigator.clipboard.writeText` solo está disponible en contextos seguros (HTTPS o localhost). Al acceder al panel vía HTTP (`http://198.27.81.133/...`) o dentro de un `iframe`, `navigator.clipboard` es `undefined`, lo que provocaba que los botones "Copiar" fallaran en silencio con un error de JS.
+- **Solución implementada**:
+  - Implementada función universal `copyToClipboard(text, msg)` en `public/app.js` con:
+    1. Verificación segura de `navigator.clipboard` si `window.isSecureContext`.
+    2. Fallback mediante elemento `<textarea>` temporal con `document.execCommand('copy')` que funciona en el 100% de los navegadores en HTTP y dentro de iframes.
+    3. Fallback interactivo con `window.prompt` en caso de restricción extrema del navegador.
+  - Añadido `clipboard-read; clipboard-write` al atributo `allow` del `<iframe>` en `src/public/Views/admin/stream_extractor.php`.
+  - Corregido `fullStreamUrl` en caso de URLs relativas del proxy para incluir `${API_BASE}`.
+
+### 3. Actualización de Reglas de Seguridad en Skills (Prioridad Absoluta):
+- Actualizados `/home/debian/.gemini/config/skills/uypanel/SKILL.md` y `.devin/skills/uypanel/SKILL.md` estableciendo la **Seguridad como Regla de Oro #1 Obligatoria**:
+  - Prohibido exponer herramientas o proxies sin autenticación gate (`auth_request` / `requirePermission`).
+  - Prohibido bindear servicios a `0.0.0.0` (estrictamente `127.0.0.1`).
+  - Obligatorio responder con `404 Not Found` ante peticiones no autenticadas (anti-sondeo).
+  - Control estricto de roles: herramientas administrativas restringidas a `is_admin: true`.
+
+## 2026-11-12 — Integración de Radio & Stream Extractor en Gestión / Herramientas
 
 Se integró exitosamente la aplicación [radio-stream-extractor](https://github.com/m4sterinfo/radio-stream-extractor) como una herramienta nativa accesible desde el menú del panel de administración (`Gestión` -> `Herramientas` -> `Extractor de Streams`).
 
