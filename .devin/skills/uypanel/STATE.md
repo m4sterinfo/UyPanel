@@ -1,7 +1,30 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-12 (fix panel reseller: footer/JS + `Authorization::hasResellerPermissions` restaurado; trazabilidad owner al crear usuarios — desplegado en producción).
+> cada cambio significativo. Última actualización: 2026-11-12 (fix panel reseller: footer/JS + `Authorization::hasResellerPermissions` restaurado; trazabilidad owner; super resellers ya crean líneas — paquete groups [2,4]).
+
+## 🆕 2026-11-12 (b) — Super resellers también crean líneas
+
+**Reporte**: el super reseller podía crear resellers pero NO líneas.
+
+**Causa**: el único paquete ("test", is_line=1) tenía `groups=[2]` (solo
+Resellers). `create_line` sale de `users_packages` (paquetes del grupo) y
+`ResellerAPI::processLine` exige el grupo en `package.groups` → grupo 4 sin
+paquetes = sin "Add Line" ni creación.
+
+**Fix**:
+- Dato (este install): `users_packages.groups` de los paquetes de resellers
+  ahora incluye al grupo Super Resellers (`[2]` → `[2,4]`).
+- Migración `003_super_resellers_group.sql` extendida (idempotente): tras
+  crear el grupo, agrega su id a todo paquete que contenga al grupo
+  Resellers (cubre upgrades de otros installs).
+- QA E2E (curl, sesión real): super reseller QA (grupo 4) → botón "Add Line"
+  visible → `POST post?action=line` → línea creada con `member_id` = super
+  reseller, expira +1 mes, crédito descontado. Artefactos de prueba borrados.
+- Cadena completa verificada: línea → super reseller (owner admin) → super admin.
+
+**Nota**: si se quiere que un super reseller pueda crear OTROS super
+resellers, basta `subresellers=[2,4]` en su grupo (hoy `[2]`).
 
 ## 🆕 2026-11-12 — Fix panel reseller (loading) + trazabilidad owner
 
