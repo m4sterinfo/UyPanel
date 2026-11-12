@@ -130,17 +130,28 @@ class UserService {
 				}
 			}
 
-			// Multi-tenant: solo un Super Admin puede asignar grupos super admin
+			// Multi-tenant: solo un Super Admin puede asignar grupos super admin o admin.
+			// Un admin normal solo crea/asigna grupos RESELLER (resellers y super resellers).
+			// Al editar, se permite mantener el grupo actual del usuario.
 			if (!$rBypassAuth && !Authorization::isSuperAdmin() && intval($rArray['member_group_id'])) {
-				$db->query('SELECT `is_super_admin` FROM `users_groups` WHERE `group_id` = ?;', intval($rArray['member_group_id']));
-				if ($db->num_rows() == 1 && intval($db->get_row()['is_super_admin'])) {
-					exit();
+				$db->query('SELECT `is_super_admin`, `is_reseller` FROM `users_groups` WHERE `group_id` = ?;', intval($rArray['member_group_id']));
+				if ($db->num_rows() == 1) {
+					$rTargetGroup = $db->get_row();
+					$rGroupChanged = (!isset($rUser) || intval($rUser['member_group_id']) != intval($rArray['member_group_id']));
+
+					if ($rGroupChanged && (intval($rTargetGroup['is_super_admin']) || !intval($rTargetGroup['is_reseller']))) {
+						exit();
+					}
 				}
 			}
 
-			// Multi-tenant: los usuarios creados por un admin normal cuelgan de el
+			// Multi-tenant: los usuarios creados por un admin normal cuelgan de el o de su arbol
 			if (!$rBypassAuth && !Authorization::isSuperAdmin() && !isset($rData['edit'])) {
-				$rArray['owner_id'] = $GLOBALS['rAdminUserInfo']['id'];
+				$rVisibleOwner = Authorization::getVisibleUserIds();
+
+				if (!isset($rArray['owner_id']) || !in_array(intval($rArray['owner_id']), array_map('intval', $rVisibleOwner ?: array()))) {
+					$rArray['owner_id'] = $GLOBALS['rAdminUserInfo']['id'];
+				}
 			}
 
 			if (!empty($rData['member_group_id'])) {

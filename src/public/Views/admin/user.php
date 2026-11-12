@@ -90,7 +90,7 @@
 														<select name="member_group_id" id="member_group_id" class="form-control select2" data-toggle="select2">
 															<?php foreach (GroupService::getAll() as $rGroup): ?>
 																<option value="<?= intval($rGroup['group_id']) ?>"
-																<?php if (!Authorization::isSuperAdmin() && intval($rGroup['is_super_admin'])): continue; endif; ?>
+																<?php if (!Authorization::isSuperAdmin() && (!intval($rGroup['is_reseller']) || intval($rGroup['is_super_admin']))): continue; endif; ?>
 																	<?= isset($rUser) && intval($rUser['member_group_id']) === intval($rGroup['group_id']) ? 'selected' : '' ?>>
 																	<?= htmlspecialchars($rGroup['group_name']) ?>
 																</option>
