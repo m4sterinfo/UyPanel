@@ -1,7 +1,7 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-12 (rama `super_admin`: multi-tenant scoping + rol Super Admin, desplegado y verificado en producción).
+> cada cambio significativo. Última actualización: 2026-11-12 (rama `super_admin`: multi-tenant + Super Admin + grupo Super Resellers + access codes por categoría, desplegado y verificado).
 
 ## ⏭️ CONTINUAR AQUÍ (próxima sesión)
 
@@ -114,6 +114,33 @@ nueva categoría **Super Admin** que ve todo (admins, resellers, líneas, provid
 - qa_super: reg_users=7 (todos), lines=10 (todas), todas las páginas 200.
 - Panel reseller (qa_res2 vía /resellers): intacto, ve solo su línea.
 - Access code 7JDEeDMG ampliado a groups [1,3] para el QA.
+
+
+### Iteración 2 (2026-11-12, commit 5db3ec42) — feedback del usuario
+1. **Admin normal creaba admins** → `UserService::process` ahora solo permite
+   a admins normales asignar grupos `is_reseller=1` (y no super admin);
+   mantener el grupo actual al editar sí se permite. Dropdowns de grupo en
+   `user.php`/`user_mass.php` filtrados igual (solo reseller groups).
+2. **Faltaba crear super resellers** → grupo **"Super Resellers"** (id 4 en
+   este install): `is_reseller=1`, `create_sub_resellers=1`,
+   `subresellers=[2]` (migración `003_super_resellers_group.sql`, idempotente
+   + seed actualizado con AUTO_INCREMENT=4). El admin lo crea desde Users;
+   el super reseller crea sus resellers desde el panel reseller.
+3. **Access codes por categoría** (mecanismo `access_codes.groups` ya
+   existente; aplicado a este install + `console.php tools access`):
+   - `7JDEeDMG` → groups `[1]` (solo super admins)
+   - `nybPU7Cw` (nuevo, type 0) → groups `[3]` (admins normales; ajustar en
+     página Codes al crear grupos admin reales)
+   - `resellers` → groups `[2,4]` (resellers + super resellers, mismo código)
+   - URLs: `/{code}/login` en la raíz del dominio.
+4. **Owner flexible**: `UserService` permite colgar un usuario nuevo de
+   cualquier miembro visible del árbol (antes se forzaba owner=self).
+5. Fix 002: comentarios al inicio hacían que MigrationRunner se saltara el
+   primer statement (comments-first chunk); movidos al final.
+6. QA adicional: qa_superres (id 10, owner 4) entró por /resellers/ y creó
+   qa_subres (id 11, owner 10); qa_admin2 ve 5 usuarios (árbol en cascada);
+   intento de crear admin → bloqueado (exit, 0 rows). Residuos de test
+   borrados (qa_hack/qa_hack2/Gv5gxRkwtb).
 
 ### Pendientes / notas
 - ⚠️ `qa_super` (grupo 1, password qapass123) y demás datos QA: borrar tras
