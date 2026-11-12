@@ -141,11 +141,15 @@ class BaseAdminController
         // Split mode: separate .scripts.php exists → footer + scripts handled here.
         // Clean mode: no .scripts.php + no $__viewMode → controller renders footer.
         // Unified (proxy) mode: no .scripts.php + $__viewMode set → proxy view handles footer itself.
+        // Reseller views are pure content (no footer call) → the controller always renders
+        // the footer for them, otherwise pages ship without JS and hang "loading".
+        // View data is forwarded via $vars: the reseller footer reads page variables
+        // (e.g. $rRegisteredUsers on dashboard) that only exist in the view scope.
         if ($__hasScriptsFile) {
-            renderUnifiedLayoutFooter($this->scope);
+            renderUnifiedLayoutFooter($this->scope, $data);
             require $__scriptsFile;
-        } elseif (!isset($__viewMode)) {
-            renderUnifiedLayoutFooter($this->scope);
+        } elseif (!isset($__viewMode) || $this->scope === 'reseller') {
+            renderUnifiedLayoutFooter($this->scope, $data);
         }
     }
 
