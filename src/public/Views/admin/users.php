@@ -72,6 +72,7 @@
 
 									<?php foreach (GroupService::getAll() as $rGroup): ?>
 										<option value="<?= intval($rGroup['group_id']) ?>"
+										<?php if (!Authorization::isSuperAdmin() && intval($rGroup['is_super_admin'])): continue; endif; ?>
 											<?= (isset(RequestManager::getAll()['filter']) && RequestManager::getAll()['filter'] == intval($rGroup['group_id'])) ? 'selected' : '' ?>>
 											<?= $rGroup['group_name'] ?>
 										</option>

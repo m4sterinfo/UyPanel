@@ -14,7 +14,7 @@ class LineActivityController extends BaseAdminController
 
         if (isset(RequestManager::getAll()['user_id'])) {
             $rSearchUser = UserRepository::getLineById(RequestManager::getAll()['user_id']);
-            if ($rSearchUser) {
+            if ($rSearchUser && Authorization::check('line', $rSearchUser['id'])) {
                 $data['rSearchUser'] = $rSearchUser;
             }
         }

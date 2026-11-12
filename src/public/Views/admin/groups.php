@@ -45,6 +45,7 @@
 									<th class="text-center"><?php echo $language::get('is_admin'); ?></th>
 									<th class="text-center"><?php echo $language::get('is_reseller'); ?></th>
 									<th class="text-center">Subresellers</th>
+									<th class="text-center">Super Admin</th>
 									<th class="text-center"><?php echo $language::get('actions'); ?></th>
 								</tr>
 							</thead>
@@ -70,6 +71,13 @@
 										<td class="text-center">
 											<?php if ($rGroup['create_sub_resellers']): ?>
 												<i class='text-success mdi mdi-circle'></i>
+											<?php else: ?>
+												<i class='text-secondary mdi mdi-circle'></i>
+											<?php endif; ?>
+										</td>
+										<td class="text-center">
+											<?php if (intval($rGroup['is_super_admin'])): ?>
+												<i class='text-purple mdi mdi-shield-crown'></i>
 											<?php else: ?>
 												<i class='text-secondary mdi mdi-circle'></i>
 											<?php endif; ?>

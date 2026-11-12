@@ -1508,10 +1508,24 @@ if (isset($_SESSION['hash'])) {
 				$rServers = ServerRepository::getAll(true);
 				$rReturn = array('cpu' => 0, 'mem' => 0, 'io' => 0, 'fs' => 0, 'uptime' => '--', 'bytes_sent' => 0, 'bytes_received' => 0, 'open_connections' => 0, 'total_connections' => 0, 'online_users' => 0, 'total_users' => 0, 'total_streams' => 0, 'total_running_streams' => 0, 'offline_streams' => 0, 'requests_per_second' => 0, 'servers' => array());
 
+				// Multi-tenant: conexiones/usuarios limitados al arbol del admin
+				$rVisibleUserIDs = Authorization::getVisibleUserIds();
+				$rVisibleLineIDs = null;
+
+				if ($rVisibleUserIDs !== null) {
+					if (0 >= count($rVisibleUserIDs)) {
+						$rVisibleLineIDs = array(0);
+					} else {
+						$db->query('SELECT `id` FROM `lines` WHERE `member_id` IN (' . implode(',', array_map('intval', $rVisibleUserIDs)) . ');');
+						$rRows = $db->get_rows();
+						$rVisibleLineIDs = (is_array($rRows) && 0 < count($rRows)) ? array_map('intval', array_column($rRows, 'id')) : array(0);
+					}
+				}
+
 				if (SettingsManager::getAll()['redis_handler']) {
-					$rReturn['total_users'] = SettingsManager::getAll()['total_users'];
+					$rReturn['total_users'] = ($rVisibleLineIDs === null ? SettingsManager::getAll()['total_users'] : ($rVisibleLineIDs == array(0) ? 0 : count($rVisibleLineIDs)));
 				} else {
-					$db->query('SELECT `activity_id` FROM `lines_live` WHERE `hls_end` = 0 GROUP BY `user_id`;');
+					$db->query('SELECT `activity_id` FROM `lines_live` WHERE `hls_end` = 0' . ($rVisibleLineIDs === null ? '' : ' AND `user_id` IN (' . implode(',', $rVisibleLineIDs) . ')') . ' GROUP BY `user_id`;');
 
 					if (0 >= $db->num_rows()) {
 					} else {
@@ -1563,7 +1577,7 @@ if (isset($_SESSION['hash'])) {
 							$rReturn['open_connections'] = $db->get_row()['count'];
 						}
 
-						$db->query('SELECT COUNT(*) AS `count` FROM `lines_live` WHERE `hls_end` = 0;');
+						$db->query('SELECT COUNT(*) AS `count` FROM `lines_live` WHERE `hls_end` = 0' . ($rVisibleLineIDs === null ? '' : ' AND `user_id` IN (' . implode(',', $rVisibleLineIDs) . ')') . ');');
 
 						if (0 >= $db->num_rows()) {
 						} else {
@@ -1604,7 +1618,7 @@ if (isset($_SESSION['hash'])) {
 					$rUptime = 0;
 
 					if (!SettingsManager::getAll()['redis_handler']) {
-						$db->query('SELECT COUNT(*) AS `count` FROM `lines_live` WHERE `hls_end` = 0;');
+						$db->query('SELECT COUNT(*) AS `count` FROM `lines_live` WHERE `hls_end` = 0' . ($rVisibleLineIDs === null ? '' : ' AND `user_id` IN (' . implode(',', $rVisibleLineIDs) . ')') . ');');
 
 						if (0 < $db->num_rows()) {
 							$rTotalConnections = $db->get_row()['count'];
@@ -1612,7 +1626,7 @@ if (isset($_SESSION['hash'])) {
 							$rTotalConnections = 0;
 						}
 
-						$db->query('SELECT `activity_id` AS `count` FROM `lines_live` WHERE `hls_end` = 0 GROUP BY `user_id`;');
+						$db->query('SELECT `activity_id` AS `count` FROM `lines_live` WHERE `hls_end` = 0' . ($rVisibleLineIDs === null ? '' : ' AND `user_id` IN (' . implode(',', $rVisibleLineIDs) . ')') . ' GROUP BY `user_id`;');
 
 						if (0 < $db->num_rows()) {
 							$rTotalUsers = $db->num_rows();
@@ -1620,7 +1634,7 @@ if (isset($_SESSION['hash'])) {
 							$rTotalUsers = 0;
 						}
 
-						$db->query('SELECT `user_id` FROM `lines_live` WHERE `hls_end` = 0 GROUP BY `user_id`;');
+						$db->query('SELECT `user_id` FROM `lines_live` WHERE `hls_end` = 0' . ($rVisibleLineIDs === null ? '' : ' AND `user_id` IN (' . implode(',', $rVisibleLineIDs) . ')') . ' GROUP BY `user_id`;');
 						$rReturn['online_users'] = $db->num_rows();
 						$rReturn['open_connections'] = $rTotalConnections;
 					}
@@ -1652,6 +1666,13 @@ if (isset($_SESSION['hash'])) {
 						$rOnlineStreams[intval($rRow['server_id'])] = intval($rRow['count']);
 					}
 
+					if ($rVisibleLineIDs !== null) {
+						// Multi-tenant: conexiones del arbol propio (pipeline Redis)
+						$rCounts = ConnectionTracker::getUserConnections($rVisibleLineIDs, true);
+						$rReturn['open_connections'] = intval(array_sum($rCounts));
+						$rReturn['online_users'] = count(array_filter($rCounts, function ($rCount) { return 0 < $rCount; }));
+						$rReturn['total_connections'] = $rReturn['open_connections'];
+					} else {
 					foreach (array_keys($rServers) as $rServerID) {
 						if ($rServers[$rServerID]['server_online']) {
 							$rArray = array();
@@ -1700,13 +1721,16 @@ if (isset($_SESSION['hash'])) {
 							$rReturn['servers'][] = $rArray;
 						}
 					}
+					}
 
 					foreach ($rReturn['servers'] as $rServerArray) {
 						$rReturn['total_streams'] += $rServerArray['total_streams'];
 						$rReturn['total_running_streams'] += $rServerArray['total_running_streams'];
 						$rReturn['offline_streams'] += $rServerArray['offline_streams'];
 					}
-					$rReturn['online_users'] = SettingsManager::getAll()['total_users'];
+					if ($rVisibleLineIDs === null) {
+						$rReturn['online_users'] = SettingsManager::getAll()['total_users'];
+					}
 				}
 
 				echo json_encode($rReturn, JSON_PARTIAL_OUTPUT_ON_ERROR);
@@ -1722,22 +1746,42 @@ if (isset($_SESSION['hash'])) {
 			if (Authorization::check('adv', 'index')) {
 				$rReturn = array('bytes_sent' => 0, 'bytes_received' => 0, 'total_connections' => 0, 'total_users' => 0, 'total_running_streams' => 0, 'offline_streams' => 0);
 
+				// Multi-tenant: conexiones/usuarios del arbol propio
+				$rVisibleUserIDs = Authorization::getVisibleUserIds();
+				$rVisibleLineIDs = null;
+
+				if ($rVisibleUserIDs !== null) {
+					if (0 >= count($rVisibleUserIDs)) {
+						$rVisibleLineIDs = array(0);
+					} else {
+						$db->query('SELECT `id` FROM `lines` WHERE `member_id` IN (' . implode(',', array_map('intval', $rVisibleUserIDs)) . ');');
+						$rRows = $db->get_rows();
+						$rVisibleLineIDs = (is_array($rRows) && 0 < count($rRows)) ? array_map('intval', array_column($rRows, 'id')) : array(0);
+					}
+				}
+
 				if (!SettingsManager::getAll()['redis_handler']) {
-					$db->query('SELECT COUNT(*) AS `count` FROM `lines_live` WHERE `hls_end` = 0;');
+					$db->query('SELECT COUNT(*) AS `count` FROM `lines_live` WHERE `hls_end` = 0' . ($rVisibleLineIDs === null ? '' : ' AND `user_id` IN (' . implode(',', $rVisibleLineIDs) . ')') . ');');
 
 					if (0 >= $db->num_rows()) {
 					} else {
 						$rReturn['total_connections'] = $db->get_row()['count'];
 					}
 
-					$db->query('SELECT `activity_id` FROM `lines_live` WHERE `hls_end` = 0 GROUP BY `user_id`;');
+					$db->query('SELECT `activity_id` FROM `lines_live` WHERE `hls_end` = 0' . ($rVisibleLineIDs === null ? '' : ' AND `user_id` IN (' . implode(',', $rVisibleLineIDs) . ')') . ' GROUP BY `user_id`;');
 
 					if (0 >= $db->num_rows()) {
 					} else {
 						$rReturn['total_users'] = $db->num_rows();
 					}
 				} else {
-					$rReturn['total_users'] = SettingsManager::getAll()['total_users'];
+					if ($rVisibleLineIDs === null) {
+						$rReturn['total_users'] = SettingsManager::getAll()['total_users'];
+					} else {
+						$rReturn['total_users'] = ($rVisibleLineIDs == array(0) ? 0 : count($rVisibleLineIDs));
+						$rCounts = ConnectionTracker::getUserConnections($rVisibleLineIDs, true);
+						$rReturn['total_connections'] = intval(array_sum($rCounts));
+					}
 				}
 
 				$rOnlineCount = $rOfflineCount = array();
@@ -1755,7 +1799,7 @@ if (isset($_SESSION['hash'])) {
 				foreach (array_keys($rServers) as $rServerID) {
 					if (!$rServers[$rServerID]['server_online']) {
 					} else {
-						if (!SettingsManager::getAll()['redis_handler']) {
+						if (!SettingsManager::getAll()['redis_handler'] || $rVisibleLineIDs !== null) {
 						} else {
 							$rReturn['total_connections'] += $rServers[$rServerID]['connections'];
 						}
@@ -1949,9 +1993,12 @@ if (isset($_SESSION['hash'])) {
 						$rPage = 1;
 					}
 
-					$db->query('SELECT COUNT(`id`) AS `id` FROM `users` WHERE `username` LIKE ?;', '%' . RequestManager::getAll()['search'] . '%');
+					$rVisible = Authorization::getVisibleUserIds();
+					$rVisibleSQL = ($rVisible === null ? '' : ' AND `id` IN (' . implode(',', array_map('intval', $rVisible)) . ')');
+
+					$db->query('SELECT COUNT(`id`) AS `id` FROM `users` WHERE `username` LIKE ?' . $rVisibleSQL . ';', '%' . RequestManager::getAll()['search'] . '%');
 					$rReturn['total_count'] = $db->get_row()['id'];
-					$db->query('SELECT `id`, `username` FROM `users` WHERE `username` LIKE ? ORDER BY `username` ASC LIMIT ' . ($rPage - 1) * 100 . ', 100;', '%' . RequestManager::getAll()['search'] . '%');
+					$db->query('SELECT `id`, `username` FROM `users` WHERE `username` LIKE ?' . $rVisibleSQL . ' ORDER BY `username` ASC LIMIT ' . ($rPage - 1) * 100 . ', 100;', '%' . RequestManager::getAll()['search'] . '%');
 
 					if (0 >= $db->num_rows()) {
 					} else {
@@ -1982,13 +2029,16 @@ if (isset($_SESSION['hash'])) {
 						$rPage = 1;
 					}
 
-					$db->query('SELECT COUNT(`id`) AS `id` FROM `lines` WHERE `username` LIKE ? AND `is_e2` = 0 AND `is_mag` = 0;', RequestManager::getAll()['search'] . '%');
+					$rVisibleLines = Authorization::getVisibleUserIds();
+					$rVisibleLinesSQL = ($rVisibleLines === null ? '' : ' AND `member_id` IN (' . implode(',', array_map('intval', $rVisibleLines)) . ')');
+
+					$db->query('SELECT COUNT(`id`) AS `id` FROM `lines` WHERE `username` LIKE ? AND `is_e2` = 0 AND `is_mag` = 0' . $rVisibleLinesSQL . ';', RequestManager::getAll()['search'] . '%');
 					$rReturn['total_count'] = $db->get_row()['id'];
 					$db->query('SELECT COUNT(`device_id`) AS `id` FROM `enigma2_devices` WHERE `mac` LIKE ?;', RequestManager::getAll()['search'] . '%');
 					$rReturn['total_count'] += $db->get_row()['id'];
 					$db->query('SELECT COUNT(`mag_id`) AS `id` FROM `mag_devices` WHERE `mac` LIKE ?;', RequestManager::getAll()['search'] . '%');
 					$rReturn['total_count'] += $db->get_row()['id'];
-					$db->query('SELECT `id`, IF(`lines`.`is_mag`, `mag_devices`.`mac`, IF(`lines`.`is_e2`, `enigma2_devices`.`mac`, `lines`.`username`)) AS `username` FROM `lines` LEFT JOIN `mag_devices` ON `mag_devices`.`user_id` = `lines`.`id` LEFT JOIN `enigma2_devices` ON `enigma2_devices`.`user_id` = `lines`.`id` WHERE `lines`.`username` LIKE ? OR `mag_devices`.`mac` LIKE ? OR `enigma2_devices`.`mac` LIKE ? ORDER BY `username` ASC LIMIT ' . ($rPage - 1) * 100 . ', 100;', RequestManager::getAll()['search'] . '%', RequestManager::getAll()['search'] . '%', RequestManager::getAll()['search'] . '%');
+					$db->query('SELECT `id`, IF(`lines`.`is_mag`, `mag_devices`.`mac`, IF(`lines`.`is_e2`, `enigma2_devices`.`mac`, `lines`.`username`)) AS `username` FROM `lines` LEFT JOIN `mag_devices` ON `mag_devices`.`user_id` = `lines`.`id` LEFT JOIN `enigma2_devices` ON `enigma2_devices`.`user_id` = `lines`.`id` WHERE (`lines`.`username` LIKE ? OR `mag_devices`.`mac` LIKE ? OR `enigma2_devices`.`mac` LIKE ?)' . $rVisibleLinesSQL . ' ORDER BY `username` ASC LIMIT ' . ($rPage - 1) * 100 . ', 100;', RequestManager::getAll()['search'] . '%', RequestManager::getAll()['search'] . '%', RequestManager::getAll()['search'] . '%');
 
 					if (0 >= $db->num_rows()) {
 					} else {
@@ -3621,10 +3671,30 @@ if (isset($_SESSION['hash'])) {
 				$rItems = array();
 
 				foreach ($rTables as $rTable => $rTableInfo) {
+					// Multi-tenant: solo resultados del arbol propio
+					$rVisible = Authorization::getVisibleUserIds();
+					$rScopeSQL = '';
+
+					if ($rVisible !== null) {
+						if (0 >= count($rVisible)) {
+							$rScopeSQL = ' AND 1=0';
+						} else {
+							$rIDs = implode(',', array_map('intval', $rVisible));
+
+							if ($rTable == 'lines') {
+								$rScopeSQL = ' AND `member_id` IN (' . $rIDs . ')';
+							} elseif ($rTable == 'mag_devices' || $rTable == 'enigma2_devices') {
+								$rScopeSQL = ' AND `user_id` IN (SELECT `id` FROM `lines` WHERE `member_id` IN (' . $rIDs . '))';
+							} elseif ($rTable == 'users') {
+								$rScopeSQL = ' AND `id` IN (' . $rIDs . ')';
+							}
+						}
+					}
+
 					if ($rTable == 'streams') {
-						$db->query('SELECT `' . $rTable . '`.*, MATCH(' . $rTableInfo[2] . ') AGAINST (? IN BOOLEAN MODE) AS `score1`, MATCH(' . $rTableInfo[2] . ') AGAINST (? IN BOOLEAN MODE) AS `score2` FROM `' . $rTable . '` WHERE MATCH(' . $rTableInfo[2] . ') AGAINST (? IN BOOLEAN MODE) OR `id` = ? ORDER BY `score1` + `score2` DESC LIMIT ' . $rLimit . ';', $rTermSP, $rTermSP . '*', $rTermSP . '*', intval($rTerm));
+						$db->query('SELECT `' . $rTable . '`.*, MATCH(' . $rTableInfo[2] . ') AGAINST (? IN BOOLEAN MODE) AS `score1`, MATCH(' . $rTableInfo[2] . ') AGAINST (? IN BOOLEAN MODE) AS `score2` FROM `' . $rTable . '` WHERE (MATCH(' . $rTableInfo[2] . ') AGAINST (? IN BOOLEAN MODE) OR `id` = ?)' . $rScopeSQL . ' ORDER BY `score1` + `score2` DESC LIMIT ' . $rLimit . ';', $rTermSP, $rTermSP . '*', $rTermSP . '*', intval($rTerm));
 					} else {
-						$db->query('SELECT `' . $rTable . '`.*, MATCH(' . $rTableInfo[2] . ') AGAINST (? IN BOOLEAN MODE) AS `score1`, MATCH(' . $rTableInfo[2] . ') AGAINST (? IN BOOLEAN MODE) AS `score2` FROM `' . $rTable . '` WHERE MATCH(' . $rTableInfo[2] . ') AGAINST (? IN BOOLEAN MODE) ORDER BY `score1` + `score2` DESC LIMIT ' . $rLimit . ';', $rTermSP, $rTermSP . '*', $rTermSP . '*');
+						$db->query('SELECT `' . $rTable . '`.*, MATCH(' . $rTableInfo[2] . ') AGAINST (? IN BOOLEAN MODE) AS `score1`, MATCH(' . $rTableInfo[2] . ') AGAINST (? IN BOOLEAN MODE) AS `score2` FROM `' . $rTable . '` WHERE MATCH(' . $rTableInfo[2] . ') AGAINST (? IN BOOLEAN MODE)' . $rScopeSQL . ' ORDER BY `score1` + `score2` DESC LIMIT ' . $rLimit . ';', $rTermSP, $rTermSP . '*', $rTermSP . '*');
 					}
 
 					foreach ($db->get_rows() as $rRow) {
@@ -4498,7 +4568,18 @@ if (isset($_SESSION['hash'])) {
 		if (count($rRequestIDs) != 0) {
 			switch ($rType) {
 				case 'line':
-					if (Authorization::check('adv', 'edit_line')) {
+					if (Authorization::check('adv', 'edit_user')) {
+						$rVisible = Authorization::getVisibleUserIds();
+
+						if ($rVisible !== null) {
+							if (0 >= count($rVisible)) {
+								$rRequestIDs = array();
+							} else {
+								$db->query('SELECT `id` FROM `lines` WHERE `id` IN (' . implode(',', array_map('intval', $rRequestIDs)) . ') AND `member_id` IN (' . implode(',', array_map('intval', $rVisible)) . ');');
+								$rRequestIDs = array_map('intval', array_column($db->get_rows(), 'id'));
+							}
+						}
+
 						if ($rSub == 'delete') {
 							LineRepository::deleteMany($rRequestIDs);
 						} else {
@@ -4563,6 +4644,17 @@ if (isset($_SESSION['hash'])) {
 
 						foreach ($db->get_Rows() as $rRow) {
 							$rUserIDs[] = $rRow['user_id'];
+						}
+
+						$rVisible = Authorization::getVisibleUserIds();
+
+						if ($rVisible !== null) {
+							if (0 >= count($rVisible)) {
+								$rUserIDs = array();
+							} else {
+								$db->query('SELECT `id` FROM `lines` WHERE `id` IN (' . implode(',', array_map('intval', $rUserIDs)) . ') AND `member_id` IN (' . implode(',', array_map('intval', $rVisible)) . ');');
+								$rUserIDs = array_map('intval', array_column($db->get_rows(), 'id'));
+							}
 						}
 
 						if (0 >= count($rUserIDs)) {
@@ -4633,6 +4725,12 @@ if (isset($_SESSION['hash'])) {
 					// no break
 				case 'user':
 					if (Authorization::check('adv', 'edit_reguser')) {
+						$rVisible = Authorization::getVisibleUserIds();
+
+						if ($rVisible !== null) {
+							$rRequestIDs = array_values(array_intersect(array_map('intval', $rRequestIDs), array_map('intval', $rVisible)));
+						}
+
 						if ($rSub == 'enable') {
 							$db->query('UPDATE `users` SET `status` = 1 WHERE `id` IN (' . implode(',', array_map('intval', $rRequestIDs)) . ');');
 						} else {

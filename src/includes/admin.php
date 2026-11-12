@@ -1849,7 +1849,8 @@ function checkResellerPermissions($rPage = null) {
 function checkPermissions($rPage = null) {
 	if ($rPage) {
 	} else {
-		$rPage = strtolower(basename($_SERVER['SCRIPT_FILENAME'], '.php'));
+		// Front Controller: SCRIPT_FILENAME es index.php — usar la ruta real (PAGE_NAME)
+		$rPage = getPageName();
 	}
 
 	switch ($rPage) {
@@ -2158,14 +2159,16 @@ function checkPermissions($rPage = null) {
 
 
 		case 'stream_view':
-		case 'provider':
-		case 'providers':
 		case 'streams':
 		case 'epg_view':
 		case 'created_channels':
 		case 'stream_rank':
 		case 'archive':
 			return Authorization::check('adv', 'streams');
+
+		case 'provider':
+		case 'providers':
+			return Authorization::check('adv', 'stream_providers');
 
 		case 'ticket':
 			return Authorization::check('adv', 'ticket');

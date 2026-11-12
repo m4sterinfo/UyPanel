@@ -48,6 +48,11 @@ class EnigmaService {
 			if (!isset($rData['c_member_id'])) {
 			} else {
 				$rUserArray['member_id'] = intval($rData['member_id']);
+				// Multi-tenant: el nuevo dueno debe ser visible
+				$rVisibleOwner = Authorization::getVisibleUserIds();
+				if ($rVisibleOwner !== null && !in_array(intval($rData['member_id']), array_map('intval', $rVisibleOwner))) {
+					unset($rUserArray['member_id']);
+				}
 			}
 
 			if (!isset($rData['c_force_server_id'])) {
@@ -103,6 +108,11 @@ class EnigmaService {
 			foreach ($rDevices as $rDevice) {
 				$rDeviceInfo = getEnigma($rDevice);
 
+				// Multi-tenant: solo dispositivos del arbol propio
+				if ($rDeviceInfo && !Authorization::check('line', $rDeviceInfo['user_id'])) {
+					continue;
+				}
+
 				if (!$rDeviceInfo) {
 				} else {
 					if (0 >= count($rArray)) {
@@ -156,7 +166,7 @@ class EnigmaService {
 		global $db;
 		if (InputValidator::validate('processEnigma', $rData)) {
 			if (isset($rData['edit'])) {
-				if (Authorization::check('adv', 'edit_e2')) {
+				if (Authorization::check('adv', 'edit_e2') && Authorization::check('line', getEnigma($rData['edit'])['user_id'] ?? 0)) {
 					$rArray = overwriteData(getEnigma($rData['edit']), $rData);
 					$rUser = UserRepository::getLineById($rArray['user_id']);
 
@@ -239,6 +249,12 @@ class EnigmaService {
 
 			if ($rUserArray['member_id']) {
 			} else {
+				$rUserArray['member_id'] = $GLOBALS['rAdminUserInfo']['id'];
+			}
+
+			// Multi-tenant: el dueno del dispositivo debe ser el propio admin o su arbol
+			$rVisibleOwner = Authorization::getVisibleUserIds();
+			if ($rVisibleOwner !== null && !in_array(intval($rUserArray['member_id']), array_map('intval', $rVisibleOwner))) {
 				$rUserArray['member_id'] = $GLOBALS['rAdminUserInfo']['id'];
 			}
 

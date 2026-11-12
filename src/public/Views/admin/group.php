@@ -138,6 +138,16 @@ if (!isset($rGroup)) {
 	}
 }
 
+if (Authorization::isSuperAdmin()) {
+	echo '<div class="form-group row mb-4">' . "\n" . '<label class="col-md-4 col-form-label" for="is_super_admin">Super Admin</label>' . "\n" . '<div class="col-md-2">' . "\n" . '<input name="is_super_admin" id="is_super_admin" type="checkbox" ';
+
+	if (isset($rGroup) && intval($rGroup['is_super_admin'])) {
+		echo 'checked ';
+	}
+
+	echo 'data-plugin="switchery" class="js-switch" data-color="#039cfd"/>' . "\n" . '</div>' . "\n" . '</div>';
+}
+
 echo 'data-plugin="switchery" class="js-switch" data-color="#039cfd"/>' . "\n\t\t\t\t\t\t\t\t\t\t\t\t\t" . '</div>' . "\n\t\t\t\t\t\t\t\t\t\t\t\t" . '</div>' . "\n\t\t\t\t\t\t\t\t\t\t\t" . '</div> ' . "\n\t\t\t\t\t\t\t\t\t\t" . '</div> ' . "\n\t\t\t\t\t\t\t\t\t\t" . '<ul class="list-inline wizard mb-0">' . "\n\t\t\t\t\t\t\t\t\t\t\t" . '<li class="nextb list-inline-item float-right">' . "\n\t\t\t\t\t\t\t\t\t\t\t\t" . '<input name="submit_group" type="submit" class="btn btn-primary" value="';
 
 

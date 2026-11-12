@@ -30,6 +30,21 @@ if (!empty(RequestManager::getAll()['api_key']) && AdminAPIWrapper::createSessio
     } else {
         $rHideColumns = null;
     }
+    // Multi-tenant: acciones de infraestructura/ajustes solo para Super Admin
+    $rSuperOnlyActions = array(
+        'mysql_query',
+        'get_providers', 'get_provider', 'create_provider', 'edit_provider', 'delete_provider', 'reload_provider',
+        'get_groups', 'get_group', 'create_group', 'edit_group', 'delete_group',
+        'get_servers', 'get_server', 'install_server', 'install_proxy', 'edit_server', 'edit_proxy', 'delete_server',
+        'get_settings', 'edit_settings',
+        'get_server_stats', 'get_fpm_status', 'get_rtmp_stats', 'get_free_space', 'get_pids', 'get_certificate_info',
+        'reload_nginx', 'clear_temp', 'clear_streams', 'get_directory', 'kill_pid', 'reload_cache',
+        'get_rtmp_ips', 'get_rtmp_ip', 'create_rtmp_ip', 'edit_rtmp_ip', 'delete_rtmp_ip'
+    );
+    if (in_array($rAction, $rSuperOnlyActions) && !Authorization::isSuperAdmin()) {
+        echo json_encode(array('status' => 'STATUS_FAILURE', 'error' => 'Super admin only.'));
+        exit;
+    }
     switch ($rAction) {
         case 'mysql_query':
             echo json_encode(AdminAPIWrapper::runQuery($rData['query']));
@@ -712,7 +727,7 @@ class AdminAPIWrapper {
         return array('status' => 'STATUS_SUCCESS', 'data' => $rUserInfo, 'permissions' => $rPermissions);
     }
     public static function getLine($rID) {
-        if (!($rLine = UserRepository::getLineById($rID))) {
+        if (!($rLine = UserRepository::getLineById($rID)) || !Authorization::check('line', $rID)) {
             return array('status' => 'STATUS_FAILURE');
         }
         return array('status' => 'STATUS_SUCCESS', 'data' => $rLine);
@@ -784,7 +799,7 @@ class AdminAPIWrapper {
         return array('status' => 'STATUS_SUCCESS');
     }
     public static function getUser($rID) {
-        if (!($rUser = UserRepository::getRegisteredUserById($rID))) {
+        if (!($rUser = UserRepository::getRegisteredUserById($rID)) || !Authorization::check('user', $rID)) {
             return array('status' => 'STATUS_FAILURE');
         }
         return array('status' => 'STATUS_SUCCESS', 'data' => $rUser);
@@ -838,7 +853,7 @@ class AdminAPIWrapper {
         return array('status' => 'STATUS_SUCCESS');
     }
     public static function getMAG($rID) {
-        if (!($rDevice = getMag($rID))) {
+        if (!($rDevice = getMag($rID)) || !Authorization::check('line', $rDevice['user_id'])) {
             return array('status' => 'STATUS_FAILURE');
         }
         return array('status' => 'STATUS_SUCCESS', 'data' => $rDevice);
@@ -917,7 +932,7 @@ class AdminAPIWrapper {
         return array('status' => 'STATUS_SUCCESS', 'data' => self::getLine($rDevice['user_id']));
     }
     public static function getEnigma($rID) {
-        if (!($rDevice = getEnigma($rID))) {
+        if (!($rDevice = getEnigma($rID)) || !Authorization::check('line', $rDevice['user_id'])) {
             return array('status' => 'STATUS_FAILURE');
         }
         return array('status' => 'STATUS_SUCCESS', 'data' => $rDevice);

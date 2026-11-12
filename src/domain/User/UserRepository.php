@@ -117,6 +117,38 @@ class UserRepository {
 		return $rReturn;
 	}
 
+	/**
+	 * Usuarios registrados visibles para el usuario actual (multi-tenant):
+	 * Super Admin => todos; Admin/Reseller => self + su arbol; sin sesion => vacio.
+	 */
+	public static function getVisibleRegisteredUsers() {
+		global $db;
+		$rVisible = Authorization::getVisibleUserIds();
+
+		if ($rVisible === null) {
+			return self::getRegisteredUsers();
+		}
+
+		$rReturn = array();
+
+		if (0 >= count($rVisible)) {
+			$rReturn[-1] = array();
+			return $rReturn;
+		}
+
+		$db->query('SELECT * FROM `users` WHERE `id` IN (' . implode(',', array_map('intval', $rVisible)) . ') ORDER BY `username` ASC;');
+
+		foreach ($db->get_rows() as $rRow) {
+			$rReturn[intval($rRow['id'])] = $rRow;
+		}
+
+		if (count($rReturn) == 0) {
+			$rReturn[-1] = array();
+		}
+
+		return $rReturn;
+	}
+
 	public static function getStreamingUserInfo($rSettings, $rCached, $rBouquets, $rUserID = null, $rUsername = null, $rPassword = null, $rGetChannelIDs = false, $rGetConnections = false, $rIP = '') {
 		global $db, $rBlockedISP, $rBlockedServers;
 		$rUserInfo = null;

@@ -104,6 +104,22 @@ class LineService {
 
 			$rUsers = confirmIDs(json_decode($rData['users_selected'], true));
 
+			// Multi-tenant: solo lineas del arbol propio
+			$rVisible = Authorization::getVisibleUserIds();
+
+			if ($rVisible !== null) {
+				if (0 >= count($rVisible)) {
+					$rUsers = array();
+				} else {
+					$db->query('SELECT `id` FROM `lines` WHERE `id` IN (' . implode(',', array_map('intval', $rUsers)) . ') AND `member_id` IN (' . implode(',', array_map('intval', $rVisible)) . ');');
+					$rUsers = array_map('intval', array_column($db->get_rows(), 'id'));
+				}
+
+				if (isset($rArray['member_id']) && !in_array(intval($rArray['member_id']), array_map('intval', $rVisible))) {
+					unset($rArray['member_id']);
+				}
+			}
+
 			if (0 >= count($rUsers)) {
 			} else {
 				$rPrepare = prepareArray($rArray);
@@ -132,7 +148,7 @@ class LineService {
 		global $db;
 		if (InputValidator::validate('processLine', $rData)) {
 			if (isset($rData['edit'])) {
-				if (Authorization::check('adv', 'edit_user')) {
+				if (Authorization::check('adv', 'edit_user') && Authorization::check('line', $rData['edit'])) {
 					$rArray = overwriteData(UserRepository::getLineById($rData['edit']), $rData);
 				} else {
 					exit();
@@ -198,6 +214,13 @@ class LineService {
 
 			if ($rArray['member_id']) {
 			} else {
+				$rArray['member_id'] = $GLOBALS['rAdminUserInfo']['id'];
+			}
+
+			// Multi-tenant: el dueño de la linea debe ser el propio admin o su arbol
+			$rVisible = Authorization::getVisibleUserIds();
+
+			if ($rVisible !== null && !in_array(intval($rArray['member_id']), array_map('intval', $rVisible))) {
 				$rArray['member_id'] = $GLOBALS['rAdminUserInfo']['id'];
 			}
 

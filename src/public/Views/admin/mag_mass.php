@@ -141,7 +141,7 @@
                                                     <label class="col-md-3 col-form-label" for="member_id">Owner</label>
                                                     <div class="col-md-8">
                                                         <select disabled name="member_id" id="member_id" class="form-control select2" data-toggle="select2">
-                                                            <?php foreach (UserRepository::getRegisteredUsers() as $rRegisteredUser) { ?>
+                                                            <?php foreach (UserRepository::getVisibleRegisteredUsers() as $rRegisteredUser) { ?>
                                                                 <option value="<?php echo $rRegisteredUser['id']; ?>"><?php echo $rRegisteredUser['username']; ?></option>
                                                             <?php } ?>
                                                         </select>

@@ -40,7 +40,7 @@
         }
     }
 
-    $rRegisteredUsers = UserRepository::getRegisteredUsers();
+    $rRegisteredUsers = UserRepository::getVisibleRegisteredUsers();
     $_TITLE = 'Line';
     require_once __DIR__ . '/../layouts/admin.php';
     renderUnifiedLayoutHeader('admin');

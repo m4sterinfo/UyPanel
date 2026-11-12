@@ -13,7 +13,7 @@ class LineController extends BaseAdminController
         if (isset(RequestManager::getAll()['id'])) {
             $rLine = UserRepository::getLineById(RequestManager::getAll()['id']);
 
-            if (!$rLine || !Authorization::check('adv', 'edit_user')) {
+            if (!$rLine || !Authorization::check('adv', 'edit_user') || !Authorization::check('line', $rLine['id'])) {
                 goHome();
             }
 
@@ -43,7 +43,7 @@ class LineController extends BaseAdminController
             $rLine = null;
         }
 
-        $rRegisteredUsers = UserRepository::getRegisteredUsers();
+        $rRegisteredUsers = UserRepository::getVisibleRegisteredUsers();
 
         $data = ['rRegisteredUsers' => $rRegisteredUsers];
         if ($rLine) {

@@ -92,6 +92,7 @@ $rPermissionKeys = array(
 	'series',
 	'users',
 	'episodes',
+	'stream_providers',
 	'edit_tprofile',
 	'folder_watch_add',
 	'add_code',

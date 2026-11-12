@@ -10,7 +10,7 @@ class MagController extends BaseAdminController {
         $rDevice = null;
         if (isset(RequestManager::getAll()['id'])) {
             $rDevice = getMag(RequestManager::getAll()['id']);
-            if (!$rDevice['user_id']) {
+            if (!$rDevice['user_id'] || !Authorization::check('line', $rDevice['user_id'])) {
                 exit();
             }
         }

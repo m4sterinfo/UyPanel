@@ -649,10 +649,10 @@
                                             <a href="#"> <i class="fas fa-users"></i><?= $language::get('supplirs'); ?> <div class="arrow-down"></div>
                                             </a>
                                             <ul class="submenu">
-                                                <?php if (Authorization::check('adv', 'streams')): ?>
+                                                <?php if (Authorization::check('adv', 'stream_providers')): ?>
                                                     <li><a href="provider"><?= $language::get('add_providers'); ?></a></li>
                                                 <?php endif; ?>
-                                                <?php if (Authorization::check('adv', 'streams')): ?>
+                                                <?php if (Authorization::check('adv', 'stream_providers')): ?>
                                                     <li><a href="providers"><?= $language::get('stream_providers'); ?></a></li>
                                                 <?php endif; ?>
                                             </ul>

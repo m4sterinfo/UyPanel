@@ -15,6 +15,9 @@ class LiveConnectionsController extends BaseAdminController
 
         if (isset(RequestManager::getAll()['user_id'])) {
             $rSearchUser = UserRepository::getLineById(RequestManager::getAll()['user_id']);
+            if ($rSearchUser && !Authorization::check('line', $rSearchUser['id'])) {
+                $rSearchUser = null;
+            }
         }
 
         if (isset(RequestManager::getAll()['stream_id'])) {

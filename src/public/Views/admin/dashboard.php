@@ -16,6 +16,11 @@
 		goHome();
 	}
 
+	// Multi-tenant: la vista por servidor es infraestructura, solo Super Admin
+	if (isset(RequestManager::getAll()['server_id']) && !Authorization::isSuperAdmin()) {
+		goHome();
+	}
+
 	$rConnectionMap = array();
 	$rConnectionCount = 0;
 
@@ -80,6 +85,7 @@
 					<div class="page-title-box">
 						<div class="page-title-right" <?php if ($rMobile): ?>style="width: 100%" <?php endif; ?>>
 							<ol class="breadcrumb m-0" style="width: <?php echo $rMobile ? '100%' : '250px'; ?>;">
+								<?php if (Authorization::isSuperAdmin()): ?>
 								<select id="server_id" class="form-control">
 									<option <?php if (!isset(RequestManager::getAll()['server_id'])) echo 'selected'; ?> value="">All Servers</option>
 									<?php foreach ($rServers as $rServerItem): ?>
@@ -90,6 +96,7 @@
 										<?php endif; ?>
 									<?php endforeach; ?>
 								</select>
+								<?php endif; ?>
 							</ol>
 						</div>
 						<?php if (!$rMobile): ?>
@@ -389,7 +396,7 @@
 					<?php endif; ?>
 				<?php endif; ?>
 
-				<?php if (!isset(RequestManager::getAll()['server_id'])): ?>
+				<?php if (!isset(RequestManager::getAll()['server_id']) && Authorization::isSuperAdmin()): ?>
 					<?php $i = 0; ?>
 					<?php foreach ($rOrderedServers as $rServer): ?>
 						<?php if ($rServer['enabled'] && $rServer['server_online']): ?>

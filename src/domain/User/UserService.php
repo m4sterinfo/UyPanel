@@ -70,6 +70,24 @@ class UserService {
 
 			$rUsers = confirmIDs(json_decode($rData['users_selected'], true));
 
+		// Multi-tenant: solo se editan usuarios del arbol propio
+		$rVisible = Authorization::getVisibleUserIds();
+
+		if ($rVisible !== null) {
+			$rUsers = array_values(array_intersect(array_map('intval', $rUsers), array_map('intval', $rVisible)));
+
+			if (isset($rArray['member_group_id'])) {
+				$db->query('SELECT `is_super_admin` FROM `users_groups` WHERE `group_id` = ?;', intval($rArray['member_group_id']));
+				if ($db->num_rows() == 1 && intval($db->get_row()['is_super_admin'])) {
+					unset($rArray['member_group_id']);
+				}
+			}
+
+			if (isset($rArray['owner_id']) && !in_array(intval($rArray['owner_id']), array_map('intval', $rVisible))) {
+				unset($rArray['owner_id']);
+			}
+		}
+
 			if (0 >= count($rUsers)) {
 			} else {
 				if (!(isset($rData['c_owner_id']) && $rUser == $rArray['owner_id'])) {
@@ -96,7 +114,7 @@ class UserService {
 		global $db;
 		if (InputValidator::validate('processUser', $rData)) {
 			if (isset($rData['edit'])) {
-				if (Authorization::check('adv', 'edit_reguser') || $rBypassAuth) {
+				if ((Authorization::check('adv', 'edit_reguser') || $rBypassAuth) && Authorization::check('user', $rData['edit'])) {
 					$rUser = UserRepository::getRegisteredUserById($rData['edit']);
 					$rArray = overwriteData($rUser, $rData, array('password'));
 				} else {
@@ -110,6 +128,19 @@ class UserService {
 				} else {
 					exit();
 				}
+			}
+
+			// Multi-tenant: solo un Super Admin puede asignar grupos super admin
+			if (!$rBypassAuth && !Authorization::isSuperAdmin() && intval($rArray['member_group_id'])) {
+				$db->query('SELECT `is_super_admin` FROM `users_groups` WHERE `group_id` = ?;', intval($rArray['member_group_id']));
+				if ($db->num_rows() == 1 && intval($db->get_row()['is_super_admin'])) {
+					exit();
+				}
+			}
+
+			// Multi-tenant: los usuarios creados por un admin normal cuelgan de el
+			if (!$rBypassAuth && !Authorization::isSuperAdmin() && !isset($rData['edit'])) {
+				$rArray['owner_id'] = $GLOBALS['rAdminUserInfo']['id'];
 			}
 
 			if (!empty($rData['member_group_id'])) {

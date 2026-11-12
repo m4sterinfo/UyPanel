@@ -113,6 +113,7 @@ $rPermissionKeys = array(
 	'series',
 	'users',
 	'episodes',
+	'stream_providers',
 	'edit_tprofile',
 	'folder_watch_add',
 	'add_code',
@@ -125,6 +126,11 @@ $rPermissionKeys = array(
 
 $rAdvPermissions = array();
 foreach ($rPermissionKeys as $rPermissionKey) {
+	// Multi-tenant: las keys reservadas al Super Admin no se asignan por grupo
+	if (in_array($rPermissionKey, Authorization::SUPER_ADMIN_ONLY_KEYS)) {
+		continue;
+	}
+
 	if (isset($language) && is_string($language) && class_exists($language)) {
 		$rAdvPermissions[] = array(
 			$rPermissionKey,

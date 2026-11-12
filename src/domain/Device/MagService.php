@@ -73,6 +73,11 @@ class MagService {
 			if (!isset($rData['c_member_id'])) {
 			} else {
 				$rUserArray['member_id'] = intval($rData['member_id']);
+				// Multi-tenant: el nuevo dueno debe ser visible
+				$rVisibleOwner = Authorization::getVisibleUserIds();
+				if ($rVisibleOwner !== null && !in_array(intval($rData['member_id']), array_map('intval', $rVisibleOwner))) {
+					unset($rUserArray['member_id']);
+				}
 			}
 
 			if (!isset($rData['c_force_server_id'])) {
@@ -147,6 +152,11 @@ class MagService {
 			foreach ($rDevices as $rDevice) {
 				$rDeviceInfo = getMag($rDevice);
 
+				// Multi-tenant: solo dispositivos del arbol propio
+				if ($rDeviceInfo && !Authorization::check('line', $rDeviceInfo['user_id'])) {
+					continue;
+				}
+
 				if (!$rDeviceInfo) {
 				} else {
 					if (empty($rData['message_type'])) {
@@ -205,7 +215,7 @@ class MagService {
 		global $db;
 		if (InputValidator::validate('processMAG', $rData)) {
 			if (isset($rData['edit'])) {
-				if (Authorization::check('adv', 'edit_mag')) {
+				if (Authorization::check('adv', 'edit_mag') && Authorization::check('line', getMag($rData['edit'])['user_id'] ?? 0)) {
 					$rArray = overwriteData(getMag($rData['edit']), $rData);
 					$rUser = UserRepository::getLineById($rArray['user_id']);
 
@@ -289,6 +299,12 @@ class MagService {
 
 			if ($rUserArray['member_id']) {
 			} else {
+				$rUserArray['member_id'] = $GLOBALS['rAdminUserInfo']['id'];
+			}
+
+			// Multi-tenant: el dueno del dispositivo debe ser el propio admin o su arbol
+			$rVisibleOwner = Authorization::getVisibleUserIds();
+			if ($rVisibleOwner !== null && !in_array(intval($rUserArray['member_id']), array_map('intval', $rVisibleOwner))) {
 				$rUserArray['member_id'] = $GLOBALS['rAdminUserInfo']['id'];
 			}
 

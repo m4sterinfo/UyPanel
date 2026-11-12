@@ -53,6 +53,46 @@ if ($rMobile) {
 }
 $rType = RequestManager::getAll()["id"];
 
+// Multi-tenant: filas visibles segun el arbol del admin/reseller actual (NULL = super admin, sin filtro)
+$rVisibleUserIDs = Authorization::getVisibleUserIds();
+
+if (!function_exists("tableVisibleFilter")) {
+    function tableVisibleFilter($rKind, $rColumn) {
+        $rVisible = Authorization::getVisibleUserIds();
+        if ($rVisible === null) {
+            return null;
+        }
+        if (0 >= count($rVisible)) {
+            return "1=0";
+        }
+        $rIDs = implode(",", array_map("intval", $rVisible));
+        if ($rKind == "line") {
+            return $rColumn . " IN (SELECT `id` FROM `lines` WHERE `lines`.`member_id` IN (" . $rIDs . "))";
+        }
+        return $rColumn . " IN (" . $rIDs . ")";
+    }
+}
+
+if (!function_exists("tableVisibleLineIDs")) {
+    function tableVisibleLineIDs() {
+        global $db;
+        static $rCache = false;
+        if ($rCache !== false) {
+            return $rCache;
+        }
+        $rVisible = Authorization::getVisibleUserIds();
+        if ($rVisible === null) {
+            return $rCache = null;
+        }
+        if (0 >= count($rVisible)) {
+            return $rCache = array();
+        }
+        $db->query("SELECT `id` FROM `lines` WHERE `member_id` IN (" . implode(",", array_map("intval", $rVisible)) . ");");
+        $rRows = $db->get_rows();
+        return $rCache = (is_array($rRows) ? array_map("intval", array_column($rRows, "id")) : array());
+    }
+}
+
 $rStart = (int) RequestManager::getAll()["start"];
 $rLimit = (int) RequestManager::getAll()["length"];
 if ((1000 < $rLimit || $rLimit <= 0) && !$rIsAPI) {
@@ -103,6 +143,10 @@ if ($rType == "lines") {
     if (0 < strlen(RequestManager::getAll()["reseller"] ?? '')) {
         $rWhere[] = "`lines`.`member_id` = ?";
         $rWhereV[] = RequestManager::getAll()["reseller"];
+    }
+    $rVisibleFilter = tableVisibleFilter("user", "`lines`.`member_id`");
+    if ($rVisibleFilter !== null) {
+        $rWhere[] = $rVisibleFilter;
     }
     if (0 < count($rWhere)) {
         $rWhereString = "WHERE " . implode(" AND ", $rWhere);
@@ -386,6 +430,10 @@ if ($rType == "lines") {
         $rWhere[] = "`lines`.`member_id` = ?";
         $rWhereV[] = RequestManager::getAll()["reseller"];
     }
+    $rVisibleFilter = tableVisibleFilter("user", "`lines`.`member_id`");
+    if ($rVisibleFilter !== null) {
+        $rWhere[] = $rVisibleFilter;
+    }
     if (0 < count($rWhere)) {
         $rWhereString = "WHERE " . implode(" AND ", $rWhere);
     } else {
@@ -653,6 +701,10 @@ if ($rType == "lines") {
     if (0 < strlen(RequestManager::getAll()["reseller"] ?? '')) {
         $rWhere[] = "`lines`.`member_id` = ?";
         $rWhereV[] = RequestManager::getAll()["reseller"];
+    }
+    $rVisibleFilter = tableVisibleFilter("user", "`lines`.`member_id`");
+    if ($rVisibleFilter !== null) {
+        $rWhere[] = $rVisibleFilter;
     }
     if (0 < count($rWhere)) {
         $rWhereString = "WHERE " . implode(" AND ", $rWhere);
@@ -2280,6 +2332,10 @@ if ($rType == "lines") {
         $rWhere[] = "`lines_activity`.`user_id` = ?";
         $rWhereV[] = RequestManager::getAll()["user"];
     }
+    $rVisibleFilter = tableVisibleFilter("line", "`lines_activity`.`user_id`");
+    if ($rVisibleFilter !== null) {
+        $rWhere[] = $rVisibleFilter;
+    }
     if (0 < (int)(RequestManager::getAll()["server"] ?? 0)) {
         $rWhere[] = "(`lines_activity`.`server_id` = ? OR `lines_activity`.`proxy_id` = ?)";
         $rWhereV[] = (int)(RequestManager::getAll()["server"] ?? 0);
@@ -2570,6 +2626,13 @@ if ($rType == "lines") {
             $rRows[$i]["type"] = $rStreamNames[$rRows[$i]["stream_id"]][1] ?: 1;
             $rRows[$i] = array_merge($rRows[$i], $rUserMap[$rRows[$i]["user_id"]] ?: []);
         }
+        $rVisibleLineIDs = tableVisibleLineIDs();
+        if ($rVisibleLineIDs !== null) {
+            $rRows = array_values(array_filter($rRows, function ($rRow) use ($rVisibleLineIDs) {
+                return in_array((int) ($rRow["user_id"] ?: 0), $rVisibleLineIDs);
+            }));
+            $rKeyCount = count($rRows);
+        }
         $rReturn["recordsTotal"] = $rKeyCount;
         $rReturn["recordsFiltered"] = ($rIsAPI ? ($rReturn["recordsTotal"] < $rLimit ? $rReturn["recordsTotal"] : $rLimit) : $rReturn["recordsTotal"]);
     } else {
@@ -2600,6 +2663,10 @@ if ($rType == "lines") {
         if (0 < (int) (RequestManager::getAll()["user_id"] ?? 0)) {
             $rWhere[] = "`lines_live`.`user_id` = ?";
             $rWhereV[] = RequestManager::getAll()["user_id"];
+        }
+        $rVisibleFilter = tableVisibleFilter("user", "`lines`.`member_id`");
+        if ($rVisibleFilter !== null) {
+            $rWhere[] = $rVisibleFilter;
         }
         if (isset(RequestManager::getAll()["refresh"])) {
             $rWhere = ["`lines_live`.`activity_id` IN (" . implode(",", array_map("intval", explode(",", RequestManager::getAll()["refresh"]))) . ") AND `hls_end` = 0"];
@@ -3385,6 +3452,10 @@ if ($rType == "lines") {
         $rWhereV[] = RequestManager::getAll()["reseller"];
         $rWhereV[] = RequestManager::getAll()["reseller"];
     }
+    $rVisibleFilter = tableVisibleFilter("user", "`users_credits_logs`.`target_id`");
+    if ($rVisibleFilter !== null) {
+        $rWhere[] = "(" . $rVisibleFilter . " OR `users_credits_logs`.`admin_id` = " . intval($rUserInfo["id"]) . ")";
+    }
     if (0 < count($rWhere)) {
         $rWhereString = "WHERE " . implode(" AND ", $rWhere);
     } else {
@@ -3459,6 +3530,10 @@ if ($rType == "lines") {
     if (0 < strlen(RequestManager::getAll()["filter"] ?? '')) {
         $rWhere[] = "`lines_logs`.`client_status` = ?";
         $rWhereV[] = RequestManager::getAll()["filter"];
+    }
+    $rVisibleFilter = tableVisibleFilter("user", "`lines`.`member_id`");
+    if ($rVisibleFilter !== null) {
+        $rWhere[] = $rVisibleFilter;
     }
     if (0 < count($rWhere)) {
         $rWhereString = "WHERE " . implode(" AND ", $rWhere);
@@ -3545,6 +3620,10 @@ if ($rType == "lines") {
     if (0 < strlen(RequestManager::getAll()["reseller"] ?? '')) {
         $rWhere[] = "`users_logs`.`owner` = ?";
         $rWhereV[] = RequestManager::getAll()["reseller"];
+    }
+    $rVisibleFilter = tableVisibleFilter("user", "`users_logs`.`owner`");
+    if ($rVisibleFilter !== null) {
+        $rWhere[] = $rVisibleFilter;
     }
     if (0 < strlen(RequestManager::getAll()["filter"] ?? '')) {
         $rWhere[] = "`users_logs`.`action` = ?";
@@ -3863,6 +3942,10 @@ if ($rType == "lines") {
     if (0 < strlen(RequestManager::getAll()["reseller"] ?? '')) {
         $rWhere[] = "`users`.`owner_id` = ?";
         $rWhereV[] = RequestManager::getAll()["reseller"];
+    }
+    $rVisibleFilter = tableVisibleFilter("user", "`users`.`id`");
+    if ($rVisibleFilter !== null) {
+        $rWhere[] = $rVisibleFilter;
     }
     if (0 < count($rWhere)) {
         $rWhereString = "WHERE " . implode(" AND ", $rWhere);

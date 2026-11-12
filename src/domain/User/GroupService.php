@@ -27,6 +27,13 @@ class GroupService {
 				}
 			}
 
+			// Multi-tenant: el flag Super Admin solo lo controla un Super Admin (y no puede quitarse el suyo propio)
+			$rArray['is_super_admin'] = (Authorization::isSuperAdmin() && isset($rData['is_super_admin'])) ? 1 : 0;
+
+			if (isset($rData['edit']) && intval($rData['edit']) == intval($GLOBALS['rUserInfo']['member_group_id'])) {
+				$rArray['is_super_admin'] = 1;
+			}
+
 			if ($rArray['can_delete'] || !isset($rData['edit'])) {
 			} else {
 				$rGroup = self::getById($rData['edit']);
