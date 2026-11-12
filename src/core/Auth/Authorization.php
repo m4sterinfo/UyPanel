@@ -117,6 +117,20 @@ class Authorization {
 		return $rColumn . ' IN (' . implode(',', array_map('intval', $rVisible)) . ')';
 	}
 
+	/**
+	 * Permiso reseller por clave (p. ej. 'create_line', 'create_sub_resellers').
+	 * Lo usa el topbar del panel reseller para mostrar/ocultar acciones.
+	 */
+	public static function hasResellerPermissions($rType) {
+		global $rPermissions;
+
+		if (!is_array($rPermissions)) {
+			return false;
+		}
+
+		return !empty($rPermissions[$rType]);
+	}
+
 	public static function check($rType, $rID) {
 		global $rUserInfo;
 		global $db;

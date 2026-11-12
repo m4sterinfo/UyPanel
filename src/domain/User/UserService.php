@@ -145,11 +145,18 @@ class UserService {
 				}
 			}
 
-			// Multi-tenant: los usuarios creados por un admin normal cuelgan de el o de su arbol
-			if (!$rBypassAuth && !Authorization::isSuperAdmin() && !isset($rData['edit'])) {
-				$rVisibleOwner = Authorization::getVisibleUserIds();
+			// Multi-tenant: los usuarios creados por un admin normal cuelgan de el o de su arbol.
+			// Trazabilidad: si no se elige owner explicito, el creador queda registrado como
+			// owner (tambien para super admins; asi la cadena linea/reseller/admin/super_admin
+			// siempre es trazable y owner_id nunca queda en 0).
+			if (!$rBypassAuth && !isset($rData['edit'])) {
+				if (!Authorization::isSuperAdmin()) {
+					$rVisibleOwner = Authorization::getVisibleUserIds();
 
-				if (!isset($rArray['owner_id']) || !in_array(intval($rArray['owner_id']), array_map('intval', $rVisibleOwner ?: array()))) {
+					if (!isset($rArray['owner_id']) || !in_array(intval($rArray['owner_id']), array_map('intval', $rVisibleOwner ?: array()))) {
+						$rArray['owner_id'] = $GLOBALS['rAdminUserInfo']['id'];
+					}
+				} elseif (!isset($rArray['owner_id']) || 0 >= intval($rArray['owner_id'])) {
 					$rArray['owner_id'] = $GLOBALS['rAdminUserInfo']['id'];
 				}
 			}

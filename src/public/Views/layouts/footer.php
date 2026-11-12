@@ -21,6 +21,10 @@ if (!function_exists('renderUnifiedLayoutFooter')) {
             if (!array_key_exists($key, $GLOBALS)) {
                 $GLOBALS[$key] = $value;
             }
+
+            // Variables de la vista disponibles en el scope del footer
+            // (el footer reseller lee datos de la página, p. ej. $rRegisteredUsers).
+            $$key = $value;
         }
 
         // Legacy footer.php expects these variables in file scope.

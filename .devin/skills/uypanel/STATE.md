@@ -1,7 +1,54 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-12 (rama `super_admin`: multi-tenant + Super Admin + grupo Super Resellers + access codes por categoría, desplegado y verificado).
+> cada cambio significativo. Última actualización: 2026-11-12 (fix panel reseller: footer/JS + `Authorization::hasResellerPermissions` restaurado; trazabilidad owner al crear usuarios — desplegado en producción).
+
+## 🆕 2026-11-12 — Fix panel reseller (loading) + trazabilidad owner
+
+**Síntomas reportados**: (1) al iniciar sesión como super reseller el panel
+queda "en loading"; (2) el super reseller `jferreira` no mostraba quién lo
+creó (`owner_id=0`).
+
+### Causas raíz (dos bugs independientes, heredados del upstream 2.0.1)
+1. **Loading**: las vistas `Views/reseller/*.php` son contenido puro y NO llaman
+   a `renderUnifiedLayoutFooter()` (a diferencia de las admin). El controlador
+   solo renderizaba el footer si había `.scripts.php` (solo `lines`) o si no
+   existía la vista → 18/19 páginas salían SIN JavaScript (vendor, DataTables,
+   ping de sesión, header stats) → panel colgado "loading". Además, el footer
+   reseller usa `$rRegisteredUsers` en la rama dashboard (`count()` sin isset)
+   → TypeError fatal en PHP 8.
+2. **Fatal adicional**: el topbar reseller llama a
+   `Authorization::hasResellerPermissions()` — método que EXISTÍA en upstream
+   2.0.1 pero se perdió en nuestra refactorización multi-tenant → fatal en
+   todas las páginas que incluyen topbar (users, lines, mags, enigmas,
+   line_activity, live_connections).
+3. **Owner**: `UserService::process` solo forzaba `owner_id=creador` para
+   admins NO-super; el form admin no tiene campo owner → super admin creaba
+   con `owner_id=0`.
+
+### Fixes (desplegados en producción + repo)
+- `public/Controllers/Admin/BaseAdminController.php`: en `render()`, scope
+  reseller SIEMPRE renderiza el footer; se pasan los datos de la vista vía
+  `$vars` (`renderUnifiedLayoutFooter($this->scope, $data)`).
+- `public/Views/layouts/footer.php`: `renderUnifiedLayoutFooter()` ahora
+  exporta las `$vars` al scope local del footer (antes solo a `$GLOBALS`,
+  que el include no veía).
+- `core/Auth/Authorization.php`: restaurado `hasResellerPermissions()`
+  (implementación upstream: `!empty($rPermissions[$rType])`).
+- `domain/User/UserService.php`: al CREAR, si no hay owner válido =>
+  `owner_id = creador` también para super admins (trazabilidad completa:
+  línea → reseller → super reseller → admin → super admin). Al editar no se
+  toca el owner.
+
+### QA (curl, sesión real)
+- Super reseller QA (grupo 4): las 21 páginas del panel reseller renderizan
+  completas (42-43 `<script>`, `</body>` presente, <100 ms).
+- Panel admin: sin regresiones (dashboard/users/lines/settings/servers/groups OK).
+- E2E owner: super admin creó un usuario vía `post.php?action=user` →
+  `owner_id` = id del creador (antes: 0).
+- Dato corregido: `jferreira` (id 12) → `owner_id=1` (jadmin4407).
+- Cadena real verificada en BD: `yybTQKuDXd` (owner 12) → `jferreira`
+  (owner 1) → `jadmin4407`.
 
 ## ⏭️ CONTINUAR AQUÍ (próxima sesión)
 
