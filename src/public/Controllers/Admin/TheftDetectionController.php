@@ -14,8 +14,8 @@ class TheftDetectionController extends BaseAdminController
             : [];
 
         $this->render('theft_detection', [
-            'theftDetection' => $rTheftDetection,
-            'range'          => $rRange,
+            'rTheftDetection' => $rTheftDetection,
+            'rRange'          => $rRange,
         ]);
     }
 }

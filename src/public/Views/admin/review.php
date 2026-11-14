@@ -5,9 +5,12 @@
     <?php if (checkPermissions()): ?>
     <?php else: goHome();
     endif; ?>
+<?php endif;
 
-    <?php
-    if (isset(RequestManager::getAll()['type'])) {
+// Data-prep fuera del guard: tanto el Front Controller (render()) como el
+// fallback legacy (index.php) setean $__viewMode antes de requerir la vista,
+// así que este bloque dentro del guard sería código muerto (patrón proxies.php).
+if (isset(RequestManager::getAll()['type'])) {
         $rType = intval(RequestManager::getAll()['type']);
     } else {
         if (isset(RequestManager::getAll()['type'])) {
@@ -72,7 +75,11 @@
 
             if ($_STATUS != STATUS_SUCCESS) {
             } else {
-                header('Location: ./streams?status=' . STATUS_SUCCESS);
+                if (!headers_sent()) {
+                    header('Location: ./streams?status=' . STATUS_SUCCESS);
+                } else {
+                    echo '<script>window.location.replace("./streams?status=' . STATUS_SUCCESS . '");</script>';
+                }
                 exit();
             }
         } else {
@@ -81,7 +88,11 @@
 
             if ($_STATUS != STATUS_SUCCESS) {
             } else {
-                header('Location: ./movies?status=' . STATUS_SUCCESS);
+                if (!headers_sent()) {
+                    header('Location: ./movies?status=' . STATUS_SUCCESS);
+                } else {
+                    echo '<script>window.location.replace("./movies?status=' . STATUS_SUCCESS . '");</script>';
+                }
                 exit();
             }
         }
@@ -168,9 +179,10 @@
 
     $rLogoSet = $rCategorySet = array();
     $_TITLE = 'Review';
-    require_once __DIR__ . '/../layouts/admin.php';
-    renderUnifiedLayoutHeader('admin');
     ?>
+<?php if (!isset($__viewMode)): ?>
+    <?php require_once __DIR__ . '/../layouts/admin.php';
+    renderUnifiedLayoutHeader('admin'); ?>
 <?php endif; ?>
 
 <div class="wrapper<?php if (!isset($rImport)) {

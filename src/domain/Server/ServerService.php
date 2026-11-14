@@ -227,6 +227,9 @@ class ServerService {
 			} else {
 				$rCommand = PHP_BIN . ' ' . MAIN_HOME . 'console.php balancer ' . intval($rData['type']) . ' ' . intval($rServer['id']) . ' ' . intval($rData['ssh_port']) . ' ' . escapeshellarg($rData['root_username']) . ' ' . escapeshellarg($rData['root_password']) . ' 80 443 ' . intval($rUpdateSysctl) . ' > "' . BIN_PATH . 'install/' . intval($rServer['id']) . '.install" 2>/dev/null &';
 			}
+			// El log debe existir desde ya: el reaper usa su mtime como referencia
+			// y una fila status=3 sin log sería un fantasma indetectable.
+			touch(BIN_PATH . 'install/' . intval($rServer['id']) . '.install');
 			shell_exec($rCommand);
 			return array('status' => STATUS_SUCCESS, 'data' => array('insert_id' => $rServer['id']));
 		}
@@ -265,6 +268,7 @@ class ServerService {
 			$rCommand = PHP_BIN . ' ' . MAIN_HOME . 'console.php balancer ' . intval($rData['type']) . ' ' . intval($rInsertID) . ' ' . intval($rData['ssh_port']) . ' ' . escapeshellarg($rData['root_username']) . ' ' . escapeshellarg($rData['root_password']) . ' 80 443 ' . intval($rUpdateSysctl) . ' > "' . BIN_PATH . 'install/' . intval($rInsertID) . '.install" 2>/dev/null &';
 		}
 
+		touch(BIN_PATH . 'install/' . intval($rInsertID) . '.install');
 		shell_exec($rCommand);
 		return array('status' => STATUS_SUCCESS, 'data' => array('insert_id' => $rInsertID));
 	}

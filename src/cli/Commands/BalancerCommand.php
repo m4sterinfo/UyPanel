@@ -40,6 +40,7 @@ class BalancerCommand implements CommandInterface {
 		shell_exec("kill -9 `ps -ef | grep 'UyPanel Install\\[" . $rServerID . "\\]' | grep -v grep | awk '{print \$2}'`;");
 		set_time_limit(0);
 		cli_set_process_title('UyPanel Install[' . $rServerID . ']');
+		$rInstallStart = time();
 		register_shutdown_function(function () use ($db) {
 			if (is_object($db)) {
 				$db->close_mysql();
@@ -384,6 +385,24 @@ class BalancerCommand implements CommandInterface {
 		} else {
 			$db->query('UPDATE `servers` SET `status` = 1 WHERE `id` = ?;', $rServerID);
 		}
+
+		// Un install que nunca reporta no puede quedarse en el panel como fantasma
+		// (status=1 + "Down since: Always"): se verifica el primer reporte real.
+		echo "Waiting for the server to report for the first time (up to 240s)...\n";
+		$rCameOnline = false;
+		$rDeadline = time() + 240;
+		while (time() < $rDeadline) {
+			sleep(10);
+			$db->query('SELECT `last_check_ago` FROM `servers` WHERE `id` = ?;', $rServerID);
+			if ($db->num_rows() == 1 && intval($db->get_row()['last_check_ago']) >= $rInstallStart) {
+				$rCameOnline = true;
+				break;
+			}
+		}
+		if (!$rCameOnline) {
+			return $this->failInstall($rServerID, 'Server installed but it never reported within 240s - removing it from the panel. Check the remote server (service status, firewall) and try again.');
+		}
+		echo "Server is online!\n";
 		unlink($rInstallDir . $rServerID . '.json');
 
 		return 0;

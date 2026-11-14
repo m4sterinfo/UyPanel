@@ -195,10 +195,29 @@ class ServersCronJob implements CommandInterface {
                 if ($rServerArray['is_main'] || ($rServerArray['status'] != 3 && $rServerArray['status'] != 4)) {
                     continue;
                 }
-                $rInstallProc = intval(trim(shell_exec("pgrep -f 'UyPanel Install\\[" . intval($rServerID) . "\\]' 2>/dev/null | wc -l")));
                 $rLogFile = BIN_PATH . 'install/' . intval($rServerID) . '.install';
-                if ($rServerArray['status'] == 4 || ($rInstallProc == 0 && file_exists($rLogFile) && (time() - filemtime($rLogFile)) > 300)) {
+                $rLogAge = file_exists($rLogFile) ? (time() - filemtime($rLogFile)) : -1;
+                $rInstallPIDs = array_filter(array_map('intval', explode("\n", trim(strval(shell_exec("pgrep -f 'UyPanel Install\\[" . intval($rServerID) . "\\]' 2>/dev/null") ?? '')))));
+                $rInstallAlive = count($rInstallPIDs) > 0;
+
+                $rReap = false;
+                $rKill = false;
+                if ($rServerArray['status'] == 4) {
+                    $rReap = true;
+                    $rKill = $rInstallAlive;
+                } elseif (!$rInstallAlive && $rLogAge > 300) {
+                    $rReap = true;
+                } elseif (!$rInstallAlive && $rLogAge == -1 && intval($rServerArray['last_check_ago']) == 0) {
+                    $rReap = true;
+                } elseif ($rInstallAlive && $rLogAge > 3600) {
+                    $rReap = true;
+                    $rKill = true;
+                }
+                if ($rReap) {
                     echo 'Removing failed/stuck install for server #' . intval($rServerID) . "\n";
+                    foreach ($rInstallPIDs as $rPID) {
+                        shell_exec('kill -9 ' . intval($rPID) . ' 2>/dev/null');
+                    }
                     @unlink(BIN_PATH . 'install/' . intval($rServerID) . '.json');
                     ServerRepository::deleteById(intval($rServerID));
                 }
