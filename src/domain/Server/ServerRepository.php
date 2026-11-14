@@ -233,6 +233,7 @@ class ServerRepository {
 
 		$db->query('UPDATE `servers` SET `parent_id` = NULL, `enabled` = 0 WHERE `server_type` = 1 AND `parent_id` = ?;', $rID);
 		$db->query('DELETE FROM `servers_stats` WHERE `server_id` = ?;', $rID);
+		$db->query('DELETE FROM `signals` WHERE `server_id` = ?;', $rID);
 		$db->query('DELETE FROM `servers` WHERE `id` = ?;', $rID);
 
 		if ($rServer['server_type'] == 0) {

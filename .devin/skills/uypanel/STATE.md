@@ -1,7 +1,20 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-14 (Fix instalador: libs runtime faltantes causaban 502 en servers nuevos).
+> cada cambio significativo. Última actualización: 2026-11-14 (Anti-servers-fantasma: instalaciones fallidas se auto-eliminan; limpieza de 3 fantasmas en prod).
+
+## 🆕 2026-11-14 — Anti-servers-fantasma: instalaciones fallidas se auto-eliminan del panel
+
+**Problema del usuario**: servers LB con instalación fallida quedaban para siempre en la lista como fantasmas ("Down since: Always") — rows con `status=4` (fallo explícito) o `status=3` trabado (proceso de install muerto a mitad).
+
+**Causa**: `BalancerCommand` en sus 7 rutas de fallo hacía `UPDATE servers SET status = 4` y `return 1` — la fila quedaba huérfana para siempre. Y si el proceso background moría sin llegar a ningún `return`, la fila quedaba en `status=3` ("Installing...") eternamente.
+
+**Fixes**:
+- `cli/Commands/BalancerCommand.php`: nuevo helper privado `failInstall($rServerID, $rMessage)` — borra el `.json` de credenciales SSH, llama `ServerRepository::deleteById()` (elimina la fila + datos relacionados) y devuelve 1. Las 7 rutas de fallo (tipo inválido, SSH connect, SSH auth, extract x2, MD5 x2) ahora usan el helper → el server desaparece de la lista al fallar. El log de instalación queda en `bin/install/<id>.install` para debug.
+- `cli/CronJobs/ServersCronJob.php`: reaper en el bloque `is_main` — servers no-main con `status=4` (legacy) o `status=3` sin proceso `UyPanel Install[<id>]` vivo Y log `.install` con mtime > 300s → `deleteById`. Auto-sanativo de fantasmas existentes en otros paneles.
+- `domain/Server/ServerRepository.php`: `deleteById()` ahora también hace `DELETE FROM signals WHERE server_id = ?` (higiene, aplica al borrado manual de la UI también).
+- **Limpieza manual en prod**: eliminados servers fantasma #2 (LB01), #3 (PRX01) — ambos 208.110.84.125 — y #5 (EU-LB, 64.37.105.75), todos `status=4`/`last_check_ago=0` de instalaciones SSH-bloqueadas (firewall). Cero datos relacionados (streams_servers/lines_live/lines_activity/servers_stats = 0; 25 signals huérfanas eliminadas). Backup: `/home/debian/backups/ghost_servers_20261114.sql`. `sudo /home/uypanel/status` → "All servers are Online".
+- **Verificación**: `php -l` OK en los 3 archivos; `console.php cron:servers` corre limpio con el reaper; expresión `pgrep -f 'UyPanel Install\[<id>\]'` validada (el título de proceso reemplaza el cmdline, pgrep -f lo encuentra).
 
 ## 🆕 2026-11-14 — Fix instalador: PHP sin `libcurl-gnutls`/`libsodium` en servers nuevos (502 Bad Gateway)
 

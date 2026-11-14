@@ -69,9 +69,7 @@ class BalancerCommand implements CommandInterface {
 			$rInstallFiles = $UpdateData['url'];
 			$hash = $UpdateData['md5'];
 		} else {
-			$db->query('UPDATE `servers` SET `status` = 4 WHERE `id` = ?;', $rServerID);
-			echo "Invalid type specified!\n";
-			return 1;
+			return $this->failInstall($rServerID, 'Invalid type specified!');
 		}
 
 		if ($rType == 1) {
@@ -83,9 +81,7 @@ class BalancerCommand implements CommandInterface {
 		$rHost = $rServers[$rServerID]['server_ip'];
 		echo 'Connecting to ' . $rHost . ':' . $rPort . "\n";
 		if (!($rConn = ssh2_connect($rHost, $rPort))) {
-			$db->query('UPDATE `servers` SET `status` = 4 WHERE `id` = ?;', $rServerID);
-			echo "Failed to connect to server. Exiting\n";
-			return 1;
+			return $this->failInstall($rServerID, 'Failed to connect to server. Exiting');
 		}
 
 		if ($rUsername == 'root') {
@@ -95,9 +91,7 @@ class BalancerCommand implements CommandInterface {
 		}
 		$rResult = @ssh2_auth_password($rConn, $rUsername, $rPassword);
 		if (!$rResult) {
-			$db->query('UPDATE `servers` SET `status` = 4 WHERE `id` = ?;', $rServerID);
-			echo "Failed to authenticate using config.ini. Exiting\n";
-			return 1;
+			return $this->failInstall($rServerID, 'Failed to authenticate using config.ini. Exiting');
 		}
 
 		// 1. Detect remote OS version
@@ -176,14 +170,10 @@ class BalancerCommand implements CommandInterface {
 				$this->runSSH($rConn, 'sudo rm -rf ' . MAIN_HOME . 'status');
 				$this->runSSH($rConn, 'sudo tar -zxvf "/tmp/' . $rInstallFiles . '" -C "' . MAIN_HOME . '"');
 				if (!file_exists(MAIN_HOME . 'status')) {
-					$db->query('UPDATE `servers` SET `status` = 4 WHERE `id` = ?;', $rServerID);
-					echo "Failed to extract files! Exiting\n";
-					return 1;
+					return $this->failInstall($rServerID, 'Failed to extract files! Exiting');
 				}
 			} else {
-				$db->query('UPDATE `servers` SET `status` = 4 WHERE `id` = ?;', $rServerID);
-				echo "Invalid MD5 checksum! Exiting\n";
-				return 1;
+				return $this->failInstall($rServerID, 'Invalid MD5 checksum! Exiting');
 			}
 		} else {
 			echo "Download archive\n";
@@ -221,14 +211,10 @@ class BalancerCommand implements CommandInterface {
 						}
 					}
 				} else {
-					$db->query('UPDATE `servers` SET `status` = 4 WHERE `id` = ?;', $rServerID);
-					echo "Failed to extract files! Exiting\n";
-					return 1;
+					return $this->failInstall($rServerID, 'Failed to extract files! Exiting');
 				}
 			} else {
-				$db->query('UPDATE `servers` SET `status` = 4 WHERE `id` = ?;', $rServerID);
-				echo "Invalid MD5 checksum! Exiting\n";
-				return 1;
+				return $this->failInstall($rServerID, 'Invalid MD5 checksum! Exiting');
 			}
 		}
 
@@ -374,6 +360,14 @@ class BalancerCommand implements CommandInterface {
 		unlink($rInstallDir . $rServerID . '.json');
 
 		return 0;
+	}
+
+	private function failInstall(int $rServerID, string $rMessage): int {
+		echo $rMessage . "\n";
+		@unlink(BIN_PATH . 'install/' . $rServerID . '.json');
+		ServerRepository::deleteById($rServerID);
+		echo 'Installation failed - server removed from the panel. Install log: ' . BIN_PATH . 'install/' . $rServerID . '.install' . "\n";
+		return 1;
 	}
 
 	private function sendFileSSH($rConn, string $rPath, string $rOutput, bool $rWarn = false): bool {

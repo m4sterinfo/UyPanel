@@ -189,6 +189,20 @@ class ServersCronJob implements CommandInterface {
                 }
             }
             $db->query('DELETE FROM `signals` WHERE `time` <= ?;', time() - 86400);
+
+            // Reaper: instalaciones fallidas o trabadas no deben quedar como servers fantasma
+            foreach ($rServers as $rServerID => $rServerArray) {
+                if ($rServerArray['is_main'] || ($rServerArray['status'] != 3 && $rServerArray['status'] != 4)) {
+                    continue;
+                }
+                $rInstallProc = intval(trim(shell_exec("pgrep -f 'UyPanel Install\\[" . intval($rServerID) . "\\]' 2>/dev/null | wc -l")));
+                $rLogFile = BIN_PATH . 'install/' . intval($rServerID) . '.install';
+                if ($rServerArray['status'] == 4 || ($rInstallProc == 0 && file_exists($rLogFile) && (time() - filemtime($rLogFile)) > 300)) {
+                    echo 'Removing failed/stuck install for server #' . intval($rServerID) . "\n";
+                    @unlink(BIN_PATH . 'install/' . intval($rServerID) . '.json');
+                    ServerRepository::deleteById(intval($rServerID));
+                }
+            }
         }
     }
 }
