@@ -17,6 +17,8 @@ rPackages = [
     "libmaxminddb-dev",
     "mmdb-bin",
     "libcurl4",
+    "libcurl3-gnutls",
+    "libsodium23",
     "libgeoip-dev",
     "libxslt1-dev",
     "libonig-dev",
@@ -284,18 +286,24 @@ if __name__ == "__main__":
         printc("Removing %s" % rPackage)
         os.system("sudo apt-get remove %s -y" % rPackage)
     if rDistro == "debian" or rVersion.startswith("24."):
-        # Modern distros (Debian 12/13, Ubuntu 24.04): t64 libraries, omit obsolete packages
+        # Modern distros (Debian 12/13, Ubuntu 24.04): omit obsolete packages
         rPackages = [p for p in rPackages if p not in ("software-properties-common", "mcrypt", "php-ssh2", "python", "cpufrequtils")]
-        rPackages = ["libcurl4t64" if p == "libcurl4" else p for p in rPackages]
-        rPackages = ["libssh2-1t64" if p in ("libssh2-1", "libssh2-1t64") else p for p in rPackages]
         if "libcap2-bin" not in rPackages:
             rPackages.append("libcap2-bin")
     else:
         # Pre-t64 distros (Ubuntu 20.04, 22.04)
-        rPackages = ["libssh2-1" if p == "libssh2-1t64" else p for p in rPackages]
-        rPackages = ["libcurl4" if p == "libcurl4t64" else p for p in rPackages]
         if rVersion.startswith("22."):
             rPackages = [p for p in rPackages if p not in ("mcrypt", "python")]
+    if rVersion.startswith("24.") or (rDistro == "debian" and rVersion == "13"):
+        # t64 transition names (Debian 13 trixie, Ubuntu 24.04+)
+        rPackages = ["libcurl4t64" if p == "libcurl4" else p for p in rPackages]
+        rPackages = ["libcurl3t64-gnutls" if p == "libcurl3-gnutls" else p for p in rPackages]
+        rPackages = ["libssh2-1t64" if p in ("libssh2-1", "libssh2-1t64") else p for p in rPackages]
+    else:
+        # Pre-t64 distros (Debian 12, Ubuntu 20.04, 22.04)
+        rPackages = ["libcurl4" if p == "libcurl4t64" else p for p in rPackages]
+        rPackages = ["libcurl3-gnutls" if p == "libcurl3t64-gnutls" else p for p in rPackages]
+        rPackages = ["libssh2-1" if p in ("libssh2-1", "libssh2-1t64") else p for p in rPackages]
     for rPackage in rPackages:
         printc("Installing %s" % rPackage)
         os.system(

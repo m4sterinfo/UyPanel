@@ -1,7 +1,22 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-14 (Eliminación completa del Stream Extractor a petición del usuario).
+> cada cambio significativo. Última actualización: 2026-11-14 (Fix instalador: libs runtime faltantes causaban 502 en servers nuevos).
+
+## 🆕 2026-11-14 — Fix instalador: PHP sin `libcurl-gnutls`/`libsodium` en servers nuevos (502 Bad Gateway)
+
+**Síntoma**: Instalación en server nuevo (Debian 13) terminaba con `php: error while loading shared libraries: libcurl-gnutls.so.4` y el panel devolvía **502 Bad Gateway** (php-fpm muere al arrancar).
+
+**Causa raíz**: El binario PHP del payload (y php-fpm/phpdbg) está enlazado contra `libcurl-gnutls.so.4` porque el entorno de build instala `libcurl4-gnutls-dev` (`third_party/UyPanel_Binaries/build/deps_debian.sh:18`). El instalador principal (`install`) solo instalaba `libcurl4(t64)` (variante OpenSSL, NO provee esa lib). En producción funcionaba de casualidad: `git` está instalado y arrastra `libcurl3t64-gnutls` como dependencia.
+
+**Diagnóstico sistemático**: Container Docker `debian:13` limpio + lista exacta de paquetes del instalador + `ldd` de los 20 ELF del payload → faltantes: `libcurl-gnutls.so.4` (paquete `libcurl3t64-gnutls`) y `libsodium.so.23` (paquete `libsodium23`), solo en php/php-fpm/phpdbg. El payload del LB (loadbalancer.tar.gz) tenía el mismo faltante de libsodium (el BalancerCommand ya agregaba libcurl3t64-gnutls desde un fix anterior, pero no libsodium23).
+
+**Fixes aplicados** (sin commitear aún):
+- `install`: añadidos `libcurl3-gnutls` + `libsodium23` a `rPackages`; lógica t64 condicionada correctamente (nombres t64 solo en Debian 13/Ubuntu 24.x; Debian 12 usa `libcurl4`/`libcurl3-gnutls`/`libssh2-1` — antes el instalador forzaba `libcurl4t64`/`libssh2-1t64` también en bookworm, donde no existen).
+- `src/cli/Commands/BalancerCommand.php`: añadido `libsodium23` en las 3 ramas de distro; Debian 12 ahora usa `libcurl3-gnutls` en vez del t64 inexistente en bookworm.
+- **Verificación**: container debian:13 fresco con la lista corregida → 0 libs faltantes en ambos payloads y `php -v` ejecuta (PHP 8.3.36). Container debian:12 → confirmado que `libcurl4t64`/`libcurl3t64-gnutls`/`libssh2-1t64` no existen y `libcurl4`/`libcurl3-gnutls`/`libsodium23`/`libssh2-1` sí. `php -l` OK en BalancerCommand; `py_compile` OK en install.
+- **Pendiente**: rebuild del payload (`make main`) para que el fix llegue al `UyPanel.zip` de releases; commitear cambios. Quick-fix para el server afectado: `apt-get install -y libcurl3t64-gnutls libsodium23 && sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php startup && sudo systemctl restart uypanel`.
+
 
 ## 🆕 2026-11-14 — Eliminación completa del Stream Extractor
 

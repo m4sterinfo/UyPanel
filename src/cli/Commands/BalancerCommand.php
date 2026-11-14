@@ -112,7 +112,8 @@ class BalancerCommand implements CommandInterface {
 		if ($rDistroID == 'debian' || preg_match('/^(12|13)\./', $rVersion)) {
 			echo "Debian detected — adapting package list\n";
 			$rPackages = array_values(array_diff($rPackages, array('mcrypt', 'php-ssh2', 'software-properties-common', 'libgeoip-dev', 'python', 'cpufrequtils')));
-			$rPackages[] = 'libcurl3t64-gnutls';
+			$rPackages[] = ($rDistroID == 'debian' && str_starts_with($rVersion, '12')) ? 'libcurl3-gnutls' : 'libcurl3t64-gnutls';
+			$rPackages[] = 'libsodium23';
 			$rPackages[] = 'libnuma1';
 			$rPackages[] = 'libgomp1';
 			$rPackages[] = 'libexpat1';
@@ -121,6 +122,7 @@ class BalancerCommand implements CommandInterface {
 			echo "Ubuntu 24.x detected — adapting package list\n";
 			$rPackages = array_values(array_diff($rPackages, array('mcrypt', 'php-ssh2', 'python', 'cpufrequtils')));
 			$rPackages[] = 'libcurl3t64-gnutls';
+			$rPackages[] = 'libsodium23';
 			$rPackages[] = 'libnuma1';
 			$rPackages[] = 'libgomp1';
 			$rPackages[] = 'libexpat1';
@@ -128,6 +130,7 @@ class BalancerCommand implements CommandInterface {
 		} else {
 			echo "Ubuntu {$rVersion} detected — adapting package list\n";
 			$rPackages[] = 'libcurl3-gnutls';
+			$rPackages[] = 'libsodium23';
 			$rPackages[] = 'libnuma1';
 			$rPackages[] = 'libgomp1';
 			$rPackages[] = 'libexpat1';
