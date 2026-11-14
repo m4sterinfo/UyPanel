@@ -18,6 +18,15 @@
 - **Pendiente**: rebuild del payload (`make main`) para que el fix llegue al `UyPanel.zip` de releases; commitear cambios. Quick-fix para el server afectado: `apt-get install -y libcurl3t64-gnutls libsodium23 && sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php startup && sudo systemctl restart uypanel`.
 - **Resuelto (mismo día)**: commit `a9da3cff` pusheado a main; release **2.0.3** publicada (CI `Build Release Assets` OK en 2m56s, 5 assets: UyPanel.zip, loadbalancer.tar.gz, loadbalancer_update.tar.gz, update.tar.gz, hashes.md5). Verificado descargando el `UyPanel.zip` y `update.tar.gz` de la release: ambos contienen los fixes (libcurl3-gnutls/libsodium23 en install; libsodium23 en BalancerCommand). El server afectado fue formateado por el usuario; reinstalar desde la release 2.0.3.
 
+## 2026-11-14 — Política de SO en docs: Debian 13 recomendado, versiones viejas deprecadas
+
+A pedido del usuario (razón: vulnerabilidades/librerías viejas), se actualizó la documentación:
+- `README.md`: sección renombrada a "Supported Operating Systems" — **Debian 13 (Trixie) = recomendado**, Ubuntu 24.04 LTS = soportado, Debian 12 = compatible (LTS), Ubuntu 22.04 y anteriores = *Legacy/Outdated — Not Recommended*, con sección "Why older releases are discouraged" (librerías del sistema desactualizadas + fin de parches; el PHP 8.3.36 hardened del payload no cubre el resto del stack). Quick Install ahora dice "Debian 13 (recommended) or Ubuntu 24.04".
+- `docs/es/README.md` y `docs/en/README.md`: misma política en las guías publicadas.
+- Limpieza: `python3-pip` quitado de las dependencias de instalación (el instalador solo usa stdlib de Python). Tabla de Technology Stack corregida a las versiones reales del payload (PHP 8.3.36 hardened, Nginx 1.29.6+RTMP, MariaDB 11.8).
+- Commit `6ea2d6c8` pusheado a main (el sitio de docs se redespliega solo vía pages-build-deployment). El instalador sigue aceptando las versiones viejas (no se bloquean en el script); si el usuario quiere enforcement duro en el instalador, queda como pendiente opcional.
+
+
 
 ## 🆕 2026-11-14 — Eliminación completa del Stream Extractor
 
