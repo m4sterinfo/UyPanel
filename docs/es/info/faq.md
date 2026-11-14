@@ -348,10 +348,11 @@ sudo -u uypanel /home/uypanel/bin/php/bin/php /home/uypanel/console.php watchdog
 
 ---
 
-Es el comportamiento esperado desde UyPanel 2.0.4: si la instalación de un Load Balancer o Proxy falla (SSH inaccesible, credenciales incorrectas, checksum o extracción fallida), el servidor **se elimina automáticamente del panel** en lugar de quedar como un fantasma "caído" en la lista.
+Es el comportamiento esperado desde UyPanel 2.0.4 (ampliado en 2.0.5): si la instalación de un Load Balancer o Proxy falla (SSH inaccesible, credenciales incorrectas, checksum o extracción fallida), el servidor **se elimina automáticamente del panel** en lugar de quedar como un fantasma "caído" en la lista.
 
 - **Log de instalación:** queda en `bin/install/<id>.install` del servidor MAIN para revisar qué falló
-- **Reaper:** cada minuto, el cron de MAIN también elimina servidores trabados en "Installing..." sin proceso de instalación vivo (>5 min) y filas fallidas legacy
+- **Verificación post-instalación (2.0.5):** tras instalar, el panel espera hasta 240s el primer reporte del servidor; si nunca reporta (p. ej. servicio caído, 502), también se elimina automáticamente
+- **Reaper:** cada minuto, el cron de MAIN también elimina servidores trabados en "Installing..." sin proceso de instalación vivo (>5 min), instalaciones colgadas sin output durante más de 1 hora y filas fallidas legacy
 - **Reintentar:** corrige la causa (firewall SSH, credenciales) y vuelve a agregar el servidor desde el panel
 
 ---

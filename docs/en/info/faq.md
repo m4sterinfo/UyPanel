@@ -348,10 +348,11 @@ sudo -u uypanel /home/uypanel/bin/php/bin/php /home/uypanel/console.php watchdog
 
 ---
 
-This is expected behavior since UyPanel 2.0.4: if a Load Balancer or Proxy installation fails (unreachable SSH, wrong credentials, checksum or extraction failure), the server is **automatically removed from the panel** instead of lingering as an "offline" ghost row.
+This is expected behavior since UyPanel 2.0.4 (extended in 2.0.5): if a Load Balancer or Proxy installation fails (unreachable SSH, wrong credentials, checksum or extraction failure), the server is **automatically removed from the panel** instead of lingering as an "offline" ghost row.
 
 - **Install log:** kept at `bin/install/<id>.install` on the MAIN server so you can review what failed
-- **Reaper:** every minute, MAIN's cron also removes servers stuck on "Installing..." with no live installer process (>5 min) and legacy failed rows
+- **Post-install verification (2.0.5):** after installing, the panel waits up to 240s for the server's first report; if it never reports (e.g. dead service, 502), it is removed automatically as well
+- **Reaper:** every minute, MAIN's cron also removes servers stuck on "Installing..." with no live installer process (>5 min), installs hung without output for over 1 hour, and legacy failed rows
 - **Retry:** fix the cause (SSH firewall, credentials) and add the server again from the panel
 
 ---
