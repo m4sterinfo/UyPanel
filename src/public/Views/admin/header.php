@@ -588,7 +588,6 @@
                                                             <?php endif; ?>
                                                             <?php if (Authorization::check('adv', 'stream_tools')): ?>
                                                                 <li><a href="stream_tools"><?= $language::get('stream_tools'); ?></a></li>
-                                                                <li><a href="stream_extractor"><?= $language::get('stream_extractor'); ?></a></li>
                                                             <?php endif; ?>
                                                         </ul>
                                                     </li>

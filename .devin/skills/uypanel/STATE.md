@@ -1,9 +1,20 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-12 (Blindaje crítico de seguridad: Nginx auth_request gate + binding localhost 127.0.0.1 + fix de copiado en portapapeles HTTP/iframe + actualización de skills de seguridad).
+> cada cambio significativo. Última actualización: 2026-11-14 (Eliminación completa del Stream Extractor a petición del usuario).
 
-## 🆕 2026-11-12 — Blindaje Crítico de Seguridad y Fix de Copiado de URLs
+## 🆕 2026-11-14 — Eliminación completa del Stream Extractor
+
+A petición del usuario (no quedó satisfecho con el resultado), se desactivó y eliminó por completo la aplicación de extracción de streams (`/stream_extractor`), tanto del servidor en producción como del repo fuente:
+
+- **Servicio systemd**: `uypanel-extractor.service` detenido, deshabilitado, unit eliminado y `daemon-reload`. Puerto 3200 liberado.
+- **App Node.js**: directorio `/home/uypanel/extractor/` eliminado (no formaba parte del payload del build; se había desplegado a mano).
+- **Nginx**: bloque `location ^~ /stream_extractor/`, `@extractor_denied` y redirect 301 eliminados de `custom.conf` (prod y `src/infrastructure/nginx/custom.conf`). También se quitó `location = /internal_admin_auth` (solo lo usaba el extractor). `custom.conf` queda vacío con comentario; el `include` en `nginx.conf` se conserva. `nginx -t` OK + reload sin downtime.
+- **Panel PHP** (prod `/home/uypanel` y repo `src/`): ruta en `public/routes/admin.php`, controlador `StreamExtractorController.php`, vista `stream_extractor.php`, entrada de menú en `Views/admin/header.php` y clave `stream_extractor` en los 7 idiomas (`includes/langs/*.ini`) eliminados.
+- **Verificación**: `php -l` OK en todos los archivos editados; `http://198.27.81.133/stream_extractor/` → 404; `/7JDEeDMG/stream_extractor` → 302 (ruta inexistente, redirect home); login del panel intacto; `systemctl is-active uypanel-extractor` → not-found.
+- **Backup rollback**: `/home/debian/backups/stream_extractor_removed_20261114.tar.gz` (código del extractor sin node_modules + unit + custom.conf + archivos del panel afectados).
+
+## 2026-11-12 — Blindaje Crítico de Seguridad y Fix de Copiado de URLs
 
 Tras la integración inicial, se detectaron y corrigieron de inmediato dos incidencias críticas reportadas por el usuario:
 
