@@ -50,7 +50,7 @@ UyPanel helps you deploy a full IPTV infrastructure:
 - **FFmpeg 8.0** — transcoding  
 - **yt-dlp** — media acquiring  
 
-UyPanel officially supports Ubuntu 22.04 and is tested on 24.04.
+UyPanel officially supports **Debian 13 (recommended)** and **Ubuntu 24.04 LTS**. Older releases (Ubuntu 22.04 and below, Debian 12) work but are **not recommended** for security reasons: they ship outdated system libraries and progressively stop receiving security patches.
 
 ---
 
@@ -69,11 +69,11 @@ If you want to contribute, read the:
 
 ## 🛠 Installation
 
-Installation on Ubuntu 22.04+:
+Installation on Debian 13 (recommended) or Ubuntu 24.04:
 
 ```bash
 sudo apt update && sudo apt full-upgrade -y
-sudo apt install -y python3-pip unzip
+sudo apt install -y unzip
 
 latest_version=$(curl -s https://api.github.com/repos/m4sterinfo/UyPanel/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)
 wget "https://github.com/m4sterinfo/UyPanel/releases/download/${latest_version}/UyPanel.zip"

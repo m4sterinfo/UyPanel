@@ -25,7 +25,7 @@
 * ⚠️ [Status](#️-status)
 * 📚 [Documentation](#-documentation)
 * 🧱 [Technology Stack](#-technology-stack)
-* 🧩 [Ubuntu Support](#-supported-ubuntu-versions)
+* 🐧 [OS Support](#-supported-operating-systems)
 * 📥 [Quick Install](#-quick-install)
 * 🧰 [Service Management](#-service-management)
 * 📂 [Project Structure](#-project-structure)
@@ -76,61 +76,66 @@ It enables:
 
 | Component | Version    | Description                     |
 | --------- | ---------- | ------------------------------- |
-| PHP       | 8.1.33        | Backend runtime                 |
-| Nginx     | 1.24       | Web server & reverse proxy      |
+| PHP       | 8.3.36 (hardened) | Backend runtime, patched against PHP2Shell CVE-2026-109618/109619 |
+| Nginx     | 1.29.6 (+ RTMP) | Web server & reverse proxy      |
 | FFmpeg    | 8.0, 7.1, 5.1, 4.4, 4.3, 4.0        | Media transcoding & processing  |
-| MariaDB   | 11.4      | SQL database engine             |
+| MariaDB   | 11.8      | SQL database engine             |
 | KeyDB     | 6.3.4      | Cache & session storage (Redis) |
 | yt-dlp    | 2025.07.21 | Audio/Video downloader          |
 
 ---
 
-## 🐧 Supported Ubuntu Versions
+## 🐧 Supported Operating Systems
 
-UyPanel **officially supports** the following Ubuntu LTS and interim releases:
+UyPanel officially supports the following operating systems:
 
-| Ubuntu Version | Codename        | Status                |
-| -------------- | --------------- | --------------------- |
-| **20.04**      | Focal Fossa     | ⚠️ *Outdated*         |
-| **20.10**      | Groovy Gorilla  | ⚠️ *Outdated*         |
-| **22.04**      | Jammy Jellyfish | ✅ **Fully Supported** |
-| **22.10**      | Kinetic Kudu    | ⚙️ *Compatible*       |
-| **24.04**      | Noble Numbat    | ✅ **Fully Supported** |
-| **24.10**      | Oracular Oriole | 🧪 *Under Testing*    |
+| OS           | Version            | Codename        | Status                            |
+| ------------ | ------------------ | --------------- | --------------------------------- |
+| **Debian**   | **13**             | Trixie          | ✅ **Recommended**                 |
+| **Debian**   | 12                 | Bookworm        | ⚙️ *Compatible (LTS)*             |
+| **Ubuntu**   | **24.04 LTS**      | Noble Numbat    | ✅ **Supported**                   |
+| **Ubuntu**   | 24.10              | Oracular Oriole | 🧪 *Under Testing*                |
+| **Ubuntu**   | 22.04 LTS          | Jammy Jellyfish | ⚠️ *Legacy — Not Recommended*     |
+| **Ubuntu**   | 20.04 / 20.10      | Focal / Groovy  | 🚫 *Outdated — Not Recommended*   |
+| **Ubuntu**   | 22.10              | Kinetic Kudu    | 🚫 *Outdated — Not Recommended*   |
 
 ---
 
 ### 💡 Recommendations
 
-For new installations, the **strongly recommended** Ubuntu versions are:
+For new installations, the **strongly recommended** operating systems are:
 
-* 🟢 **Ubuntu 22.04 LTS**
-* 🟢 **Ubuntu 24.04 LTS**
-
-These versions receive full support, active security updates, and provide the stability required for UyPanel.
+* 🟢 **Debian 13 (Trixie)** — the platform UyPanel is developed, built and tested on
+* 🟢 **Ubuntu 24.04 LTS** — fully compatible alternative
 
 ---
 
-### ⚠️ Important Note About Ubuntu 20.x
+### ⚠️ Why older releases are discouraged
 
-Ubuntu 20.04 and 20.10 are **outdated** and no longer receive updates for most essential system packages.
-Using these versions is still *possible*, but:
+Older distro releases (Ubuntu 22.04 and below, Debian 12) ship **outdated system
+libraries** (OpenSSL, glibc, libcurl, GnuTLS) and progressively stop receiving
+security patches.
 
-* 🛠️ **Official support is discontinued** — any issues must be resolved by the user.
-* 🚫 Bugs caused by outdated dependencies or libraries **will not be addressed** by the UyPanel project.
+UyPanel ships its own **hardened PHP 8.3.36** build (patched against the PHP2Shell
+CVE-2026-109618/109619), but the rest of the stack depends on the operating
+system's security updates — running the panel on an EOL or legacy release exposes
+it to known vulnerabilities.
+
+For that reason, **Ubuntu 22.04 and older are no longer recommended** for new
+installations and do not receive prioritized support.
 
 ---
 
 ## 📥 Quick Install
 
-> ✅ Ubuntu 22.04 or newer
+> ✅ Debian 13 (recommended) or Ubuntu 24.04
 
 ```bash
 # 1. Update system
 sudo apt update && sudo apt full-upgrade -y
 
 # 2. Install dependencies
-sudo apt install -y python3-pip unzip
+sudo apt install -y unzip
 
 # 3. Download latest release
 latest_version=$(curl -s https://api.github.com/repos/m4sterinfo/UyPanel/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)
