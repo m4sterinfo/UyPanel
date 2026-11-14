@@ -1,7 +1,7 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-14 (Anti-servers-fantasma: instalaciones fallidas se auto-eliminan; limpieza de 3 fantasmas en prod).
+> cada cambio significativo. Última actualización: 2026-11-14 (cierre de sesión: fix lista de proxies en WebUI, FAQ anti-fantasma, skill al día).
 
 ## 🆕 2026-11-14 — Lista de proxies vacía en el WebUI: bug de migración al Front Controller
 
@@ -16,6 +16,15 @@
 **Despliegue inmediato**: el proxies.php corregido se copió via SSH al panel del usuario (`/home/uypanel/public/Views/admin/proxies.php`, chown uypanel). Además se eliminó el fantasma #3 (PRX01_GE, `last_check_ago=0`, fila del primer intento con payload viejo) con backup en `/root/ghost_proxy_3_backup.sql` del panel; cache servers/proxy_servers limpiada. Estado final del panel del usuario: #1 main, #2 LB01_US, #4 PRX_de (proxy reportando).
 
 **Nota de patrón**: otras vistas que asignen datos en el guard `$__viewMode` y los usen en el body heredan la global del bootstrap — revisar si alguna más quedó desincronizada (servers.php funciona por coincidencia de filtros).
+
+## 2026-11-14 — Infraestructura del usuario (segundo panel) + cierre de sesión
+
+- **Nuevo panel del usuario**: `178.156.194.122` (debian-2gb-ash-1, 2GB, Debian 13) — instalado fresco con 2.0.3, actualizado a 2.0.4. Acceso web con código propio (NO es el de prod). SSH: credenciales provistas ad-hoc por el usuario en el chat — NO registrarlas aquí ni en el repo.
+- **Infra del nuevo panel**: MAIN (178.156.194.122, id 1) + LB01_US (5.161.219.208, id 2, Debian 13, instalado OK) + PRX_de (2.31.115.247, id 4, Debian 13, proxy instalado OK y reportando). El fantasma #3 (PRX01_GE, primer intento con payload viejo) fue eliminado con backup en `/root/ghost_proxy_3_backup.sql` del panel.
+- **Verificación del proxy en vivo** (script de diagnóstico pasado al usuario): nginx escuchando 80/443 como uypanel, PHP 8.3.36, crontab del callback instalado, POST a `/admin/proxy_api` del main → HTTP 200 + [] (gate anti-probe pasado).
+- **Docs**: FAQ (es + en) con nueva entrada "El servidor desapareció de la lista tras una instalación fallida" (comportamiento anti-fantasma 2.0.4 + log en `bin/install/<id>.install`).
+- **SKILL.md**: releases actualizadas (2.0.4) + nueva sección "Gotchas del Front Controller" (patrón `$__viewMode`, global `$rServers` pisada, `console.php update` no-op).
+- **Pendiente para próxima sesión**: revisar preventivamente otras vistas con asignaciones dentro del guard `$__viewMode` (el patrón roto de proxies.php); la release 2.0.5 acumulará: fix proxies.php (`4561e364`), usage de update (`dfbf2831`), ExecRestart (`9d87ce41`) — el fix de la vista ya está desplegado a mano en el panel del usuario.
 
 ## 🆕 2026-11-14 — Proxy (type 1): payload reconstruido — el viejo era upstream roto (PHP 8.1.33/xc_vm)
 

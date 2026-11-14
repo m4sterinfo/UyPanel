@@ -343,6 +343,21 @@ sudo -u uypanel /home/uypanel/bin/php/bin/php /home/uypanel/console.php watchdog
 
 </details>
 
+<details>
+<summary><b>🧹 El servidor desapareció de la lista tras una instalación fallida</b></summary>
+
+---
+
+Es el comportamiento esperado desde UyPanel 2.0.4: si la instalación de un Load Balancer o Proxy falla (SSH inaccesible, credenciales incorrectas, checksum o extracción fallida), el servidor **se elimina automáticamente del panel** en lugar de quedar como un fantasma "caído" en la lista.
+
+- **Log de instalación:** queda en `bin/install/<id>.install` del servidor MAIN para revisar qué falló
+- **Reaper:** cada minuto, el cron de MAIN también elimina servidores trabados en "Installing..." sin proceso de instalación vivo (>5 min) y filas fallidas legacy
+- **Reintentar:** corrige la causa (firewall SSH, credenciales) y vuelve a agregar el servidor desde el panel
+
+---
+
+</details>
+
 ---
 
 📘 *Esta página se actualiza con el tiempo. Si encontraste un problema típico nuevo — propónlo en los [Issues](https://github.com/m4sterinfo/UyPanel/issues).*

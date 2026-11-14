@@ -138,7 +138,9 @@ journalctl -u uypanel -f
 - Releases: 2.0.1 (2026-11-02), 2.0.2, 2.0.3 (2026-11-14: fix instalador —
   `libcurl3t64-gnutls` + `libsodium23` faltantes causaban 502 en servers
   nuevos; política de SO en docs: Debian 13 recomendado, Ubuntu 22.04 y
-  anteriores deprecados).
+  anteriores deprecados), 2.0.4 (2026-11-14: anti-servers-fantasma — las
+  instalaciones fallidas se auto-eliminan del panel; payload de proxy
+  reconstruido con el stack actual).
 
 ## Tono de trabajo
 
@@ -146,3 +148,21 @@ journalctl -u uypanel -f
 - Validar sintaxis PHP y probar en el servidor antes de commitear.
 - Ante duda de arquitectura: ARCHITECTURE.md manda; luego las instructions.
 - Registrar TODO cambio en STATE.md — el skill es la memoria del proyecto.
+
+## Gotchas del Front Controller (lecciones aprendidas)
+
+- **Patrón `$__viewMode`**: `BaseAdminController::render()` setea `$__viewMode = true`
+  antes de requerir la vista → el bloque `if (!isset($__viewMode)):` del top de la
+  vista SE SALTEA (bootstrap, header y asignaciones de datos). Las vistas NO deben
+  depender de asignaciones dentro de ese guard: los datos que el body usa deben
+  asignarse FUERA del guard o venir del `extract()` de render() (que pasa las
+  globals listadas en `$viewGlobals`). Casualidad que lo delata: una lista que
+  renderiza vacía aunque la BD tenga los datos.
+- **Global `$rServers` pisada**: `bootstrapAdminRuntime()` sobreescribe la global
+  `$rServers` con `getStreamingSimple()` (solo `server_type = 0`: main + LBs). Los
+  proxies (server_type=1) viven en `$rProxyServers`. Una vista que filtre
+  `server_type == 1` sobre `$rServers` NUNCA matchea (caso proxies.php, fix
+  `4561e364`). "Manage Servers" funciona por coincidencia de filtros.
+- **`console.php update` a secas es no-op**: espera subcomando (`update update` /
+  `post-update`); imprime usage desde `dfbf2831`. La notificación de update la
+  escribe `cron:update` (cron diario 00:00) escribiendo `settings.update_data`.
