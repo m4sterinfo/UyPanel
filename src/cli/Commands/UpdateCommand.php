@@ -14,6 +14,7 @@ class UpdateCommand implements CommandInterface {
 		set_time_limit(0);
 
 		if (empty($rArgs[0])) {
+			echo 'Usage: console.php update update|post-update' . "\n";
 			return 0;
 		}
 
