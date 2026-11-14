@@ -16,6 +16,7 @@
 - `src/cli/Commands/BalancerCommand.php`: añadido `libsodium23` en las 3 ramas de distro; Debian 12 ahora usa `libcurl3-gnutls` en vez del t64 inexistente en bookworm.
 - **Verificación**: container debian:13 fresco con la lista corregida → 0 libs faltantes en ambos payloads y `php -v` ejecuta (PHP 8.3.36). Container debian:12 → confirmado que `libcurl4t64`/`libcurl3t64-gnutls`/`libssh2-1t64` no existen y `libcurl4`/`libcurl3-gnutls`/`libsodium23`/`libssh2-1` sí. `php -l` OK en BalancerCommand; `py_compile` OK en install.
 - **Pendiente**: rebuild del payload (`make main`) para que el fix llegue al `UyPanel.zip` de releases; commitear cambios. Quick-fix para el server afectado: `apt-get install -y libcurl3t64-gnutls libsodium23 && sudo /home/uypanel/bin/php/bin/php /home/uypanel/console.php startup && sudo systemctl restart uypanel`.
+- **Resuelto (mismo día)**: commit `a9da3cff` pusheado a main; release **2.0.3** publicada (CI `Build Release Assets` OK en 2m56s, 5 assets: UyPanel.zip, loadbalancer.tar.gz, loadbalancer_update.tar.gz, update.tar.gz, hashes.md5). Verificado descargando el `UyPanel.zip` y `update.tar.gz` de la release: ambos contienen los fixes (libcurl3-gnutls/libsodium23 en install; libsodium23 en BalancerCommand). El server afectado fue formateado por el usuario; reinstalar desde la release 2.0.3.
 
 
 ## 🆕 2026-11-14 — Eliminación completa del Stream Extractor
