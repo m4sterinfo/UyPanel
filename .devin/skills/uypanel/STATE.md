@@ -3,6 +3,18 @@
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
 > cada cambio significativo. Última actualización: 2026-11-14 (Anti-servers-fantasma: instalaciones fallidas se auto-eliminan; limpieza de 3 fantasmas en prod).
 
+## 🆕 2026-11-14 — Proxy (type 1): payload reconstruido — el viejo era upstream roto (PHP 8.1.33/xc_vm)
+
+**Problema del usuario**: en su panel nuevo (2.0.3, Debian 13), agregar LB (type 2) funcionó pero agregar un PROXY (type 1) en Debian 13 falló.
+
+**Causa raíz**: `src/bin/install/proxy.tar.gz` era un asset ESTÁTICO del repo (no lo rebuilda el Makefile) con contenido upstream de **octubre 2025**: binarios PHP **8.1.33** (EOL, sin parches) y nginx 1.28 con prefix `/home/xc_vm` compilado, `nginx.conf` con `user xc_vm` (usuario inexistente en instalación fresca → nginx ni arranca), `service` apuntando a `includes/startup.php` con rutas xc_vm, y en Debian 13 el PHP viejo muere por `libjpeg.so.8` (ABI 8 no existe en trixie). Verificado empíricamente en container debian:13 con la lista de paquetes type-1.
+
+**Fixes** (commit `b017b028`):
+- **proxy.tar.gz reconstruido desde el stack actual** (65.5MB): bin/php completo (PHP 8.3.36 hardened, prefix uypanel, etc/1-4.conf), bin/nginx 1.29.6 + conf mínima de proxy (nginx.conf proxy con `user uypanel`/`pool_uypanel`, options.conf del payload viejo, ssl.conf, certs, mime.types, dirs logs/temp), `service`/`includes/startup.php`/`crons/callback.php` uypanel-izados (el callback reporta stats al main vía `/admin/proxy_api` y recibe señales: restart, block_ip, reload_nginx...). Modos estilo Makefile (binarios 0551, dirs 750). Probado en container: php -v OK, lint OK, nginx -t OK, nginx arranca como uypanel y proxyea al main OK.
+- **BalancerCommand type-1**: lista de paquetes + `libfreetype6` + `libmaxminddb0` (deps de GD compilado y de la extensión maxminddb — antes las traía `libharfbuzz-dev` que el proxy no instala); chequeo de extracción ahora REMOTO (`test -x bin/nginx/sbin/nginx` — el viejo chequeaba un archivo LOCAL del main y nunca podía fallar); type-1 ahora despliega binarios nativos por distro desde `bin/distros/` (igual que type 2 — necesario para proxies Ubuntu); bootstrap del proxy llama `includes/startup.php` como root (instala el crontab del callback) en vez del inexistente `console.php startup`.
+- **Nota**: el endpoint `/admin/proxy_api` del main responde 404 a IPs no-proxy por diseño (anti-probe, `BlocklistService::isProxy`); el callback del proxy registrado pasa el gate. Arquitectura de proxies intacta.
+- **Pendiente**: publicar release 2.0.4 para que los paneles instalados reciban el BalancerCommand nuevo + el proxy.tar.gz nuevo (viaja dentro del payload main en `bin/install/`). El panel del usuario puede también recibir el proxy.tar.gz a mano (scp a `/home/uypanel/bin/install/`) mientras sale la release.
+
 ## 🆕 2026-11-14 — Anti-servers-fantasma: instalaciones fallidas se auto-eliminan del panel
 
 **Problema del usuario**: servers LB con instalación fallida quedaban para siempre en la lista como fantasmas ("Down since: Always") — rows con `status=4` (fallo explícito) o `status=3` trabado (proceso de install muerto a mitad).
