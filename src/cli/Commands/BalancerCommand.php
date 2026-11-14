@@ -61,7 +61,7 @@ class BalancerCommand implements CommandInterface {
 		$rInstallDir = BIN_PATH . 'install/';
 
 		if ($rType == 1) {
-			$rPackages = array('iproute2', 'net-tools', 'libcurl4', 'libxslt1-dev', 'libonig-dev', 'e2fsprogs', 'wget', 'sysstat', 'mcrypt', 'python3', 'certbot', 'iptables-persistent', 'libjpeg-dev', 'libpng-dev', 'php-ssh2', 'xz-utils', 'zip', 'unzip', 'cron');
+			$rPackages = array('iproute2', 'net-tools', 'libcurl4', 'libfreetype6', 'libmaxminddb0', 'libxslt1-dev', 'libonig-dev', 'e2fsprogs', 'wget', 'sysstat', 'mcrypt', 'python3', 'certbot', 'iptables-persistent', 'libjpeg-dev', 'libpng-dev', 'php-ssh2', 'xz-utils', 'zip', 'unzip', 'cron');
 			$rInstallFiles = 'proxy.tar.gz';
 		} elseif ($rType == 2) {
 			$rPackages = array('cpufrequtils', 'iproute2', 'python', 'net-tools', 'dirmngr', 'gpg-agent', 'software-properties-common', 'libmaxminddb0', 'libmaxminddb-dev', 'mmdb-bin', 'libcurl4', 'libgeoip-dev', 'libxslt1-dev', 'libonig-dev', 'e2fsprogs', 'wget', 'sysstat', 'alsa-utils', 'v4l-utils', 'mcrypt', 'python3', 'certbot', 'iptables-persistent', 'libjpeg-dev', 'libpng-dev', 'php-ssh2', 'xz-utils', 'zip', 'unzip', 'cron', 'libfribidi-dev', 'libharfbuzz-dev', 'libogg0');
@@ -169,8 +169,34 @@ class BalancerCommand implements CommandInterface {
 				echo "Extracting to directory\n";
 				$this->runSSH($rConn, 'sudo rm -rf ' . MAIN_HOME . 'status');
 				$this->runSSH($rConn, 'sudo tar -zxvf "/tmp/' . $rInstallFiles . '" -C "' . MAIN_HOME . '"');
-				if (!file_exists(MAIN_HOME . 'status')) {
+				$rExtractCheck = $this->runSSH($rConn, 'test -x ' . MAIN_HOME . 'bin/nginx/sbin/nginx && echo EXTRACT_OK');
+				if (stripos($rExtractCheck['output'], 'EXTRACT_OK') === false) {
 					return $this->failInstall($rServerID, 'Failed to extract files! Exiting');
+				}
+
+				// Deploy native PHP 8.3 / Nginx binaries matching the remote OS
+				$rDistroTag = null;
+				if ($rDistroID == 'debian' || preg_match('/^(12|13)\./', $rVersion)) {
+					$rDistroTag = 'debian_13';
+				} elseif (preg_match('/^24\./', $rVersion)) {
+					$rDistroTag = 'ubuntu_24';
+				} elseif (preg_match('/^22\./', $rVersion)) {
+					$rDistroTag = 'ubuntu_22';
+				} elseif (preg_match('/^20\./', $rVersion)) {
+					$rDistroTag = 'ubuntu_20';
+				}
+
+				if ($rDistroTag) {
+					$rLocalBinaryPath = BIN_PATH . 'distros/' . $rDistroTag . '.tar.gz';
+					if (file_exists($rLocalBinaryPath)) {
+						echo "Deploying native {$rDistroTag} binaries (PHP 8.3 / Nginx 1.29) to Proxy...\n";
+						if ($this->sendFileSSH($rConn, $rLocalBinaryPath, '/tmp/' . $rDistroTag . '.tar.gz', true)) {
+							$this->runSSH($rConn, 'sudo tar -zxvf "/tmp/' . $rDistroTag . '.tar.gz" -C "' . MAIN_HOME . '"');
+							$this->runSSH($rConn, 'sudo rm -f "/tmp/' . $rDistroTag . '.tar.gz"');
+							$this->runSSH($rConn, 'sudo chown -R uypanel:uypanel "' . MAIN_HOME . 'bin"');
+							echo "Native binaries deployed successfully.\n";
+						}
+					}
 				}
 			} else {
 				return $this->failInstall($rServerID, 'Invalid MD5 checksum! Exiting');
@@ -183,7 +209,8 @@ class BalancerCommand implements CommandInterface {
 				echo "Extracting to directory\n";
 				$this->runSSH($rConn, 'sudo rm -rf ' . MAIN_HOME . 'status');
 				$this->runSSH($rConn, 'sudo tar -zxvf "/tmp/UyPanel.tar.gz" -C "' . MAIN_HOME . '"');
-				if (file_exists(MAIN_HOME . 'status')) {
+				$rExtractCheck = $this->runSSH($rConn, 'test -x ' . MAIN_HOME . 'bin/nginx/sbin/nginx && echo EXTRACT_OK');
+				if (stripos($rExtractCheck['output'], 'EXTRACT_OK') !== false) {
 					$this->runSSH($rConn, 'sudo rm -f "/tmp/UyPanel.tar.gz"');
 
 					// Deploy native PHP 8.3 / Nginx binaries matching the remote OS
@@ -349,7 +376,7 @@ class BalancerCommand implements CommandInterface {
 			$this->runSSH($rConn, 'sudo -u uypanel ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php startup');
 			$this->runSSH($rConn, 'sudo -u uypanel ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php cron:servers');
 		} else {
-			$this->runSSH($rConn, 'sudo -u uypanel ' . PHP_BIN . ' ' . MAIN_HOME . 'console.php startup');
+			$this->runSSH($rConn, 'sudo ' . PHP_BIN . ' ' . MAIN_HOME . 'includes/startup.php');
 		}
 
 		if (in_array($rType, array(1, 2))) {
