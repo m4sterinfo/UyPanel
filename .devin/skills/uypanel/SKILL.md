@@ -60,11 +60,11 @@ UyPanel/
 │  ├─ crons/  signals/  migrations/  tools/  bin/
 ├─ lb_configs/           # nginx.conf + live.conf para el build del Load Balancer
 ├─ tools/                # build_ffmpeg.sh, tests de player API, scripts varios
-├─ docs/                 # Documentación (mkdocs, en/ y ru/)
+├─ docs/                 # Documentación (mkdocs, en/ y es/)
 ├─ third_party/          # SUBMÓDULOS git (sistemas de build de binarios)
 │  ├─ UyPanel_Binaries/  # Build de PHP/nginx/redis/nginx_rtmp por distro (docker)
 │  └─ UyPanel_FFMPEG/    # Build de FFmpeg 8.0/7.1/4.0 (docker)
-├─ install               # Instalador Python (con soporte Debian 12/13 — parche nuestro)
+├─ install               # Instalador Python (Debian 12/13 + Ubuntu; instala las deps runtime del payload: libcurl3t64-gnutls, libsodium23)
 ├─ Makefile              # Sistema de build de payloads
 ├─ ARCHITECTURE.md       # Especificación técnica completa
 └─ .devin/skills/uypanel/  # Este skill (SKILL.md + STATE.md)
@@ -96,15 +96,17 @@ journalctl -u uypanel -f
 ## Entorno de producción (servidor actual)
 
 - Debian 13 (trixie), 8 cores, 32 GB RAM, IP `198.27.81.133`
-- UyPanel 2.0.1 (base XC_VM 2.0.1) instalado en `/home/uypanel` (nginx 80/443, nginx_rtmp,
+- UyPanel 2.0.3 (base XC_VM 2.0.1) instalado en `/home/uypanel` (nginx 80/443, nginx_rtmp,
   4 pools php-fpm 8.3.36, KeyDB 6.3.4 en 6379 con auth, MariaDB 11.8)
 - Base de datos migrada desde XUI (27,672 líneas, 240,557 streams)
-- Acceso admin: `http://198.27.81.133/x9access9x`
+- Acceso admin: `http://198.27.81.133/7JDEeDMG` (código tras la reinstalación
+  limpia del 2026-11-04; el `x9access9x` anterior murió con la BD vieja)
 - Credenciales MariaDB: `/home/debian/credentials.txt` (BD: `uypanel`) (NO commitear nunca)
-- Particularidades Debian 13 del PHP incluido (build Ubuntu):
-  `libcurl3t64-gnutls` + `libjpeg.so.8` (ABI 8) en `/usr/local/lib` — ver
-  `/home/debian/AGENTS.md` para detalles. NO sustituir libjpeg por symlink a la
-  ABI 62 (layouts de struct incompatibles).
+- Binarios nativos Debian 13 (PHP 8.3.36 hardened, nginx 1.29.6). El instalador
+  (desde 2.0.3) instala sus deps runtime: `libcurl3t64-gnutls` + `libsodium23`
+  (verificado en containers debian:13/debian:12 limpios). El hack de
+  `libjpeg.so.8` en `/usr/local/lib` solo aplica al rollback de binarios 8.1
+  viejos — ver `/home/debian/AGENTS.md`.
 
 ## Relación con upstream
 
@@ -122,10 +124,21 @@ journalctl -u uypanel -f
 ## Publicar releases
 
 - El Quick Install del README descarga de `releases/latest` de NUESTRO repo.
-- Release 2.0.1 publicado (2026-11-02) con `UyPanel.zip` + `loadbalancer.tar.gz`
-  + `hashes.md5`. Para publicar una versión nueva: bump de `UyPanel_VERSION` en
-  `src/core/Config/AppConfig.php`, tag, `gh release create <tag> dist/*`
-  (builds con `make main` y `make lb`).
+- El CI (`.github/workflows/build-release.yml`) se dispara al publicar la
+  release y builda/sube TODOS los assets automáticamente
+  (`make lb/main/main_update/lb_update` desde el tag).
+- **Checklist obligatorio** (lección de la 2.0.3, que hubo que publicar 2 veces):
+  1. Bump de `UyPanel_VERSION` en `src/core/Config/AppConfig.php` — si se olvida,
+     el payload se autoreporta con la versión vieja y los paneles instalados
+     quedan en loop de "update disponible" (el delta no lleva AppConfig.php).
+  2. Commit + push a main.
+  3. `gh release create <tag> --title "UyPanel <tag>" --notes ...` — el tag se
+     crea en HEAD de main; el CI arma y sube los assets.
+  4. Verificar: assets publicados y `UyPanel_VERSION` correcto DENTRO del zip.
+- Releases: 2.0.1 (2026-11-02), 2.0.2, 2.0.3 (2026-11-14: fix instalador —
+  `libcurl3t64-gnutls` + `libsodium23` faltantes causaban 502 en servers
+  nuevos; política de SO en docs: Debian 13 recomendado, Ubuntu 22.04 y
+  anteriores deprecados).
 
 ## Tono de trabajo
 
