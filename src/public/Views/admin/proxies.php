@@ -8,11 +8,13 @@
 		goHome();
 	}
 
-	$rServers = ServerRepository::getAll(true);
 	$_TITLE = 'Proxy Servers';
 	require_once __DIR__ . '/../layouts/admin.php';
 	renderUnifiedLayoutHeader('admin'); ?>
-<?php endif; ?>
+<?php endif;
+
+$rServers = ServerRepository::getAll(true);
+?>
 
 
 <div class="wrapper" <?php if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') echo 'style="display: none;"' ?>>
