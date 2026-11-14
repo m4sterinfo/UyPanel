@@ -287,7 +287,7 @@ class BalancerCommand implements CommandInterface {
 
 		echo "Installing service\n";
 		$this->runSSH($rConn, 'sudo rm /etc/systemd/system/uypanel.service');
-		$rSystemd = '[Unit]' . "\n" . 'SourcePath=/home/uypanel/service' . "\n" . 'Description=UyPanel Service' . "\n" . 'After=network.target' . "\n" . 'StartLimitIntervalSec=0' . "\n\n" . '[Service]' . "\n" . 'Type=simple' . "\n" . 'User=root' . "\n" . 'Restart=always' . "\n" . 'RestartSec=1' . "\n" . 'ExecStart=/bin/bash /home/uypanel/service start' . "\n" . 'ExecRestart=/bin/bash /home/uypanel/service restart' . "\n" . 'ExecStop=/bin/bash /home/uypanel/service stop' . "\n\n" . '[Install]' . "\n" . 'WantedBy=multi-user.target';
+		$rSystemd = '[Unit]' . "\n" . 'SourcePath=/home/uypanel/service' . "\n" . 'Description=UyPanel Service' . "\n" . 'After=network.target' . "\n" . 'StartLimitIntervalSec=0' . "\n\n" . '[Service]' . "\n" . 'Type=simple' . "\n" . 'User=root' . "\n" . 'Restart=always' . "\n" . 'RestartSec=1' . "\n" . 'ExecStart=/bin/bash /home/uypanel/service start' . "\n" . 'ExecStop=/bin/bash /home/uypanel/service stop' . "\n\n" . '[Install]' . "\n" . 'WantedBy=multi-user.target';
 		file_put_contents(TMP_PATH . 'systemd_' . $rServerID, $rSystemd);
 		$this->sendFileSSH($rConn, TMP_PATH . 'systemd_' . $rServerID, '/etc/systemd/system/uypanel.service');
 		$this->runSSH($rConn, 'sudo chmod +x /etc/systemd/system/uypanel.service');
