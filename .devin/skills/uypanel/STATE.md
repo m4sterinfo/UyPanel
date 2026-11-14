@@ -1,9 +1,35 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-14 (cierre de sesión: fix lista de proxies en WebUI, FAQ anti-fantasma, skill al día).
+> cada cambio significativo. Última actualización: 2026-11-14 (release 2.0.5: anti-fantasma completo + auditoría $__viewMode de las 60 vistas).
 
-## 🆕 2026-11-14 — Lista de proxies vacía en el WebUI: bug de migración al Front Controller
+## 🆕 2026-11-14 — Release 2.0.5: huecos anti-fantasma cerrados + auditoría $__viewMode completa
+
+**Pedido del usuario**: continuar los pendientes; garantizar que una instalación fallida de LB/proxy NUNCA deje servers fantasma en la BD.
+
+**Auditoría del código anti-fantasma existente (commit `79560b8d`, 2.0.4)** — 3 huecos encontrados y cerrados (commit `b86daeb3`):
+1. **Instalación "termina OK" pero el server nunca reporta** (caso 502 Bad Gateway de la sesión anterior): la fila quedaba `status=1` con "Down since: Always" para siempre — el reaper no toca status=1. **Fix**: `BalancerCommand` tras el install hace poll de `last_check_ago` hasta 240s (señal universal: WatchdogCommand la actualiza en LBs, `proxy_api` en proxies; `DatabaseHandler::query()` tiene auto-reconnect para el poll largo). Si nunca reporta → `failInstall` (fila eliminada, feedback inmediato). `$rInstallStart` capturado al inicio de execute() para el caso re-instalación.
+2. **Proceso de install vivo pero colgado** (SSH trabado, DROP de firewall): `pgrep` lo encuentra → el reaper lo saltaba para siempre. **Fix**: reaper con hard-kill — `status=3` + log `.install` sin writes > 3600s (1h) → kill -9 del proceso + deleteById. Un install activo escribe output constantemente (echo por paquete); el único tramo mudo largo es el SCP del payload (~65MB, <30min incluso en links malos).
+3. **Proceso muerto antes de crear el log**: el reaper exigía `file_exists(log)` → fila `status=3` eterna. **Fix**: `ServerService::install()` hace `touch()` del `.install` antes del `shell_exec` (ambas rutas: nuevo y edit) → el log siempre existe desde la creación de la fila y el mtime da la ventana de gracia (300s). Además el reaper ahora elimina `status=3` sin proceso + sin log + `last_check_ago=0` (nunca reportó).
+
+**Reaper reescrito** (`ServersCronJob.php:193-224`): tabla de decisión — `status=4` → reap (kill si vivo); `!alive && logAge>300` → reap; `!alive && sin log && last_check_ago=0` → reap; `alive && logAge>3600` → reap+kill. El log `.install` se CONSERVA (debug, como en failInstall). Verificado contra prod: solo main #1 online, nada que tocar.
+
+**deleteById ya cubre lo crítico** (streams_servers, lines_live, lines_activity, servers_stats, signals, parent_id de proxies). Huérfanos menores aceptados (mysql_syslog, panel_logs, streams_errors — filtrados por subquery `IN (SELECT id FROM servers)` en la UI). `grantPrivileges` es un GRANT local (sin riesgo de hang entre INSERT y launch).
+
+**Auditoría $__viewMode (pendiente de la sesión anterior) — completada** con scripts desechables (/tmp/viewmode_audit.py + /tmp/view_audit2.py, no commiteados):
+- 60 vistas usan el guard; ~55 asignan datos dentro (patrón legacy normal). Cruce vista↔controlador (render() $data): **2 bugs reales + 1 hardening + 2 falsos positivos**.
+- **review.php (import M3U) — página MUERTA en FC**: el data-prep completo (~160 líneas: submit post_data → StreamService/MovieService::process, upload m3u_file → M3UParser + dedup + $rImport) estaba DENTRO del guard. Tanto `render()` como el fallback legacy de `index.php:425` setean `$__viewMode=true` → el guard es código muerto en AMBAS rutas → el import no hacía nada en el panel. **Fix**: data-prep movido fuera del guard (patrón proxies.php), layout header en segundo guard propio (preserva el orden legacy: redirect antes de output), redirects con fallback JS `headers_sent()` (no hay output_buffering en el runtime, implicit_flush=On). ReviewController sigue siendo stub deliberado.
+- **theft_detection.php**: el controlador pasaba claves `theftDetection`/`range` pero la vista lee `$rTheftDetection`/`$rRange` → página rota en FC. Claves corregidas en `TheftDetectionController`.
+- **servers.php**: `$rServers = getAll(true)` movido fuera del guard (funcionaba por coincidencia de filtros type=0, igual que proxies.php antes del fix).
+- **Falsos positivos descartados**: dashboard.php `$i` (reasignado en body línea 393); line_activity.php `rSearchStream/rSearchUser` (uso con `isset()` — FC es incluso más seguro).
+- **Side-effects en guard (scan adicional)**: 7 vistas con `header('Location')` dentro del guard (epg_view, ips, line, movie_mass, process_monitor, record, stream_review) — TODAS replicadas en sus controladores FC (IpController→flush, MovieMassController→massEdit, ProcessMonitor→clear/clear_s, StreamReview→submit, EpgView→mobile, Line→mag/e2, Record→validación). Migración FC completa, sin acción.
+- **Deuda conocida (no urgente)**: RecordController:45 `header('Location: record')` sin exit (Location+200, browsers redirigen igual); data-prep en vistas viola Controller→Service (deuda del patrón legacy, revisar en futura migración MVC).
+
+**Release 2.0.5 publicada**: bump en `AppConfig.php`, commit `b86daeb3`, tag 2.0.5, CI Build Release Assets (run 43563483851). Acumula: fix proxies.php (`4561e364`), usage update (`dfbf2831`), ExecRestart (`9d87ce41`) + todo lo de arriba.
+
+**Pendiente para próxima sesión**: desplegar 2.0.5 al panel del usuario (178.156.194.122) — el update llega solo por el cron diario o manual via `console.php update update`; verificar que el reaper ampliado no interfiera con el proxy #4 en producción.
+
+## 2026-11-14 — Lista de proxies vacía en el WebUI: bug de migración al Front Controller
 
 **Problema del usuario**: el proxy instalado (Debian 13, funcionando y reportando) no aparecía en "Manage Proxies" — la tabla renderizaba tbody vacío.
 

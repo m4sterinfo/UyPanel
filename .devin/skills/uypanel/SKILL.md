@@ -140,7 +140,12 @@ journalctl -u uypanel -f
   nuevos; política de SO en docs: Debian 13 recomendado, Ubuntu 22.04 y
   anteriores deprecados), 2.0.4 (2026-11-14: anti-servers-fantasma — las
   instalaciones fallidas se auto-eliminan del panel; payload de proxy
-  reconstruido con el stack actual).
+  reconstruido con el stack actual), 2.0.5 (2026-11-14: anti-fantasma
+  completado — verificación post-instalación de primer reporte 240s,
+  reaper con hard-kill de installs colgados >1h y muertos sin log, touch
+  del `.install` antes del launch; import M3U de review.php revivido
+  (data-prep muerto dentro del guard), claves de theft_detection,
+  servers.php auto-provisión).
 
 ## Tono de trabajo
 
@@ -158,6 +163,15 @@ journalctl -u uypanel -f
   asignarse FUERA del guard o venir del `extract()` de render() (que pasa las
   globals listadas en `$viewGlobals`). Casualidad que lo delata: una lista que
   renderiza vacía aunque la BD tenga los datos.
+- **El guard es código muerto en AMBAS rutas**: el fallback legacy de
+  `public/index.php` (~línea 425) TAMBIÉN setea `$__viewMode = true` antes de
+  requerir el archivo legacy. Cualquier data-prep o POST-handling dentro del guard
+  nunca corre (caso review.php: el import M3U entero estaba muerto, fix `b86daeb3`).
+  Si una vista tiene side-effects en el guard, verificar que su controlador FC los
+  replique (IpController→flush, MovieMassController→massEdit, etc. ya lo hacen).
+- **Redirects en vista FC**: no hay output_buffering (0) ni implicit_flush off →
+  un `header('Location:')` tras el HTML del layout falla. Patrón aceptado:
+  `if (!headers_sent()) { header(...); } else { echo '<script>window.location.replace(...)</script>'; } exit();`
 - **Global `$rServers` pisada**: `bootstrapAdminRuntime()` sobreescribe la global
   `$rServers` con `getStreamingSimple()` (solo `server_type = 0`: main + LBs). Los
   proxies (server_type=1) viven en `$rProxyServers`. Una vista que filtre
