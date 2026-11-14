@@ -3,6 +3,20 @@
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
 > cada cambio significativo. Última actualización: 2026-11-14 (Anti-servers-fantasma: instalaciones fallidas se auto-eliminan; limpieza de 3 fantasmas en prod).
 
+## 🆕 2026-11-14 — Lista de proxies vacía en el WebUI: bug de migración al Front Controller
+
+**Problema del usuario**: el proxy instalado (Debian 13, funcionando y reportando) no aparecía en "Manage Proxies" — la tabla renderizaba tbody vacío.
+
+**Diagnóstico (con SSH al panel del usuario, 178.156.194.122)**: la BD tenía el proxy con `server_type=1, status=1, enabled=1` y reportando (`last_check_ago` fresco); la cache de servers también lo tenía. El dato estaba — el render no.
+
+**Causa raíz** (migración FC): `bootstrapAdminRuntime()` (`includes/bootstrap/admin_runtime.php:142`) pisa la **global** `$rServers` con `getStreamingSimple()` = `WHERE server_type = 0` (solo main+LBs; los proxies van en `$rProxyServers` aparte). La vista `proxies.php` tenía su propio `$rServers = ServerRepository::getAll(true)` pero DENTRO del guard `if (!isset($__viewMode))` — y `BaseAdminController::render()` setea `$__viewMode = true` antes de requerir la vista → la asignación se salteaba → el foreach iteraba la global pisada (solo type=0) → el filtro `server_type == 1` nunca matcheaba → lista siempre vacía. "Manage Servers" funcionaba de casualidad (su filtro type=0 coincide con la global pisada).
+
+**Fix** (commit `4561e364`): en `proxies.php`, la asignación `$rServers = ServerRepository::getAll(true);` movida FUERA del guard `$__viewMode` — la vista se auto-provee la lista completa y fresca en ambos modos (FC y legacy). Verificado que el body solo usa variables cubiertas ($rUserInfo/$rSettings via extract del render, resto computado en el loop). `php -l` OK.
+
+**Despliegue inmediato**: el proxies.php corregido se copió via SSH al panel del usuario (`/home/uypanel/public/Views/admin/proxies.php`, chown uypanel). Además se eliminó el fantasma #3 (PRX01_GE, `last_check_ago=0`, fila del primer intento con payload viejo) con backup en `/root/ghost_proxy_3_backup.sql` del panel; cache servers/proxy_servers limpiada. Estado final del panel del usuario: #1 main, #2 LB01_US, #4 PRX_de (proxy reportando).
+
+**Nota de patrón**: otras vistas que asignen datos en el guard `$__viewMode` y los usen en el body heredan la global del bootstrap — revisar si alguna más quedó desincronizada (servers.php funciona por coincidencia de filtros).
+
 ## 🆕 2026-11-14 — Proxy (type 1): payload reconstruido — el viejo era upstream roto (PHP 8.1.33/xc_vm)
 
 **Problema del usuario**: en su panel nuevo (2.0.3, Debian 13), agregar LB (type 2) funcionó pero agregar un PROXY (type 1) en Debian 13 falló.
