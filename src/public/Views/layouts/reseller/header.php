@@ -173,65 +173,26 @@ if (count(get_included_files()) != 1) {
 		echo '</a></li>' . "\r\n" . '                                </ul>' . "\r\n" . '                            </li>' . "\r\n" . '                            ';
 	}
 
-	if (!($rPermissions['create_line'] || $rPermissions['create_mag'] || $rPermissions['create_enigma'])) {
+	if (!$rPermissions['create_line']) {
 	} else {
 		echo "\t\t\t\t\t\t\t" . '<li class="has-submenu">' . "\r\n" . '                                <a href="#"> <i class="fas fa-desktop"></i>';
 		echo $language::get('lines');
 		echo ' <div class="arrow-down"></div></a>' . "\r\n" . '                                <ul class="submenu">' . "\r\n" . '                                    ';
 
-		if (!$rPermissions['create_line']) {
+		echo '                                    <li class="has-submenu">' . "\r\n" . '                                        <a href="#">';
+		echo $language::get('user_lines');
+		echo ' <div class="arrow-down"></div></a>' . "\r\n" . '                                        <ul class="submenu">' . "\r\n" . '                                            <li><a href="line">';
+		echo $language::get('add_line');
+		echo '</a></li>' . "\r\n" . '                                            ';
+
+		if (!$rGenTrials) {
 		} else {
-			echo '                                    <li class="has-submenu">' . "\r\n" . '                                        <a href="#">';
-			echo $language::get('user_lines');
-			echo ' <div class="arrow-down"></div></a>' . "\r\n" . '                                        <ul class="submenu">' . "\r\n" . '                                            <li><a href="line">';
-			echo $language::get('add_line');
-			echo '</a></li>' . "\r\n" . '                                            ';
-
-			if (!$rGenTrials) {
-			} else {
-				echo '                                            <li><a href="line?trial=1">Generate Trial Line</a></li>' . "\r\n" . '                                            ';
-			}
-
-			echo '                                            <li><a href="lines">';
-			echo $language::get('manage_lines');
-			echo '</a></li>' . "\r\n" . '                                        </ul>' . "\r\n" . '                                    </li>' . "\r\n" . '                                    ';
+			echo '                                            <li><a href="line?trial=1">Generate Trial Line</a></li>' . "\r\n" . '                                            ';
 		}
 
-		if (!$rPermissions['create_mag']) {
-		} else {
-			echo '                                    <li class="has-submenu">' . "\r\n" . '                                        <a href="#">';
-			echo $language::get('mag_devices');
-			echo ' <div class="arrow-down"></div></a>' . "\r\n" . '                                        <ul class="submenu">' . "\r\n" . '                                            <li><a href="mag">';
-			echo $language::get('add_mag');
-			echo '</a></li>' . "\r\n" . '                                            ';
-
-			if (!$rGenTrials) {
-			} else {
-				echo '                                            <li><a href="mag?trial=1">Generate Trial Device</a></li>' . "\r\n" . '                                            ';
-			}
-
-			echo '                                            <li><a href="mags">';
-			echo $language::get('manage_mag_devices');
-			echo '</a></li>' . "\r\n" . '                                        </ul>' . "\r\n" . '                                    </li>' . "\r\n" . '                                    ';
-		}
-
-		if (!$rPermissions['create_enigma']) {
-		} else {
-			echo '                                    <li class="has-submenu">' . "\r\n" . '                                        <a href="#">';
-			echo $language::get('enigma_devices');
-			echo ' <div class="arrow-down"></div></a>' . "\r\n" . '                                        <ul class="submenu">' . "\r\n" . '                                            <li><a href="enigma">';
-			echo $language::get('add_enigma');
-			echo '</a></li>' . "\r\n" . '                                            ';
-
-			if (!$rGenTrials) {
-			} else {
-				echo '                                            <li><a href="enigma?trial=1">Generate Trial Device</a></li>' . "\r\n" . '                                            ';
-			}
-
-			echo '                                            <li><a href="enigmas">';
-			echo $language::get('manage_enigma_devices');
-			echo '</a></li>' . "\r\n" . '                                        </ul>' . "\r\n" . '                                    </li>' . "\r\n" . '                                    ';
-		}
+		echo '                                            <li><a href="lines">';
+		echo $language::get('manage_lines');
+		echo '</a></li>' . "\r\n" . '                                        </ul>' . "\r\n" . '                                    </li>' . "\r\n" . '                                    ';
 
 		echo '                                </ul>' . "\r\n" . '                            </li>' . "\r\n" . '                            ';
 	}

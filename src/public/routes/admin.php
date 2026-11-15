@@ -35,7 +35,6 @@ $router->get('bouquet_sort', [BouquetSortController::class, 'index']);
 
 $router->get('login_logs', [LoginLogController::class, 'index']);
 $router->get('mysql_syslog', [MysqlSyslogController::class, 'index']);
-$router->get('mag_events', [MagEventController::class, 'index']);
 $router->get('restream_logs', [RestreamLogController::class, 'index']);
 $router->get('panel_logs', [PanelLogController::class, 'index']);
 $router->get('epgs', [EpgListController::class, 'index']);
@@ -119,14 +118,7 @@ $router->get('user_logs', [UserLogsController::class, 'index']);
 $router->get('useragents', [UseragentsController::class, 'index']);
 $router->any('useragent', [UseragentController::class, 'index']);
 
-// ─── Group J: Devices MAG / Enigma (Phase 6.3) ────────────────
-
-$router->get('mags', [MagsController::class, 'index']);
-$router->any('mag', [MagController::class, 'index']);
-$router->any('mag_mass', [MagMassController::class, 'index']);
-$router->get('enigmas', [EnigmasController::class, 'index']);
-$router->any('enigma', [EnigmaController::class, 'index']);
-$router->any('enigma_mass', [EnigmaMassController::class, 'index']);
+// ─── Group J: Devices MAG / Enigma (Phase 6.3) ── DESACTIVADO: portal MAG = vector de fuerza bruta por MAC; sin clientes Enigma2 ───
 
 // ─── Group K: Tickets / EPG (Phase 6.3) ───────────────────────
 

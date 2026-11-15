@@ -55,24 +55,6 @@ class ResellerPostController extends BaseResellerController
                 echo json_encode(['result' => false, 'data' => $rReturn['data'], 'status' => $rReturn['status']]);
                 exit();
 
-            case 'mag':
-                $rReturn = ResellerAPI::processMAG($rData);
-                if ($rReturn['status'] == STATUS_SUCCESS) {
-                    echo json_encode(['result' => true, 'location' => 'mags?status=' . intval($rReturn['status']), 'status' => $rReturn['status']]);
-                    exit();
-                }
-                echo json_encode(['result' => false, 'data' => $rReturn['data'], 'status' => $rReturn['status']]);
-                exit();
-
-            case 'enigma':
-                $rReturn = ResellerAPI::processEnigma($rData);
-                if ($rReturn['status'] == STATUS_SUCCESS) {
-                    echo json_encode(['result' => true, 'location' => 'enigmas?status=' . intval($rReturn['status']), 'status' => $rReturn['status']]);
-                    exit();
-                }
-                echo json_encode(['result' => false, 'data' => $rReturn['data'], 'status' => $rReturn['status']]);
-                exit();
-
             case 'ticket':
                 $rReturn = ResellerAPI::submitTicket($rData);
                 if ($rReturn['status'] == STATUS_SUCCESS) {

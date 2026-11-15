@@ -302,7 +302,7 @@
                                             </ul>
                                         </li>
                                     <?php endif; ?>
-                                    <?php if (Authorization::check('adv', 'add_user') || Authorization::check('adv', 'users') || Authorization::check('adv', 'add_mag') || Authorization::check('adv', 'manage_mag') || Authorization::check('adv', 'add_e2') || Authorization::check('adv', 'manage_e2')): ?>
+                                    <?php if (Authorization::check('adv', 'add_user') || Authorization::check('adv', 'users') || Authorization::check('adv', 'add_reguser') || Authorization::check('adv', 'mng_regusers')): ?>
                                         <li class="has-submenu">
                                             <a href="#"> <i class="fas fa-desktop"></i><?= $language::get('users'); ?> <div class="arrow-down">
                                                 </div></a>
@@ -319,38 +319,6 @@
                                                             <?php endif; ?>
                                                             <?php if (Authorization::check('adv', 'mass_edit_lines')): ?>
                                                                 <li><a href="line_mass"><?= $language::get('mass_edit_users'); ?></a></li>
-                                                            <?php endif; ?>
-                                                        </ul>
-                                                    </li>
-                                                <?php endif; ?>
-                                                <?php if (Authorization::check('adv', 'add_mag') || Authorization::check('adv', 'manage_mag')): ?>
-                                                    <li class="has-submenu">
-                                                        <a href="#"><?= $language::get('mag_devices'); ?> <div class="arrow-down"></div></a>
-                                                        <ul class="submenu">
-                                                            <?php if (Authorization::check('adv', 'add_mag')): ?>
-                                                                <li><a href="mag"><?= $language::get('add_mag'); ?></a></li>
-                                                            <?php endif; ?>
-                                                            <?php if (Authorization::check('adv', 'manage_mag')): ?>
-                                                                <li><a href="mags"><?= $language::get('manage_mag_devices'); ?></a></li>
-                                                            <?php endif; ?>
-                                                            <?php if (Authorization::check('adv', 'mass_edit_mags')): ?>
-                                                                <li><a href="mag_mass">Mass Edit Mags</a></li>
-                                                            <?php endif; ?>
-                                                        </ul>
-                                                    </li>
-                                                <?php endif; ?>
-                                                <?php if (Authorization::check('adv', 'add_e2') || Authorization::check('adv', 'manage_e2')): ?>
-                                                    <li class="has-submenu">
-                                                        <a href="#"><?= $language::get('enigma_devices'); ?> <div class="arrow-down"></div></a>
-                                                        <ul class="submenu">
-                                                            <?php if (Authorization::check('adv', 'add_e2')): ?>
-                                                                <li><a href="enigma"><?= $language::get('add_enigma'); ?></a></li>
-                                                            <?php endif; ?>
-                                                            <?php if (Authorization::check('adv', 'manage_e2')): ?>
-                                                                <li><a href="enigmas"><?= $language::get('manage_enigma_devices'); ?></a></li>
-                                                            <?php endif; ?>
-                                                            <?php if (Authorization::check('adv', 'mass_edit_enigmas')): ?>
-                                                                <li><a href="enigma_mass">Mass Edit Enigmas</a></li>
                                                             <?php endif; ?>
                                                         </ul>
                                                     </li>
@@ -607,7 +575,6 @@
                                                                         ['url' => 'line_ips', 'title' => $language::get('ips_per_line'), 'permissions' => ['connection_logs']],
                                                                         ['url' => 'live_connections', 'title' => $language::get('live_connections'), 'permissions' => ['live_connections']],
                                                                         ['url' => 'login_logs', 'title' => 'Login Logs', 'permissions' => ['login_logs']],
-                                                                        ['url' => 'mag_events', 'title' => $language::get('mag_event_logs'), 'permissions' => ['manage_events']],
                                                                         ['url' => 'ondemand', 'title' => 'On-Demand Scanner', 'permissions' => ['streams']],
                                                                         ['url' => 'panel_logs', 'title' => 'Panel Errors', 'permissions' => ['panel_logs']],
                                                                         ['url' => 'user_logs', 'title' => $language::get('reseller_logs'), 'permissions' => ['reg_userlog']],

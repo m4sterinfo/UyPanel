@@ -77,16 +77,6 @@ class ApiDocsController extends BaseAdminController
                 ['delete_user', 'id', 'Elimina un reseller (y sus líneas).'],
                 ['disable_user / enable_user', 'id', 'Deshabilita / habilita el login de un reseller.'],
             ],
-            'MAG / Enigma2' => [
-                ['get_mags / get_enigmas', 'start, limit', 'Lista paginada de dispositivos.'],
-                ['get_mag / get_enigma', 'id', 'Datos de un dispositivo.'],
-                ['create_mag / create_enigma', 'mac, package, member_id, ...', 'Crea un dispositivo MAG / Enigma2.'],
-                ['edit_mag / edit_enigma', 'id + campos a cambiar', 'Edita un dispositivo.'],
-                ['delete_mag / delete_enigma', 'id', 'Elimina un dispositivo.'],
-                ['disable_mag / enable_mag', 'id', 'Deshabilita / habilita el dispositivo.'],
-                ['ban_mag / unban_mag', 'id', 'Banea / desbanea (solo MAG/Enigma).'],
-                ['convert_mag / convert_enigma', 'id', 'Convierte el dispositivo en línea normal.'],
-            ],
             'Contenido' => [
                 ['get_streams / get_channels / get_stations', 'start, limit', 'Listas de streams, canales creados y radios.'],
                 ['get_movies / get_series_list / get_episodes', 'start, limit', 'Listas de VOD.'],
@@ -131,7 +121,7 @@ class ApiDocsController extends BaseAdminController
             'Logs' => [
                 ['activity_logs / live_connections / client_logs', 'start, limit', 'Actividad de líneas y conexiones.'],
                 ['credit_logs / user_logs', 'start, limit', 'Gastos de créditos y logs de resellers.'],
-                ['login_logs / system_logs / stream_errors / restream_logs / mag_events / watch_output', 'start, limit', 'Otros logs del sistema.'],
+                ['login_logs / system_logs / stream_errors / restream_logs / watch_output', 'start, limit', 'Otros logs del sistema.'],
             ],
         ];
     }

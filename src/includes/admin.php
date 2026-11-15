@@ -1822,14 +1822,6 @@ function checkResellerPermissions($rPage = null) {
 		case 'lines':
 			return $rPermissions['create_line'];
 
-		case 'mag':
-		case 'mags':
-			return $rPermissions['create_mag'];
-
-		case 'enigma':
-		case 'enigmas':
-			return $rPermissions['create_enigma'];
-
 		case 'epg_view':
 		case 'streams':
 		case 'created_channels':
@@ -1904,9 +1896,6 @@ function checkPermissions($rPage = null) {
 		case 'credit_logs':
 			return Authorization::check('adv', 'credits_log');
 
-		case 'enigmas':
-			return Authorization::check('adv', 'manage_e2');
-
 		case 'epg':
 			if (isset(RequestManager::getAll()['id']) && Authorization::check('adv', 'epg_edit')) {
 				return true;
@@ -1962,19 +1951,6 @@ function checkPermissions($rPage = null) {
 
 		case 'live_connections':
 			return Authorization::check('adv', 'live_connections');
-
-		case 'mag':
-			if (isset(RequestManager::getAll()['id']) && Authorization::check('adv', 'edit_mag')) {
-				return true;
-			}
-			if (isset(RequestManager::getAll()['id']) || !Authorization::check('adv', 'add_mag')) {
-				break;
-			}
-			return true;
-		case 'mag_events':
-			return Authorization::check('adv', 'manage_events');
-		case 'mags':
-			return Authorization::check('adv', 'manage_mag');
 
 		case 'mass_delete':
 			return Authorization::check('adv', 'mass_delete');
@@ -2134,14 +2110,6 @@ function checkPermissions($rPage = null) {
 
 		case 'user_mass':
 			return Authorization::check('adv', 'mass_edit_users');
-
-		case 'mag_mass':
-			return Authorization::check('adv', 'mass_edit_mags');
-
-
-
-		case 'enigma_mass':
-			return Authorization::check('adv', 'mass_edit_enigmas');
 
 
 		case 'quick_tools':

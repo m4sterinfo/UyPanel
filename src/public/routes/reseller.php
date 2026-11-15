@@ -38,12 +38,7 @@ $router->get('line', [ResellerLineController::class, 'index']);
 $router->get('line_activity', [ResellerLineActivityController::class, 'index']);
 $router->get('live_connections', [ResellerLiveConnectionsController::class, 'index']);
 
-// ─── Devices MAG / Enigma (Phase 6.4) ──────────────────────────
-
-$router->get('mags', [ResellerMagsController::class, 'index']);
-$router->get('mag', [ResellerMagController::class, 'index']);
-$router->get('enigmas', [ResellerEnigmasController::class, 'index']);
-$router->get('enigma', [ResellerEnigmaController::class, 'index']);
+// ─── Devices MAG / Enigma ── DESACTIVADO: portal MAG = vector de fuerza bruta por MAC; sin clientes Enigma2 ───
 
 // ─── Content (Phase 6.4) ───────────────────────────────────────
 

@@ -26,7 +26,7 @@ $rPkgName = ($rFirstPackage ? $rFirstPackage['package_name'] : '1 Mes');
 		<div class="row">
 			<div class="col-12">
 				<div class="alert alert-info" role="alert">
-					Con el API puedes crear y gestionar tus líneas, demos, dispositivos MAG/Enigma2 y sub-resellers desde sistemas externos (bots, web, WHMCS, scripts) con simples peticiones HTTP que devuelven <code>JSON</code>.
+					Con el API puedes crear y gestionar tus líneas, demos y sub-resellers desde sistemas externos (bots, web, WHMCS, scripts) con simples peticiones HTTP que devuelven <code>JSON</code>.
 				</div>
 
 				<?php if (!$rApiUrl): ?>
@@ -106,10 +106,6 @@ $rPkgName = ($rFirstPackage ? $rFirstPackage['package_name'] : '1 Mes');
 
 						<h6 class="mt-4 text-success">Ver una línea concreta</h6>
 						<?= apiDocsCurl('curl "' . $rApiUrl . '?api_key=' . $rKeyPlaceholder . '&action=get_line&id=8"'); ?>
-
-						<h6 class="mt-4 text-success">Crear un MAG o Enigma2</h6>
-						<p class="text-muted mb-1">La MAC es obligatoria y única. La línea interna se crea sola (usuario/password de 32 caracteres).</p>
-						<?= apiDocsCurl('curl "' . $rApiUrl . '?api_key=' . $rKeyPlaceholder . '&action=create_mag&mac=00:1A:79:00:00:01&package=' . $rPkgID . '"'); ?>
 
 						<?php if ($rCanSubResellers): ?>
 							<h6 class="mt-4 text-success">Crear una línea para uno de tus sub-resellers</h6>
