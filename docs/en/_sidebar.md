@@ -2,7 +2,8 @@
 
 - 🔌 **API Reference**
   - [📡 System API](en-us/api/system_api.md)
-  - [📡 XtreamCodes API](en-us/api/xtreamcodes_api.md)
+  - [� External REST API (Admin/Reseller)](en-us/api/rest_api.md)
+  - [�📡 XtreamCodes API](en-us/api/xtreamcodes_api.md)
   - [📺 Playlists](en-us/api/playlist.md)
 
 - 🛠 **Build & Compilation**

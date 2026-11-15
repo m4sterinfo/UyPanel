@@ -359,6 +359,37 @@ Es el comportamiento esperado desde UyPanel 2.0.4 (ampliado en 2.0.5): si la ins
 
 </details>
 
+<details>
+<summary><b>🧩 No veo MAG / Enigma2 en el panel ni en el API</b></summary>
+
+---
+
+Es una decisión de diseño de UyPanel: los portales MAG (Stalker) son un vector clásico de **fuerza bruta por MAC** (scripts que simulan la MAC de dispositivos) y los dispositivos MAG/Enigma2 están **desactivados por completo**:
+
+- El portal `/portal.php` y `/c/portal.php` no se sirven (setting `disable_ministra`)
+- El endpoint `/enigma2.php` responde 404 (setting `disable_enigma2`)
+- No existen páginas, menús, rutas ni acciones de API para dispositivos
+- Los paquetes no pueden ser de tipo MAG/E2 (`is_mag`/`is_e2` = 0)
+
+Si necesitas MAG de vuelta: activa "Disable Ministra"/"Disable Enigma2" en Settings según corresponda y restaura las páginas desde el historial de git.
+
+---
+
+</details>
+
+<details>
+<summary><b>⏱️ Una línea recién creada por un reseller no reproduce inmediatamente</b></summary>
+
+---
+
+Síntoma conocido de versiones anteriores: con la caché de streaming activa (`enable_cache`), una línea creada desde el panel/API de reseller no existía para el streaming hasta que el motor de caché corría (cada 5 minutos) — la reproducción fallaba con credenciales inválidas durante esa ventana.
+
+**Corregido** (disponible en la próxima release): la creación de líneas por reseller ahora envía la señal de caché `update_line` y la línea funciona al instante, igual que las creadas por el admin. Si tu panel aún no lo tiene, actualiza o espera el ciclo de caché (~5 min).
+
+---
+
+</details>
+
 ---
 
 📘 *Esta página se actualiza con el tiempo. Si encontraste un problema típico nuevo — propónlo en los [Issues](https://github.com/m4sterinfo/UyPanel/issues).*

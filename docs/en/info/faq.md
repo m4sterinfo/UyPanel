@@ -359,6 +359,37 @@ This is expected behavior since UyPanel 2.0.4 (extended in 2.0.5): if a Load Bal
 
 </details>
 
+<details>
+<summary><b>🧩 No MAG / Enigma2 in the panel or the API</b></summary>
+
+---
+
+This is a design decision in UyPanel: MAG portals (Stalker) are a classic **MAC brute-force vector** (scripts spoofing device MACs), so MAG/Enigma2 devices are **fully disabled**:
+
+- `/portal.php` and `/c/portal.php` are not served (`disable_ministra` setting)
+- The `/enigma2.php` endpoint answers 404 (`disable_enigma2` setting)
+- No device pages, menus, routes or API actions exist
+- Packages cannot be MAG/E2 type (`is_mag`/`is_e2` = 0)
+
+If you ever need MAG back: enable "Disable Ministra"/"Disable Enigma2" in Settings accordingly and restore the pages from git history.
+
+---
+
+</details>
+
+<details>
+<summary><b>⏱️ A line just created by a reseller does not play immediately</b></summary>
+
+---
+
+Known symptom of older versions: with the streaming file cache enabled (`enable_cache`), a line created from the reseller panel/API did not exist for streaming until the cache engine ran (every 5 minutes) — playback failed with invalid credentials during that window.
+
+**Fixed** (available in the next release): reseller line creation now sends the `update_line` cache signal and the line works instantly, just like admin-created lines. If your panel does not have it yet, update or wait for the cache cycle (~5 min).
+
+---
+
+</details>
+
 ---
 
 📘 *This page is updated over time. If you discover a new common issue — please suggest it in [Issues](https://github.com/m4sterinfo/UyPanel/issues).*

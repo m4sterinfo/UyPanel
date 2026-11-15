@@ -96,7 +96,7 @@ journalctl -u uypanel -f
 ## Entorno de producción (servidor actual)
 
 - Debian 13 (trixie), 8 cores, 32 GB RAM, IP `198.27.81.133`
-- UyPanel 2.0.3 (base XC_VM 2.0.1) instalado en `/home/uypanel` (nginx 80/443, nginx_rtmp,
+- UyPanel 2.0.5 (base XC_VM 2.0.1) instalado en `/home/uypanel` (nginx 80/443, nginx_rtmp,
   4 pools php-fpm 8.3.36, KeyDB 6.3.4 en 6379 con auth, MariaDB 11.8)
 - Base de datos migrada desde XUI (27,672 líneas, 240,557 streams)
 - Acceso admin: `http://198.27.81.133/7JDEeDMG` (código tras la reinstalación
@@ -107,6 +107,49 @@ journalctl -u uypanel -f
   (verificado en containers debian:13/debian:12 limpios). El hack de
   `libjpeg.so.8` en `/usr/local/lib` solo aplica al rollback de binarios 8.1
   viejos — ver `/home/debian/AGENTS.md`.
+- **Estado funcional (2026-11-15)**: resellers/super resellers operativos
+  (grupos 2/3, codes `uyresellers`/`uysresellers`), APIs REST funcionales
+  (codes `uyadminapi` type 3 + `uyresellersapi` type 4; auth por `users.api_key`),
+  sección **API Docs** en ambos paneles (menú), **MAG/Enigma2 DESACTIVADOS**
+  (portal Stalker = vector de fuerza bruta por MAC; `disable_ministra=1`,
+  `disable_enigma2=1`, paquetes sin is_mag/is_e2, páginas/rutas/acciones API
+  eliminadas — ver STATE.md).
+
+## APIs REST externos (Admin + Reseller)
+
+- **Endpoints**: los Access Codes type 3 (`includes/api/admin`) y type 4
+  (`includes/api/reseller`) crean la URL nginx `/<code>/` → Front Controller
+  (bloque 3a, ANTES del guard de login — fix `52d085f9`). Variante
+  `/<code>/api.php` también válida.
+- **Auth**: `api_key` (32-hex) en `users.api_key` — NO son los access codes.
+  Se genera desde Edit Profile (botón) o SQL. Admin API exige `is_admin=1`,
+  Reseller API `is_reseller=1`.
+- **Controladores**: `public/Controllers/Api/AdminApiController.php` y
+  `ResellerRestApiController.php` (con `AdminAPIWrapper`/`ResellerAPIWrapper`).
+  El reseller delega en `includes/reseller_api.php` (`ResellerAPI`), que aplica
+  paquetes y descuenta créditos; el Admin API (`LineService`/`UserService`...)
+  crea con campos crudos.
+- **Documentación**: página **API Docs** en ambos paneles
+  (`ApiDocsController`/`ResellerApiDocsController` + vistas `api_docs.php`,
+  helper compartido `public/Views/api_docs_common.php`, estilos en
+  `assets/{admin,reseller}/css/custom.css`) y `docs/{es,en}/api/rest_api.md`.
+- **Señal de caché**: tras crear/editar una línea SIEMPRE llamar
+  `LineService::updateLineSignal($id)` — sin ella, con `enable_cache=1` la
+  línea no reproduce hasta el ciclo de `cache_engine` (5 min).
+
+## MAG / Enigma2 — DESACTIVADOS (decisión de diseño)
+
+- Motivo: el portal Stalker permite fuerza bruta simulando MACs; sin clientes E2.
+- Settings: `disable_ministra=1` (portal.php inerte; symlinks `www/c` +
+  `www/portal.php` ausentes, el watchdog los mantiene muertos con
+  `mag_legacy_redirect=0`), `disable_enigma2=1` (`/enigma2.php` → 404).
+- Paquetes: `is_mag=0, is_e2=0` → permisos reseller `create_mag`/`create_enigma`
+  = false (derivados de los paquetes del grupo, NO de columnas de users_groups).
+- Código eliminado: páginas/controladores/rutas de dispositivos (admin +
+  reseller), acciones MAG/E2 de ambos APIs, menús, casos de
+  checkPermissions/checkResellerPermissions. Conservado: `magscan_settings`
+  (herramienta de seguridad) y rutas muertas inertes en archivos compartidos.
+- Para reactivar: settings + restaurar desde git history.
 
 ## Relación con upstream
 
@@ -180,3 +223,22 @@ journalctl -u uypanel -f
 - **`console.php update` a secas es no-op**: espera subcomando (`update update` /
   `post-update`); imprime usage desde `dfbf2831`. La notificación de update la
   escribe `cron:update` (cron diario 00:00) escribiendo `settings.update_data`.
+- **4 pools FPM y opcache por pool**: `opcache_reset()` vía un fichero temporal
+  en `www/` solo limpia el pool que sirve ESA petición (least_conn). Tras un
+  despliegue de código, repetir el reset ~8 veces (o reiniciar FPM) antes de
+  verificar; `revalidate_freq=20s` por archivo también retrasa el pickup.
+- **Controladores FC necesitan `global $db`**: el bootstrap conecta la BD en el
+  paso 4b del FC, pero dentro de un método `$db` es local-null sin `global $db`
+  → "Call to a member function query() on null" (EXCEPTION en error_log).
+- **Login del panel por curl**: el POST exige el campo `login=1` (nombre del
+  botón submit) además de username/password.
+- **error_log de prod se rota**: `tmp/logs/error_log.log` lo vacía el TmpCronJob
+  — los históricos desaparecen; capturar errores en el momento.
+- **Permisos reseller derivados de paquetes**: `create_line`/`create_mag`/
+  `create_enigma` del reseller salen de `getGroupPermissions()` leyendo los
+  `users_packages` del grupo (con caché igbinary `tmp/cache/permissions_<gid>`
+  — regenerar con `cron:cache_engine groups` como uypanel, como root falla el
+  assertRunAsXcVm). Cambiar paquetes NO surte efecto hasta invalidar esa caché.
+- **Translator**: default `$langsDir = includes/libs/lang/` NO existe; el init
+  correcto lo hace `XC_Bootstrap::initTranslator()` con `includes/langs/`.
+  `setLanguage(string)` es non-nullable — nunca llamarlo con posible null.
