@@ -1,7 +1,21 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-15 (MAG/Enigma2 desactivados por seguridad).
+> cada cambio significativo. Última actualización: 2026-11-15 (fix popup error al guardar perfil reseller).
+
+## 🆕 2026-11-15 — Fix: popup "An error occured" al guardar perfil de reseller (el tema SÍ se aplicaba)
+
+**Reporte del usuario**: en el perfil de un super reseller nuevo, cambiar el tema a dark y Save → popup "An error occured while processing your request."; tras refresh el tema SÍ estaba aplicado.
+
+**Causa raíz (2 bugs encadenados)**:
+1. **Fatal después del UPDATE**: el formulario del perfil reseller NO tiene campo `lang`, pero `ResellerPostController::edit_profile` llama `$language::setLanguage($rData['lang'])` con clave inexistente → null → `Translator::setLanguage(string $lang)` es non-nullable → **TypeError fatal** en PHP 8.3 → respuesta vacía → el catch del JS (`post.scripts.php` submitForm) hace parseJSON('') → `{"status":0,"result":false}` → `callbackForm` sin location → `showError("An error occured...")`. El UPDATE ya había corrido dentro de `editResellerProfile` → el tema se aplicaba igual. (El form del ADMIN sí tiene lang → por eso el flujo admin nunca falló.)
+2. **lang siempre reseteado a 'en'**: además, la whitelist de `ResellerAPI::processData('profile')` no incluía 'lang' → el campo se eliminaba del POST → el UPDATE de `editResellerProfile` guardaba lang='en' siempre (la validación `in_array(lang, $allowedLangs)` con clave indefinida → null → no match → 'en').
+
+**Fix** (commit `b70e80f6`): (1) `ResellerPostController` — si no viene lang, usar el actual del usuario (`$rUserInfo['lang'] ?? 'en'`); setcookie de hue/theme con `?? ''`; (2) whitelist 'profile' + 'lang' en `reseller_api.php`; (3) selector Language añadido al form del perfil reseller (paridad con admin, markup idéntico).
+
+**Gotchas de depuración**: (a) el error_log de prod se rota/vacía (TmpCronJob) — los históricos desaparecen; (b) hay **4 pools FPM** y `opcache_reset()` vía web solo limpia el pool que sirve la petición — repetir el reset ~8 veces (least_conn) o reiniciar FPM tras desplegar; (c) `Translator` default `$langsDir = libs/lang/` NO existe — el init correcto lo hace `XC_Bootstrap::initTranslator()` con `includes/langs/` (admin_runtime.php:123 solo en la rama de bootstrap fallido).
+
+**Verificación en prod** (super reseller temporal, grupo 3): POST sin lang → JSON válido + lang conservado; POST con lang=es → persistido; theme aplicado sin popup; selector lang renderiza. Usuario temporal eliminado.
 
 ## 🆕 2026-11-15 — MAG y Enigma2 DESACTIVADOS en todo el panel (seguridad)
 
