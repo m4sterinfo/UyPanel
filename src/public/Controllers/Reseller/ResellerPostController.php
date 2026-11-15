@@ -34,9 +34,15 @@ class ResellerPostController extends BaseResellerController
 
         switch ($rAction) {
             case 'edit_profile':
+                // El formulario del reseller no envía lang: conservar el actual
+                // (setLanguage(null) es TypeError fatal y el UPDATE borraría la preferencia).
+                if (!isset($rData['lang'])) {
+                    $rData['lang'] = ($rUserInfo['lang'] ?? 'en');
+                }
+
                 $rReturn = ResellerAPI::editResellerProfile($rData);
-                setcookie('hue', $rData['hue'], time() + 315360000);
-                setcookie('theme', $rData['theme'], time() + 315360000);
+                setcookie('hue', ($rData['hue'] ?? ''), time() + 315360000);
+                setcookie('theme', ($rData['theme'] ?? ''), time() + 315360000);
                 $language::setLanguage($rData['lang']);
 
                 if ($rReturn['status'] == STATUS_SUCCESS) {

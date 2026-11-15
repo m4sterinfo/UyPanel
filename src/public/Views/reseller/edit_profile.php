@@ -80,6 +80,16 @@
                                                         </select>
                                                     </div>
                                                 </div>
+                                                <div class="form-group row mb-4">
+                                                    <label class="col-md-4 col-form-label" for="lang">Language</label>
+                                                    <div class="col-md-8">
+                                                        <select name="lang" id="lang" class="form-control" data-toggle="select2">
+                                                            <?php foreach ((is_array($allowedLangs ?? null) ? $allowedLangs : []) as $rText): ?>
+                                                                <option<?= ($rUserInfo['lang'] == $rText) ? ' selected' : '' ?> value="<?= $rText ?>"><?= $rText ?></option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                                 <?php if (isset($apiCode)): ?>
                                                 <div class="form-group row mb-4">
                                                     <label class="col-md-4 col-form-label" for="api_key">API Key <i title="API URL:<br/><?= $apiUrl ?>" class="tooltip text-secondary far fa-circle"></i></label>
