@@ -159,6 +159,7 @@ $router->any('server_order', [ServerOrderController::class, 'index']);
 
 $router->get('credit_logs', [CreditLogsController::class, 'index']);
 $router->get('edit_profile', [EditProfileController::class, 'index']);
+$router->get('api_docs', [ApiDocsController::class, 'index']);
 $router->get('fingerprint', [FingerprintController::class, 'index']);
 $router->get('proxies', [ProxiesController::class, 'index']);
 $router->any('proxy', [ProxyController::class, 'index']);

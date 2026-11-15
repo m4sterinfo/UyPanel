@@ -1,7 +1,23 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-15 (fix reseller-lines + APIs REST funcionales).
+> cada cambio significativo. Última actualización: 2026-11-15 (sección API Docs en ambos paneles).
+
+## 🆕 2026-11-15 — Sección "API Docs" en el panel (admin + reseller)
+
+**Pedido del usuario**: documentación del API dentro del panel, con ejemplos para admin y reseller (crear demos, renovar líneas, crear líneas, todas las acciones funcionando) y explicación de cómo generar la propia api_key.
+
+**Implementado** (commit posterior a `52d085f9`):
+- **Controladores**: `public/Controllers/Admin/ApiDocsController.php` y `public/Controllers/Reseller/ResellerApiDocsController.php` — preparan endpoint(s) dinámicos (codes type 3/4 habilitados → `site_url + code + '/'`), la api_key del usuario logueado, paquetes (`users_packages` / `getPackages()` del grupo), outputs, y la referencia de acciones como arrays de datos. El reseller ve solo las acciones de SU API y las recetas condicionadas a permisos (`create_sub_resellers`, trials, bouquets, restrictions).
+- **Vistas**: `public/Views/admin/api_docs.php` (estilo legacy self-contained: guard `$__viewMode` + footer + `<script id="scripts">` inline, patrón codes.php) y `public/Views/reseller/api_docs.php` + `api_docs.scripts.php` (contenido puro + JS separado, patrón lines.scripts.php). Helper compartido `public/Views/api_docs_common.php` (tabla STATUS_*, botones copiar, bloque curl).
+- **Contenido** (español): autenticación (api_key por usuario + paso a paso para generarla en Edit Profile + regeneración), formato JSON de respuesta, tabla de errores STATUS_*, referencia completa de acciones por categorías (Admin: ~120 acciones en 9 categorías; Reseller: líneas/MAG/E2/sub-resellers/logs), recetas curl con botón copiar (demo trial=1, crear línea con package, renovar = edit_line con package, editar sin coste, disable/enable/delete, MAG, líneas para sub-resellers con member_id, crear sub-reseller, adjust_credits), endpoints de reproducción para clientes (get.php m3u_plus, player_api, live TS/HLS), notas de seguridad y problemas frecuentes.
+- **Rutas**: `api_docs` en `public/routes/admin.php` y `reseller.php` (GET).
+- **Menús**: item "API Docs" (icono fa-book) al final del menú admin (`Views/admin/header.php`, tras Suppliers) y en el menú reseller (`Views/layouts/reseller/header.php`, tras Logs).
+- **Gotchas encontrados**: (1) los controladores necesitan `global $db` ANTES de consultar (el bootstrap conecta en el FC 4b, pero sin `global` la var local es null → EXCEPTION query-on-null); (2) `getPermissions()['subresellers']` ya viene decodificado a array (no re-hacer json_decode); (3) opcache `revalidate_freq=20s` — tras desplegar, esperar ~20s antes de verificar; (4) el login del panel exige el campo `login=1` en el POST (botón submit).
+
+**Verificación en prod**: páginas renderizadas con sesión real creada vía usuarios temporales (testdocs/testdocsres/testdocssres, grupo 1/2/3, login por curl) — admin 141KB con ambos endpoints; reseller grupo 2 sin secciones sub-reseller; grupo 3 con ellas; menú presente en las 3. Usuarios temporales ELIMINADOS (BD con los 4 users reales). Regresión: APIs user_info OK ×3, playback línea 8 HTTP 200, panels 302→login OK.
+
+**Pendiente para próxima sesión**: desplegar 2.0.5 al panel del usuario (178.156.194.122) — el update llega solo por el cron diario o manual via `console.php update update`; verificar que el reaper ampliado no interfiera con el proxy #4 en producción. Los fixes de hoy (señal update_line, dispatch API, api_docs) irán en la próxima release.
 
 ## 🆕 2026-11-15 — Líneas de reseller sin playback + APIs REST (admin/reseller) arreglados
 

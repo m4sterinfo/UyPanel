@@ -273,7 +273,7 @@ if (count(get_included_files()) != 1) {
 		echo '</a></li>' . "\r\n" . '                                    ';
 	}
 
-	echo '                                    <li><a href="user_logs">User Logs</a></li>' . "\r\n" . '                                </ul>' . "\r\n" . '                            </li>' . "\r\n" . '                        </ul>' . "\r\n" . '                        <div class="clearfix"></div>' . "\r\n" . '                    </div>' . "\r\n" . '                </div>' . "\r\n" . '            </div>' . "\r\n" . '        </header>' . "\r\n" . '        ';
+	echo '                                    <li><a href="user_logs">User Logs</a></li>' . "\r\n" . '                                </ul>' . "\r\n" . '                            </li>' . "\r\n" . '                            <li>' . "\r\n" . '                                <a href="api_docs"><i class="fas fa-book"></i>API Docs</a>' . "\r\n" . '                            </li>' . "\r\n" . '                        </ul>' . "\r\n" . '                        <div class="clearfix"></div>' . "\r\n" . '                    </div>' . "\r\n" . '                </div>' . "\r\n" . '            </div>' . "\r\n" . '        </header>' . "\r\n" . '        ';
 
 	if (!$rSettings['js_navigate']) {
 	} else {

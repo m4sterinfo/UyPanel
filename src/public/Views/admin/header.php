@@ -658,6 +658,9 @@
                                             </ul>
                                         </li>
                                     <?php endif; ?>
+                                    <li>
+                                        <a href="api_docs"><i class="fas fa-book"></i>API Docs</a>
+                                    </li>
                                 </ul>
                                 <div class="clearfix"></div>
                             </div>
