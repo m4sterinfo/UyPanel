@@ -167,11 +167,13 @@ class ResellerAPI {
 
 							$rBouquets = array_values(json_decode($rPackage['bouquets'], true));
 
-							if (!(self::$rPermissions['allow_change_bouquets'] && 0 < count($rData['bouquets_selected']))) {
+							$rSelectedBouquets = LineService::normalizeIDList($rData['bouquets_selected'] ?? null);
+
+							if (!(self::$rPermissions['allow_change_bouquets'] && 0 < count($rSelectedBouquets))) {
 							} else {
 								$rNewBouquets = array();
 
-								foreach ($rData['bouquets_selected'] as $rBouquetID) {
+								foreach ($rSelectedBouquets as $rBouquetID) {
 									if (!in_array($rBouquetID, $rBouquets)) {
 									} else {
 										$rNewBouquets[] = $rBouquetID;
@@ -447,11 +449,13 @@ class ResellerAPI {
 
 							$rBouquets = array_values(json_decode($rPackage['bouquets'], true));
 
-							if (!(self::$rPermissions['allow_change_bouquets'] && 0 < count($rData['bouquets_selected']))) {
+							$rSelectedBouquets = LineService::normalizeIDList($rData['bouquets_selected'] ?? null);
+
+							if (!(self::$rPermissions['allow_change_bouquets'] && 0 < count($rSelectedBouquets))) {
 							} else {
 								$rNewBouquets = array();
 
-								foreach ($rData['bouquets_selected'] as $rBouquetID) {
+								foreach ($rSelectedBouquets as $rBouquetID) {
 									if (!in_array($rBouquetID, $rBouquets)) {
 									} else {
 										$rNewBouquets[] = $rBouquetID;
@@ -903,11 +907,13 @@ class ResellerAPI {
 
 							$rBouquets = array_values(json_decode($rPackage['bouquets'], true));
 
-							if (!(self::$rPermissions['allow_change_bouquets'] && 0 < count($rData['bouquets_selected']))) {
+							$rSelectedBouquets = LineService::normalizeIDList($rData['bouquets_selected'] ?? null);
+
+							if (!(self::$rPermissions['allow_change_bouquets'] && 0 < count($rSelectedBouquets))) {
 							} else {
 								$rNewBouquets = array();
 
-								foreach ($rData['bouquets_selected'] as $rBouquetID) {
+								foreach ($rSelectedBouquets as $rBouquetID) {
 									if (!in_array($rBouquetID, $rBouquets)) {
 									} else {
 										$rNewBouquets[] = $rBouquetID;
@@ -1102,6 +1108,7 @@ class ResellerAPI {
 				if ($db->query($rQuery, ...$rPrepare['data'])) {
 					$rInsertID = $db->last_insert_id();
 					MagService::syncLineDevices($rInsertID);
+					LineService::updateLineSignal($rInsertID);
 					if (isset($rPackage)) {
 						$rNewCredits = intval(self::$rUserInfo['credits']) - intval($rCost);
 						$db->query('UPDATE `users` SET `credits` = ? WHERE `id` = ?;', $rNewCredits, self::$rUserInfo['id']);

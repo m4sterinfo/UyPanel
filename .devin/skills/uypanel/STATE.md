@@ -1,7 +1,28 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-14 (release 2.0.5: anti-fantasma completo + auditoría $__viewMode de las 60 vistas).
+> cada cambio significativo. Última actualización: 2026-11-15 (fix reseller-lines + APIs REST funcionales).
+
+## 🆕 2026-11-15 — Líneas de reseller sin playback + APIs REST (admin/reseller) arreglados
+
+**Pedido del usuario**: los resellers y super resellers loguean y crean líneas, pero las líneas creadas por un reseller NORMAL no reproducen nada (las del super reseller sí). Además pidió dejar funcionales el API de admin y el de resellers (había creado access codes type 3/4 para ellos).
+
+**Diagnóstico (3 causas independientes)**:
+1. **Señal `update_line` faltante en `ResellerAPI::processLine`** (`src/includes/reseller_api.php`): el flujo admin (`LineService::process`) llama `LineService::updateLineSignal()` tras el REPLACE, y `processMAG`/`processEnigma` insertan la señal a mano — pero `processLine` no. Con `enable_cache=1` el streaming solo ve la línea vía los ficheros `tmp/cache/lines/line_i_<id>` + `line_c_<user>_<pass>`; sin señal, esos ficheros no existen hasta que `cache_engine` corre (cron cada 5 min, `getChangedLines()` detecta el fichero faltante). Ventana muerta de hasta 5 min tras cada línea de reseller → «no reproduce nada» si se prueba enseguida. El super reseller "funcionaba" por timing (probado tras un ciclo de caché). **Fix**: `LineService::updateLineSignal($rInsertID)` tras el REPLACE en `processLine` (misma llamada que el admin). Verificado: línea creada por API de reseller tiene caché en ~2s (SignalsCommand daemon) y reproduce inmediato (HTTP 200 MPEG-TS).
+2. **FC: guard «raíz del code → /login» antes del dispatch REST API** (`src/public/index.php`): para codes type 3/4 (API), la URL raíz `/CODE?action=...` resolvía `pageName='index'` + `scope='admin'` (scopeMap) → el guard GET redirigía 302 a `/CODE/login` ANTES de llegar al bloque 3a → el API era inaccesible por su URL raíz (la que anuncia la UI en Edit Profile como "API URL"). **Fix**: bloque 3a (dispatch `AdminApiController`/`ResellerRestApiController`) movido ANTES del guard. Los codes de PANEL (type 0/1) siguen redirigiendo a login (regresión verificada: 7JDEeDMG, uyresellers, uysresellers → 302 login OK). `/CODE/api.php?action=...` ya funcionaba (pageName='api').
+3. **APIs autentican por `users.api_key`, NO por access codes**: los codes type 3 (`uyadminapi`) y 4 (`uyresellersapi`) solo crean el endpoint nginx (alias → `includes/api/admin|reseller` → FC). La sesión del API sale de `AdminAPIWrapper::createSession()` / `ResellerAPIWrapper::createSession()` → `WHERE api_key = ? AND LENGTH(api_key) > 0 AND is_admin/is_reseller = 1`. Todos los usuarios tenían `api_key` vacío → «Invalid API key». **Fix (datos)**: api_key 32-hex generada para jadmin4407 (id 1), jreseller (id 4), jsreseller (id 5). El sub-reseller jsubreseller (id 6) queda sin key (su owner puede generársela desde su perfil). NOTA: el campo `api_key` de Edit Profile (botón generate/clear) es la vía UI.
+
+**Hardening adicional del Admin API `create_line`** (`src/domain/Line/LineService.php`): `LineService::process` es un creador de líneas CRUDO (no aplica el paquete, a diferencia del flujo reseller) y fatalizaba en silencio (HTTP 200 vacío, TypeError `array_values(null)` en línea 182) si faltaba `bouquets_selected`, y creaba líneas inertes (`allowed_outputs='[]'` → USER_DISALLOW_EXT → 404) si faltaba `access_output`. **Fix**: nuevo helper público `LineService::normalizeIDList()` (acepta array PHP | JSON `"[1,2]"` | lista por comas `"1,2"`); `bouquets_selected` vacío → `STATUS_INVALID_INPUT` JSON claro; `access_output` ausente → TODOS los outputs (paridad con el formulario del panel, todo checked por defecto). El mismo `normalizeIDList` se aplicó a las 3 ocurrencias de `bouquets_selected` en `reseller_api.php` (line/MAG/E2) — protege grupos con `allow_change_bouquets=1` del TypeError con strings.
+
+**Verificación end-to-end (prod 198.27.81.133)**: admin API `user_info` OK; reseller API `user_info` OK (jreseller y jsreseller); `create_line` reseller → línea reproduce inmediato; `delete_line` OK en ambos APIs; líneas de prueba 11-15 eliminadas (BD restaurada a 4 líneas originales). Desplegado a mano a `/home/uypanel` (public/index.php, includes/reseller_api.php, domain/Line/LineService.php, chown uypanel).
+
+**URLs del API (para el usuario)**:
+- Admin API: `http://198.27.81.133/uyadminapi?api_key=<key de jadmin4407>&action=...` (también `/uyadminapi/api.php?...`)
+- Reseller API: `http://198.27.81.133/uyresellersapi?api_key=<key del reseller>&action=...`
+- `create_line` (reseller): `&package=<id>` basta (aplica paquete). `create_line` (admin): exige `bouquets_selected` (JSON o comas) y opcional `access_output` (default: todos), `exp_date`, `max_connections`, `member_id`.
+- Las api_keys actuales están en la BD (`users.api_key`); el usuario puede regenerarlas desde Edit Profile en cada panel.
+
+**Pendiente para próxima sesión**: desplegar 2.0.5 al panel del usuario (178.156.194.122) — el update llega solo por el cron diario o manual via `console.php update update`; verificar que el reaper ampliado no interfiera con el proxy #4 en producción. Estos 3 fixes irán en la próxima release (los paneles instalados los reciben vía update).
 
 ## 🆕 2026-11-14 — Release 2.0.5: huecos anti-fantasma cerrados + auditoría $__viewMode completa
 

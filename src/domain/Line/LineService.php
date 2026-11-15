@@ -128,6 +128,24 @@ class LineService {
 		}
 	}
 
+	public static function normalizeIDList($rValue): array {
+		if (is_array($rValue)) {
+			return array_map('intval', $rValue);
+		}
+
+		if (is_string($rValue) && 0 < strlen($rValue)) {
+			$rDecoded = json_decode($rValue, true);
+
+			if (is_array($rDecoded)) {
+				return array_map('intval', $rDecoded);
+			}
+
+			return array_map('intval', array_filter(array_map('trim', explode(',', $rValue)), 'strlen'));
+		}
+
+		return array();
+	}
+
 	public static function process($rData) {
 		global $db;
 		if (InputValidator::validate('processLine', $rData)) {
@@ -179,7 +197,13 @@ class LineService {
 				$rArray['as_number'] = null;
 			}
 
-			$rArray['bouquet'] = sortArrayByArray(array_values(json_decode($rData['bouquets_selected'], true)), array_keys(BouquetService::getOrder()));
+			$rBouquetsSelected = self::normalizeIDList($rData['bouquets_selected'] ?? null);
+
+			if (0 >= count($rBouquetsSelected)) {
+				return array('status' => STATUS_INVALID_INPUT, 'data' => $rData);
+			}
+
+			$rArray['bouquet'] = sortArrayByArray($rBouquetsSelected, array_keys(BouquetService::getOrder()));
 			$rArray['bouquet'] = '[' . implode(',', array_map('intval', $rArray['bouquet'])) . ']';
 
 			if (isset($rData['exp_date']) && !isset($rData['no_expire'])) {
@@ -223,12 +247,14 @@ class LineService {
 				$rArray['allowed_ua'] = '[]';
 			}
 
-			$rOutputs = array();
+			$rOutputs = self::normalizeIDList($rData['access_output'] ?? null);
 
-			if (!isset($rData['access_output'])) {
-			} else {
-				foreach ($rData['access_output'] as $rOutputID) {
-					$rOutputs[] = $rOutputID;
+			if (0 >= count($rOutputs)) {
+				// Paridad con el formulario del panel: todos los outputs marcados por defecto.
+				$db->query('SELECT `access_output_id` FROM `output_formats`;');
+
+				foreach ($db->get_rows() as $rRow) {
+					$rOutputs[] = $rRow['access_output_id'];
 				}
 			}
 

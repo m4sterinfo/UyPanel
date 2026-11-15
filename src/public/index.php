@@ -186,6 +186,30 @@ if ($pageName === '') {
     $pageName = 'index';
 }
 
+// ─────────────────────────────────────────────────────────────────
+//  3a. REST API — admin/reseller external API dispatch
+// ─────────────────────────────────────────────────────────────────
+//
+//  Access code type 3/4 → nginx fallback @fc_{code} → FC.
+//  index.php eliminado de includes/api/, bootstrap + controller directamente.
+//
+//  DEBE ejecutarse ANTES del guard «raíz del code → /login»: la raíz del
+//  code API (/CODE?action=... y /CODE/) ES el endpoint del API — la UI del
+//  panel la anuncia como API URL. Si el guard corriera primero, la raíz
+//  resolvería pageName='index' + scope='admin' y redirigiría al login.
+// ─────────────────────────────────────────────────────────────────
+
+if (isset($rawScope) && in_array($rawScope, ['includes/api/admin', 'includes/api/reseller'], true)) {
+	require_once MAIN_HOME . 'includes/admin.php';
+	if ($rawScope === 'includes/api/admin') {
+		$controller = new AdminApiController();
+	} else {
+		$controller = new ResellerRestApiController();
+	}
+	$controller->index();
+	exit;
+}
+
 // Raíz del access code (/CODE o /CODE/) → redirect al login.
 // Sin redirect el navegador se queda en /CODE, y los assets relativos
 // se resuelven desde / en vez de /CODE/ — todos los CSS/JS/images se rompen.
@@ -210,25 +234,6 @@ $ext = pathinfo($pageName, PATHINFO_EXTENSION);
 if (in_array($ext, ['css', 'js', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'ico', 'woff', 'woff2', 'ttf', 'eot', 'map'], true)) {
     http_response_code(404);
     exit;
-}
-
-// ─────────────────────────────────────────────────────────────────
-//  3a. REST API — admin/reseller external API dispatch
-// ─────────────────────────────────────────────────────────────────
-//
-//  Access code type 3/4 → nginx fallback @fc_{code} → FC.
-//  index.php eliminado de includes/api/, bootstrap + controller directamente.
-// ─────────────────────────────────────────────────────────────────
-
-if (isset($rawScope) && in_array($rawScope, ['includes/api/admin', 'includes/api/reseller'], true)) {
-	require_once MAIN_HOME . 'includes/admin.php';
-	if ($rawScope === 'includes/api/admin') {
-		$controller = new AdminApiController();
-	} else {
-		$controller = new ResellerRestApiController();
-	}
-	$controller->index();
-	exit;
 }
 
 // ─────────────────────────────────────────────────────────────────
