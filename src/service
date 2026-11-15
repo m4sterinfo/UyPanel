@@ -18,7 +18,9 @@ start() {
   sudo chown -R uypanel:uypanel /sys/class/net
   sudo chown -R uypanel:uypanel /home/uypanel/content/streams
   sudo chown -R uypanel:uypanel /home/uypanel/tmp
-  if [ -f $SCRIPT/bin/redis/redis-server ]; then
+  if [ -f $SCRIPT/bin/redis/valkey-server ]; then
+    sudo -u uypanel $SCRIPT/bin/redis/valkey-server $SCRIPT/bin/redis/redis.conf >/dev/null 2>/dev/null
+  elif [ -f $SCRIPT/bin/redis/redis-server ]; then
     sudo -u uypanel $SCRIPT/bin/redis/redis-server $SCRIPT/bin/redis/redis.conf >/dev/null 2>/dev/null
   fi
   sudo -u uypanel $SCRIPT/bin/nginx/sbin/nginx >/dev/null 2>/dev/null

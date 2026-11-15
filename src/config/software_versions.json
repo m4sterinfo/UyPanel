@@ -1,0 +1,50 @@
+{
+  "_comment": "Manifest de últimas versiones de software para las alertas de la pestaña Info de Settings (SoftwareVersions). El panel lo refresca desde el repo UyPanel_Update (versions.json, caché 24h); este archivo es el fallback incluido en el payload. 'eol': true marca productos sin mantenimiento activo (se alerta aunque estén en su última versión). 'hint': instrucción para el admin.",
+  "_updated": "2026-11-15",
+  "nginx": {
+    "latest": "1.30.6",
+    "notes": "https://nginx.org/en/download.html",
+    "hint": "Recompilar con third_party/UyPanel_Binaries (versions.json) y reemplazar bin/nginx/sbin/nginx"
+  },
+  "nginx_rtmp": {
+    "latest": "1.30.6",
+    "notes": "https://nginx.org/en/download.html",
+    "hint": "Recompilar con third_party/UyPanel_Binaries (versions.json) y reemplazar bin/nginx_rtmp/sbin/nginx_rtmp"
+  },
+  "php": {
+    "latest": "8.3.36",
+    "notes": "https://www.php.net/releases/8_3_36.php",
+    "hint": "Recompilar PHP con third_party/UyPanel_Binaries (versions.json)"
+  },
+  "phpredis": {
+    "latest": "6.3.0",
+    "notes": "https://pecl.php.net/package/redis",
+    "hint": "Recompilar la extensión redis con pecl/phpredis"
+  },
+  "mariadb": {
+    "latest": "11.8.10",
+    "notes": "https://mariadb.org/mariadb-server-11-8-10-release-notes/",
+    "hint": "apt update && apt install mariadb-server (repo deb.mariadb.org/11.8)"
+  },
+  "valkey": {
+    "latest": "9.1.3",
+    "notes": "https://github.com/valkey-io/valkey/releases",
+    "hint": "Compilar Valkey y reemplazar bin/redis/valkey-server"
+  },
+  "redis": {
+    "latest": "8.10.3",
+    "notes": "https://github.com/redis/redis/releases",
+    "hint": "Compilar Redis y reemplazar bin/redis/redis-server"
+  },
+  "keydb": {
+    "latest": "6.3.4",
+    "eol": true,
+    "notes": "https://github.com/Snapchat/KeyDB",
+    "hint": "KeyDB está descontinuado (último release 2023, CVE-2025-49844 sin parche). Migrar a Valkey 9.x (compatible al 100%)."
+  },
+  "ffmpeg": {
+    "latest": "8.0",
+    "notes": "https://ffmpeg.org/download.html",
+    "hint": "Cambiar la versión activa en Settings → Streaming (bin/ffmpeg_bin ya incluye 8.0)"
+  }
+}

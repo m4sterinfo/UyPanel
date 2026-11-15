@@ -12,41 +12,63 @@ if (!isset($__settingsViewMode)):
 	$rSettings = getSettings();
 	$rStreamArguments = StreamConfigRepository::getStreamArguments();
 
-	$GeoLite2 = json_decode(@file_get_contents(BIN_PATH . "maxmind/version.json"), true)["geolite2_version"] ?? "N/A";
-	$GeoISP = json_decode(@file_get_contents(BIN_PATH . "maxmind/version.json"), true)["geoisp_version"] ?? "N/A";
-	$Nginx = trim(shell_exec(BIN_PATH . "nginx/sbin/nginx -v 2>&1 | cut -d'/' -f2") ?: '') ?: 'N/A';
-	$NginxRTMP = trim(shell_exec(BIN_PATH . "nginx_rtmp/sbin/nginx_rtmp -v 2>&1 | cut -d'/' -f2") ?: '') ?: 'N/A';
+	// Modo legacy (acceso directo): el controlador ya provee estos valores vía
+	// compact(); solo se calculan aquí si no existen.
+	if (!isset($GeoLite2)) {
+		$GeoLite2 = json_decode(@file_get_contents(BIN_PATH . "maxmind/version.json"), true)["geolite2_version"] ?? "N/A";
+	}
+	if (!isset($GeoISP)) {
+		$GeoISP = json_decode(@file_get_contents(BIN_PATH . "maxmind/version.json"), true)["geoisp_version"] ?? "N/A";
+	}
+	if (!isset($Nginx)) {
+		$Nginx = trim(shell_exec(BIN_PATH . "nginx/sbin/nginx -v 2>&1 | cut -d'/' -f2") ?: '') ?: 'N/A';
+	}
+	if (!isset($NginxRTMP)) {
+		$NginxRTMP = trim(shell_exec(BIN_PATH . "nginx_rtmp/sbin/nginx_rtmp -v 2>&1 | cut -d'/' -f2") ?: '') ?: 'N/A';
+	}
 
-	$MariaDB = 'N/A';
-	try {
-		if (isset($db) && $db) {
-			$db->query('SELECT VERSION() AS ver;');
-			$rVer = $db->get_row();
-			if (!empty($rVer['ver'])) {
-				$MariaDB = $rVer['ver'];
+	if (!isset($MariaDB)) {
+		$MariaDB = 'N/A';
+		try {
+			if (isset($db) && $db) {
+				$db->query('SELECT VERSION() AS ver;');
+				$rVer = $db->get_row();
+				if (!empty($rVer['ver'])) {
+					$MariaDB = $rVer['ver'];
+				}
 			}
-		}
-	} catch (Throwable $e) {}
+		} catch (Throwable $e) {}
+	}
 
-	$RedisVer = 'N/A';
-	try {
-		$redis = new Redis();
-		if ($redis->connect('127.0.0.1', 6379, 1.0)) {
-			$redisPass = $rSettings['redis_password'] ?? '';
-			if (!empty($redisPass)) {
-				$redis->auth($redisPass);
+	if (!isset($RedisVer)) {
+		$RedisVer = 'N/A';
+		try {
+			$redis = new Redis();
+			if ($redis->connect('127.0.0.1', 6379, 1.0)) {
+				$redisPass = $rSettings['redis_password'] ?? '';
+				if (!empty($redisPass)) {
+					$redis->auth($redisPass);
+				}
+				$info = $redis->info('server');
+				if (!empty($info['valkey_version'])) {
+					$RedisVer = 'Valkey ' . $info['valkey_version'];
+				} elseif (!empty($info['keydb_version'])) {
+					$RedisVer = 'KeyDB ' . $info['keydb_version'];
+				} elseif (!empty($info['redis_version'])) {
+					$RedisVer = 'Redis ' . $info['redis_version'];
+				}
 			}
-			$info = $redis->info('server');
-			if (!empty($info['keydb_version'])) {
-				$RedisVer = 'KeyDB ' . $info['keydb_version'];
-			} elseif (!empty($info['redis_version'])) {
-				$RedisVer = 'Redis ' . $info['redis_version'];
-			}
-		}
-	} catch (Throwable $e) {}
+		} catch (Throwable $e) {}
+	}
 
-	$cpuVer = $rSettings['ffmpeg_cpu'] ?? '4.0';
-	$FFmpegVer = 'v' . $cpuVer;
+	if (!isset($FFmpegVer)) {
+		$cpuVer = $rSettings['ffmpeg_cpu'] ?? '4.0';
+		$FFmpegVer = 'v' . $cpuVer;
+	}
+
+	if (!isset($rSoftwareReport)) {
+		$rSoftwareReport = SoftwareVersions::getReport($rSettings, isset($db) && $db ? $db : null);
+	}
 
 	$_TITLE = "Settings";
 	require_once __DIR__ . '/../layouts/admin.php';
@@ -2222,38 +2244,104 @@ endif; // !$__settingsViewMode
 									<div class="tab-pane" id="info">
 										<div class="row">
 											<div class="col-12">
+												<?php
+												$rSW = array();
+												foreach (($rSoftwareReport['components'] ?? array()) as $rComp) {
+													$rSW[$rComp['key']] = $rComp;
+												}
+												$rSWBadge = function ($rKey) use ($rSW) {
+													$rComp = $rSW[$rKey] ?? null;
+													if ($rComp === null || $rComp['status'] === 'unknown') {
+														return '';
+													}
+													if ($rComp['status'] === 'ok') {
+														return ' <span class="badge badge-success" style="font-size: 0.75rem;" title="Actualizado"><i class="fas fa-check"></i></span>';
+													}
+													if ($rComp['status'] === 'eol') {
+														return ' <span class="badge badge-danger" style="font-size: 0.75rem;" title="' . htmlspecialchars($rComp['hint'] ?? 'Sin mantenimiento (EOL)') . '">EOL</span>';
+													}
+													return ' <span class="badge badge-warning" style="font-size: 0.75rem;" title="' . htmlspecialchars($rComp['hint'] ?? '') . '">→ ' . htmlspecialchars($rComp['latest'] ?? '?') . '</span>';
+												};
+												$rSWOutdated = $rSoftwareReport['outdated'] ?? array();
+												$rSWEol = $rSoftwareReport['eol'] ?? array();
+												if (!empty($rSWOutdated) || !empty($rSWEol)) { ?>
+													<div class="alert alert-warning" style="font-size: 0.9rem;">
+														<i class="fas fa-exclamation-triangle"></i> <strong>Software desactualizado detectado</strong>
+														<ul class="mb-0 mt-2" style="padding-left: 1.2rem;">
+															<?php foreach ($rSWOutdated as $rKey) {
+																$rComp = $rSW[$rKey]; ?>
+																<li>
+																	<strong><?= htmlspecialchars($rComp['label']) ?></strong>: <?= htmlspecialchars($rComp['installed'] ?? 'N/A') ?> → <strong><?= htmlspecialchars($rComp['latest']) ?></strong> disponible
+																	<?php
+																	if (!empty($rComp['notes'])) { ?>
+																		<a href="<?= htmlspecialchars($rComp['notes']) ?>" target="_blank" rel="noopener">(notas de la versión)</a>
+																	<?php }
+																	if (!empty($rComp['hint'])) { ?>
+																		<div class="text-muted" style="font-size: 0.8rem;"><?= htmlspecialchars($rComp['hint']) ?></div>
+																	<?php } ?>
+																</li>
+															<?php } ?>
+															<?php foreach ($rSWEol as $rKey) {
+																$rComp = $rSW[$rKey]; ?>
+																<li>
+																	<strong><?= htmlspecialchars($rComp['label']) ?> <?= htmlspecialchars($rComp['installed'] ?? '') ?></strong>: <span class="text-danger">sin mantenimiento (EOL)</span>
+																	<?php
+																	if (!empty($rComp['notes'])) { ?>
+																		<a href="<?= htmlspecialchars($rComp['notes']) ?>" target="_blank" rel="noopener">(más info)</a>
+																	<?php } ?>
+																	<?php
+																	if (!empty($rComp['hint'])) { ?>
+																		<div class="text-muted" style="font-size: 0.8rem;"><?= htmlspecialchars($rComp['hint']) ?></div>
+																	<?php } ?>
+																</li>
+															<?php } ?>
+														</ul>
+													</div>
+												<?php } else { ?>
+													<div class="alert alert-success" style="font-size: 0.9rem;">
+														<i class="fas fa-check-circle"></i> Todo el software del panel está actualizado.
+													</div>
+												<?php } ?>
 												<h4 class="card-title mb-4">Versions</h4>
 												<table class="table table-striped table-bordered">
 													<tbody>
 														<tr>
 															<td class="text-center font-weight-bold" style="font-size: 0.85rem; width: 25%;">MariaDB</td>
 															<td class="text-center" style="width: 25%;">
-																<button type="button" class="btn btn-primary btn-sm" style="font-size: 0.85rem;"><?= htmlspecialchars($MariaDB ?? 'N/A') ?></button>
+																<button type="button" class="btn btn-primary btn-sm" style="font-size: 0.85rem;"><?= htmlspecialchars($MariaDB ?? 'N/A') ?></button><?= $rSWBadge('mariadb') ?>
 															</td>
-															<td class="text-center font-weight-bold" style="font-size: 0.85rem; width: 25%;">KeyDB / Redis</td>
+															<td class="text-center font-weight-bold" style="font-size: 0.85rem; width: 25%;">Cache Server</td>
 															<td class="text-center" style="width: 25%;">
-																<button type="button" class="btn btn-dark btn-sm" style="font-size: 0.85rem;"><?= htmlspecialchars($RedisVer ?? 'N/A') ?></button>
+																<button type="button" class="btn btn-dark btn-sm" style="font-size: 0.85rem;"><?= htmlspecialchars($RedisVer ?? 'N/A') ?></button><?= $rSWBadge('cache') ?>
 															</td>
 														</tr>
 														<tr>
 															<td class="text-center font-weight-bold" style="font-size: 0.85rem;">PHP</td>
 															<td class="text-center">
-																<button type="button" class="btn btn-info btn-sm" style="font-size: 0.85rem;"><?= phpversion() ?></button>
+																<button type="button" class="btn btn-info btn-sm" style="font-size: 0.85rem;"><?= phpversion() ?></button><?= $rSWBadge('php') ?>
 															</td>
 															<td class="text-center font-weight-bold" style="font-size: 0.85rem;">Nginx</td>
 															<td class="text-center">
-																<button type="button" class="btn btn-danger btn-sm" style="font-size: 0.85rem;"><?= htmlspecialchars($Nginx ?? 'N/A') ?></button>
+																<button type="button" class="btn btn-danger btn-sm" style="font-size: 0.85rem;"><?= htmlspecialchars($rSW['nginx']['installed'] ?? 'N/A') ?></button><?= $rSWBadge('nginx') ?>
 															</td>
 														</tr>
 														<tr>
 															<td class="text-center font-weight-bold" style="font-size: 0.85rem;">FFmpeg</td>
 															<td class="text-center">
-																<button type="button" class="btn btn-secondary btn-sm" style="font-size: 0.85rem;"><?= htmlspecialchars($FFmpegVer ?? 'N/A') ?></button>
+																<button type="button" class="btn btn-secondary btn-sm" style="font-size: 0.85rem;"><?= htmlspecialchars($FFmpegVer ?? 'N/A') ?></button><?= $rSWBadge('ffmpeg') ?>
 															</td>
 															<td class="text-center font-weight-bold" style="font-size: 0.85rem;">Nginx RTMP</td>
 															<td class="text-center">
-																<button type="button" class="btn btn-success btn-sm" style="font-size: 0.85rem;"><?= htmlspecialchars($NginxRTMP ?? 'N/A') ?></button>
+																<button type="button" class="btn btn-success btn-sm" style="font-size: 0.85rem;"><?= htmlspecialchars($rSW['nginx_rtmp']['installed'] ?? 'N/A') ?></button><?= $rSWBadge('nginx_rtmp') ?>
 															</td>
+														</tr>
+														<tr>
+															<td class="text-center font-weight-bold" style="font-size: 0.85rem;">phpredis (extensión)</td>
+															<td class="text-center">
+																<button type="button" class="btn btn-outline-dark btn-sm" style="font-size: 0.85rem;"><?= htmlspecialchars($rSW['phpredis']['installed'] ?? 'N/A') ?></button><?= $rSWBadge('phpredis') ?>
+															</td>
+															<td class="text-center font-weight-bold" style="font-size: 0.85rem;"></td>
+															<td class="text-center"></td>
 														</tr>
 														<tr>
 															<td class="text-center font-weight-bold" style="font-size: 0.85rem;">Geolite2 Version</td>
@@ -2267,6 +2355,9 @@ endif; // !$__settingsViewMode
 														</tr>
 													</tbody>
 												</table>
+												<div class="text-muted" style="font-size: 0.75rem;">
+													<i class="fas fa-database"></i> Versiones de referencia: manifest <code>UyPanel_Update/versions.json</code> (fuente: <?= htmlspecialchars($rSoftwareReport['manifest_source'] ?? 'N/A') ?>, caché 24h)
+												</div>
 
 												<h4 class="card-title mb-4">Support project</h4>
 												<table class="table table-striped table-bordered text-center">

@@ -20,8 +20,6 @@ class SettingsController extends BaseAdminController
         $versionData = json_decode(@file_get_contents(BIN_PATH . 'maxmind/version.json'), true) ?: [];
         $GeoLite2 = $versionData['geolite2_version'] ?? 'N/A';
         $GeoISP   = $versionData['geoisp_version'] ?? 'N/A';
-        $Nginx    = trim(shell_exec(BIN_PATH . 'nginx/sbin/nginx -v 2>&1 | cut -d\'/\' -f2') ?: '') ?: 'N/A';
-        $NginxRTMP = trim(shell_exec(BIN_PATH . 'nginx_rtmp/sbin/nginx_rtmp -v 2>&1 | cut -d\'/\' -f2') ?: '') ?: 'N/A';
         $rUpdate  = json_decode((string) ($rSettings['update_data'] ?? ''), true) ?: [];
 
         // MariaDB version
@@ -46,7 +44,9 @@ class SettingsController extends BaseAdminController
                     $redis->auth($redisPass);
                 }
                 $info = $redis->info('server');
-                if (!empty($info['keydb_version'])) {
+                if (!empty($info['valkey_version'])) {
+                    $RedisVer = 'Valkey ' . $info['valkey_version'];
+                } elseif (!empty($info['keydb_version'])) {
                     $RedisVer = 'KeyDB ' . $info['keydb_version'];
                 } elseif (!empty($info['redis_version'])) {
                     $RedisVer = 'Redis ' . $info['redis_version'];
@@ -57,6 +57,9 @@ class SettingsController extends BaseAdminController
         // FFmpeg configured version
         $cpuVer = $rSettings['ffmpeg_cpu'] ?? '4.0';
         $FFmpegVer = 'v' . $cpuVer;
+
+        // Alertas de software desactualizado (pestaña Info)
+        $rSoftwareReport = SoftwareVersions::getReport($rSettings, $db);
 
         // Global lookup arrays from includes/admin.php needed by settings view
         $rTMDBLanguages = $GLOBALS['rTMDBLanguages'] ?? [];
@@ -74,6 +77,7 @@ class SettingsController extends BaseAdminController
             'MariaDB',
             'RedisVer',
             'FFmpegVer',
+            'rSoftwareReport',
             'rUpdate',
             'rTMDBLanguages',
             'rGeoCountries',
