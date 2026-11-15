@@ -1,0 +1,98 @@
+/* ─── API Docs (páginas api_docs admin + reseller) ─────────────────── */
+
+.docs-page .page-title-box .page-title {
+	font-size: 24px;
+}
+
+.docs-page .card-body {
+	font-size: 15px;
+	line-height: 1.65;
+}
+
+.docs-page .card-body p,
+.docs-page .card-body li {
+	font-size: 15px;
+}
+
+.docs-page h5.header-title {
+	font-size: 17px;
+	margin-bottom: 14px;
+}
+
+.docs-page h6 {
+	font-size: 15.5px;
+	font-weight: 600;
+}
+
+/* Tablas de referencia */
+.docs-table {
+	width: 100%;
+	font-size: 15px;
+}
+
+.docs-table th {
+	font-size: 13.5px;
+	text-transform: uppercase;
+	letter-spacing: .4px;
+	color: #8391a2;
+}
+
+.docs-table td,
+.docs-table th {
+	padding: .6rem .75rem;
+	vertical-align: top;
+}
+
+.docs-table code {
+	font-size: 14px;
+	word-break: break-word;
+}
+
+.docs-table td code.text-muted {
+	font-size: 13.5px;
+}
+
+/* Bloques de ejemplo curl / URL */
+.docs-curl {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	background: rgba(131, 145, 162, .08);
+	border: 1px solid rgba(131, 145, 162, .22);
+	border-radius: 5px;
+	padding: 9px 14px;
+	margin: 7px 0;
+}
+
+.docs-curl code {
+	flex: 1 1 auto;
+	font-size: 14.5px;
+	line-height: 1.55;
+	color: inherit;
+	word-break: break-all;
+	white-space: normal;
+}
+
+.docs-curl .copy-btn {
+	flex: 0 0 auto;
+	font-size: 12px;
+	padding: 3px 9px;
+}
+
+.docs-curl .copy-btn.btn-success {
+	color: #fff;
+}
+
+/* Ajustes menores */
+.docs-page .alert {
+	font-size: 15px;
+}
+
+.docs-page ol li {
+	margin-bottom: 4px;
+}
+
+.docs-page .badge {
+	font-size: 12px;
+}

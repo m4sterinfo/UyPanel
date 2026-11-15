@@ -29,7 +29,7 @@ $rPkgID = ($rFirstPackage ? $rFirstPackage['id'] : 1);
 $rOutputList = implode(',', array_map(function ($rOutput) { return $rOutput['access_output_id']; }, $rOutputs));
 ?>
 
-<div class="wrapper boxed-layout" <?php if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'): ?> style="display: none;" <?php endif; ?>>
+<div class="wrapper docs-page" <?php if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'): ?> style="display: none;" <?php endif; ?>>
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-12">
@@ -107,7 +107,7 @@ $rOutputList = implode(',', array_map(function ($rOutput) { return $rOutput['acc
 						<p class="text-muted">Parámetros comunes de las listas: <code>start</code> (offset, 0 por defecto), <code>limit</code> (50 por defecto), <code>show_columns</code> / <code>hide_columns</code> (nombres de columna separados por coma).</p>
 						<?php foreach ($rActions as $rCategory => $rCategoryActions): ?>
 							<h6 class="mt-4 mb-2 text-primary"><?= htmlspecialchars($rCategory); ?></h6>
-							<table class="table table-sm table-striped table-borderless docs-table">
+							<table class="table table-striped table-borderless docs-table">
 								<thead><tr><th style="width:30%;">Acción</th><th style="width:30%;">Parámetros</th><th>Descripción</th></tr></thead>
 								<tbody>
 									<?php foreach ($rCategoryActions as $rAction): ?>
@@ -167,7 +167,7 @@ $rOutputList = implode(',', array_map(function ($rOutput) { return $rOutput['acc
 					<div class="card-body">
 						<h5 class="header-title mb-3"><i class="fas fa-tv text-info"></i> Endpoints de reproducción (para los clientes)</h5>
 						<p>Estos endpoints NO usan api_key: usan el usuario y password de la línea.</p>
-						<table class="table table-sm table-striped table-borderless docs-table">
+						<table class="table table-striped table-borderless docs-table">
 							<thead><tr><th style="width:35%;">Qué</th><th>URL</th></tr></thead>
 							<tbody>
 								<tr><td>Lista completa (m3u_plus)</td><td><code><?= htmlspecialchars($rServers[SERVER_ID]['site_url'] ?? 'http://HOST/'); ?>get.php?username=USUARIO&password=PASSWORD&type=m3u_plus&output=ts</code></td></tr>

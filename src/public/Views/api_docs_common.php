@@ -29,7 +29,7 @@ if (!function_exists('apiDocsStatusTable')) {
             ['STATUS_DISABLED', 'La cuenta está deshabilitada.'],
         ];
 
-        $rHTML = '<table class="table table-striped table-borderless table-sm docs-table"><thead><tr><th style="width:32%;">Status</th><th>Significado</th></tr></thead><tbody>';
+        $rHTML = '<table class="table table-striped table-borderless docs-table"><thead><tr><th style="width:32%;">Status</th><th>Significado</th></tr></thead><tbody>';
         foreach ($rStatuses as $rStatus) {
             $rClass = ($rStatus[0] == 'STATUS_SUCCESS' ? 'text-success' : 'text-danger');
             $rHTML .= '<tr><td><code class="' . $rClass . '">' . $rStatus[0] . '</code></td><td>' . $rStatus[1] . '</td></tr>';
