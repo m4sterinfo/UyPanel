@@ -96,7 +96,7 @@ journalctl -u uypanel -f
 ## Entorno de producción (servidor actual)
 
 - Debian 13 (trixie), 8 cores, 32 GB RAM, IP `198.27.81.133`
-- UyPanel 2.0.5 (base XC_VM 2.0.1) instalado en `/home/uypanel` (nginx 80/443, nginx_rtmp,
+- UyPanel 2.0.6 (base XC_VM 2.0.1) instalado en `/home/uypanel` (nginx 80/443, nginx_rtmp,
   4 pools php-fpm 8.3.36, KeyDB 6.3.4 en 6379 con auth, MariaDB 11.8)
 - Base de datos migrada desde XUI (27,672 líneas, 240,557 streams)
 - Acceso admin: `http://198.27.81.133/7JDEeDMG` (código tras la reinstalación
@@ -188,7 +188,15 @@ journalctl -u uypanel -f
   reaper con hard-kill de installs colgados >1h y muertos sin log, touch
   del `.install` antes del launch; import M3U de review.php revivido
   (data-prep muerto dentro del guard), claves de theft_detection,
-  servers.php auto-provisión).
+  servers.php auto-provisión), 2.0.6 (2026-11-15: playback instantáneo de
+  líneas de reseller — señal `update_line` en `ResellerAPI::processLine`;
+  APIs REST admin/reseller accesibles por URL raíz — dispatch antes del
+  guard de login; hardening `create_line` — `normalizeIDList`; sección
+  API Docs admin+reseller; MAG/Enigma2 eliminados del panel — 22 archivos
+  viajan en `migrations/deleted_files.txt` del delta; fix popup al guardar
+  perfil reseller — setLanguage null). El changelog de la notificación de
+  update vive en `UyPanel_Update/changelog.json` (repo aparte — actualizarlo
+  TAMBIÉN en cada release; estaba atrasado hasta 2.0.6).
 
 ## Tono de trabajo
 

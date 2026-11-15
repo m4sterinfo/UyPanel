@@ -1,7 +1,25 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-15 (fix popup error al guardar perfil reseller).
+> cada cambio significativo. Última actualización: 2026-11-15 (release 2.0.6 publicada).
+
+## 🆕 2026-11-15 — Release 2.0.6 publicada: fixes de hoy llegan a los paneles instalados
+
+**Pedido del usuario**: continuar con los releases para que los fixes se envíen a los paneles instalados.
+
+**Publicada** (checklist del SKILL.md completo):
+1. Bump `UyPanel_VERSION` 2.0.5 → 2.0.6 (`src/core/Config/AppConfig.php`, commit `88ab6059`).
+2. Push a main.
+3. `gh release create 2.0.6` — CI Build Release Assets (run `43772316742`) verde en 3m2s, 5 assets: UyPanel.zip (470MB), loadbalancer.tar.gz (326MB), update.tar.gz (62KB), loadbalancer_update.tar.gz (42KB), hashes.md5.
+4. **Verificación**: MD5 de update.tar.gz y lb_update coinciden con hashes.md5; delta contiene TODOS los fixes de hoy (LineService, reseller_api, ResellerPostController, public/index.php, api_docs ×5, headers, routes, custom.css, admin.php) + `migrations/deleted_files.txt` con los 22 archivos MAG/Enigma2 (el `post-update` los borra automáticamente en cada panel instalado vía `MigrationRunner::runFileCleanup`); `UyPanel_VERSION = '2.0.6'` dentro del zip y del delta; payload completo SIN controladores MAG/E2 (solo queda `MagscanSettingsController`, conservado a propósito).
+
+**Changelog de la notificación de update** (`m4sterinfo/UyPanel_Update/changelog.json`): estaba ATRASADO (solo 2.0.1 y 2.0.2 — las releases 2.0.3–2.0.5 no mostraban changelog en el popup de update del panel). Añadidas entradas 2.0.3, 2.0.4, 2.0.5 y 2.0.6 en español (commit `6d76991` en ese repo). **Lección**: actualizar `UyPanel_Update/changelog.json` es parte del checklist de release (el `getUpdate()` lo filtra por versiones válidas y el UI muestra las entries entre la versión actual y la target).
+
+**Mecánica de distribución confirmada** (revisada antes de publicar): `cron:update` → `GitHubReleases::getUpdate(UyPanel_VERSION)` → `getNextVersion` (la release siguiente en la lista de GitHub, NO la "latest" — publicar 2.0.6 es seguro aunque el Makefile del CI consulte latest; el CI usa `git tag --sort=-v:refname` para el prev tag) → `settings.update_data` → el admin lanza la actualización desde la UI → descarga `update.tar.gz` + MD5 → `src/update` (python) extrae + `console.php update post-update` → migraciones SQL + limpieza de archivos borrados + señales de update a LBs si `auto_update_lbs` + `systemctl restart uypanel` (el restart limpia opcache — no hace falta reset manual tras update).
+
+**Ruta de update del panel del usuario (178.156.194.122)**: está en 2.0.4 → recibirá 2.0.5 primero (cron diario o `console.php update update` manual) y luego 2.0.6 (los deltas son secuenciales por diseño de `getNextVersion`). El panel de prod (198.27.81.133) ya tiene todos los fixes desplegados a mano; puede tomar el update 2.0.6 desde la UI sin riesgo (idempotente — mismos archivos, y `runFileCleanup` comprueba `file_exists` antes de unlink) y así queda con la versión reportada correcta.
+
+**Pendiente para próxima sesión**: verificar que el panel del usuario quedó en 2.0.6 tras los dos updates secuenciales; verificar que el reaper ampliado no interfiera con el proxy #4 en producción.
 
 ## 🆕 2026-11-15 — Fix: popup "An error occured" al guardar perfil de reseller (el tema SÍ se aplicaba)
 
