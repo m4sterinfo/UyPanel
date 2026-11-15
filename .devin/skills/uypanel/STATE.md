@@ -1,7 +1,46 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-15 (release 2.0.6 publicada).
+> cada cambio significativo. Última actualización: 2026-11-15 (release 2.0.7 publicada).
+
+## 🆕 2026-11-15 — Release 2.0.7: KeyDB→Valkey 9.1.3, nginx 1.30.6 y alertas de software desactualizado
+
+**Pedido del usuario**: "el panel está usando una versión desactualizada de redis; revisar a fondo y actualizar todo lo desactualizado manteniendo compatibilidad, y que en Settings → Info haya alertas de software desactualizado para que el admin pueda actualizarlo".
+
+**Inventario vs últimas versiones (2026-11-15)**:
+| Componente | Instalado | Último | Acción |
+|---|---|---|---|
+| Cache server | KeyDB 6.3.4 (Oct 2023) | Valkey 9.1.3 / Redis 8.10.3 | ✅ migrado a Valkey 9.1.3 |
+| Nginx (público) | 1.29.6 | 1.30.6 stable | ✅ actualizado |
+| Nginx RTMP | 1.29.6 | 1.30.6 | ✅ actualizado |
+| MariaDB | 11.8.9 | 11.8.10 (13 Nov) | ⚠️ mirror deb.mariadb.org aún no lo tiene — pendiente, la alerta lo recordará |
+| PHP | 8.3.36 (parcheado PHP2Shell) | 8.3.36 | ✅ al día |
+| phpredis | 6.3.0 | 6.3.0 | ✅ al día |
+| FFmpeg | 4.0–8.0 incluidos | 8.0.x | ✅ (activo configurable en Streaming) |
+
+**Por qué Valkey y no Redis 8**: KeyDB está abandonado (Snap, último release Oct 2023, su autor John Sully dejó la empresa en 2025 y recomienda Valkey) y arrastra **CVE-2025-49844 "RediShell" (CVSS 9.9, RCE post-auth vía Lua) SIN parche** — el PR del fix lleva abierto desde Oct 2025. Redis 8.10.3 es oficial pero AGPL/RSAL/SSPL (redistribuir el binario en el payload comercial de UyPanel genera obligaciones); Valkey es BSD-3, mantenido por Linux Foundation (AWS/Google), drop-in compatible y el sucesor que recomienda el propio autor de KeyDB. Elección del usuario vía pregunta (Valkey 9.1.3 + nginx 1.30.6 stable).
+
+**Migración KeyDB→Valkey en prod (198.27.81.133)**:
+1. Compilado Valkey 9.1.3 en Docker **debian:12** y **ubuntu:20.04** (este último es el del payload: solo requiere GLIBC 2.29 → corre en TODAS las distros soportadas; solo enlaza libc/libm — el KeyDB viejo necesitaba libssl3/libcurl/libstdc++ y el instalador tenía un hack wget de libssl3 para focal que ya no hace falta). `make BUILD_TLS=no`, jemalloc incluido.
+2. Config probada en puerto 6380 antes del swap: Valkey acepta el redis.conf del panel (incluye alias `slave-*`) salvo `server-threads`/`server-thread-affinity` (exclusivas de KeyDB) → eliminadas de prod con sed. El template del instalador NUNCA tuvo esas líneas → los demás paneles no necesitan cambio de config.
+3. Swap: `kill` limpio del KeyDB (dbsize=0, caché file-based — cero pérdida), binario nuevo en `bin/redis/valkey-server` (+`valkey-cli`), KeyDB conservado como `redis-server_6.3.4` (convención existente con el 6.2.2). `service` actualizado: prefiere `valkey-server`, fallback `redis-server` (compatible adelante y atrás — los paneles que reciban el delta migran solos al reiniciar).
+4. **Verificado en prod**: INFO `valkey_version:9.1.3` (compat `redis_version:7.2.4`), phpredis setex/get/del/exists OK, login 200, dashboard/lines/servers/settings 200, **playback HTTP 200 video/mp2t**.
+
+**Alerta de incidente (transparencia)**: durante el swap de nginx maté 2 procesos ffmpeg creyendo que estaban colgados (conexiones CLOSE-WAIT + mi `ls` de segmentos falló en silencio por permisos → asumí "sin output"). El usuario aclaró que eran 2 canales activos de hace ~29 min. Eran jobs de prep HLS en background (el serving es proxy directo de nginx — el playback siguió 200 en todo momento, cero impacto en viewers), pero igualmente fueron terminados por error. El panel los relanza solo por on-demand/watchdog cuando hay clientes. **Lección**: verificar permisos antes de concluir "sin output" y confirmar con el usuario antes de matar procesos del panel.
+
+**nginx 1.30.6 en prod**: build vía `third_party/UyPanel_Binaries` (`versions.json` nginx→1.30.6, `sudo ./build_all.sh debian13`, 25/25 tests). Binarios **estáticos** (nginx) → portable a todas las distros; nginx_rtmp dinámico pero exige el MISMO glibc 2.38 que el actual (sin regresión). Swap con `-s quit` (0 streams activos) + arranque nuevo. **Gotcha crítico**: al salir, el master viejo hace unlink del pidfile que ya pertenece al master nuevo → `nginx -s reload` roto hasta restaurar `logs/nginx.pid` a mano (hecho). Si se repite el procedimiento, restaurar el pidfile SIEMPRE tras la salida del master viejo.
+
+**Feature: alertas de software desactualizado (Settings → Info)** (commit `821b63a2`):
+- `src/core/Diagnostics/SoftwareVersions.php`: `getReport($rSettings, $db)` — inventa versiones instaladas (nginx/rtmp vía `-v`, php, phpredis, MariaDB `VERSION()`, cache vía INFO `valkey_version|keydb_version|redis_version`, ffmpeg activo de `ffmpeg_cpu`) y las compara con el manifest (`version_compare` tras normalizar sufijos).
+- Manifest: `UyPanel_Update/versions.json` (commit `21d300b`) con caché local 24h (`tmp/software_versions_cache.json`), stale-while-error y fallback incluido `src/config/software_versions.json`. Timeout curl 4s — nunca bloquea la página.
+- Estados: `ok` / `outdated` / `eol` (KeyDB marcado EOL en el manifest: alerta aunque esté en su última versión) / `unknown` (sin datos).
+- Vista Info: banner `alert-warning` con lista (instalada → disponible, link a notas, hint para el admin) o `alert-success` si todo al día; badges por fila (verde ✓ / ámbar →X.Y.Z / rojo EOL); fila nueva phpredis; label "KeyDB / Redis" → "Cache Server"; footer con fuente del manifest (remote/cache/cache-stale/bundled).
+- **Gotcha del prelude legacy**: `settings.php` recomputaba `$RedisVer/$Nginx/$MariaDB/...` en su prelude (`if (!isset($__settingsViewMode))` — el render genérico setea `$__viewMode`, NUNCA `$__settingsViewMode`) y pisaba los valores del controlador → el botón mostraba "Redis 7.2.4" (compat) en vez de "Valkey 9.1.3". Fix: prelude idempotente (`if (!isset($X))` por variable) con lógica valkey-first para el modo legacy.
+- El controlador ya no duplica shell_exec de nginx/rtmp (el reporte es fuente única).
+
+**Release 2.0.7**: bump `UyPanel_VERSION` en AppConfig, push main (`821b63a2`), `gh release create 2.0.7` (run `43776369205`), changelog.json con entrada 2.0.7 (commit `70b7bbb` en UyPanel_Update). El delta update.tar.gz incluye los binarios (valkey-server+cli ~40MB, nginx+rtmp ~30MB) → **los paneles instalados migran a Valkey 9.1.3 + nginx 1.30.6 automáticamente** con el update + restart (post-update hace `systemctl restart uypanel` → service start prefiere valkey-server). Los redis.conf de otros paneles no llevan `server-threads` → migración sin fricción. Prod ya desplegado a mano (quedará con versión reportada 2.0.7).
+
+**Pendiente para próxima sesión**: MariaDB 11.8.10 cuando el mirror la tenga (la alerta del panel lo indicará); verificar assets de la release 2.0.7 (CI); pendientes arrastrados: panel del usuario (178.156.194.122) en 2.0.4→2.0.5→2.0.6→2.0.7 secuenciales; verificar que el reaper ampliado no interfiera con el proxy #4 en producción.
 
 ## 🆕 2026-11-15 — Release 2.0.6 publicada: fixes de hoy llegan a los paneles instalados
 
