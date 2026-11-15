@@ -1,7 +1,24 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-15 (API Docs a ancho completo + tipografía del panel).
+> cada cambio significativo. Última actualización: 2026-11-15 (MAG/Enigma2 desactivados por seguridad).
+
+## 🆕 2026-11-15 — MAG y Enigma2 DESACTIVADOS en todo el panel (seguridad)
+
+**Pedido del usuario**: los portales MAG son un vector de fuerza bruta (scripts que simulan MACs de dispositivos) y no tiene clientes Enigma2 — desactivar todo lo relacionado, incluida la documentación del API.
+
+**Mecanismo del portal MAG (Stalker)**: se sirve vía symlinks `www/c` → `ministra/` y `www/portal.php` → `ministra/portal.php`, creados/borrados por la señal `enable_ministra`/`disable_ministra` del RootSignalsCronJob según el setting `mag_legacy_redirect`. portal.php además respeta el setting `disable_ministra`. Enigma2: endpoint `/enigma2.php` → FC → Enigma2ApiController, bloqueado por el setting `disable_enigma2`.
+
+**Aplicado (commit `07ea35c2`)**:
+- **Datos prod**: `settings.disable_ministra=1`, `settings.disable_enigma2=1`; `users_packages.is_mag=0, is_e2=0` en TODOS los paquetes (los permisos reseller `create_mag`/`create_enigma` derivan de los paquetes del grupo vía getGroupPermissions → con 0 paquetes MAG/E2 quedan false). Caché de permisos regenerada (`cron:cache_engine groups` como uypanel — como root falla el assertRunAsXcVm). Verificado vía API: create_mag/create_enigma=false para grupos 2 y 3.
+- **Código eliminado** (22 archivos, -4669 líneas): controladores+ vistas de mag/mags/mag_mass/mag_events/enigma/enigmas/enigma_mass (admin) y mag/mags/enigma/enigmas (reseller); rutas correspondientes; acciones y métodos wrapper MAG/Enigma de AdminApiController y ResellerRestApiController; casos 'mag'/'enigma' de ResellerPostController; casos mag/enigma de checkPermissions/checkResellerPermissions; submenús MAG/Enigma de ambos headers; mag_events de la lista de logs admin; secciones MAG/Enigma2 de la documentación del API.
+- **Conservado**: `magscan_settings` (herramienta de SEGURIDAD anti-clonado MAG); rutas muertas en archivos compartidos (table.php secciones mags/enigmas, api.php acciones mag, footer JS case "enigma", formatos de playlist Enigma en el selector de descargas, dashboard reseller links condicionados a is_mag) — inertes sin las páginas; `MagService::syncLineDevices` en el flujo de líneas (no-op sin dispositivos).
+- **Estado del portal**: symlinks `www/c` y `www/portal.php` YA estaban ausentes (mag_legacy_redirect=0); con disable_ministra=1 portal.php sería inerte aunque existieran. Verificado: `/portal.php` y `/c/portal.php` → 404; `/enigma2.php` → 404 (E2_DISABLED).
+- **Gotcha opcache**: tras desplegar, FPM sirvió versiones viejas (revalidate_freq=20s por archivo) — reset quirúrgico con `opcache_reset()` vía fichero temporal en www/ (crear, curl, borrar). Considerar `opcache_reset` tras despliegues grandes.
+
+**Verificación en prod**: rutas mag/mags/enigma/enigmas/mag_events → 404; acciones create_mag/create_enigma en ambos APIs → "Invalid action"; doc admin y reseller con 0 menciones MAG/Enigma (solo quedan 2 strings inertes del footer compartido); menús sin MAG/Enigma; regresión OK (dashboard/lines admin+reseller 200, create_line por API → playback 200 → delete OK). Usuarios temporales de prueba eliminados.
+
+**Pendiente para próxima sesión**: desplegar 2.0.5 al panel del usuario (178.156.194.122) — el update llega solo por el cron diario o manual via `console.php update update`; verificar que el reaper ampliado no interfiera con el proxy #4 en producción. Los cambios de hoy (fixes API + api_docs + desactivación MAG/E2) irán en la próxima release.
 
 ## 🆕 2026-11-15 — Ajuste visual de API Docs (ancho completo + tipografía)
 
