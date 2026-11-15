@@ -1,7 +1,15 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-15 (sección API Docs en ambos paneles).
+> cada cambio significativo. Última actualización: 2026-11-15 (API Docs a ancho completo + tipografía del panel).
+
+## 🆕 2026-11-15 — Ajuste visual de API Docs (ancho completo + tipografía)
+
+**Feedback del usuario**: la fuente se veía muy pequeña y la página no usaba todo el ancho.
+
+**Causas**: (1) la vista usaba `wrapper boxed-layout` → `.boxed-layout .container-fluid { max-width: 840px }` (app.css:480); (2) tablas con `table-sm` + `code { font-size: 87.5% }` del bootstrap → ~13px.
+
+**Fix** (commit `f50c8456`): wrapper → `wrapper docs-page` (ancho completo) en ambas vistas; estilos `.docs-*` añadidos a `public/assets/{admin,reseller}/css/custom.css` (estaban vacíos, lo cargan ambos layouts; en el repo son hardlink — una escritura cubre los dos): texto 15px (base del panel, app.css:148), código 14/14.5px, bloques `.docs-curl` con fondo rgba neutro (válido en claro y oscuro — el dark usa CSS files separados, no body class), tablas con padding .6rem y headers uppercase 13.5px. `table-sm` eliminado de las tablas docs. Verificado con sesión temporal: ambas páginas a ancho completo, custom.css servido por nginx vía los codes (`/CODE/assets/css/custom.css` → alias por panel). Usuarios temporales eliminados.
 
 ## 🆕 2026-11-15 — Sección "API Docs" en el panel (admin + reseller)
 
