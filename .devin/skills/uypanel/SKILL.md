@@ -105,9 +105,12 @@ journalctl -u uypanel -f
   nginx_rtmp exige GLIBC 2.38). El instalador rechaza el resto y `bin/distros/`
   solo lleva `debian_13` + `ubuntu_24`. Un LB en Ubuntu viejo → reinstalar en
   Debian 13/Ubuntu 24.04.
-- UyPanel 2.0.8 (base original 2.0.1) instalado en `/home/uypanel` (nginx 1.30.6 en 80/443,
+- UyPanel 2.0.9 (base original 2.0.1) instalado en `/home/uypanel` (nginx 1.30.6 en 80/443,
   nginx_rtmp 1.30.6, 4 pools php-fpm 8.3.36, **Valkey 9.1.3** en 6379 con auth,
-  MariaDB 11.8.9 — 11.8.10 pendiente de mirror; ffmpeg activo 8.0)
+  MariaDB 11.8.9 — 11.8.10 pendiente de mirror; ffmpeg activo 8.0). Binarios de
+  prod = payload limpio (sin strings del proyecto original, swap 2026-11-16).
+  Contrato nginx↔PHP: **`UY_SCOPE`/`UY_CODE`/`UY_API`** (fallback `XC_*` legacy
+  hasta fase 2 — ver STATE.md).
 - Base de datos migrada desde XUI (27,672 líneas, 240,557 streams)
 - Acceso admin: `http://198.27.81.133/7JDEeDMG` (código tras la reinstalación
   limpia del 2026-11-04; el `x9access9x` anterior murió con la BD vieja)
@@ -310,24 +313,45 @@ journalctl -u uypanel -f
   — regenerar con `cron:cache_engine groups` como uypanel, como root falla el
   assertRunAsUyPanel). Cambiar paquetes NO surte efecto hasta invalidar esa caché.
 - **Translator**: default `$langsDir = includes/libs/lang/` NO existe; el init
-  correcto lo hace `XC_Bootstrap::initTranslator()` con `includes/langs/`.
+  correcto lo hace `UyPanel_Bootstrap::initTranslator()` con `includes/langs/`.
   `setLanguage(string)` es non-nullable — nunca llamarlo con posible null.
-- **Swap de binario nginx en caliente** (procedimiento probado en 1.30.6):
-  1. `cp` sobre el binario en uso falla con "Text file busy" → `rm` primero
-     (el proceso vivo conserva su inode) y luego `cp` el nuevo.
-  2. `nginx -t` con el binario NUEVO antes de reiniciar.
-  3. Con 0 streams: `nginx -s quit` + `nginx_rtmp -s quit`, sleep 3, arrancar
-     ambos de nuevo. El master viejo drena keepalives hasta ~65s (normal ver
-     ambos masters conviviendo un rato).
-  4. **CRÍTICO — pidfile**: al salir, el master viejo hace unlink del pidfile
-     que el master nuevo ya reescribió → `nginx -s reload` queda roto.
-     Restaurar `bin/nginx/logs/nginx.pid` con el PID del master nuevo
-     (`ps -u uypanel | grep nginx` → el más viejo por cgroup/start time es el
-     nuevo master si el viejo ya salió; verificar con `ps -p <pid> -o cmd`).
-  5. NO matar procesos ffmpeg del panel sin confirmar: los jobs de prep HLS
-     graban con `-progress http://127.0.0.1/progress?stream_id=N` y mantienen
-     keepalive al nginx viejo (impiden su salida). Verificar con el usuario
-     antes de matar; el panel relanza streams por on-demand/watchdog.
+- **Swap de binarios en caliente** (probado 2026-11-16 con actividad: 2 jobs
+  ffmpeg + panel sirviendo — cero downtime):
+  1. `cp` sobre el binario en uso falla con "Text file busy". Mejor que rm+cp:
+     `install -m <modo> -o uypanel -g uypanel <nuevo> <dest>.new && mv -f
+     <dest>.new <dest>` — el rename NO sufre ETXTBSY ni deja ventana sin
+     fichero (el proceso vivo conserva su inode viejo).
+  2. **Upgrade de proceso zero-downtime = USR2 (re-exec)**, mejor que
+     quit+start cuando hay actividad: `kill -USR2 <master_pid>` re-executa el
+     binario nuevo (hereda sockets); los masters viejos salen al drenar.
+     php-fpm: USR2 a cada master de `bin/php/sockets/{1..4}.pid` (gestiona su
+     pidfile solo, sin gotcha). nginx/nginx_rtmp: USR2 + `kill -QUIT <viejo>`.
+  3. **CRÍTICO — pidfile de nginx**: al salir, el master viejo hace unlink del
+     pidfile que el master nuevo ya reescribió → `nginx -s reload` queda roto.
+     Si el master viejo puede tardar en salir (conns ffmpeg activas),
+     dejar un watchdog que restaure `bin/nginx/logs/nginx.pid` con el PID del
+     master nuevo cuando el viejo salga (ej.: `systemd-run --unit=... <script>`).
+  4. NO matar procesos ffmpeg del panel sin confirmar: los jobs de prep HLS
+     graban con `-progress http://127.0.0.1/progress?stream_id=N` (POST largo,
+     NO keepalive idle — mantienen al worker nginx drenado indefinidamente).
+     Si el master viejo sale, esas conns se cierran → ffmpeg muere → **el
+     watchdog del panel lo relanza solo (~1 min) ya con el binario nuevo**.
+     Verificar con el usuario antes de matar; nunca forzarlo a mano.
+  5. Verificación del swap: inodos `stat -Lc %i /proc/<master>/exe` == disco;
+     `strings -a <bin> | grep -ci 'xc_vm\|xcvm'` = 0; panel 200; segmentos HLS
+     frescos (`ls --time-style=+%H:%M:%S content/streams/` CON sudo — sin sudo
+     falla en silencio).
+- **404 anti-probe del streaming API**: `ErrorHandler::generate404()` EMULA la
+  página HTML 404 de nginx (padding MSIE incluido). Un 404 con ese cuerpo viene
+  de PHP, NO de nginx: `player_api.php`/`api.php` responden así a credenciales
+  inválidas o probes POR DISEÑO. No confundir con fallo de enrutado — trazar
+  por CLI (simular `$_SERVER['UY_*']` + require `public/index.php`) o usar
+  credenciales válidas.
+- **Contrato nginx↔PHP**: `UY_SCOPE`/`UY_CODE`/`UY_API` (desde 2.0.9; antes
+  `XC_*`). PHP lee UY_ primero con fallback XC_ (fase 2 lo eliminará cuando
+  todos los installs ≥ 2.0.9). Emisores: `codes/template` (confs generadas),
+  `nginx.conf` main, `lb_configs/nginx.conf` (LB). Los proxies type-1 no llevan
+  ninguno. El post-update regenera `codes/*.conf` (`AuthRepository::updateCodes()`).
 - **`bin/distros/<distro>.tar.gz`** (runtime, no está en git): BalancerCommand
   los despliega por SSH al instalar Proxy/LB según el OS detectado. Tras
   actualizar binarios, REFRESCAR estos tarballs desde

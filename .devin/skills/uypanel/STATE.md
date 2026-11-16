@@ -1,7 +1,38 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-16 (desacople total del proyecto original + binarios purgados).
+> cada cambio significativo. Última actualización: 2026-11-16 (swap de binarios en prod + migración contrato UY_ + release 2.0.9).
+
+## 🆕 2026-11-16 — Swap de binarios en prod (zero-downtime) + migración contrato nginx↔PHP `XC_*`→`UY_*` (release 2.0.9)
+
+**Pedido del usuario**: continuar los pendientes del panel — swap de binarios en prod (cosmético) y migración coordinada de los fastcgi_params para eliminar el prefijo `XC_`. Elegidos vía pregunta: prefijo **`UY_`**, swap manual zero-downtime AHORA, release **2.0.9** con la migración.
+
+### Swap de binarios en prod (198.27.81.133) — COMPLETADO
+- **29 ficheros** del commit `205a16d9` desplegados: php/php-fpm/phpdbg + 5 extensiones `.so` (igbinary, maxminddb, opcache, redis, ssh2) + nginx + nginx_rtmp + ffmpeg 8.0 (ffmpeg/ffprobe) + `network` + cosméticos (phar.phar, php-config, headers, .reg PEAR). Backup rollback: `/home/debian/bin_backup_2026-11-16/bin_swap_backup.tar.gz` (106MB, perms/owner preservados).
+- **Swap atómico en disco**: `install` a `<file>.new` + `mv` (rename) — NO sufre ETXTBSY ni deja ventana sin fichero (mejor que rm+cp). Modos capturados del fichero en prod antes del swap.
+- **Procesos vía USR2 (re-exec, zero-downtime)**: 4 pools php-fpm (`kill -USR2` a los masters de `bin/php/sockets/{1..4}.pid`; php-fpm gestiona su pidfile sin el gotcha de nginx; masters viejos salieron limpios), nginx (USR2 → master nuevo 1465382 + QUIT al viejo) y nginx_rtmp (USR2 + QUIT, salió inmediato con 0 conns).
+- **Verificado**: inodos de `/proc/<master>/exe` == binarios nuevos en disco; strings `xc_vm|xcvm` = **0** en los 6 binarios clave; panel 200 (80/443); segmentos HLS escribiéndose frescos; los 2 jobs ffmpeg activos NO se tocaron.
+- **Cadena auto-resuelta del master viejo**: el master nginx viejo (257723) drenaba atascado en el worker que sostenía los 2 conns `-progress` de los ffmpeg (POST largo, no keepalive idle). Al salir el master viejo (~01:45) se cerraron esas conns → ffmpeg murió → **el watchdog del panel los relanzó solos ~1 min después YA CON EL BINARIO NUEVO** (etime ~1min, sin intervención). El pidfile quedó correcto (1465382); watchdog systemd `uypanel-pidfile-restore` (transient unit) terminó inactivo sin necesidad de restaurar.
+- **Lección de diagnóstico**: `kill -0 <pid-ajeno>` sin sudo devuelve EPERM → falso "exited". Verificar siempre con sudo. Y el 404 de player_api NO era nginx: ver lección generate404 abajo.
+
+### Migración del contrato nginx↔PHP `XC_*` → `UY_*` — FASE 1 (release 2.0.9)
+- **Emisores** (nginx): `src/bin/nginx/conf/codes/template` (→ `codes/*.conf` de todos los paneles vía `AuthRepository::updateCodes()`), `src/bin/nginx/conf/nginx.conf` (locations player_api/api.php), `lb_configs/nginx.conf` (nginx.conf del LB, viaja en `lb_update`). Los **proxies type-1 NO llevan ninguno** (su nginx.conf solo proxyea; verificado en `bin/install/proxy.tar.gz`).
+- **Lectores** (PHP, dual-read UY_ primero + fallback XC_): `src/public/index.php` (Modo A + dispatch API), `src/domain/Auth/AuthRepository.php::getCurrentCode()`, `src/infrastructure/bootstrap/player_session.php`, `player_functions.php`. Los LBs reciben los mismos ficheros PHP (dual-read) pero NO `domain/Auth` (excluido del payload LB — el hook post-update está guardado por `is_main`).
+- **Hook post-update** (`UpdateCommand`): `AuthRepository::updateCodes()` tras `MigrationRunner::run()` (solo main) — regenera `codes/*.conf` con UY_ durante el post-update (servicios parados); el start posterior carga todo consistente. Idempotente, corre en cada update.
+- **Orden garantizado por diseño**: el pipeline (`update`: stop → extraer → post-update → start) aplica PHP dual-read y confs juntas; PHP acepta ambos contratos → sin ventana de ruptura ni entre panel y LBs (cada nginx habla con su propio PHP).
+- **Commit `98471386`** (12 ficheros) + fix colateral: referencias `XC_Autoloader` residuales en `docs/en/development/autoloader.md` (se habían pasado en el desacople).
+- **Release 2.0.9**: bump AppConfig ANTES del push ✓, CI run `43787402525` verde (3m14s), 5 assets. **Delta auditado** (lección 2.0.7): md5 == hashes.md5 ✓, AppConfig `2.0.9` ✓, UY_ en los 7 ficheros ✓, 5 `.so` ✓, sin deleted_files ✓. **Delta LB auditado**: nginx.conf con UY_ ✓, sin `domain/Auth` ✓, binarios ✓. El delta 2.0.9 lleva TAMBIÉN los 29 binarios limpios (commits posteriores al tag 2.0.8) → los paneles instalados se ponen al día de binarios + contrato en un solo update.
+- **Fase 2 (pendiente, futura release)**: eliminar el fallback `XC_*` del PHP cuando todos los installs sean ≥ 2.0.9 (el panel del usuario va 2.0.4 → updates secuenciales primero).
+
+### Deploy 2.0.9 en prod (manual, zero-downtime) — COMPLETADO
+- Prod estaba EXACTO al payload 2.0.8 (verificado contra `7a3c61cc`; solo el string de versión difería: 2.0.7). Copiados a mano los 8 ficheros (6 PHP + `nginx.conf` + `template`, modos 644/550, uypanel:uypanel).
+- `codes/*.conf` regenerados con script CLI (bootstrap `CONTEXT_CLI` + `AuthRepository::updateCodes()`) — **ojo: en prod la clase sigue siendo `XC_Bootstrap`** (el payload 2.0.8 es anterior al desacople de nombres; el rename completo llega a prod solo con un delta futuro aplicado con stop/start).
+- `nginx -t` OK en ambos → reload de nginx + nginx_rtmp (zero-downtime) → workers nuevos con confs UY_.
+- **Verificado end-to-end**: panel 200; `player_api` con credenciales falsas → 404 (correcto, ver abajo); versión de prod = **2.0.9** (el cron de updates no re-descargará). Traza CLI con checkpoints: init.php OK → `$db` OK → `PlayerApiController` instanciado → 404 = `generateError('INVALID_CREDENTIALS')` con debug off.
+- **Lección clave (anti-probe)**: `ErrorHandler::generate404()` EMULA la página HTML 404 de nginx (con el padding MSIE) — un 404 con ese cuerpo viene de PHP, no de nginx. `player_api.php`/`api.php` responden 404-nginx-mimic a credenciales inválidas o probes POR DISEÑO. No confundir con fallos de enrutado: para probar el dispatch usar credenciales válidas o trazar por CLI.
+- El update estándar en prod NO se usó a propósito: `systemctl stop uypanel` hace `killall -u uypanel` y habría matado los 2 ffmpeg activos.
+
+**Pendiente para próxima sesión**: FASE 2 del contrato (eliminar fallback `XC_*` cuando todos los installs ≥ 2.0.9); panel del usuario (178.156.194.122) updates secuenciales 2.0.4→…→2.0.9 (su delta lleva binarios limpios + contrato UY_); MariaDB 11.8.10 cuando el mirror la tenga; LB futuro → Debian 13/Ubuntu 24.04; reaper vs proxy #4; borrar `/home/debian/XC_VM.zip` + `xc_vm.tar.gz` (~895MB, decisión del usuario); opcional: aplicar el rename completo del desacople a prod (requiere stop/start — mataría ffmpeg activos, hacer en ventana sin streams).
 
 ## 🆕 2026-11-16 — Desacople total del proyecto original (sin forks, sin menciones, binarios purgados)
 
