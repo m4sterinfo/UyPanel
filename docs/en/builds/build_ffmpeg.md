@@ -23,7 +23,7 @@
 
 ## 📋 Requirements
 
-* **Ubuntu 22.04 or newer** — recommended OS for stable builds.
+* **Debian 13 or Ubuntu 24.04 LTS** — recommended OS for stable builds (the build runs in Docker)
 * NVIDIA GPU with **NVENC/NVDEC** support (optional but highly recommended for hardware acceleration).
 * ~15 GB of free disk space for sources and temporary files.
 * Stable internet connection for downloading dependencies.

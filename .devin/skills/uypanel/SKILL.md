@@ -105,9 +105,9 @@ journalctl -u uypanel -f
   nginx_rtmp exige GLIBC 2.38). El instalador rechaza el resto y `bin/distros/`
   solo lleva `debian_13` + `ubuntu_24`. Un LB en Ubuntu viejo → reinstalar en
   Debian 13/Ubuntu 24.04.
-- UyPanel 2.0.7 (base original 2.0.1) instalado en `/home/uypanel` (nginx 1.30.6 en 80/443,
+- UyPanel 2.0.8 (base original 2.0.1) instalado en `/home/uypanel` (nginx 1.30.6 en 80/443,
   nginx_rtmp 1.30.6, 4 pools php-fpm 8.3.36, **Valkey 9.1.3** en 6379 con auth,
-  MariaDB 11.8.9 — 11.8.10 pendiente de mirror)
+  MariaDB 11.8.9 — 11.8.10 pendiente de mirror; ffmpeg activo 8.0)
 - Base de datos migrada desde XUI (27,672 líneas, 240,557 streams)
 - Acceso admin: `http://198.27.81.133/7JDEeDMG` (código tras la reinstalación
   limpia del 2026-11-04; el `x9access9x` anterior murió con la BD vieja)

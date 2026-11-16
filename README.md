@@ -181,7 +181,7 @@ journalctl -u uypanel -f         # Live logs
 | RAM       | 16–32 GB                      |
 | Disk      | SSD/NVMe, 480+ GB             |
 | Network   | Dedicated 1 Gbps port         |
-| OS        | Ubuntu 22.04+ (clean install) |
+| OS        | Debian 13 (recommended) or Ubuntu 24.04 LTS (clean install) |
 
 ---
 

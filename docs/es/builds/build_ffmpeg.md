@@ -23,7 +23,7 @@
 
 ## 📋 Requisitos
 
-* **Ubuntu 22.04 o superior** — SO recomendado para un build estable.
+* **Debian 13 o Ubuntu 24.04 LTS** — SO recomendado para un build estable (el build corre en Docker).
 * Tarjeta gráfica NVIDIA con soporte **NVENC** (opcional, pero recomendado para aceleración por hardware).
 * ~15 GB de espacio libre en disco para fuentes y archivos temporales.
 * Conexión a internet estable para descargar dependencias.
