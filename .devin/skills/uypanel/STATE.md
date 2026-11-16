@@ -5,7 +5,7 @@
 
 ## 🆕 2026-11-16 — Reescritura de historial git: autoría unificada + mensajes purgados (los 4 repos)
 
-**Pedido del usuario**: en GitHub aparecían ~11 colaboradores (los devs del proyecto original) y solo deben estar él y Devin. Elegidos vía pregunta: **autoría + mensajes** (purga total), **los 4 repos**, identidad destino **m4sterinfo <jferrjferreira@masterinfo.org>**.
+**Pedido del usuario**: en GitHub aparecían ~11 colaboradores (los devs del proyecto original) y solo deben estar él y Devin. Elegidos vía pregunta: **autoría + mensajes** (purga total), **los 4 repos**, identidad destino **m4sterinfo <jferreira@masterinfo.org>**.
 
 **Diagnóstico previo**: el "colaboradores" que veía el usuario = el **contributors graph** (derivado de la autoría de los commits del historial heredado), NO accesos reales (collaborators API: solo m4sterinfo en los 4 ✓). Autores upstream a mapear: Divarion-D (3 variantes de nombre, 2513 commits), obscuremind (3 emails), Claude <noreply@anthropic.com> (218), babasado, root de 2 servidores viejos, IPTVEX, dependabot, github-actions, copilot-swe-agent, + ~10 más. **Detalle clave**: el email del usuario NO está vinculado a su cuenta GitHub (los commits propios salían "SIN-VINCULAR" y él no aparecía ni en su repo).
 
@@ -26,7 +26,9 @@
 
 **Verificado**: releases 2.0.1-2.0.9 intactas con assets ✓; clon fresco `--recurse-submodules` resuelve los gitlinks reescritos ✓; LFS smudge OK en el clon ✓; Pages rebuilt ✓; Security Scan ✓; workflows sin triggers en tags (sin tormentas de CI) ✓.
 
-**ACCIÓN DEL USUARIO**: añadir/verificar `jferrjferreira@masterinfo.org` en GitHub → Settings → Emails para que la cuenta m4sterinfo aparezca como contributor (ahora mismo los commits están "SIN-VINCULAR": el graph mostrará 0 personas hasta vincular el email).
+**ACCIÓN DEL USUARIO**: añadir/verificar `jferreira@masterinfo.org` en GitHub → Settings → Emails para que la cuenta m4sterinfo aparezca como contributor (ahora mismo los commits están "SIN-VINCULAR": el graph mostrará 0 personas hasta vincular el email).
+
+**Corrección de email (misma sesión)**: la identidad usaba un TYPO (`jferrjferreira@` — por eso el usuario nunca aparecía como contributor ni de sus propios commits). El email real es **`jferreira@masterinfo.org`**. Segunda pasada de filter-repo (mailmap `jferrjferreira@→jferreira@`) en los 4 repos + force-push de nuevo; git config global y del repo corregidos (el global quedó corrupto un momento por un comando mal formado del agente — restaurado a `m4sterinfo <jferreira@masterinfo.org>`). Verificado por API: TODOS los commits (incluida la era upstream profunda) con `jferreira@masterinfo.org` en los 4 repos.
 
 **Pendiente para próxima sesión**: confirmar el contributors graph refrescado (darle horas); FASE 2 del contrato (eliminar fallback `XC_*` cuando todos los installs ≥ 2.0.9); panel del usuario (178.156.194.122) updates secuenciales; MariaDB 11.8.10 cuando el mirror la tenga; monitoreo del ingest de amagi (stalls de la fuente, no del binario — A/B test hecho); borrar `/home/debian/XC_VM.zip` + `xc_vm.tar.gz` (~895MB, decisión del usuario).
 
@@ -537,7 +539,7 @@ scoped / Super Resellers) no convencía; se vuelve al modelo simple de main
 - **Upstream original**: desvinculado — SIN remote configurado;
   añadir como `upstream` solo si se quiere mirar fixes (`git remote add upstream ...`)
 - **Auth GitHub**: gh CLI autenticado como `m4sterinfo` (credenciales de git vía gh)
-- **Identidad git (config local del repo)**: m4sterinfo <jferrjferreira@masterinfo.org>
+- **Identidad git (config local del repo)**: m4sterinfo <jferreira@masterinfo.org>
 - **Licencia**: AGPL-3.0 (heredada, mantener — NO cambiar a GPL-3.0)
 
 ## Entorno
