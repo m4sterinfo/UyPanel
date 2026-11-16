@@ -286,7 +286,7 @@ export PKG_CONFIG_PATH="${INSTALL_DIR:-$HOME/ffmpeg_build}/lib/pkgconfig"
   --pkg-config-flags="--static" \
   --extra-cflags="-I${INSTALL_DIR:-$HOME/ffmpeg_build}/include -I/usr/local/cuda/include" \
   --extra-ldflags="-L${INSTALL_DIR:-$HOME/ffmpeg_build}/lib -L/usr/local/cuda/lib64 -Wl,-Bstatic -lcrypto -lssl -Wl,-Bdynamic" \
-  --extra-version=XCVM \
+  --extra-version=UyPanel \
   --extra-libs="-lsupc++ -lgmp -lz -lunistring -lpthread -lm -lrt -ldl" \
   --bindir="${INSTALL_DIR:-$HOME/bin}" \
   --enable-gpl \

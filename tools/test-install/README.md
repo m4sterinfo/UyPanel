@@ -19,7 +19,7 @@ Contenedor Docker de prueba (Ubuntu 22.04) para verificar la instalación de UyP
 ./tools/test-install/test_release.sh install   # ejecutar la instalación
 
 # Entrar al contenedor manualmente
-docker exec -it xcvm-test-install bash
+docker exec -it uypanel-test-install bash
 
 # Ver el log de la instalación
 ./tools/test-install/test_release.sh logs

@@ -25,11 +25,11 @@ RUN rm -f /lib/systemd/system/multi-user.target.wants/* \
 
 STOPSIGNAL SIGRTMIN+3
 
-WORKDIR /opt/xcvm-install
+WORKDIR /opt/uypanel-install
 
 # Script de instalación automática (responde a las preguntas interactivas)
-COPY auto_install.sh /opt/xcvm-install/auto_install.sh
-RUN chmod +x /opt/xcvm-install/auto_install.sh
+COPY auto_install.sh /opt/uypanel-install/auto_install.sh
+RUN chmod +x /opt/uypanel-install/auto_install.sh
 
 # Punto de entrada — systemd (PID 1), la instalación se lanza a mano o vía script
 CMD ["/sbin/init"]

@@ -3,7 +3,7 @@
 # Responde a las preguntas interactivas del instalador
 set -e
 
-INSTALL_DIR="/opt/xcvm-install"
+INSTALL_DIR="/opt/uypanel-install"
 cd "$INSTALL_DIR"
 
 # Comprobamos que exista UyPanel.zip
@@ -32,7 +32,7 @@ echo "==> Lanzando el instalador..."
 #   3) "HTTPS port (default 443):" — línea vacía (default 443)
 #   4) "Overwrite sysctl configuration? (Y / N):" — N (sysctl no se puede cambiar en el contenedor)
 
-printf 'Y\n\n\nN\n' | python3 install 2>&1 | tee /var/log/xcvm_install.log
+printf 'Y\n\n\nN\n' | python3 install 2>&1 | tee /var/log/uypanel_install.log
 EXIT_CODE=${PIPESTATUS[1]}
 
 echo ""

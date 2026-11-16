@@ -12,8 +12,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 COMPOSE="docker compose -f $SCRIPT_DIR/docker-compose.yml"
-CONTAINER="xcvm-test-install"
-IMAGE="xcvm-test:latest"
+CONTAINER="uypanel-test-install"
+IMAGE="uypanel-test:latest"
 
 cd "$PROJECT_ROOT"
 
@@ -59,11 +59,11 @@ cmd_run() {
     echo "==> Starting container with systemd..."
     docker run -d \
         --name "$CONTAINER" \
-        --hostname xcvm-test \
+        --hostname uypanel-test \
         --privileged \
         --cgroupns=host \
         -v /sys/fs/cgroup:/sys/fs/cgroup:rw \
-        -v "$PROJECT_ROOT/dist/UyPanel.zip:/opt/xcvm-install/UyPanel.zip:ro" \
+        -v "$PROJECT_ROOT/dist/UyPanel.zip:/opt/uypanel-install/UyPanel.zip:ro" \
         -p 8880:80 \
         -p 8443:443 \
         --stop-signal SIGRTMIN+3 \
@@ -74,7 +74,7 @@ cmd_run() {
     echo ""
     echo "Container is running. You can:"
     echo "  docker exec -it $CONTAINER bash                     # shell"
-    echo "  docker exec -it $CONTAINER /opt/xcvm-install/auto_install.sh  # auto-install"
+    echo "  docker exec -it $CONTAINER /opt/uypanel-install/auto_install.sh  # auto-install"
     echo "  $0 install                                          # auto-install shortcut"
     echo "  $0 clean                                            # stop and remove"
 }
@@ -89,11 +89,11 @@ cmd_install() {
         docker rm -f "$CONTAINER" 2>/dev/null || true
         docker run -d \
             --name "$CONTAINER" \
-            --hostname xcvm-test \
+            --hostname uypanel-test \
             --privileged \
             --cgroupns=host \
             -v /sys/fs/cgroup:/sys/fs/cgroup:rw \
-            -v "$PROJECT_ROOT/dist/UyPanel.zip:/opt/xcvm-install/UyPanel.zip:ro" \
+            -v "$PROJECT_ROOT/dist/UyPanel.zip:/opt/uypanel-install/UyPanel.zip:ro" \
             -p 8880:80 \
             -p 8443:443 \
             --stop-signal SIGRTMIN+3 \
@@ -103,7 +103,7 @@ cmd_install() {
     fi
 
     echo "==> Running auto-install inside container..."
-    docker exec -it "$CONTAINER" /opt/xcvm-install/auto_install.sh
+    docker exec -it "$CONTAINER" /opt/uypanel-install/auto_install.sh
 }
 
 cmd_clean() {
@@ -114,7 +114,7 @@ cmd_clean() {
 }
 
 cmd_logs() {
-    docker exec "$CONTAINER" cat /var/log/xcvm_install.log 2>/dev/null || echo "No install log found."
+    docker exec "$CONTAINER" cat /var/log/uypanel_install.log 2>/dev/null || echo "No install log found."
 }
 
 case "${1:-install}" in

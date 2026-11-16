@@ -1,6 +1,6 @@
 services:
-  xcvm-test:
+  uypanel-test:
     build:
       context: .
       dockerfile: Dockerfile
-    image: xcvm-test:latest
+    image: uypanel-test:latest

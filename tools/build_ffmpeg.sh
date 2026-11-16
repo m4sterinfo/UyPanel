@@ -318,7 +318,7 @@ get_configure_flags() {
         "--pkg-config-flags=--static"
         "--extra-cflags=-I${prefix}/include${cuda_cflags}"
         "--extra-ldflags=-L${prefix}/lib${cuda_ldflags} -Wl,-Bstatic -lcrypto -lssl -Wl,-Bdynamic"
-        "--extra-version=XCVM-$(date +%Y%m%d)"
+        "--extra-version=UyPanel-$(date +%Y%m%d)"
         "--extra-libs=-lsupc++ -lgmp -lz -lunistring -lpthread -lm -lrt -ldl"
         "--target-os=linux"
         "--enable-static"
@@ -446,7 +446,7 @@ build_version() {
     make distclean 2>/dev/null || true
 
     get_configure_flags "$version" "$prefix"
-    local build_log="${src_dir}/xcvm_build.log"
+    local build_log="${src_dir}/uypanel_build.log"
     local rc=0
 
     # Configure
