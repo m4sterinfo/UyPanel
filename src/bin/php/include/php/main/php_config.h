@@ -1969,19 +1969,19 @@
 /* #undef PHP_BUILD_PROVIDER */
 
 /* builder uname output */
-#define PHP_BUILD_SYSTEM "Linux 084772da88e1 6.12.113+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.113-1 (2026-10-15) x86_64 GNU/Linux"
+#define PHP_BUILD_SYSTEM "Linux 2aa74dc2d903 6.12.117+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.117-1 (2026-11-12) x86_64 GNU/Linux"
 
 /* Define if your system has fork/vfork/CreateProcess */
 #define PHP_CAN_SUPPORT_PROC_OPEN 1
 
 /* fpm group name */
-#define PHP_FPM_GROUP "xc_vm"
+#define PHP_FPM_GROUP "uypanel"
 
 /* fpm systemd service type */
 #define PHP_FPM_SYSTEMD "simple"
 
 /* fpm user name */
-#define PHP_FPM_USER "xc_vm"
+#define PHP_FPM_USER "uypanel"
 
 /* Whether the compiler supports AVX512 */
 #define PHP_HAVE_AVX512_SUPPORTS 1
@@ -2077,7 +2077,7 @@
 #define PHP_SIGCHILD 0
 
 /* uname -a output */
-#define PHP_UNAME "Linux 084772da88e1 6.12.113+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.113-1 (2026-10-15) x86_64 GNU/Linux"
+#define PHP_UNAME "Linux 2aa74dc2d903 6.12.117+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.117-1 (2026-11-12) x86_64 GNU/Linux"
 
 /* Whether PHP has to use its own crypt_r */
 #define PHP_USE_PHP_CRYPT_R 1

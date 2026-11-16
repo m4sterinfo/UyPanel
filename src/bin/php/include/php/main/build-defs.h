@@ -14,7 +14,7 @@
    +----------------------------------------------------------------------+
 */
 
-#define CONFIGURE_COMMAND " './configure'  '--prefix=/home/uypanel/bin/php' '--enable-fpm' '--with-fpm-user=xc_vm' '--with-fpm-group=xc_vm' '--with-openssl' '--with-zlib' '--with-curl' '--enable-mbstring' '--with-pdo-mysql' '--with-mysqli' '--enable-gd' '--with-jpeg' '--with-freetype' '--enable-static' '--disable-shared' '--enable-opcache' '--without-sqlite3' '--without-pdo-sqlite' '--enable-mysqlnd' '--disable-cgi' '--enable-sockets' '--enable-shmop' '--enable-sysvsem' '--enable-sysvshm' '--enable-sysvmsg' '--enable-calendar' '--disable-rpath' '--enable-inline-optimization' '--enable-pcntl' '--enable-mbregex' '--enable-exif' '--enable-bcmath' '--with-mhash' '--with-gettext' '--with-xmlrpc' '--with-xsl' '--with-libxml' '--with-sodium=/usr' '--with-pear'"
+#define CONFIGURE_COMMAND " './configure'  '--prefix=/home/uypanel/bin/php' '--enable-fpm' '--with-fpm-user=uypanel' '--with-fpm-group=uypanel' '--with-openssl' '--with-zlib' '--with-curl' '--enable-mbstring' '--with-pdo-mysql' '--with-mysqli' '--enable-gd' '--with-jpeg' '--with-freetype' '--enable-static' '--disable-shared' '--enable-opcache' '--without-sqlite3' '--without-pdo-sqlite' '--enable-mysqlnd' '--disable-cgi' '--enable-sockets' '--enable-shmop' '--enable-sysvsem' '--enable-sysvshm' '--enable-sysvmsg' '--enable-calendar' '--disable-rpath' '--enable-inline-optimization' '--enable-pcntl' '--enable-mbregex' '--enable-exif' '--enable-bcmath' '--with-mhash' '--with-gettext' '--with-xmlrpc' '--with-xsl' '--with-libxml' '--with-sodium=/usr' '--with-pear'"
 #define PHP_ODBC_CFLAGS	""
 #define PHP_ODBC_LFLAGS		""
 #define PHP_ODBC_LIBS		""

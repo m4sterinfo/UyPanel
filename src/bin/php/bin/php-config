@@ -17,7 +17,7 @@ program_suffix=""
 exe_extension=""
 php_cli_binary=NONE
 php_cgi_binary=NONE
-configure_options=" '--prefix=/home/uypanel/bin/php' '--enable-fpm' '--with-fpm-user=xc_vm' '--with-fpm-group=xc_vm' '--with-openssl' '--with-zlib' '--with-curl' '--enable-mbstring' '--with-pdo-mysql' '--with-mysqli' '--enable-gd' '--with-jpeg' '--with-freetype' '--enable-static' '--disable-shared' '--enable-opcache' '--without-sqlite3' '--without-pdo-sqlite' '--enable-mysqlnd' '--disable-cgi' '--enable-sockets' '--enable-shmop' '--enable-sysvsem' '--enable-sysvshm' '--enable-sysvmsg' '--enable-calendar' '--disable-rpath' '--enable-inline-optimization' '--enable-pcntl' '--enable-mbregex' '--enable-exif' '--enable-bcmath' '--with-mhash' '--with-gettext' '--with-xmlrpc' '--with-xsl' '--with-libxml' '--with-sodium=/usr' '--with-pear'"
+configure_options=" '--prefix=/home/uypanel/bin/php' '--enable-fpm' '--with-fpm-user=uypanel' '--with-fpm-group=uypanel' '--with-openssl' '--with-zlib' '--with-curl' '--enable-mbstring' '--with-pdo-mysql' '--with-mysqli' '--enable-gd' '--with-jpeg' '--with-freetype' '--enable-static' '--disable-shared' '--enable-opcache' '--without-sqlite3' '--without-pdo-sqlite' '--enable-mysqlnd' '--disable-cgi' '--enable-sockets' '--enable-shmop' '--enable-sysvsem' '--enable-sysvshm' '--enable-sysvmsg' '--enable-calendar' '--disable-rpath' '--enable-inline-optimization' '--enable-pcntl' '--enable-mbregex' '--enable-exif' '--enable-bcmath' '--with-mhash' '--with-gettext' '--with-xmlrpc' '--with-xsl' '--with-libxml' '--with-sodium=/usr' '--with-pear'"
 php_sapis=" cli fpm phpdbg"
 ini_dir=""
 ini_path="/home/uypanel/bin/php/lib"
