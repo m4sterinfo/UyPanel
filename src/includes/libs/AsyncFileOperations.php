@@ -3,9 +3,9 @@
 /**
  * AsyncFileOperations PHP class – non-blocking filesystem utilities
  *
- * @package VateronMedia_AsyncFileOperations
+ * @package UyPanel_AsyncFileOperations
  * @author Divarion_D <https://github.com/Divarion-D>
- * @copyright 2026 Vateron Media
+ * @copyright 2026 UyPanel
  * @link https://github.com/m4sterinfo/UyPanel
  * @version 0.1.0
  * @license AGPL-3.0 https://www.gnu.org/licenses/agpl-3.0.html

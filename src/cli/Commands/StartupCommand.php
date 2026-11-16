@@ -15,8 +15,8 @@ class StartupCommand implements CommandInterface {
 
 	public function execute(array $rArgs): int {
 				// Reset de la caché de autoload — garantiza el mapa de clases actualizado tras una actualización
-		XC_Autoloader::clearCache();
-		XC_Autoloader::warmCache();
+		UyPanel_Autoloader::clearCache();
+		UyPanel_Autoloader::warmCache();
 
 		$rFixCron = false;
 		if (!empty($rArgs[0]) && intval($rArgs[0]) == 1) {

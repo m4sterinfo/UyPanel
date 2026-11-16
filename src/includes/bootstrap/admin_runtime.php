@@ -4,8 +4,8 @@ if (!function_exists('bootstrapAdminStatusConstants')) {
 	function bootstrapAdminStatusConstants() {
 		require_once MAIN_HOME . 'bootstrap.php';
 
-		if (class_exists('XC_Bootstrap') && method_exists('XC_Bootstrap', 'defineStatusConstants')) {
-			XC_Bootstrap::defineStatusConstants();
+		if (class_exists('UyPanel_Bootstrap') && method_exists('UyPanel_Bootstrap', 'defineStatusConstants')) {
+			UyPanel_Bootstrap::defineStatusConstants();
 			return;
 		}
 
@@ -88,9 +88,9 @@ if (!function_exists('bootstrapAdminRuntime')) {
 
 		$rBootstrapped = false;
 		require_once MAIN_HOME . 'bootstrap.php';
-		if (class_exists('XC_Bootstrap') && defined('XC_Bootstrap::CONTEXT_ADMIN')) {
+		if (class_exists('UyPanel_Bootstrap') && defined('UyPanel_Bootstrap::CONTEXT_ADMIN')) {
 			try {
-				XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_ADMIN);
+				UyPanel_Bootstrap::boot(UyPanel_Bootstrap::CONTEXT_ADMIN);
 				$rBootstrapped = true;
 			} catch (Throwable $e) {
 				$rBootstrapped = false;

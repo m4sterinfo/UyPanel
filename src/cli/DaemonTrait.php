@@ -20,7 +20,7 @@ trait DaemonTrait {
 	/**
 	 		 * Comprobar que el proceso corre como usuario uypanel.
 	 */
-	protected function assertRunAsXcVm(): bool {
+	protected function assertRunAsUyPanel(): bool {
 		if (posix_getpwuid(posix_geteuid())['name'] !== 'uypanel') {
 			echo "Please run as UyPanel!\n";
 			return false;

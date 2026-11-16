@@ -1466,7 +1466,7 @@ Sin RabbitMQ/Kafka — una cola Redis simple vía `LPUSH`/`BRPOP`.
 
 ## Apéndice: Un bootstrap en lugar de tres
 
-`bootstrap.php` provee la clase `XC_Bootstrap` con cuatro contextos de inicialización:
+`bootstrap.php` provee la clase `UyPanel_Bootstrap` con cuatro contextos de inicialización:
 
 | Contexto | Qué carga | Para qué |
 |----------|--------------|----------|
@@ -1478,22 +1478,22 @@ Sin RabbitMQ/Kafka — una cola Redis simple vía `LPUSH`/`BRPOP`.
 ```php
 // public/index.php — entry point admin/reseller
 require_once '/home/uypanel/bootstrap.php';
-XC_Bootstrap::defineStatusConstants();
-XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_ADMIN);
+UyPanel_Bootstrap::defineStatusConstants();
+UyPanel_Bootstrap::boot(UyPanel_Bootstrap::CONTEXT_ADMIN);
 // $db, CoreUtilities, API, ResellerAPI, Translator — todo listo
 ```
 
 ```php
 // public/stream.php — entry point de streaming (ligero)
 require_once '/home/uypanel/bootstrap.php';
-XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_STREAM);
+UyPanel_Bootstrap::boot(UyPanel_Bootstrap::CONTEXT_STREAM);
 // Solo Database + StreamingUtilities, sin admin_api, sin Translator
 ```
 
 ```php
 // cli/CronJobs/StreamsCron.php — cron
 require_once '/home/uypanel/bootstrap.php';
-XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_CLI, [
+UyPanel_Bootstrap::boot(UyPanel_Bootstrap::CONTEXT_CLI, [
     'cached'  => true,
     'redis'   => true,
     'process' => 'UyPanel[Streams]'
@@ -1502,4 +1502,4 @@ XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_CLI, [
 ```
 
 Un solo autoloader. Un solo conjunto de constantes. Cada punto de entrada llama a `boot()` con el contexto necesario.
-Las clases nuevas de la migración se encuentran automáticamente vía `XC_Autoloader` — sin `require_once` manuales.
+Las clases nuevas de la migración se encuentran automáticamente vía `UyPanel_Autoloader` — sin `require_once` manuales.

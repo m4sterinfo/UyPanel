@@ -20,7 +20,7 @@ class CacheEngineCronJob implements CommandInterface {
     }
 
     public function execute(array $rArgs): int {
-        if (!$this->assertRunAsXcVm()) {
+        if (!$this->assertRunAsUyPanel()) {
             return 1;
         }
 

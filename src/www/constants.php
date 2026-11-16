@@ -15,7 +15,7 @@
  *   core/Http/RequestGuard.php     — flood-protection, host verify, Logger init
  *
  * El orden de carga importa:
- *   1. autoload.php     → MAIN_HOME + XC_Autoloader
+ *   1. autoload.php     → MAIN_HOME + UyPanel_Autoloader
  *   2. ErrorCodes       → $rErrorCodes (necesario para ErrorHandler)
  *   3. ErrorHandler     → generate404() (necesario para el access guard de abajo)
  *   4. Paths            → todas las constantes *_PATH (necesarias para Binaries, ConfigLoader)

@@ -1,6 +1,6 @@
 ---
 name: uypanel
-description: Contexto vivo del proyecto UyPanel (fork de XC_VM 2.0.1) — arquitectura, comandos, convenciones y registro de cambios propios. Invocar antes de trabajar en el proyecto y actualizar tras cada mejora.
+description: Contexto vivo del proyecto UyPanel (fork independiente del proyecto original, v2.0.1) — arquitectura, comandos, convenciones y registro de cambios propios. Invocar antes de trabajar en el proyecto y actualizar tras cada mejora.
 argument-hint: "[tema opcional: build|deploy|arquitectura|migracion]"
 triggers:
   - user
@@ -11,10 +11,10 @@ allowed-tools:
   - glob
 ---
 
-# UyPanel — Panel IPTV (fork independiente de XC_VM)
+# UyPanel — Panel IPTV (fork independiente del proyecto original)
 
 Eres el agente de desarrollo de **UyPanel**, un fork independiente de
-[Vateron-Media/XC_VM](https://github.com/Vateron-Media/XC_VM) basado en el tag
+el proyecto original (repo upstream, ya desvinculado) basado en el tag
 **2.0.1** (commit `e21f9063`). El objetivo es evolucionar el panel como proyecto
 propio: modificar, añadir funciones y mantener el control total del código.
 
@@ -105,7 +105,7 @@ journalctl -u uypanel -f
   nginx_rtmp exige GLIBC 2.38). El instalador rechaza el resto y `bin/distros/`
   solo lleva `debian_13` + `ubuntu_24`. Un LB en Ubuntu viejo → reinstalar en
   Debian 13/Ubuntu 24.04.
-- UyPanel 2.0.7 (base XC_VM 2.0.1) instalado en `/home/uypanel` (nginx 1.30.6 en 80/443,
+- UyPanel 2.0.7 (base original 2.0.1) instalado en `/home/uypanel` (nginx 1.30.6 en 80/443,
   nginx_rtmp 1.30.6, 4 pools php-fpm 8.3.36, **Valkey 9.1.3** en 6379 con auth,
   MariaDB 11.8.9 — 11.8.10 pendiente de mirror)
 - Base de datos migrada desde XUI (27,672 líneas, 240,557 streams)
@@ -204,7 +204,7 @@ journalctl -u uypanel -f
 ## Relación con upstream
 
 - `origin` = https://github.com/m4sterinfo/UyPanel (NUESTRO repo; push normal).
-- El proyecto original (Vateron-Media/XC_VM) solo se consulta si se quiere
+- El proyecto original solo se consulta si se quiere
   traer fixes: añádelo como remote aparte (`git remote add upstream ...`),
   compara con `git log 2.0.1..upstream/main --oneline` y cherry-pick selectivo
   (NO merge ciego: rompería nuestras modificaciones).
@@ -308,7 +308,7 @@ journalctl -u uypanel -f
   `create_enigma` del reseller salen de `getGroupPermissions()` leyendo los
   `users_packages` del grupo (con caché igbinary `tmp/cache/permissions_<gid>`
   — regenerar con `cron:cache_engine groups` como uypanel, como root falla el
-  assertRunAsXcVm). Cambiar paquetes NO surte efecto hasta invalidar esa caché.
+  assertRunAsUyPanel). Cambiar paquetes NO surte efecto hasta invalidar esa caché.
 - **Translator**: default `$langsDir = includes/libs/lang/` NO existe; el init
   correcto lo hace `XC_Bootstrap::initTranslator()` con `includes/langs/`.
   `setLanguage(string)` es non-nullable — nunca llamarlo con posible null.

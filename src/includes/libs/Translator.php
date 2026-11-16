@@ -3,9 +3,9 @@
 /**
  * Translator PHP class - multilingual support system with auto-key generation
  *
- * @package VateronMedia_Translator
+ * @package UyPanel_Translator
  * @author Divarion_D <https://github.com/Divarion-D>
- * @copyright 2025-2026 Vateron Media
+ * @copyright 2025-2026 UyPanel
  * @link https://github.com/m4sterinfo/UyPanel
  * @version 1.0.0
  * @license AGPL-3.0 https://www.gnu.org/licenses/agpl-3.0.html

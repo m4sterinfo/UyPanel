@@ -16,7 +16,7 @@
 6. **Auditoría del zip completo**: `UyPanel.zip` = `install` (24.9KB, con rVersions `{"24.04": "noble"}` y mensajes "Unsupported Operating System") + `uypanel.tar.gz` (AppConfig 2.0.8 + BalancerCommand con política). Tag 2.0.8 → commit `0673b7d1` (el del bump).
 7. `UyPanel_Update/changelog.json`: entrada 2.0.8 añadida al inicio (newest-first; el local estaba 2 commits atrás — pull previo) y pusheado (`e2d3fba`).
 
-**Mecánica confirmada**: el CI ancla el prev tag en el tag actual (`awk` sobre `git tag --sort=-v:refname`) → para 2.0.8 el prev es 2.0.7 aunque existan tags viejos XC_VM 2.7.x arriba. El delta solo lleva archivos bajo `src/` (el script `install` de la raíz va en el zip, no en el delta — los paneles instalados no lo re-ejecutan; installs frescos lo descargan del zip de la release).
+**Mecánica confirmada**: el CI ancla el prev tag en el tag actual (`awk` sobre `git tag --sort=-v:refname`) → para 2.0.8 el prev es 2.0.7 aunque existan tags viejos del upstream (2.7.x) arriba. El delta solo lleva archivos bajo `src/` (el script `install` de la raíz va en el zip, no en el delta — los paneles instalados no lo re-ejecutan; installs frescos lo descargan del zip de la release).
 
 **Pendiente para próxima sesión**: panel del usuario (178.156.194.122) updates secuenciales (ahora 2.0.4→…→2.0.8); MariaDB 11.8.10 cuando el mirror la tenga; LB futuro → Debian 13/Ubuntu 24.04; verificar que el reaper ampliado no interfiera con el proxy #4.
 
@@ -115,7 +115,7 @@
 **Mecanismo del portal MAG (Stalker)**: se sirve vía symlinks `www/c` → `ministra/` y `www/portal.php` → `ministra/portal.php`, creados/borrados por la señal `enable_ministra`/`disable_ministra` del RootSignalsCronJob según el setting `mag_legacy_redirect`. portal.php además respeta el setting `disable_ministra`. Enigma2: endpoint `/enigma2.php` → FC → Enigma2ApiController, bloqueado por el setting `disable_enigma2`.
 
 **Aplicado (commit `07ea35c2`)**:
-- **Datos prod**: `settings.disable_ministra=1`, `settings.disable_enigma2=1`; `users_packages.is_mag=0, is_e2=0` en TODOS los paquetes (los permisos reseller `create_mag`/`create_enigma` derivan de los paquetes del grupo vía getGroupPermissions → con 0 paquetes MAG/E2 quedan false). Caché de permisos regenerada (`cron:cache_engine groups` como uypanel — como root falla el assertRunAsXcVm). Verificado vía API: create_mag/create_enigma=false para grupos 2 y 3.
+- **Datos prod**: `settings.disable_ministra=1`, `settings.disable_enigma2=1`; `users_packages.is_mag=0, is_e2=0` en TODOS los paquetes (los permisos reseller `create_mag`/`create_enigma` derivan de los paquetes del grupo vía getGroupPermissions → con 0 paquetes MAG/E2 quedan false). Caché de permisos regenerada (`cron:cache_engine groups` como uypanel — como root falla el assertRunAsUyPanel). Verificado vía API: create_mag/create_enigma=false para grupos 2 y 3.
 - **Código eliminado** (22 archivos, -4669 líneas): controladores+ vistas de mag/mags/mag_mass/mag_events/enigma/enigmas/enigma_mass (admin) y mag/mags/enigma/enigmas (reseller); rutas correspondientes; acciones y métodos wrapper MAG/Enigma de AdminApiController y ResellerRestApiController; casos 'mag'/'enigma' de ResellerPostController; casos mag/enigma de checkPermissions/checkResellerPermissions; submenús MAG/Enigma de ambos headers; mag_events de la lista de logs admin; secciones MAG/Enigma2 de la documentación del API.
 - **Conservado**: `magscan_settings` (herramienta de SEGURIDAD anti-clonado MAG); rutas muertas en archivos compartidos (table.php secciones mags/enigmas, api.php acciones mag, footer JS case "enigma", formatos de playlist Enigma en el selector de descargas, dashboard reseller links condicionados a is_mag) — inertes sin las páginas; `MagService::syncLineDevices` en el flujo de líneas (no-op sin dispositivos).
 - **Estado del portal**: symlinks `www/c` y `www/portal.php` YA estaban ausentes (mag_legacy_redirect=0); con disable_ministra=1 portal.php sería inerte aunque existieran. Verificado: `/portal.php` y `/c/portal.php` → 404; `/enigma2.php` → 404 (E2_DISABLED).
@@ -219,19 +219,19 @@
 - **SKILL.md**: releases actualizadas (2.0.4) + nueva sección "Gotchas del Front Controller" (patrón `$__viewMode`, global `$rServers` pisada, `console.php update` no-op).
 - **Pendiente para próxima sesión**: revisar preventivamente otras vistas con asignaciones dentro del guard `$__viewMode` (el patrón roto de proxies.php); la release 2.0.5 acumulará: fix proxies.php (`4561e364`), usage de update (`dfbf2831`), ExecRestart (`9d87ce41`) — el fix de la vista ya está desplegado a mano en el panel del usuario.
 
-## 🆕 2026-11-14 — Proxy (type 1): payload reconstruido — el viejo era upstream roto (PHP 8.1.33/xc_vm)
+## 🆕 2026-11-14 — Proxy (type 1): payload reconstruido — el viejo era upstream roto (PHP 8.1.33, prefix antiguo)
 
 **Problema del usuario**: en su panel nuevo (2.0.3, Debian 13), agregar LB (type 2) funcionó pero agregar un PROXY (type 1) en Debian 13 falló.
 
-**Causa raíz**: `src/bin/install/proxy.tar.gz` era un asset ESTÁTICO del repo (no lo rebuilda el Makefile) con contenido upstream de **octubre 2025**: binarios PHP **8.1.33** (EOL, sin parches) y nginx 1.28 con prefix `/home/xc_vm` compilado, `nginx.conf` con `user xc_vm` (usuario inexistente en instalación fresca → nginx ni arranca), `service` apuntando a `includes/startup.php` con rutas xc_vm, y en Debian 13 el PHP viejo muere por `libjpeg.so.8` (ABI 8 no existe en trixie). Verificado empíricamente en container debian:13 con la lista de paquetes type-1.
+**Causa raíz**: `src/bin/install/proxy.tar.gz` era un asset ESTÁTICO del repo (no lo rebuilda el Makefile) con contenido upstream de **octubre 2025**: binarios PHP **8.1.33** (EOL, sin parches) y nginx 1.28 con el prefix antiguo compilado, `nginx.conf` con el usuario del payload original (inexistente en instalación fresca → nginx ni arranca), `service` apuntando a `includes/startup.php` con rutas antiguas, y en Debian 13 el PHP viejo muere por `libjpeg.so.8` (ABI 8 no existe en trixie). Verificado empíricamente en container debian:13 con la lista de paquetes type-1.
 
 **Fixes** (commit `b017b028`):
 - **proxy.tar.gz reconstruido desde el stack actual** (65.5MB): bin/php completo (PHP 8.3.36 hardened, prefix uypanel, etc/1-4.conf), bin/nginx 1.29.6 + conf mínima de proxy (nginx.conf proxy con `user uypanel`/`pool_uypanel`, options.conf del payload viejo, ssl.conf, certs, mime.types, dirs logs/temp), `service`/`includes/startup.php`/`crons/callback.php` uypanel-izados (el callback reporta stats al main vía `/admin/proxy_api` y recibe señales: restart, block_ip, reload_nginx...). Modos estilo Makefile (binarios 0551, dirs 750). Probado en container: php -v OK, lint OK, nginx -t OK, nginx arranca como uypanel y proxyea al main OK.
 - **BalancerCommand type-1**: lista de paquetes + `libfreetype6` + `libmaxminddb0` (deps de GD compilado y de la extensión maxminddb — antes las traía `libharfbuzz-dev` que el proxy no instala); chequeo de extracción ahora REMOTO (`test -x bin/nginx/sbin/nginx` — el viejo chequeaba un archivo LOCAL del main y nunca podía fallar); type-1 ahora despliega binarios nativos por distro desde `bin/distros/` (igual que type 2 — necesario para proxies Ubuntu); bootstrap del proxy llama `includes/startup.php` como root (instala el crontab del callback) en vez del inexistente `console.php startup`.
 - **Nota**: el endpoint `/admin/proxy_api` del main responde 404 a IPs no-proxy por diseño (anti-probe, `BlocklistService::isProxy`); el callback del proxy registrado pasa el gate. Arquitectura de proxies intacta.
 - **Pendiente**: publicar release 2.0.4 para que los paneles instalados reciban el BalancerCommand nuevo + el proxy.tar.gz nuevo (viaja dentro del payload main en `bin/install/`). El panel del usuario puede también recibir el proxy.tar.gz a mano (scp a `/home/uypanel/bin/install/`) mientras sale la release.
-- **Resuelto (mismo día)**: release **2.0.4** publicada (bump `ffdbca57`, CI run 43559600772 OK, 5 assets). Verificado el zip de la release: `UyPanel_VERSION = '2.0.4'` ✓, `bin/install/proxy.tar.gz` nuevo (65.5MB) dentro del payload ✓, callback.php sin referencias xc_vm ✓. El delta `update.tar.gz` (64.9MB) incluye el proxy.tar.gz nuevo. El usuario puede actualizar su panel nuevo a 2.0.4 (manual o esperando el cron diario de updates) y reintentar el proxy.
-- **Proxy del usuario VERIFICADO FUNCIONANDO (mismo día)**: diagnóstico remoto (script pasado al usuario) sobre su proxy Debian 13 (2.31.115.247, panel en 178.156.194.122): servicio active, nginx como uypanel escuchando 80/443, PHP 8.3.36, nginx -t OK, crontab del callback instalado, y el POST a `/admin/proxy_api` del main responde **HTTP 200 + []** (gate anti-probe pasado, señales vacías). El journal distinguió los intentos: 03:55 = payload viejo ("Starting XC_VM...", 2.0.3), 05:15 = payload nuevo ("Starting UyPanel...", 2.0.4) — el segundo funciona. Lección: el comando `console.php update` a secas es no-op silencioso (espera subcomando `update update`); fix de usage message en `dfbf2831`. Limpieza cosmética: `ExecRestart` (directiva systemd inexistente, warning en cada daemon-reload) eliminada de los units generados por `install` y `BalancerCommand` (commit `9d87ce41`).
+- **Resuelto (mismo día)**: release **2.0.4** publicada (bump `ffdbca57`, CI run 43559600772 OK, 5 assets). Verificado el zip de la release: `UyPanel_VERSION = '2.0.4'` ✓, `bin/install/proxy.tar.gz` nuevo (65.5MB) dentro del payload ✓, callback.php sin referencias al proyecto original ✓. El delta `update.tar.gz` (64.9MB) incluye el proxy.tar.gz nuevo. El usuario puede actualizar su panel nuevo a 2.0.4 (manual o esperando el cron diario de updates) y reintentar el proxy.
+- **Proxy del usuario VERIFICADO FUNCIONANDO (mismo día)**: diagnóstico remoto (script pasado al usuario) sobre su proxy Debian 13 (2.31.115.247, panel en 178.156.194.122): servicio active, nginx como uypanel escuchando 80/443, PHP 8.3.36, nginx -t OK, crontab del callback instalado, y el POST a `/admin/proxy_api` del main responde **HTTP 200 + []** (gate anti-probe pasado, señales vacías). El journal distinguió los intentos: 03:55 = payload viejo (banner antiguo, 2.0.3), 05:15 = payload nuevo ("Starting UyPanel...", 2.0.4) — el segundo funciona. Lección: el comando `console.php update` a secas es no-op silencioso (espera subcomando `update update`); fix de usage message en `dfbf2831`. Limpieza cosmética: `ExecRestart` (directiva systemd inexistente, warning en cada daemon-reload) eliminada de los units generados por `install` y `BalancerCommand` (commit `9d87ce41`).
 
 ## 🆕 2026-11-14 — Anti-servers-fantasma: instalaciones fallidas se auto-eliminan del panel
 
@@ -447,11 +447,11 @@ scoped / Super Resellers) no convencía; se vuelve al modelo simple de main
 ## Identidad
 
 - **Nombre**: UyPanel
-- **Base**: fork de XC_VM tag `2.0.1` (commit `e21f9063`), historial git completo conservado
+- **Base**: fork del proyecto original, tag `2.0.1` (commit `e21f9063`), historial git completo conservado
 - **Rama de trabajo**: `main` (nuestra)
 - **Repo propio (origin)**: https://github.com/m4sterinfo/UyPanel (público, AGPL-3.0)
 - **Último commit pusheado**: `4b861388` (docs: translate Russian documentation to Spanish)
-- **Upstream original**: Vateron-Media/XC_VM — NO está configurado como remote;
+- **Upstream original**: desvinculado — SIN remote configurado;
   añadir como `upstream` solo si se quiere mirar fixes (`git remote add upstream ...`)
 - **Auth GitHub**: gh CLI autenticado como `m4sterinfo` (credenciales de git vía gh)
 - **Identidad git (config local del repo)**: m4sterinfo <jferrjferreira@masterinfo.org>
@@ -460,7 +460,7 @@ scoped / Super Resellers) no convencía; se vuelve al modelo simple de main
 ## Entorno
 
 - Servidor: Debian 13 (trixie), 8 cores, 32 GB RAM, 1.7 TB disco, IP `198.27.81.133`
-- Panel instalado en `/home/uypanel` (renombrado desde /home/xc_vm), servicio
+- Panel instalado en `/home/uypanel` (renombrado desde la ruta original), servicio
   systemd `uypanel.service`, usuario/grupo sistema `uypanel` (uid 105)
 - BDs MariaDB: `uypanel` + `uypanel_migrate` (renombradas por RENAME TABLE)
 - BD migrada desde XUI el 2026-11-02 (27,672 líneas, 240,557 streams, 2,087 users)
@@ -492,12 +492,12 @@ scoped / Super Resellers) no convencía; se vuelve al modelo simple de main
 ## Registro de cambios (nuestros)
 
 ### 2026-11-02 — Instalación y migración de datos
-- XC_VM 2.0.1 instalado en Debian 13 con instalador parcheado (soporte Debian
+- Panel original 2.0.1 instalado en Debian 13 con instalador parcheado (soporte Debian
   12/13: detección de distro, paquetes t64, MariaDB/MaxMind del sistema,
   libcap2-bin). Librerías del PHP incluido resueltas: `libcurl3t64-gnutls` +
   `libjpeg.so.8` ABI 8 (de .deb Ubuntu) en `/usr/local/lib`.
 - redis.conf: eliminada `lazyfree-lazy-server-delay` (KeyDB 6.3.4 no la soporta).
-- BD XUI (1.2 GB, 66 tablas) restaurada en `xc_vm_migrate` y migrada con
+- BD XUI (1.2 GB, 66 tablas) restaurada en la BD de migración y migrada con
   `console.php migrate`: 27,672 lines, 2,087 users, 240,557 streams,
   239,594 streams_servers, 5,062 series, 220,005 episodes, 57 bouquets,
   219 categorías, 18 servers, 22 EPG URLs, 62 packages, 12 groups.
@@ -514,7 +514,7 @@ scoped / Super Resellers) no convencía; se vuelve al modelo simple de main
   por force push con el historial del fork (AGPL-3.0 correcta).
 
 ### 2026-11-02 — Rebranding completo y separación total del original
-- Barrido en 176 archivos: `XC_VM` → `UyPanel`, `Vateron-Media` → `m4sterinfo`
+- Barrido de rebranding en 176 archivos (branding del proyecto original → UyPanel/m4sterinfo)
   (README, docs, UI, langs, CLI, Makefile, instalador, workflows, test_installer).
 - Repos de soporte propios (forks renombrados): `m4sterinfo/UyPanel_Update`
   (changelog, GeoLite lists, api_server), `UyPanel_Binaries`, `UyPanel_FFMPEG`.
@@ -527,11 +527,11 @@ scoped / Super Resellers) no convencía; se vuelve al modelo simple de main
   `GIT_REPO_MAIN=UyPanel`, `GIT_REPO_UPDATE=UyPanel_Update`.
 - Release 2.0.1 publicado: https://github.com/m4sterinfo/UyPanel/releases/tag/2.0.1
   (UyPanel.zip 435 MB + loadbalancer.tar.gz 292 MB + hashes.md5). El workflow
-  build-release se disparó solo y subió un XC_VM.zip del código original —
+  build-release se disparó solo y subió un zip del código original —
   eliminado del release; assets re-subidos a mano.
 
-### 2026-11-02 — Renombrado técnico en producción (xc_vm → uypanel)
-- Repo: renombradas rutas con `xc_vm` en el nombre (ministra/template/uypanel,
+### 2026-11-02 — Renombrado técnico en producción (ruta original → uypanel)
+- Repo: renombradas rutas con el nombre antiguo (ministra/template/uypanel,
   nginx realip_uypanel.conf) y barrido de identificadores técnicos en 143
   archivos: `/home/uypanel`, servicio `uypanel`, BDs `uypanel`/`uypanel_migrate`,
   usuario/grupo `uypanel`, tarball `uypanel.tar.gz`.
@@ -556,12 +556,12 @@ scoped / Super Resellers) no convencía; se vuelve al modelo simple de main
 
 ### 2026-11-03 — Seed database.sql rebrandeado + release actualizado
 - `database.sql` es LFS: al hacer los barridos era un puntero (grep lo saltó).
-  Corregido: placeholder `{XC_VM_ID}` → `{UyPanel_ID}` (el código de
+  Corregido: placeholder antiguo → `{UyPanel_ID}` (el código de
   PlaylistGenerator ya esperaba el nuevo — sin este fix la generación de
   playlists en instalaciones nuevas mostraba el literal), `server_name` y
   `Welcome to UyPanel`.
 - BD de producción: escaneo de 322 columnas de texto — única referencia
-  residual en `output_devices` (plantilla M3U Plus: `xc_vm-id="{XC_VM_ID}"`),
+  residual en `output_devices` (plantilla M3U Plus: atributo id con nombre antiguo → placeholder nuevo),
   corregida en caliente. Playlists funcionando en producción.
 
 ### 2026-11-03 — Documentación traducida al español
@@ -596,14 +596,14 @@ scoped / Super Resellers) no convencía; se vuelve al modelo simple de main
   (redirect a guía española), ruta `#/es-es/` 200, `es/README.md` 200.
 
 ### 2026-11-03 — Binarios reconstruidos con prefix uypanel + PHP 8.3.36 (fix PHP2Shell)
-- **Symlink `/home/xc_vm` ELIMINADO** — los binarios nuevos tienen el prefix
+- **Symlink de la ruta original ELIMINADO** — los binarios nuevos tienen el prefix
   `/home/uypanel` compilado dentro (php ini path/extension_dir, nginx prefix).
 - Build 1 (generación de la época): submódulo pineado a `42d5096` (PHP 8.1.34)
   + parche prefix → rama `build/debian13-uypanel-prefix` (83fdff6, luego 9014732
   con pin nginx 1.29.6 + flv 1.2.13 tras fallar nginx 1.31.8 contra flv 1.2.14:
   `NGX_USE_IOCP_EVENT` undeclared). Desplegado y verificado.
 - Build 2 (generación nueva): submódulo `ff034e5` (PHP 8.3.36, pecl pins,
-  xcvm_extention 2.5.2 Rust ya sincronizado en el fork) + prefix + mismo pin
+  la extensión Rust ya sincronizada en el fork) + prefix + mismo pin
   nginx → rama `build/debian13-php83-uypanel` (`b224e4b`). Desplegado.
 - **Motivo del salto a 8.3: PHP2Shell** (CVE-2026-109618/109619, RCE crítico
   no autenticado, explotado activamente; parcheado 21-oct-2026 en 8.2–8.5).
@@ -618,7 +618,7 @@ scoped / Super Resellers) no convencía; se vuelve al modelo simple de main
 - Docker instalado en el host (docker.io 26.1.5 de Debian 13) para los builds.
 - Backups: `/home/debian/bin_backup_2026-11-03/` (php/nginx/nginx_rtmp 8.1.33
   originales + `php_8.1.34/` intermedio). Rollback = parar panel, restaurar
-  bin/, arrancar (requiere recrear symlink /home/xc_vm si se vuelve a 8.1.33).
+  bin/, arrancar (requiere recrear el symlink de la ruta original si se vuelve a 8.1.33).
 - Nota: el nuevo PHP enlaza contra libjpeg.so.62 NATIVA de Debian 13 — el hack
   de libjpeg.so.8 en /usr/local/lib ya no es necesario para los binarios nuevos
   (se conserva por si se hace rollback a los binarios viejos).
@@ -677,11 +677,11 @@ scoped / Super Resellers) no convencía; se vuelve al modelo simple de main
   UPDATE settings.redis_password. Verificado: auth+ping true vía extensión
   redis del panel.
 - **GAP de despliegue #2 (conocido, workaround aplicado)**: el payload trae los
-  binarios ORIGINALES de upstream (PHP 8.1.33) con prefix `/home/xc_vm`
+  binarios ORIGINALES de upstream (PHP 8.1.33) con el prefix antiguo
   compilado → en nuestro fork (instala en /home/uypanel, SIN symlink) el PHP
   no encuentra php.ini ni configs → sin extensiones (fatal igbinary en
   autoload) y pools caídos. El upstream no lo sufre porque instala en
-  /home/xc_vm. Solución aplicada: desplegar `out/debian_13.tar.gz` (PHP
+  la ruta antigua. Solución aplicada: desplegar `out/debian_13.tar.gz` (PHP
   8.3.36 + nginx 1.29.6, prefix uypanel) sobre bin/ + `chown -R uypanel:uypanel
   /home/uypanel/bin` (el tar restaura owner interno del build — hacer chown
   SIEMPRE tras extraer binarios). **PENDIENTE DE DECISIÓN**: reemplazar los
@@ -792,7 +792,7 @@ scoped / Super Resellers) no convencía; se vuelve al modelo simple de main
   `{"version":"2.0.2","changelog":[],"url":".../releases/tag/2.0.2"}` → icono
   de update visible en el header (version_compare 2.0.2 >= 2.0.1 ✓).
 - **changelog.json**: `m4sterinfo/UyPanel_Update` NO tenía changelog.json
-  (404; el original XC_VM_Update tampoco — changelog vacío era lo normal).
+  (404; el repo de updates original tampoco — changelog vacío era lo normal).
   Creado en el clone local `/home/debian/UyPanel_Update` (commit `dc04e3e`,
   SIN pushear aún): entradas 2.0.1 y 2.0.2 en español, orden ASCENDENTE
   (obligatorio: el filtro del cron recorre el array invertido y corta al
@@ -818,7 +818,7 @@ scoped / Super Resellers) no convencía; se vuelve al modelo simple de main
   automático al desconectar ✓. `api?action=connections` del reseller da
   result:false — CORRECTO (grupo 2 tiene reseller_client_connection_logs=0).
 - **Bug #4 — assets del panel reseller fuera del payload** (commit `86dacde6`):
-  `src/public/assets/reseller` era symlink ABSOLUTO a /home/xc_vm (upstream) →
+  `src/public/assets/reseller` era symlink ABSOLUTO a la ruta antigua (upstream) →
   roto en nuestro prefix; el cp del Makefile lo saltaba → el panel reseller
   salía sin CSS/JS. Fix: symlink relativo `admin` + Makefile cp -P (preserva
   symlinks; el loop de update acepta -L). Desplegado a mano en el server.
@@ -931,7 +931,7 @@ scoped / Super Resellers) no convencía; se vuelve al modelo simple de main
 - **Síntoma** (usuario): creó un Watch Folder (series, `/mnt/vod/Series/`) y lo
   forzó — `last_run` seguía en 0, nada se importaba.
 - **Causa raíz (upstream 2.0.1, migración de módulos incompleta — verificado
-  contra el payload original `xc_vm.tar.gz`: idéntico)**:
+  contra el payload original: idéntico)**:
   1. `WatchCron::run()`/`PlexCron::run()` leen como globales `$rForce`,
      `$rScanOffset`, `$rThreadCount`, `$rMaxItems` (`$F7fa29461a8a5ee2`
      ofuscado) — definidos en NINGÚN sitio del código. La query programada
@@ -1017,7 +1017,7 @@ scoped / Super Resellers) no convencía; se vuelve al modelo simple de main
   **Debian 13** → en Ubuntu 20.04 (glibc 2.31) el binario ni carga:
   `GLIBC_2.32/2.33/2.34/2.38 not found` + `libjpeg.so.62 not found`
   (Debian 13 = glibc 2.38/libjpeg62; focal = glibc 2.31/libjpeg-turbo8).
-  El GAP #2 del panel (binarios upstream prefix xc_vm) ya no existe en el
+  El GAP #2 del panel (binarios upstream con prefix antiguo) ya no existe en el
   payload 2.0.2 — ahora el gap es el INVERSO: binarios Debian en LBs Ubuntu.
 - **Filas duplicadas borradas**: ids 4 y 6 eran el MISMO servidor físico
   (164.37.105.75) que el id 7 (instalado 3 veces). DELETE + cache
@@ -1145,7 +1145,7 @@ scoped / Super Resellers) no convencía; se vuelve al modelo simple de main
       repo, commit `f1a3bf51` pusheado (2026-11-03)
 - [x] **GitHub Pages** — activado (main, /docs); sitio verificado en línea
 - [x] **Reconstruir binarios con prefix /home/uypanel** — HECHO (2026-11-03,
-      PHP 8.3.36 + nginx 1.29.6, symlink /home/xc_vm eliminado)
+      PHP 8.3.36 + nginx 1.29.6, symlink de la ruta original eliminado)
 - [x] **Binarios propios DENTRO del payload** — HECHO (2026-11-04, commit
       6225c356; instalación fresca funcional de fábrica en Debian 12/13)
 - [x] **Release 2.0.2** — publicado con assets del workflow (CI con fetch LFS;
@@ -1179,5 +1179,5 @@ scoped / Super Resellers) no convencía; se vuelve al modelo simple de main
   assets construidos desde el tag — para releases propios funciona bien, pero
   el tag 2.0.1 apunta al commit del original (los assets se subieron a mano).
 - Submódulos pineados a builds más nuevos que el 2.0.1 (PHP 8.3 + extensión
-  `xcvm_core` en Rust): al reconstruir binarios, decidir si se pinean commits
+  la extensión en Rust): al reconstruir binarios, decidir si se pinean commits
   de la época (~marzo 2026) o se adopta la generación nueva.

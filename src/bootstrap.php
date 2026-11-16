@@ -37,19 +37,19 @@
  *
  *   // En un controlador admin:
  *   require_once '/home/uypanel/bootstrap.php';
- *   XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_ADMIN);
+ *   UyPanel_Bootstrap::boot(UyPanel_Bootstrap::CONTEXT_ADMIN);
  *
  *   // En una tarea cron:
  *   require_once '/home/uypanel/bootstrap.php';
- *   XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_CLI);
+ *   UyPanel_Bootstrap::boot(UyPanel_Bootstrap::CONTEXT_CLI);
  *
  *   // En un endpoint de streaming:
  *   require_once '/home/uypanel/bootstrap.php';
- *   XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_STREAM, ['cached' => true]);
+ *   UyPanel_Bootstrap::boot(UyPanel_Bootstrap::CONTEXT_STREAM, ['cached' => true]);
  *
  *   // Solo constantes (sin BD):
  *   require_once '/home/uypanel/bootstrap.php';
- *   XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_MINIMAL);
+ *   UyPanel_Bootstrap::boot(UyPanel_Bootstrap::CONTEXT_MINIMAL);
  *
  * ──────────────────────────────────────────────────────────────────
  * Compatibilidad hacia atrás:
@@ -70,7 +70,7 @@ declare(strict_types=0);
 // ─────────────────────────────────────────────────────────────────
 
 require_once __DIR__ . '/autoload.php';
-// Tras esto: MAIN_HOME definido, XC_Autoloader inicializado
+// Tras esto: MAIN_HOME definido, UyPanel_Autoloader inicializado
 
 
 // ─────────────────────────────────────────────────────────────────
@@ -92,10 +92,10 @@ if (!function_exists('getallheaders')) {
 
 
 // ─────────────────────────────────────────────────────────────────
-//  3. Clase XC_Bootstrap
+//  3. Clase UyPanel_Bootstrap
 // ─────────────────────────────────────────────────────────────────
 
-class XC_Bootstrap {
+class UyPanel_Bootstrap {
 
         // ── Contextos ─────────────────────────────────────────────
     const CONTEXT_MINIMAL  = 'minimal';

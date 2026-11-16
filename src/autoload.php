@@ -25,7 +25,7 @@
  * @package UyPanel
  */
 
-class XC_Autoloader {
+class UyPanel_Autoloader {
 
     /** @var string Project root directory (e.g. /home/uypanel/) */
     private static $basePath = '';
@@ -467,7 +467,7 @@ if (!defined('MAIN_HOME')) {
     define('MAIN_HOME', __DIR__ . '/');
 }
 
-XC_Autoloader::init(MAIN_HOME);
+UyPanel_Autoloader::init(MAIN_HOME);
 
 // File cache: warm on first run, O(1) on subsequent requests
-XC_Autoloader::enableFileCache(MAIN_HOME . 'tmp/cache/autoload_map');
+UyPanel_Autoloader::enableFileCache(MAIN_HOME . 'tmp/cache/autoload_map');

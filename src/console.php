@@ -31,7 +31,7 @@ require_once __DIR__ . '/cli/CommandInterface.php';
 require_once __DIR__ . '/cli/CommandRegistry.php';
 require_once __DIR__ . '/bootstrap.php';
 
-XC_Bootstrap::boot(XC_Bootstrap::CONTEXT_CLI, [
+UyPanel_Bootstrap::boot(UyPanel_Bootstrap::CONTEXT_CLI, [
 	'process' => 'UyPanel[Console]',
 ]);
 
