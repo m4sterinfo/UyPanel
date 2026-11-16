@@ -1,7 +1,24 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-16 (FFmpeg confirmado en 8.0; assets de 2.0.7 verificados).
+> cada cambio significativo. Última actualización: 2026-11-16 (release 2.0.8 publicada — política de SO).
+
+## 🆕 2026-11-16 — Release 2.0.8 publicada: política de SO del instalador llega a los paneles instalados
+
+**Pedido del usuario**: "podríamos hacer el Release 2.0.8 (opcional, para distribuir el cambio de política del instalador)".
+
+**Checklist ejecutado**:
+1. Estado del repo: main en sync con origin, 2 commits desde 2.0.7 (`85d22965` política de SO + `cac7c5ed` docs). Único cambio sin commitear: STATE.md (commiteado antes del bump, `fc021c1c`).
+2. Bump `UyPanel_VERSION` 2.0.7 → 2.0.8 en `AppConfig.php` (commit `0673b7d1`, `php -l` OK) — ANTES del push, según lección de la 2.0.7.
+3. Push a main + `gh release create 2.0.8 --target main` con notas en español.
+4. CI Build Release Assets (run `43779737771`) verde en 3m3s — 5 assets: UyPanel.zip (482MB), loadbalancer.tar.gz (326MB), update.tar.gz (6.9KB), loadbalancer_update.tar.gz (663B), hashes.md5.
+5. **Auditoría del delta** (descargado, MD5 `ff26588a…` = hashes.md5): contiene `cli/Commands/BalancerCommand.php` (política "Unsupported OS", lint OK) + `core/Config/AppConfig.php` con `2.0.8`. El delta LB (663B) lleva lo mismo (BalancerCommand + AppConfig). Sin `deleted_files.txt` (no se borró nada bajo src/).
+6. **Auditoría del zip completo**: `UyPanel.zip` = `install` (24.9KB, con rVersions `{"24.04": "noble"}` y mensajes "Unsupported Operating System") + `uypanel.tar.gz` (AppConfig 2.0.8 + BalancerCommand con política). Tag 2.0.8 → commit `0673b7d1` (el del bump).
+7. `UyPanel_Update/changelog.json`: entrada 2.0.8 añadida al inicio (newest-first; el local estaba 2 commits atrás — pull previo) y pusheado (`e2d3fba`).
+
+**Mecánica confirmada**: el CI ancla el prev tag en el tag actual (`awk` sobre `git tag --sort=-v:refname`) → para 2.0.8 el prev es 2.0.7 aunque existan tags viejos XC_VM 2.7.x arriba. El delta solo lleva archivos bajo `src/` (el script `install` de la raíz va en el zip, no en el delta — los paneles instalados no lo re-ejecutan; installs frescos lo descargan del zip de la release).
+
+**Pendiente para próxima sesión**: panel del usuario (178.156.194.122) updates secuenciales (ahora 2.0.4→…→2.0.8); MariaDB 11.8.10 cuando el mirror la tenga; LB futuro → Debian 13/Ubuntu 24.04; verificar que el reaper ampliado no interfiera con el proxy #4.
 
 ## 🆕 2026-11-15 — Política de SO: solo Debian 13 + Ubuntu 24.04 (fuera Ubuntu 20.04/22.04 y Debian 12)
 
