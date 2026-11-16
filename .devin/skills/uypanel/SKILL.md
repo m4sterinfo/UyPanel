@@ -261,7 +261,14 @@ journalctl -u uypanel -f
   caché 24h y fallback incluido; check_versions.sh elige rama stable de
   nginx). El changelog de la notificación de
   update vive en `UyPanel_Update/changelog.json` (repo aparte — actualizarlo
-  TAMBIÉN en cada release; estaba atrasado hasta 2.0.6).
+  TAMBIÉN en cada release; estaba atrasado hasta 2.0.6), 2.0.8 (2026-11-16:
+  política de SO del instalador), 2.0.9 (2026-11-16: contrato nginx↔PHP
+  `XC_*`→`UY_*` fase 1 + binarios del payload limpios).
+- **Historial git reescrito (2026-11-16)**: autoría unificada a m4sterinfo +
+  mensajes purgados en los 4 repos (git-filter-repo; bundles de rollback en
+  `/home/debian/history_rewrite_backup/`). Los SHAs viejos NO existen —
+  cualquier referencia externa a SHAs anteriores queda rota. Gotchas LFS y
+  del contributors graph en el skill global y STATE.md.
 
 ## Tono de trabajo
 

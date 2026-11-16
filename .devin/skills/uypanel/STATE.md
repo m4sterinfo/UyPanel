@@ -1,7 +1,34 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-16 (swap de binarios en prod + migración contrato UY_ + release 2.0.9).
+> cada cambio significativo. Última actualización: 2026-11-16 (reescritura de historial: autoría + mensajes purgados en los 4 repos).
+
+## 🆕 2026-11-16 — Reescritura de historial git: autoría unificada + mensajes purgados (los 4 repos)
+
+**Pedido del usuario**: en GitHub aparecían ~11 colaboradores (los devs del proyecto original) y solo deben estar él y Devin. Elegidos vía pregunta: **autoría + mensajes** (purga total), **los 4 repos**, identidad destino **m4sterinfo <jferrjferreira@masterinfo.org>**.
+
+**Diagnóstico previo**: el "colaboradores" que veía el usuario = el **contributors graph** (derivado de la autoría de los commits del historial heredado), NO accesos reales (collaborators API: solo m4sterinfo en los 4 ✓). Autores upstream a mapear: Divarion-D (3 variantes de nombre, 2513 commits), obscuremind (3 emails), Claude <noreply@anthropic.com> (218), babasado, root de 2 servidores viejos, IPTVEX, dependabot, github-actions, copilot-swe-agent, + ~10 más. **Detalle clave**: el email del usuario NO está vinculado a su cuenta GitHub (los commits propios salían "SIN-VINCULAR" y él no aparecía ni en su repo).
+
+**Aplicado** (git-filter-repo, instalado vía apt):
+- **Backups previos**: bundles completos de los 4 repos en `/home/debian/history_rewrite_backup/` (UyPanel 426MB, Update 135MB, Binaries 38MB, FFMPEG 66KB) + `mailmap.txt` + `replacements.txt` reutilizables.
+- **Mailmap**: TODAS las identidades (humanos + Claude + copilot + dependabot + github-actions + root + GitHub web-merge) → m4sterinfo. Conservados: m4sterinfo y el bot Devin (via trailers Co-Authored-By — intactos tras la reescritura, verificado).
+- **Purga de mensajes** (420 mensajes afectados): URLs `github.com/Vateron-Media/XC_VM*` → repos m4sterinfo; `Vateron-Media/XC_VM/XCVM/xc_vm/...` → UyPanel/uypanel; reglas ESPECÍFICAS para los ~6 commits meta del fork (describían la purga con los nombres viejos — sin reglas específicas quedarían sin sentido: "rename xc_vm -> uypanel" → "rename uypanel -> uypanel"); `XUI`/`Xtream` SE CONSERVAN (protocolo estándar IPTV + importador desde otros paneles — uso legítimo en código y docs).
+- **Orden**: submódulos primero (Binaries: 3 ramas + 7 tags; FFMPEG: main + 1.0.0) → commit-maps → **commit de gitlinks en el parent** (`e9502bc7`→`442a3fde`: punteros a los SHAs reescritos eadd40a8/4e3dd67) → Update → parent (4337 commits, 2 pasadas por 3 menciones residuales de identificadores `Xcvm*` en mensajes).
+- **Push**: force de main + super_admin + tags 2.0.0-2.0.9 (los ~70 tags upstream SOLO locales: reescritos localmente, el remoto nunca los tuvo). Ramas remotas huérfanas de la era upstream en Binaries (claude/*, perf/build-speed era local) — claude/* BORRADA del remoto.
+- **Resultado**: 0 menciones en los 4 repos, autor único m4sterinfo (+ bot Devin en Update).
+
+**Gotchas de la operación** (para futuras reescrituras):
+- filter-repo **elimina el remote origin en CADA pasada** — re-añadir tras cada una.
+- **Git LFS**: el force-push re-introduce TODO el historial como commits nuevos → el pre-receive de GitHub re-valida TODOS los punteros LFS → **rechaza (GH008) si hay objetos unknown**. En este repo había **32 punteros huérfanos** (versiones viejas de database.sql/ffmpeg/redis/maxmind: 404 en el servidor LFS, no locales — quedaron colgados desde el push standalone del desacople, que no re-validó porque fueron commits incrementales). Fix: `--blob-callback` que reemplaza los punteros con OID faltante por un stub de texto → historial auto-consistente → push aceptado (LFS 28/28, 926MB re-subidos). Los stubs solo afectan checkouts de commits viejos (esos objetos no existían ya en ningún sitio).
+- El tag 2.0.9 **nunca existió localmente** (lo creó `gh release create` solo en el remoto) → recrearlo apuntando al equivalente reescrito antes del push.
+- `kill -0` sin sudo da falso "exited" (EPERM) — verificar con sudo.
+- El **contributors graph está cacheado** en GitHub: tras el force-push sigue mostrando los autores viejos (lectura de la API hecha minutos después); se regenera de forma diferida (horas). El historial REAL ya está limpio (verificado por API de commits: todos los commits, incluidos los de la era upstream profunda, con email m4sterinfo y mensajes purgados).
+
+**Verificado**: releases 2.0.1-2.0.9 intactas con assets ✓; clon fresco `--recurse-submodules` resuelve los gitlinks reescritos ✓; LFS smudge OK en el clon ✓; Pages rebuilt ✓; Security Scan ✓; workflows sin triggers en tags (sin tormentas de CI) ✓.
+
+**ACCIÓN DEL USUARIO**: añadir/verificar `jferrjferreira@masterinfo.org` en GitHub → Settings → Emails para que la cuenta m4sterinfo aparezca como contributor (ahora mismo los commits están "SIN-VINCULAR": el graph mostrará 0 personas hasta vincular el email).
+
+**Pendiente para próxima sesión**: confirmar el contributors graph refrescado (darle horas); FASE 2 del contrato (eliminar fallback `XC_*` cuando todos los installs ≥ 2.0.9); panel del usuario (178.156.194.122) updates secuenciales; MariaDB 11.8.10 cuando el mirror la tenga; monitoreo del ingest de amagi (stalls de la fuente, no del binario — A/B test hecho); borrar `/home/debian/XC_VM.zip` + `xc_vm.tar.gz` (~895MB, decisión del usuario).
 
 ## 🆕 2026-11-16 — Swap de binarios en prod (zero-downtime) + migración contrato nginx↔PHP `XC_*`→`UY_*` (release 2.0.9)
 
