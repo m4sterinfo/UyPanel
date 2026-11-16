@@ -62,7 +62,7 @@ UyPanel/
 ├─ tools/                # build_ffmpeg.sh, tests de player API, scripts varios
 ├─ docs/                 # Documentación (mkdocs, en/ y es/)
 ├─ third_party/          # SUBMÓDULOS git (sistemas de build de binarios)
-│  ├─ UyPanel_Binaries/  # Build de PHP/nginx/redis/nginx_rtmp por distro (docker)
+│  ├─ UyPanel_Binaries/  # Build de PHP/nginx/nginx_rtmp por distro (docker; versions.json = fuente de verdad)
 │  └─ UyPanel_FFMPEG/    # Build de FFmpeg 8.0/7.1/4.0 (docker)
 ├─ install               # Instalador Python (Debian 12/13 + Ubuntu; instala las deps runtime del payload: libcurl3t64-gnutls, libsodium23)
 ├─ Makefile              # Sistema de build de payloads
@@ -79,9 +79,13 @@ make lb          # → dist/loadbalancer.tar.gz (load balancer; excluye modules/
 make main_update # → dist/update.tar.gz (actualización de panel instalado)
 make lb_update   # → dist/loadbalancer_update.tar.gz
 
-# Binarios (PHP 8.3, nginx, redis/KeyDB, nginx_rtmp) y FFmpeg:
-cd third_party/UyPanel_Binaries && ./build_all.sh  # usa docker/
+# Binarios (PHP 8.3, nginx, nginx_rtmp) y FFmpeg:
+cd third_party/UyPanel_Binaries && ./build_all.sh  # usa docker/; versions.json manda
 cd third_party/UyPanel_FFMPEG && make             # ver su README/Makefile
+# Valkey (servidor de caché) NO lo builda UyPanel_Binaries — compilar directo:
+#   docker run --rm -v /tmp/vk-src:/src -v /tmp/vk-out:/out ubuntu:20.04 bash -c
+#   "apt-get update && apt-get install -y build-essential && cd /src && make -j$(nproc) BUILD_TLS=no
+#    && cp src/valkey-server src/valkey-cli /out/"   (focal → binario portable glibc 2.29)
 
 # Sintaxis PHP (validar antes de commitear cambios PHP):
 tools/php_syntax_check.sh   # o: find src -name "*.php" | xargs -n1 php -l
@@ -96,15 +100,21 @@ journalctl -u uypanel -f
 ## Entorno de producción (servidor actual)
 
 - Debian 13 (trixie), 8 cores, 32 GB RAM, IP `198.27.81.133`
-- UyPanel 2.0.6 (base XC_VM 2.0.1) instalado en `/home/uypanel` (nginx 80/443, nginx_rtmp,
-  4 pools php-fpm 8.3.36, KeyDB 6.3.4 en 6379 con auth, MariaDB 11.8)
+- **Política de SO (2026-11-15, decisión del usuario)**: SOLO **Debian 13** y
+  **Ubuntu 24.04 LTS** — Ubuntu 20.04/22.04 y Debian 12 SIN soporte (EOL/vulnerables;
+  nginx_rtmp exige GLIBC 2.38). El instalador rechaza el resto y `bin/distros/`
+  solo lleva `debian_13` + `ubuntu_24`. Un LB en Ubuntu viejo → reinstalar en
+  Debian 13/Ubuntu 24.04.
+- UyPanel 2.0.7 (base XC_VM 2.0.1) instalado en `/home/uypanel` (nginx 1.30.6 en 80/443,
+  nginx_rtmp 1.30.6, 4 pools php-fpm 8.3.36, **Valkey 9.1.3** en 6379 con auth,
+  MariaDB 11.8.9 — 11.8.10 pendiente de mirror)
 - Base de datos migrada desde XUI (27,672 líneas, 240,557 streams)
 - Acceso admin: `http://198.27.81.133/7JDEeDMG` (código tras la reinstalación
   limpia del 2026-11-04; el `x9access9x` anterior murió con la BD vieja)
 - Credenciales MariaDB: `/home/debian/credentials.txt` (BD: `uypanel`) (NO commitear nunca)
-- Binarios nativos Debian 13 (PHP 8.3.36 hardened, nginx 1.29.6). El instalador
-  (desde 2.0.3) instala sus deps runtime: `libcurl3t64-gnutls` + `libsodium23`
-  (verificado en containers debian:13/debian:12 limpios). El hack de
+- Binarios nativos Debian 13 (PHP 8.3.36 hardened, nginx/nginx_rtmp 1.30.6 estáticos).
+  El instalador (desde 2.0.3) instala sus deps runtime: `libcurl3t64-gnutls` +
+  `libsodium23` (verificado en containers debian:13/debian:12 limpios). El hack de
   `libjpeg.so.8` en `/usr/local/lib` solo aplica al rollback de binarios 8.1
   viejos — ver `/home/debian/AGENTS.md`.
 - **Estado funcional (2026-11-15)**: resellers/super resellers operativos
@@ -114,6 +124,46 @@ journalctl -u uypanel -f
   (portal Stalker = vector de fuerza bruta por MAC; `disable_ministra=1`,
   `disable_enigma2=1`, paquetes sin is_mag/is_e2, páginas/rutas/acciones API
   eliminadas — ver STATE.md).
+
+## Servidor de caché: Valkey (NO KeyDB — migrado 2026-11-15)
+
+- **Valkey 9.1.3** (fork de Redis mantenido por Linux Foundation, BSD-3) reemplazó a
+  KeyDB 6.3.4 (abandonado desde Oct 2023, CVE-2025-49844 "RediShell" RCE sin parche).
+- Binarios del payload: `bin/redis/valkey-server` + `bin/redis/valkey-cli`
+  (compilado en Docker ubuntu:20.04 → solo requiere GLIBC 2.29, corre en todas las
+  distros soportadas; solo enlaza libc/libm — sin libssl/libcurl).
+- `src/service` (start) **prefiere `valkey-server` con fallback a `redis-server`**
+  → los paneles viejos migran solos al recibir el binario por delta + restart.
+- `bin/redis/redis.conf` se acepta tal cual (alias `slave-*` OK); las directivas
+  `server-threads`/`server-thread-affinity` son EXCLUSIVAS de KeyDB → si existen,
+  Valkey no arranca (removidas de prod; el template del instalador nunca las tuvo).
+- KeyDB queda como `bin/redis/redis-server_6.3.4` (rollback) y `redis-server`
+  sigue en el payload como fallback del service.
+- INFO server: `valkey_version:9.1.3` + compat `redis_version:7.2.4` — el panel
+  muestra "Valkey 9.1.3" (SettingsController y prelude de settings.php chequean
+  valkey_version → keydb_version → redis_version, en ese orden).
+
+## Alertas de software desactualizado (Settings → Info)
+
+- `core/Diagnostics/SoftwareVersions.php` — `SoftwareVersions::getReport($rSettings, $db)`:
+  inventa versiones instaladas (nginx/nginx_rtmp vía `-v`, php, phpredis, MariaDB
+  `VERSION()`, cache vía INFO, ffmpeg activo de `ffmpeg_cpu`) y las compara con el
+  manifest usando `version_compare` (normaliza sufijos tipo `-MariaDB`).
+- **Manifest de últimas versiones**: `UyPanel_Update/versions.json` (repo hermano, como
+  changelog.json/api_server.json) → caché local 24h en `tmp/software_versions_cache.json`,
+  stale-while-error, fallback incluido `src/config/software_versions.json`. Curl timeout 4s
+  — nunca bloquea la página. Fuente reportada en el footer de la pestaña
+  (remote/cache/cache-stale/bundled).
+- **Para actualizar las versiones de referencia**: editar `versions.json` en
+  `m4sterinfo/UyPanel_Update` (campos: `latest`, `notes` URL, `hint` para el admin,
+  `eol: true` para productos muertos — KeyDB está marcado EOL). NO requiere release del panel.
+- Vista Info: banner `alert-warning` (outdated/EOL con notas + hint) o `alert-success`;
+  badges por fila (verde ✓ / ámbar →X.Y.Z / rojo EOL); fila phpredis; label "Cache Server".
+- **Gotcha del prelude**: `settings.php` recomputaba `$RedisVer/$Nginx/$MariaDB/...` en su
+  prelude y pisaba los valores del controlador (el guard chequea `$__settingsViewMode` que
+  el render genérico NUNCA setea — setea `$__viewMode`). Fix: prelude idempotente
+  (`if (!isset($X))` por variable). Si se añaden variables nuevas al Info tab, hacerlas
+  idempotentes en el prelude.
 
 ## APIs REST externos (Admin + Reseller)
 
@@ -170,14 +220,19 @@ journalctl -u uypanel -f
 - El CI (`.github/workflows/build-release.yml`) se dispara al publicar la
   release y builda/sube TODOS los assets automáticamente
   (`make lb/main/main_update/lb_update` desde el tag).
-- **Checklist obligatorio** (lección de la 2.0.3, que hubo que publicar 2 veces):
-  1. Bump de `UyPanel_VERSION` en `src/core/Config/AppConfig.php` — si se olvida,
-     el payload se autoreporta con la versión vieja y los paneles instalados
-     quedan en loop de "update disponible" (el delta no lleva AppConfig.php).
+- **Checklist obligatorio** (lecciones de la 2.0.3 —publicada 2 veces— y de la 2.0.7):
+  1. Bump de `UyPanel_VERSION` en `src/core/Config/AppConfig.php` **ANTES del push** —
+     si el push que dispara la release sale sin el bump, el delta no lleva AppConfig.php
+     y los paneles quedan en loop de "update disponible" reportando la versión vieja
+     (caso 2.0.7: release reconstruida). El bump SIEMPRE en el commit previo a crear la release.
   2. Commit + push a main.
   3. `gh release create <tag> --title "UyPanel <tag>" --notes ...` — el tag se
      crea en HEAD de main; el CI arma y sube los assets.
-  4. Verificar: assets publicados y `UyPanel_VERSION` correcto DENTRO del zip.
+  4. **AUDITAR el delta descargándolo** (no confiar en el CI verde): descargar
+     `update.tar.gz` + `hashes.md5`, verificar MD5, listar el tar y confirmar que
+     `AppConfig.php` dentro dice la versión nueva.
+  5. Actualizar `UyPanel_Update/changelog.json` (entrada de la versión nueva) —
+     el popup de update del panel la lee de ahí.
 - Releases: 2.0.1 (2026-11-02), 2.0.2, 2.0.3 (2026-11-14: fix instalador —
   `libcurl3t64-gnutls` + `libsodium23` faltantes causaban 502 en servers
   nuevos; política de SO en docs: Debian 13 recomendado, Ubuntu 22.04 y
@@ -194,7 +249,14 @@ journalctl -u uypanel -f
   guard de login; hardening `create_line` — `normalizeIDList`; sección
   API Docs admin+reseller; MAG/Enigma2 eliminados del panel — 22 archivos
   viajan en `migrations/deleted_files.txt` del delta; fix popup al guardar
-  perfil reseller — setLanguage null). El changelog de la notificación de
+  perfil reseller — setLanguage null), 2.0.7 (2026-11-15: **Valkey 9.1.3
+  reemplaza KeyDB 6.3.4** — binario portable glibc 2.29, service con
+  fallback, migración automática al restart post-update; **nginx+rtmp
+  1.30.6 stable** — 5 CVEs Oct 2026 incl. CVE-2026-15176 alias+rewrite;
+  **alertas de software desactualizado** en Settings → Info —
+  SoftwareVersions + manifest remoto UyPanel_Update/versions.json con
+  caché 24h y fallback incluido; check_versions.sh elige rama stable de
+  nginx). El changelog de la notificación de
   update vive en `UyPanel_Update/changelog.json` (repo aparte — actualizarlo
   TAMBIÉN en cada release; estaba atrasado hasta 2.0.6).
 
@@ -250,3 +312,24 @@ journalctl -u uypanel -f
 - **Translator**: default `$langsDir = includes/libs/lang/` NO existe; el init
   correcto lo hace `XC_Bootstrap::initTranslator()` con `includes/langs/`.
   `setLanguage(string)` es non-nullable — nunca llamarlo con posible null.
+- **Swap de binario nginx en caliente** (procedimiento probado en 1.30.6):
+  1. `cp` sobre el binario en uso falla con "Text file busy" → `rm` primero
+     (el proceso vivo conserva su inode) y luego `cp` el nuevo.
+  2. `nginx -t` con el binario NUEVO antes de reiniciar.
+  3. Con 0 streams: `nginx -s quit` + `nginx_rtmp -s quit`, sleep 3, arrancar
+     ambos de nuevo. El master viejo drena keepalives hasta ~65s (normal ver
+     ambos masters conviviendo un rato).
+  4. **CRÍTICO — pidfile**: al salir, el master viejo hace unlink del pidfile
+     que el master nuevo ya reescribió → `nginx -s reload` queda roto.
+     Restaurar `bin/nginx/logs/nginx.pid` con el PID del master nuevo
+     (`ps -u uypanel | grep nginx` → el más viejo por cgroup/start time es el
+     nuevo master si el viejo ya salió; verificar con `ps -p <pid> -o cmd`).
+  5. NO matar procesos ffmpeg del panel sin confirmar: los jobs de prep HLS
+     graban con `-progress http://127.0.0.1/progress?stream_id=N` y mantienen
+     keepalive al nginx viejo (impiden su salida). Verificar con el usuario
+     antes de matar; el panel relanza streams por on-demand/watchdog.
+- **`bin/distros/<distro>.tar.gz`** (runtime, no está en git): BalancerCommand
+  los despliega por SSH al instalar Proxy/LB según el OS detectado. Tras
+  actualizar binarios, REFRESCAR estos tarballs desde
+  `third_party/UyPanel_Binaries/out/<target>.tar.gz` o los LBs nuevos
+  instalarán binarios viejos.

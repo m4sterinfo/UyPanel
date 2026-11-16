@@ -44,13 +44,13 @@ UyPanel ayuda a desplegar una infraestructura IPTV completa:
 ## 🧰 Tecnologías
 
 - **Nginx** — reverse proxy & web server  
-- **PHP 8.1** — backend core  
+- **PHP 8.3** — backend core  
 - **MariaDB** — base de datos  
-- **KeyDB** — motor de caché/sesiones  
+- **Valkey** — motor de caché/sesiones (compatible Redis)  
 - **FFmpeg 8.0** — transcodificación  
 - **yt-dlp** — adquisición de medios  
 
-UyPanel soporta oficialmente **Debian 13 (recomendado)** y **Ubuntu 24.04 LTS**. Las versiones anteriores (Ubuntu 22.04 o inferiores, Debian 12) funcionan pero **no se recomiendan** por seguridad: traen librerías del sistema desactualizadas y dejan de recibir parches.
+UyPanel soporta oficialmente **Debian 13 (recomendado)** y **Ubuntu 24.04 LTS**. Desde el 2026-11-15 las versiones anteriores (Ubuntu 22.04/20.04, Debian 12) **ya NO tienen soporte**: están EOL o traen librerías del sistema vulnerables, y los binarios actuales (nginx_rtmp exige GLIBC 2.38) no funcionan en ellas — el instalador las rechaza.
 
 ---
 

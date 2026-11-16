@@ -1,7 +1,22 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-15 (release 2.0.7 publicada).
+> cada cambio significativo. Última actualización: 2026-11-15 (release 2.0.7 publicada + política de SO).
+
+## 🆕 2026-11-15 — Política de SO: solo Debian 13 + Ubuntu 24.04 (fuera Ubuntu 20.04/22.04 y Debian 12)
+
+**Pedido del usuario**: "ya no quiero darle soporte a las versiones viejas de ubuntu que son vulnerables".
+
+**Aplicado**:
+- **Instalador** (`install`): `rVersions` reducido a `{"24.04": "noble"}`; Debian solo acepta `"13"`; mensajes de rechazo claros ("Unsupported Operating System (solo Ubuntu 24.04 LTS / Debian 13 — ver docs)"). Eliminadas las ramas muertas pre-t64 (Debian 12/Ubuntu 20.04/22.04 ya no son alcanzables) y el hack wget de libssl3 para focal (era para el binario KeyDB viejo).
+- **`bin/distros/`** (runtime, BalancerCommand): quedó con `debian_13.tar.gz` + `ubuntu_24.tar.gz`, ambos con nginx 1.30.6 + PHP 8.3.36 (rebuilds de hoy). Eliminados ubuntu_20/22.
+- **Build system**: targets ubuntu_20/22/24 reconstruidos con nginx 1.30.6 (ccache); en `out/` se conservan SOLO `debian_13` + `ubuntu_24` (los de 20/22 y sus .bak eliminados — sin soporte). Los targets siguen buildables en build_all.sh (capacidad intacta, solo no se distribuyen).
+- **Docs**: README (tabla de SO + nota de política), docs/es + docs/en README. Skills (global + proyecto) y AGENTS.md actualizados.
+- **Motivo técnico adicional**: el nginx_rtmp actual exige GLIBC 2.38 (ya así con el 1.29.6 anterior) → Ubuntu 20.04 (2.31), 22.04 (2.35) y Debian 12 (2.36) no pueden ejecutarlo — el soporte era de facto roto.
+- **Valkey**: el binario focal (GLIBC 2.29) se CONSERVA — más portable no hace daño y cubre Debian 13/Ubuntu 24.04 de sobra.
+- **FFmpeg**: con el LB ubuntu20 fuera de la BD, el motivo del `ffmpeg_cpu=4.0` temporal desapareció — el admin puede cambiar a 8.0 desde Settings → Streaming (la alerta del Info tab lo recuerda: ffmpeg 4.0 → 8.0 disponible). NO cambiado por el agente (decisión del admin, afecta transcodificación).
+
+**Pendiente para próxima sesión**: verificar assets de 2.0.7 si no se hizo; panel del usuario (178.156.194.122) updates secuenciales; MariaDB 11.8.10 cuando el mirror la tenga; LB futuro → instalar en Debian 13/Ubuntu 24.04 (SSH cerrado hacia los LB viejos); decidir release 2.0.8 con el cambio de política del instalador (o incluirlo en la próxima).
 
 ## 🆕 2026-11-15 — Release 2.0.7: KeyDB→Valkey 9.1.3, nginx 1.30.6 y alertas de software desactualizado
 

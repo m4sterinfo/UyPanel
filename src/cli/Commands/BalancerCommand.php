@@ -103,59 +103,34 @@ class BalancerCommand implements CommandInterface {
 		$rVersion = trim($rOS['output'] ?? '');
 		echo "\nRemote OS: {$rDistroID} {$rVersion}\n";
 
-		// Ajuste de paquetes por distro
-		if ($rDistroID == 'debian' || preg_match('/^(12|13)\./', $rVersion)) {
-			echo "Debian detected — adapting package list\n";
-			$rPackages = array_values(array_diff($rPackages, array('mcrypt', 'php-ssh2', 'software-properties-common', 'libgeoip-dev', 'python', 'cpufrequtils')));
-			$rPackages[] = ($rDistroID == 'debian' && str_starts_with($rVersion, '12')) ? 'libcurl3-gnutls' : 'libcurl3t64-gnutls';
-			$rPackages[] = 'libsodium23';
-			$rPackages[] = 'libnuma1';
-			$rPackages[] = 'libgomp1';
-			$rPackages[] = 'libexpat1';
-			$rPackages[] = 'librtmp1';
-		} elseif (preg_match('/^24\./', $rVersion)) {
-			echo "Ubuntu 24.x detected — adapting package list\n";
-			$rPackages = array_values(array_diff($rPackages, array('mcrypt', 'php-ssh2', 'python', 'cpufrequtils')));
-			$rPackages[] = 'libcurl3t64-gnutls';
-			$rPackages[] = 'libsodium23';
-			$rPackages[] = 'libnuma1';
-			$rPackages[] = 'libgomp1';
-			$rPackages[] = 'libexpat1';
-			$rPackages[] = 'librtmp1';
-		} else {
-			echo "Ubuntu {$rVersion} detected — adapting package list\n";
-			$rPackages[] = 'libcurl3-gnutls';
-			$rPackages[] = 'libsodium23';
-			$rPackages[] = 'libnuma1';
-			$rPackages[] = 'libgomp1';
-			$rPackages[] = 'libexpat1';
-			$rPackages[] = 'librtmp1';
-			if (preg_match('/^22\./', $rVersion)) {
-				$rPackages = array_values(array_diff($rPackages, array('python', 'mcrypt')));
-			}
+		// Política de SO (2026-11-15): solo Debian 13 y Ubuntu 24.04 LTS —
+		// las versiones viejas son EOL/vulnerables y los binarios actuales
+		// (nginx_rtmp exige GLIBC 2.38) no funcionan en ellas.
+		$rSupportedOS = ($rDistroID == 'debian' && str_starts_with($rVersion, '13'))
+			|| ($rDistroID == 'ubuntu' && str_starts_with($rVersion, '24.04'));
+		if (!$rSupportedOS) {
+			return $this->failInstall($rServerID, "Unsupported OS {$rDistroID} {$rVersion} (solo Debian 13 / Ubuntu 24.04 LTS)");
 		}
+
+		// Ajuste de paquetes por distro (Debian 13 / Ubuntu 24.04)
+		echo "{$rDistroID} {$rVersion} detected — adapting package list\n";
+		$rPackages = array_values(array_diff($rPackages, array('mcrypt', 'php-ssh2', 'software-properties-common', 'libgeoip-dev', 'python', 'cpufrequtils')));
+		$rPackages[] = 'libcurl3t64-gnutls';
+		$rPackages[] = 'libsodium23';
+		$rPackages[] = 'libnuma1';
+		$rPackages[] = 'libgomp1';
+		$rPackages[] = 'libexpat1';
+		$rPackages[] = 'librtmp1';
 
 		echo "\nStopping any previous version of UyPanel\n";
 		$this->runSSH($rConn, 'sudo systemctl stop uypanel');
 		$this->runSSH($rConn, 'sudo killall -9 -u uypanel');
 		echo "\nUpdating system\n";
 		$this->runSSH($rConn, 'sudo rm -f /var/lib/dpkg/lock-frontend /var/cache/apt/archives/lock /var/lib/dpkg/lock');
-		if ($rType == 2 && $rDistroID != 'debian' && !preg_match('/^24\./', $rVersion)) {
-			$this->runSSH($rConn, 'sudo add-apt-repository -y ppa:maxmind/ppa || true');
-		}
 		$this->runSSH($rConn, 'sudo apt-get update');
 		foreach ($rPackages as $rPackage) {
 			echo 'Installing package: ' . $rPackage . "\n";
 			$this->runSSH($rConn, 'sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install ' . $rPackage);
-		}
-
-		// 2. Ubuntu 20.x — install libssl3
-		if (preg_match('/^20\./', $rVersion)) {
-			echo "Ubuntu 20.x detected — installing libssl3 for PHP compatibility...\n";
-			$this->runSSH($rConn, "wget -O /tmp/libssl3_3.0.2-0ubuntu1_amd64.deb http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl3_3.0.2-0ubuntu1_amd64.deb");
-			$this->runSSH($rConn, "sudo dpkg -i /tmp/libssl3_3.0.2-0ubuntu1_amd64.deb || true");
-			$this->runSSH($rConn, "rm -f /tmp/libssl3_3.0.2-0ubuntu1_amd64.deb");
-			echo "libssl3 installed successfully.\n";
 		}
 
 		if (in_array($rType, array(1, 2))) {
@@ -177,20 +152,16 @@ class BalancerCommand implements CommandInterface {
 
 				// Deploy native PHP 8.3 / Nginx binaries matching the remote OS
 				$rDistroTag = null;
-				if ($rDistroID == 'debian' || preg_match('/^(12|13)\./', $rVersion)) {
+				if ($rDistroID == 'debian' && str_starts_with($rVersion, '13')) {
 					$rDistroTag = 'debian_13';
-				} elseif (preg_match('/^24\./', $rVersion)) {
+				} elseif (str_starts_with($rVersion, '24.04')) {
 					$rDistroTag = 'ubuntu_24';
-				} elseif (preg_match('/^22\./', $rVersion)) {
-					$rDistroTag = 'ubuntu_22';
-				} elseif (preg_match('/^20\./', $rVersion)) {
-					$rDistroTag = 'ubuntu_20';
 				}
 
 				if ($rDistroTag) {
 					$rLocalBinaryPath = BIN_PATH . 'distros/' . $rDistroTag . '.tar.gz';
 					if (file_exists($rLocalBinaryPath)) {
-						echo "Deploying native {$rDistroTag} binaries (PHP 8.3 / Nginx 1.29) to Proxy...\n";
+						echo "Deploying native {$rDistroTag} binaries (PHP 8.3 / Nginx 1.30) to Proxy...\n";
 						if ($this->sendFileSSH($rConn, $rLocalBinaryPath, '/tmp/' . $rDistroTag . '.tar.gz', true)) {
 							$this->runSSH($rConn, 'sudo tar -zxvf "/tmp/' . $rDistroTag . '.tar.gz" -C "' . MAIN_HOME . '"');
 							$this->runSSH($rConn, 'sudo rm -f "/tmp/' . $rDistroTag . '.tar.gz"');
@@ -216,20 +187,16 @@ class BalancerCommand implements CommandInterface {
 
 					// Deploy native PHP 8.3 / Nginx binaries matching the remote OS
 					$rDistroTag = null;
-					if ($rDistroID == 'debian' || preg_match('/^(12|13)\./', $rVersion)) {
+					if ($rDistroID == 'debian' && str_starts_with($rVersion, '13')) {
 						$rDistroTag = 'debian_13';
-					} elseif (preg_match('/^24\./', $rVersion)) {
+					} elseif (str_starts_with($rVersion, '24.04')) {
 						$rDistroTag = 'ubuntu_24';
-					} elseif (preg_match('/^22\./', $rVersion)) {
-						$rDistroTag = 'ubuntu_22';
-					} elseif (preg_match('/^20\./', $rVersion)) {
-						$rDistroTag = 'ubuntu_20';
 					}
 
 					if ($rDistroTag) {
 						$rLocalBinaryPath = BIN_PATH . 'distros/' . $rDistroTag . '.tar.gz';
 						if (file_exists($rLocalBinaryPath)) {
-							echo "Deploying native {$rDistroTag} binaries (PHP 8.3 / Nginx 1.29) to LB...\n";
+							echo "Deploying native {$rDistroTag} binaries (PHP 8.3 / Nginx 1.30) to LB...\n";
 							if ($this->sendFileSSH($rConn, $rLocalBinaryPath, '/tmp/' . $rDistroTag . '.tar.gz', true)) {
 								$this->runSSH($rConn, 'sudo tar -zxvf "/tmp/' . $rDistroTag . '.tar.gz" -C "' . MAIN_HOME . '"');
 								$this->runSSH($rConn, 'sudo rm -f "/tmp/' . $rDistroTag . '.tar.gz"');

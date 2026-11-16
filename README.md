@@ -77,10 +77,10 @@ It enables:
 | Component | Version    | Description                     |
 | --------- | ---------- | ------------------------------- |
 | PHP       | 8.3.36 (hardened) | Backend runtime, patched against PHP2Shell CVE-2026-109618/109619 |
-| Nginx     | 1.29.6 (+ RTMP) | Web server & reverse proxy      |
+| Nginx     | 1.30.6 (+ RTMP) | Web server & reverse proxy      |
 | FFmpeg    | 8.0, 7.1, 5.1, 4.4, 4.3, 4.0        | Media transcoding & processing  |
 | MariaDB   | 11.8      | SQL database engine             |
-| KeyDB     | 6.3.4      | Cache & session storage (Redis) |
+| Valkey    | 9.1.3      | Cache & session storage (Redis-compatible) |
 | yt-dlp    | 2025.07.21 | Audio/Video downloader          |
 
 ---
@@ -92,12 +92,12 @@ UyPanel officially supports the following operating systems:
 | OS           | Version            | Codename        | Status                            |
 | ------------ | ------------------ | --------------- | --------------------------------- |
 | **Debian**   | **13**             | Trixie          | ✅ **Recommended**                 |
-| **Debian**   | 12                 | Bookworm        | ⚙️ *Compatible (LTS)*             |
 | **Ubuntu**   | **24.04 LTS**      | Noble Numbat    | ✅ **Supported**                   |
-| **Ubuntu**   | 24.10              | Oracular Oriole | 🧪 *Under Testing*                |
-| **Ubuntu**   | 22.04 LTS          | Jammy Jellyfish | ⚠️ *Legacy — Not Recommended*     |
-| **Ubuntu**   | 20.04 / 20.10      | Focal / Groovy  | 🚫 *Outdated — Not Recommended*   |
-| **Ubuntu**   | 22.10              | Kinetic Kudu    | 🚫 *Outdated — Not Recommended*   |
+
+> ⚠️ **Since 2026-11-15, older releases (Ubuntu 22.04/20.04, Debian 12) are NO LONGER
+> SUPPORTED** — they are EOL or ship vulnerable system libraries, and the current
+> binaries (nginx_rtmp requires GLIBC 2.38) do not run on them. The installer
+> rejects them.
 
 ---
 
