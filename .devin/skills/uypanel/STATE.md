@@ -1,7 +1,32 @@
 # UyPanel — Estado del proyecto (documento vivo)
 
 > Este archivo lo mantiene el agente (vía skill `uypanel`). Se actualiza tras
-> cada cambio significativo. Última actualización: 2026-11-16 (release 2.0.8 publicada — política de SO).
+> cada cambio significativo. Última actualización: 2026-11-16 (desacople total del proyecto original + binarios purgados).
+
+## 🆕 2026-11-16 — Desacople total del proyecto original (sin forks, sin menciones, binarios purgados)
+
+**Pedido del usuario**: que UyPanel_Update y UyPanel_Binaries "ya no tengan nada que ver" con Vateron-Media/XC_VM_Binaries y que no quede NINGUNA mención en los proyectos del panel y relacionados. Elegidos vía pregunta: recrear repos standalone, rebuild de binarios AHORA, reescribir también registros históricos.
+
+**Inventario previo**: 3 repos de soporte eran forks de Vateron-Media/XC_VM_{Update,Binaries,FFMPEG} (0 stars/issues/releases); remotes locales apuntando a Vateron; config stale de submódulos; menciones en docs/scripts/versions.json de los 3 repos de soporte, docblocks VateronMedia_* en 3 libs del panel, skills internos, AGENTS.md; strings embebidas en binarios (`/tmp/xc_vm_build`, `PHP_FPM_USER "xc_vm"`, ffmpeg 8.0 con prefix `/home/xc_vm` + `--extra-version=XCVM` — los ffmpeg 4.0–7.1 del payload son builds XUI, SIN strings xc_vm).
+
+**Aplicado**:
+- **Repos recreados standalone** (borrar fork + crear repo nuevo + push historial completo): UyPanel_Update, UyPanel_Binaries (5 ramas + 5 tags), UyPanel_FFMPEG — verificados `fork: false`, sin parent. Descripciones GitHub rebrandeadas. El scope `delete_repo` se autorizó vía device-flow (código EF26-D8BC).
+- **Remotes/config**: `upstream` (Vateron) eliminado de UyPanel_Update; submódulos con `origin` → m4sterinfo; entradas stale `submodule.third_party/XC_VM_*` unset; **`.git/modules/third_party/XC_VM_{Binaries,FFMPEG}` renombrados a UyPanel_*** + gitfile pointers actualizados.
+- **UyPanel_Binaries**: docs rebrandeados; workflow `sync-xcvm-core.yml` ELIMINADO y `bin/xcvm_extention/` borrado (la extensión Rust NO se usa — verificado: no está en php -m de prod ni en el payload); versions.json sin la entrada xcvm_extention y network.py ahora se descarga del repo UyPanel propio; build scripts con `UYPANEL_DIR`, `/tmp/uypanel_build`, `--with-fpm-user/group=uypanel`, imágenes `uypanel-builder`, volúmenes `uypanel-ccache` (contenido del ccache viejo COPIADO a los nuevos — 137/139MB preservados).
+- **UyPanel_FFMPEG**: docs/scripts rebrandeados; imagen `uypanel-ffmpeg`; marker `/etc/uypanel-build-tools`; binarios nuevos con `--extra-version=UyPanel` y banner "UyPanel FFmpeg static builder"; `xtream-codes-4.0-reference.diff` → `legacy-4.0-reference.diff` con headers neutralizados (sin XUI/Xtream Codes); **matriz corregida: label 8.0 → FFmpeg 8.0.3 real** (el 8.1 no matcheaba el bucket 8.0 del panel).
+- **UyPanel main**: `XC_Bootstrap`→`UyPanel_Bootstrap`, `XC_Autoloader`→`UyPanel_Autoloader`, `assertRunAsXcVm`→`assertRunAsUyPanel` (39 archivos PHP, lint OK); docblocks de libs; skills y docs es/en reescritos; tools/ (build_ffmpeg, test-install) limpios.
+- **AGENTS.md** (local): 11 menciones reescritas.
+- **Sistema**: `/etc/ld.so.conf.d/99-xc_vm-local.conf` → `99-uypanel-local.conf` (+ldconfig); crontab huérfano `/var/spool/cron/crontabs/xc_vm` eliminado (usuario inexistente, rutas muertas — cron lo ignoraba).
+- **Rebuild binarios** (Docker): debian_13 + ubuntu_24 (tests 25/25 ✓) y **ffmpeg 8.0.3 debian_13** (tests ✓, muxers HLS/segment/TTS, DTS decode, RTMP, TLS). Verificado con strings: **0 menciones** en php/php-fpm/phpdbg/nginx/nginx_rtmp/opcache/ssh2/network/ffmpeg/ffprobe; `PHP_FPM_USER "uypanel"`.
+- **Payload actualizado** (commit `205a16d9`): 29 archivos binarios reemplazados en `src/bin/` (503 copiados, el resto byte-idéntico); `bin/distros/{debian_13,ubuntu_24}.tar.gz` refrescados en prod (uypanel-owned).
+
+**Decisiones documentadas**:
+- **fastcgi_params `XC_SCOPE`/`XC_CODE`/`XC_API` se CONSERVAN**: son el contrato interno nginx↔PHP presente en las confs generadas (`codes/*.conf`) de TODOS los paneles y LBs instalados; renombrarlos exige migración coordinada en el pipeline de updates (regenerar confs + reload en panel y LBs, orden estricto). No contienen el literal "XC_VM". Cambio futuro posible con hook `AuthRepository::updateCodes()` + reload en el post-update.
+- **Historial git SIN reescribir**: commits viejos mencionan el proyecto original; reescribir rompería tags/releases y los gitlinks de submódulos.
+- **Prefix de ffmpeg `/opt/ffmpeg_build`**: el binario busca datos ahí (no existe en installs); el upstream tenía `/home/xc_vm/...` (también inexistente) — sin regresión; ajustar a `/home/uypanel/bin/ffmpeg_bin` en un futuro rebuild si algún filtro llegara a necesitar data files.
+- **Binarios de prod NO swappeados**: los que corren mantienen las strings viejas (cosmético, funcionalmente idénticos); el swap de php/nginx en prod es el procedimiento delicado del 2.0.7 — decidir por separado.
+
+**Pendiente para próxima sesión**: panel del usuario (178.156.194.122) updates secuenciales; MariaDB 11.8.10 cuando el mirror la tenga; LB futuro → Debian 13/Ubuntu 24.04; reaper vs proxy #4; decidir swap de binarios en prod (opcional, cosmético); borrar `/home/debian/XC_VM.zip` + `xc_vm.tar.gz` (~895MB, artefactos originales — decisión del usuario).
 
 ## 🆕 2026-11-16 — Release 2.0.8 publicada: política de SO del instalador llega a los paneles instalados
 
