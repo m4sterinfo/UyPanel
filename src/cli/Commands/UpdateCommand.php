@@ -56,6 +56,7 @@ class UpdateCommand implements CommandInterface {
 			case 'post-update':
 				if (ServerRepository::getAll()[SERVER_ID]['is_main']) {
 					MigrationRunner::run($db);
+					AuthRepository::updateCodes();
 				}
 				MigrationRunner::runFileCleanup();
 

@@ -47,14 +47,14 @@ if (isset($_SESSION['phash'])) {
         || $rUserInfo['enabled'] == 0
     ) {
         destroySession('player');
-        $code = $_SERVER['XC_CODE'] ?? '';
+        $code = $_SERVER['UY_CODE'] ?? $_SERVER['XC_CODE'] ?? '';
         header('Location: ' . ($code ? '/' . $code . '/login' : 'login'));
         exit();
     }
 
     sort($rUserInfo['bouquet']);
 } else {
-    $code = $_SERVER['XC_CODE'] ?? '';
+    $code = $_SERVER['UY_CODE'] ?? $_SERVER['XC_CODE'] ?? '';
     header('Location: ' . ($code ? '/' . $code . '/login' : 'login'));
     exit();
 }

@@ -93,11 +93,13 @@ class AuthRepository {
 
 	public static function getCurrentCode($rInfo = false) {
 		global $db;
-				// El Front Controller pasa XC_CODE vía fastcgi_param.
+				// El Front Controller pasa UY_CODE vía fastcgi_param (XC_CODE legacy pre-2.0.9).
 				// Sin FC — se determina desde PHP_SELF (comportamiento legacy).
-		$rCode = !empty($_SERVER['XC_CODE'])
-			? $_SERVER['XC_CODE']
-			: basename(dirname($_SERVER['PHP_SELF']));
+		$rCode = !empty($_SERVER['UY_CODE'])
+			? $_SERVER['UY_CODE']
+			: (!empty($_SERVER['XC_CODE'])
+				? $_SERVER['XC_CODE']
+				: basename(dirname($_SERVER['PHP_SELF'])));
 
 		if ($rInfo) {
 			$db->query('SELECT * FROM `access_codes` WHERE `code` = ?;', $rCode);

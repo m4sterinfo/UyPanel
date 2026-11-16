@@ -14,7 +14,7 @@ La System API la atiende el controlador:
 src/public/Controllers/Api/AdminApiController.php
 ```
 
-HTTP entry-point: `/api.php` → nginx enruta a `public/index.php` con el parámetro `XC_API=internal`.
+HTTP entry-point: `/api.php` → nginx enruta a `public/index.php` con el parámetro `UY_API=internal`.
 
 ## Resumen de la arquitectura de la API
 **URI base**: `http://<host>:<puerto http>/api.php`  

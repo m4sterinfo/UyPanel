@@ -71,7 +71,7 @@ It must be deleted whenever:
 rm -f /home/uypanel/tmp/cache/autoload_map
 
 # Or via PHP
-XC_Autoloader::clearCache();
+UyPanel_Autoloader::clearCache();
 ```
 
 > **Note:** If a class is requested that isn't in the cache, the autoloader falls back to a live directory scan and caches the result automatically. So the cache only needs to be cleared when files are moved/renamed/deleted — new classes will eventually be found via fallback.
@@ -81,8 +81,8 @@ XC_Autoloader::clearCache();
 For special cases where a file contains multiple classes or the filename doesn't match the class name:
 
 ```php
-XC_Autoloader::addClass('DropboxClient', '/home/uypanel/includes/libs/Dropbox.php');
-XC_Autoloader::addClass('DropboxException', '/home/uypanel/includes/libs/Dropbox.php');
+UyPanel_Autoloader::addClass('DropboxClient', '/home/uypanel/includes/libs/Dropbox.php');
+UyPanel_Autoloader::addClass('DropboxException', '/home/uypanel/includes/libs/Dropbox.php');
 ```
 
 This is mainly needed for legacy library files that bundle multiple classes in one file (e.g., `iptables.php`, `m3u.php`).
@@ -137,12 +137,12 @@ If two files define the same class name, **first-found wins** based on directory
 
 ```php
 // See all registered directories
-print_r(XC_Autoloader::getDirectories());
+print_r(UyPanel_Autoloader::getDirectories());
 
 // See explicit class map
-print_r(XC_Autoloader::getClassMap());
+print_r(UyPanel_Autoloader::getClassMap());
 
 // Force full rescan
-XC_Autoloader::clearCache();
-XC_Autoloader::warmCache();
+UyPanel_Autoloader::clearCache();
+UyPanel_Autoloader::warmCache();
 ```

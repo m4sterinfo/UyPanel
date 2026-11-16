@@ -14,7 +14,7 @@ The System API is handled by the controller:
 src/public/Controllers/Api/AdminApiController.php
 ```
 
-HTTP entry-point: `/api.php` → routed by nginx to `public/index.php` with `XC_API=internal`.
+HTTP entry-point: `/api.php` → routed by nginx to `public/index.php` with `UY_API=internal`.
 
 ## API Architecture Overview
 

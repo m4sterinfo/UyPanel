@@ -28,8 +28,8 @@ location @fc_#CODE# {
     include fastcgi_params;
     fastcgi_param SCRIPT_FILENAME /home/uypanel/public/index.php;
     fastcgi_param SCRIPT_NAME /public/index.php;
-    fastcgi_param XC_SCOPE #TYPE#;
-    fastcgi_param XC_CODE  #CODE#;
+    fastcgi_param UY_SCOPE #TYPE#;
+    fastcgi_param UY_CODE  #CODE#;
     fastcgi_buffering on;
     fastcgi_buffers 96 32k;
     fastcgi_buffer_size 32k;

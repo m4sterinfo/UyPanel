@@ -13,7 +13,7 @@
  *
  *   1. nginx redirige la petición aquí (vía access code o directamente)
  *   2. Se determina el scope (admin|reseller) y el pageName:
- *      — Vía access code: nginx pasa XC_SCOPE y XC_CODE mediante fastcgi_param
+ *      — Vía access code: nginx pasa UY_SCOPE y UY_CODE mediante fastcgi_param
  *      — Directo: URL /admin/... o /reseller/... → scope desde la ruta
  *   3. Se carga el bootstrap (session → functions → includes/admin)
  *   4. Se cargan las rutas de public/routes/{scope}.php
@@ -41,8 +41,8 @@
  *                          6 → player
  *
  *   Para el Front Controller la plantilla pasa el scope vía fastcgi_param:
- *     fastcgi_param XC_SCOPE admin;   (o reseller)
- *     fastcgi_param XC_CODE  xxxxxx;  (access code)
+ *     fastcgi_param UY_SCOPE admin;   (o reseller)
+ *     fastcgi_param UY_CODE  xxxxxx;  (access code)
  *
  * ──────────────────────────────────────────────────────────────────
  * Activación (futura plantilla template):
@@ -55,8 +55,8 @@
  *       location ~ \.php$ { ... }
  *   }
  *   location @fc_#CODE# {
- *       fastcgi_param XC_SCOPE #TYPE#;
- *       fastcgi_param XC_CODE  #CODE#;
+ *       fastcgi_param UY_SCOPE #TYPE#;
+ *       fastcgi_param UY_CODE  #CODE#;
  *       fastcgi_param SCRIPT_FILENAME /home/uypanel/public/index.php;
  *       fastcgi_pass php;
  *       include fastcgi_params;
@@ -104,7 +104,7 @@ require_once MAIN_HOME . 'autoload.php';
 //
 //  Dos modos:
 //
-//  A) Access Code (principal): nginx pasa XC_SCOPE y XC_CODE
+//  A) Access Code (principal): nginx pasa UY_SCOPE y UY_CODE
 //     URL: /MYCODE/dashboard → scope='admin', pageName='dashboard'
 //     el alias de nginx dirige al directorio correcto
 //
@@ -122,10 +122,11 @@ $accessCode = null;
 $rawScope   = null;
 
 // Modo A: access code — nginx pasa el scope vía fastcgi_param
-if (!empty($_SERVER['XC_SCOPE'])) {
+// (UY_* desde 2.0.9; XC_* aceptado por compatibilidad con confs pre-2.0.9)
+if (!empty($_SERVER['UY_SCOPE']) || !empty($_SERVER['XC_SCOPE'])) {
         // Scope desde nginx: 'admin', 'reseller', 'ministra', etc.
-    $rawScope   = $_SERVER['XC_SCOPE'];
-    $accessCode = $_SERVER['XC_CODE'] ?? null;
+    $rawScope   = !empty($_SERVER['UY_SCOPE']) ? $_SERVER['UY_SCOPE'] : ($_SERVER['XC_SCOPE'] ?? null);
+    $accessCode = !empty($_SERVER['UY_CODE']) ? $_SERVER['UY_CODE'] : ($_SERVER['XC_CODE'] ?? null);
 
         // Mapeo #TYPE# → scope para el enrutado
     $scopeMap = [
@@ -157,14 +158,14 @@ elseif (preg_match('#^/(admin|reseller)(?:/(.*))?$#', $urlPath, $m)) {
     $scope    = $m[1];
     $pageName = isset($m[2]) ? trim($m[2], '/') : '';
 }
-// Modo C: access code sin XC_SCOPE (template antiguo)
+// Modo C: access code sin UY_SCOPE (template antiguo)
 // Determinamos el scope vía PHP_SELF (como hace AuthRepository::getCurrentCode)
 else {
     $selfDir = basename(dirname($_SERVER['PHP_SELF'] ?? ''));
 
         // Si PHP_SELF contiene un código (no 'admin'/'reseller'),
         // se necesita información adicional para determinar el scope.
-        // Sin XC_SCOPE asumimos admin (fallback seguro).
+        // Sin UY_SCOPE asumimos admin (fallback seguro).
     if (!in_array($selfDir, ['admin', 'reseller'], true)) {
         $accessCode = $selfDir;
     } else {
@@ -240,12 +241,13 @@ if (in_array($ext, ['css', 'js', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'ico', 'wof
 //  3b. Streaming API — player_api, enigma2, epg, playlist, etc.
 // ─────────────────────────────────────────────────────────────────
 //
-//  la location de nginx intercepta /{endpoint}.php → FC con XC_SCOPE=api,
-//  XC_API={endpoint}. Cargamos el bootstrap de streaming, dispatch del controller.
+//  la location de nginx intercepta /{endpoint}.php → FC con UY_SCOPE=api,
+//  UY_API={endpoint}. Cargamos el bootstrap de streaming, dispatch del controller.
 // ─────────────────────────────────────────────────────────────────
 
-if (isset($rawScope) && $rawScope === 'api' && !empty($_SERVER['XC_API'])) {
-	$rApiName = $_SERVER['XC_API'];
+$rApiName = !empty($_SERVER['UY_API']) ? $_SERVER['UY_API'] : ($_SERVER['XC_API'] ?? null);
+
+if (isset($rawScope) && $rawScope === 'api' && !empty($rApiName)) {
 	$rApiControllerMap = [
 		'player_api' => 'PlayerApiController',
 		'enigma2'    => 'Enigma2ApiController',
